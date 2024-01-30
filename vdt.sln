@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visus.DeploymentToolkit.Com
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visus.DeploymentToolkit.Base", "Visus.DeploymentToolkit.Base\Visus.DeploymentToolkit.Base.csproj", "{AFC12DA6-4605-45F6-841E-FDC348922374}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visus.DeploymentToolkit.Dism", "Visus.DeploymentToolkit.Dism\Visus.DeploymentToolkit.Dism.csproj", "{703E9465-E764-4C68-9CC2-2ADF618E2928}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{AFC12DA6-4605-45F6-841E-FDC348922374}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFC12DA6-4605-45F6-841E-FDC348922374}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFC12DA6-4605-45F6-841E-FDC348922374}.Release|Any CPU.Build.0 = Release|Any CPU
-		{703E9465-E764-4C68-9CC2-2ADF618E2928}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{703E9465-E764-4C68-9CC2-2ADF618E2928}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{703E9465-E764-4C68-9CC2-2ADF618E2928}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{703E9465-E764-4C68-9CC2-2ADF618E2928}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
