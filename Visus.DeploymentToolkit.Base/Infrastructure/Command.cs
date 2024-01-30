@@ -1,4 +1,4 @@
-﻿// <copyright file="Synchroniser.cs" company="Visualisierungsinstitut der Universität Stuttgart">
+﻿// <copyright file="Command.cs" company="Visualisierungsinstitut der Universität Stuttgart">
 // Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details
 // </copyright>
@@ -6,12 +6,11 @@
 
 using System.Diagnostics;
 using System.Net;
-using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using System.Text;
 
 
-namespace Visus.DeploymentToolkit.CommandLine {
+namespace Visus.DeploymentToolkit.Infrastructure {
 
     /// <summary>
     /// A wrapper around a command line process being started.

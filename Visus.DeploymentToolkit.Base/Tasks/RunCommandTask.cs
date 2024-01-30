@@ -10,7 +10,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Visus.DeploymentToolkit.CommandLine;
+using Visus.DeploymentToolkit.Infrastructure;
 using Visus.DeploymentToolkit.Composition;
 
 

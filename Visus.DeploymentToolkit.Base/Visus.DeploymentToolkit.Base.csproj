@@ -11,8 +11,4 @@
     <PackageReference Include="Microsoft.Dism" Version="3.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Visus.DeploymentToolkit.CommandLine\Visus.DeploymentToolkit.CommandLine.csproj" />
-  </ItemGroup>
-
 </Project>
