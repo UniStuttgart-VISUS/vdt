@@ -15,8 +15,7 @@ namespace Visus.DeploymentToolkit.Composition {
 
         /// <inheritdoc />
         public virtual bool CanExecute(Phase phase) {
-            var supported = SupportsPhaseAttribute.GetPhases(this.GetType());
-            return (!supported.Any() || supported.Contains(phase));
+            return SupportsPhaseAttribute.Check(this.GetType(), phase);
         }
 
         /// <inheritdoc />
@@ -32,8 +31,7 @@ namespace Visus.DeploymentToolkit.Composition {
 
         /// <inheritdoc />
         public virtual bool CanExecute(Phase phase) {
-            var supported = SupportsPhaseAttribute.GetPhases(this.GetType());
-            return (!supported.Any() || supported.Contains(phase));
+            return SupportsPhaseAttribute.Check(this.GetType(), phase);
         }
 
         /// <inheritdoc />

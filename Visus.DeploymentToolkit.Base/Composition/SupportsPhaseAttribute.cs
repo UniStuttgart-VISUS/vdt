@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System.Numerics;
 using System.Reflection;
 
 
@@ -17,6 +18,23 @@ namespace Visus.DeploymentToolkit.Composition {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct,
         AllowMultiple = true, Inherited = false)]
     public sealed class SupportsPhaseAttribute : Attribute {
+
+        /// <summary>
+        /// Checks whether <paramref name="type"/> is supported for the given
+        /// <paramref name="phase"/>.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="type"/> is not annotated with any
+        /// <see cref="SupportsPhaseAttribute"/>, it is assume that it is
+        /// supported in any phase.
+        /// </remarks>
+        /// <param name="type"></param>
+        /// <param name="phase"></param>
+        /// <returns></returns>
+        public static bool Check(Type? type, Phase phase) {
+            var supported = GetPhases(type);
+            return (!supported.Any() || supported.Contains(phase));
+        }
 
         /// <summary>
         /// Gets all <see cref="Phases"/> the given <paramref name="type"/> is
