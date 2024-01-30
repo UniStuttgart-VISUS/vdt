@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Visus.DeploymentToolkit.Base\Visus.DeploymentToolkit.Base.csproj" />
+    <ProjectReference Include="..\Visus.DeploymentToolkit\Visus.DeploymentToolkit.csproj" />
   </ItemGroup>
 
   <ItemGroup>
