@@ -25,13 +25,6 @@ namespace Visus.DeploymentToolkit.Test {
                 var status = service.WaitForServiceReady();
                 Assert.AreEqual(0u, status, "WaitForServiceReady succeeded");
             }
-
-            IEnumVdsObject enumProviders;
-            service.QueryProviders(VDS_QUERY_PROVIDER_FLAG.HARDWARE_PROVIDERS
-                | VDS_QUERY_PROVIDER_FLAG.SOFTWARE_PROVIDERS
-                | VDS_QUERY_PROVIDER_FLAG.VIRTUALDISK_PROVIDERS,
-                out enumProviders);
-            Assert.IsNotNull(enumProviders, "Have enumerator for provider");
         }
 
         [TestMethod]
@@ -49,18 +42,18 @@ namespace Visus.DeploymentToolkit.Test {
             }
 
             IEnumVdsObject enumProviders;
-            service.QueryProviders(VDS_QUERY_PROVIDER_FLAG.HARDWARE_PROVIDERS, out enumProviders);
+            service.QueryProviders(VDS_QUERY_PROVIDER_FLAG.VIRTUALDISK_PROVIDERS,
+                out enumProviders);
             Assert.IsNotNull(enumProviders, "Have enumerator for provider");
 
-            while (true) {
+            enumProviders.Reset();
+
+            {
                 enumProviders.Next(1, out var unknown, out uint cnt);
+                Assert.AreEqual(1u, cnt, "At least one provider found");
 
-                if (cnt == 0) {
-                    break;
-                }
+                var provider = (IVdsVdProvider) unknown;
             }
-
-            
         }
     }
 }

@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visus.DeploymentToolkit.Test", "Visus.DeploymentToolkit.Test\Visus.DeploymentToolkit.Test.csproj", "{07924244-154B-4E7D-B734-94921CB0BFCE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Visus.DeploymentToolkit.Test", "Visus.DeploymentToolkit.Test\Visus.DeploymentToolkit.Test.csproj", "{07924244-154B-4E7D-B734-94921CB0BFCE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visus.DeploymentToolkit.Agent", "Visus.DeploymentToolkit.Agent\Visus.DeploymentToolkit.Agent.csproj", "{6C8DC23C-72FB-4FD7-B07C-C10C271261F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Visus.DeploymentToolkit.Agent", "Visus.DeploymentToolkit.Agent\Visus.DeploymentToolkit.Agent.csproj", "{6C8DC23C-72FB-4FD7-B07C-C10C271261F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visus.DeploymentToolkit", "Visus.DeploymentToolkit\Visus.DeploymentToolkit.csproj", "{F9A96925-B420-40E3-938A-51CBE8C19DF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Visus.DeploymentToolkit", "Visus.DeploymentToolkit\Visus.DeploymentToolkit.csproj", "{F9A96925-B420-40E3-938A-51CBE8C19DF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visus.DeploymentToolkit.Vds", "Visus.DeploymentToolkit.Vds\Visus.DeploymentToolkit.Vds.csproj", "{E7C5CACD-CF2D-48AC-AEBB-6BF29F32D9E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Visus.DeploymentToolkit.Vds", "Visus.DeploymentToolkit.Vds\Visus.DeploymentToolkit.Vds.csproj", "{E7C5CACD-CF2D-48AC-AEBB-6BF29F32D9E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

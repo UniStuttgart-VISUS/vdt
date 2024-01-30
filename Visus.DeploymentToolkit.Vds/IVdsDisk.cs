@@ -34,6 +34,7 @@ namespace Visus.DeploymentToolkit.Vds {
 
         void GetIdentificationData(out VDS_LUN_INFORMATION lunInfo);
 
+        // TODO: Check https://learn.microsoft.com/en-us/dotnet/framework/interop/marshalling-different-types-of-arrays
         void QueryExtents(out VDS_DISK_EXTENT[] extentArray,
             out uint numberOfExtents);
 

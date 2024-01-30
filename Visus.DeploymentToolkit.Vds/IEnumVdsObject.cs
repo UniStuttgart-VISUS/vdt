@@ -17,11 +17,10 @@ namespace Visus.DeploymentToolkit.Vds {
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IEnumVdsObject {
 
-        /// <summary>
-        /// Creates an enumeration with the same state as the current enumeration.
-        /// </summary>
-        /// <param name="retval">Receives the copy.</param>
-        void Clone(out IEnumVdsObject retval);
+        /**********************************************************************\
+         * WARNING: It is important that the methods are in the same order as *
+         * in the native interface!                                           *
+        \**********************************************************************/
 
         /// <summary>
         /// Returns a specified number of objects in the enumeration, beginning
@@ -37,14 +36,20 @@ namespace Visus.DeploymentToolkit.Vds {
             out uint fetched);
 
         /// <summary>
+        /// Skips a specified number of objects in the enumeration.
+        /// </summary>
+        /// <param name="celt">The number of objects to skip.</param>
+        void Skip(uint celt);
+
+        /// <summary>
         /// Resets to the beginning of the enumeration.
         /// </summary>
         void Reset();
 
         /// <summary>
-        /// Skips a specified number of objects in the enumeration.
+        /// Creates an enumeration with the same state as the current enumeration.
         /// </summary>
-        /// <param name="celt">The number of objects to skip.</param>
-        void Skip(uint celt);
+        /// <param name="retval">Receives the copy.</param>
+        void Clone(out IEnumVdsObject retval);
     }
 }
