@@ -9,7 +9,7 @@ namespace Visus.DeploymentToolkit.Test {
 
 
     [TestClass]
-    public class EnvironmentServiceTest {
+    public sealed class EnvironmentServiceTest {
 
         [TestMethod]
         public void Enumerate() {

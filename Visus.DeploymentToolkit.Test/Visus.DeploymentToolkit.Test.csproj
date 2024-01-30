@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Visus.DeploymentToolkit.Vds\Visus.DeploymentToolkit.Vds.csproj" />
     <ProjectReference Include="..\Visus.DeploymentToolkit\Visus.DeploymentToolkit.csproj" />
   </ItemGroup>
 
