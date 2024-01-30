@@ -4,12 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace Visus.DeploymentToolkit.Vds {
@@ -45,7 +40,10 @@ namespace Visus.DeploymentToolkit.Vds {
         /// <summary>
         /// Returns the properties of VDS.
         /// </summary>
-        [Obsolete("This is not correctly mapped")]
+        [Obsolete("This method is not correctly mapped, because we did not yet "
+            + "need it. However, the method still needs to be there fore the "
+            + "interface to work. Callers must fix the sigature before using "
+            + "this method or the call will most likely crash the application.")]
         void GetProperties(/* [out] VDS_SERVICE_PROP *pServiceProp */);
 
         /// <summary>
@@ -73,17 +71,20 @@ namespace Visus.DeploymentToolkit.Vds {
         /// <summary>
         /// Returns an object pointer for the identified object.
         /// </summary>
-        [Obsolete("This is not correctly mapped")]
-        void GetObject(/*
-            [in]  VDS_OBJECT_ID   ObjectId,
-            [in]  VDS_OBJECT_TYPE type,
-            [out] IUnknown        **ppObjectUnk
-        */);
+        [Obsolete("This method is not correctly mapped, because we did not yet "
+            + "need it. However, the method still needs to be there fore the "
+            + "interface to work. Callers must fix the sigature before using "
+            + "this method or the call will most likely crash the application.")]
+        void GetObject(Guid objectId, VDS_OBJECT_TYPE type,
+            [MarshalAs(UnmanagedType.IUnknown)] out object unknown);
 
         /// <summary>
         /// Returns property details for a set of drive letters.
         /// </summary>
-        [Obsolete("This is not correctly mapped")]
+        [Obsolete("This method is not correctly mapped, because we did not yet "
+            + "need it. However, the method still needs to be there fore the "
+            + "interface to work. Callers must fix the sigature before using "
+            + "this method or the call will most likely crash the application.")]
         void QueryDriveLetters(/*
             [in]  WCHAR                 wcFirstLetter,
             [in]  DWORD                 count,
@@ -118,7 +119,10 @@ namespace Visus.DeploymentToolkit.Vds {
         /// Registers the caller's IVdsAdviseSink interface with VDS so 
         /// that the caller receives notifications from the VDS service.
         /// </summary>
-        [Obsolete("This is not correctly mapped")]
+        [Obsolete("This method is not correctly mapped, because we did not yet "
+            + "need it. However, the method still needs to be there fore the "
+            + "interface to work. Callers must fix the sigature before using "
+            + "this method or the call will most likely crash the application.")]
         void Advise(/*
             [in]  IVdsAdviseSink *pSink,
             [out] DWORD          *pdwCookie

@@ -19,24 +19,25 @@ namespace Visus.DeploymentToolkit.Vds {
         /// The interconnect address type enumerated by 
         /// <see cref="VDS_INTERCONNECT_ADDRESS_TYPE"/>.
         /// </summary>
-        VDS_INTERCONNECT_ADDRESS_TYPE AddressType;
+        public VDS_INTERCONNECT_ADDRESS_TYPE AddressType;
 
         /// <summary>
         /// The size of the interconnect address data for the LUN port
         /// (<see cref="Port"/>), in bytes.
         /// </summary>
-        uint SizeOfPort;
+        public uint SizeOfPort;
 
         /// <summary>
         /// The interconnect address data for the LUN port.
         /// </summary>
+        //[MarshalAs(UnmanagedType.LPArray, SizeParamIndex =)]
         byte[] Port; // TODO
 
         /// <summary>
         /// The size of the interconnect address data for the LUN
         /// (<see cref="Address"/>), in bytes.
         /// </summary>
-        uint SizeOfAddress;
+        public uint SizeOfAddress;
 
         /// <summary>
         /// The interconnect address data for the LUN.

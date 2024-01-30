@@ -14,14 +14,15 @@ namespace Visus.DeploymentToolkit.Vds {
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct VIRTUAL_STORAGE_TYPE {
+
         /// <summary>
         /// Device type identifier.
         /// </summary>
-        uint DeviceId;
+        public uint DeviceId;
 
         /// <summary>
         /// Vendor-unique identifier.
         /// </summary>
-        Guid VendorId;
+        public Guid VendorId;
     }
 }

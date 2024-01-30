@@ -17,11 +17,21 @@ namespace Visus.DeploymentToolkit.Vds {
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVdsVdProvider {
         void QueryVDisks(out IEnumVdsObject ppEnum);
-        [Obsolete("This is not correctly mapped")]
+
+        [Obsolete("This method is not correctly mapped, because we did not yet "
+            + "need it. However, the method still needs to be there fore the "
+            + "interface to work. Callers must fix the sigature before using "
+            + "this method or the call will most likely crash the application.")]
         void CreateVDisk();
-        [Obsolete("This is not correctly mapped")]
+
+        [Obsolete("This method is not correctly mapped, because we did not yet "
+            + "need it. However, the method still needs to be there fore the "
+            + "interface to work. Callers must fix the sigature before using "
+            + "this method or the call will most likely crash the application.")]
         void AddVDisk();
+
         void GetDiskFromVDisk(IVdsVDisk pVDisk, out IVdsDisk ppDisk);
+
         void GetVDiskFromDisk(IVdsDisk pDisk, out IVdsVDisk ppVDisk);
     }
 }

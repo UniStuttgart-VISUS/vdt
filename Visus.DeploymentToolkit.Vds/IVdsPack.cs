@@ -23,17 +23,22 @@ namespace Visus.DeploymentToolkit.Vds {
          * in the native interface!                                           *
         \**********************************************************************/
 
-        [Obsolete("This is not correctly mapped")]
-        void GetProperties(/* [out] VDS_PACK_PROP *pPackProp*/);
+        void GetProperties(out VDS_PACK_PROP packProp);
 
-        [Obsolete("This is not correctly mapped")]
+        [Obsolete("This method is not correctly mapped, because we did not yet "
+            + "need it. However, the method still needs to be there fore the "
+            + "interface to work. Callers must fix the sigature before using "
+            + "this method or the call will most likely crash the application.")]
         void GetProvider(/* [out] __RPC__deref_out_opt IVdsProvider **ppProvider*/ );
 
         void QueryVolumes(out IEnumVdsObject enumerator);
         
         void  QueryDisks(out IEnumVdsObject enumerator);
 
-        [Obsolete("This is not correctly mapped")]
+        [Obsolete("This method is not correctly mapped, because we did not yet "
+            + "need it. However, the method still needs to be there fore the "
+            + "interface to work. Callers must fix the sigature before using "
+            + "this method or the call will most likely crash the application.")]
         void CreateVolume(/* [in] VDS_VOLUME_TYPE type,
             /* [size_is][in] __RPC__in_ecount_full(lNumberOfDisks) VDS_INPUT_DISK *pInputDiskArray,
         /* [in]  LONG lNumberOfDisks,
@@ -43,7 +48,10 @@ namespace Visus.DeploymentToolkit.Vds {
         void AddDisk(Guid diskId, VDS_PARTITION_STYLE partitionStyle,
             bool asHotSpare);
 
-        [Obsolete("This is not correctly mapped")]
+        [Obsolete("This method is not correctly mapped, because we did not yet "
+            + "need it. However, the method still needs to be there fore the "
+            + "interface to work. Callers must fix the sigature before using "
+            + "this method or the call will most likely crash the application.")]
         void MigrateDisks(
             /* [size_is][in]  __RPC__in_ecount_full(lNumberOfDisks) VDS_OBJECT_ID *pDiskArray,
             /* [in]  LONG lNumberOfDisks,
@@ -53,7 +61,10 @@ namespace Visus.DeploymentToolkit.Vds {
             /* [size_is][out]  __RPC__out_ecount_full(lNumberOfDisks) HRESULT *pResults,
             /* [out]  __RPC__out BOOL *pbRebootNeeded*/);
 
-        [Obsolete("This is not correctly mapped")]
+        [Obsolete("This method is not correctly mapped, because we did not yet "
+            + "need it. However, the method still needs to be there fore the "
+            + "interface to work. Callers must fix the sigature before using "
+            + "this method or the call will most likely crash the application.")]
         void ReplaceDisk(
             /* [in]  Guid OldDiskId,
             /* [in] Guid NewDiskId,
@@ -61,7 +72,10 @@ namespace Visus.DeploymentToolkit.Vds {
         
         void RemoveMissingDisk(Guid diskId);
 
-        [Obsolete("This is not correctly mapped")]
+        [Obsolete("This method is not correctly mapped, because we did not yet "
+            + "need it. However, the method still needs to be there fore the "
+            + "interface to work. Callers must fix the sigature before using "
+            + "this method or the call will most likely crash the application.")]
         void Recover(/* [out] __RPC__deref_out_opt IVdsAsync **ppAsync*/);
     }
 }

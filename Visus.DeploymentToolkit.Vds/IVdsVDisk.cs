@@ -27,7 +27,10 @@ namespace Visus.DeploymentToolkit.Vds {
         /// <see cref="IVdsOpenVDisk"/> interface pointer to the object that
         /// represents the opened handle.
         /// </summary>
-        [Obsolete("This is not correctly mapped")]
+        [Obsolete("This method is not correctly mapped, because we did not yet "
+            + "need it. However, the method still needs to be there fore the "
+            + "interface to work. Callers must fix the sigature before using "
+            + "this method or the call will most likely crash the application.")]
         void Open(/*VIRTUAL_DISK_ACCESS_MASK accessMask,
             OPEN_VIRTUAL_DISK_FLAG flags,
             uint readWriteDepth,
@@ -44,7 +47,10 @@ namespace Visus.DeploymentToolkit.Vds {
         /// Returns an interface pointer to the volume object for the volume
         /// where the virtual disk resides.
         /// </summary>
-        [Obsolete("This is not correctly mapped")]
+        [Obsolete("This method is not correctly mapped, because we did not yet "
+            + "need it. However, the method still needs to be there fore the "
+            + "interface to work. Callers must fix the sigature before using "
+            + "this method or the call will most likely crash the application.")]
         void GetHostVolume(/* out IVdsVolume volume */);
 
         /// <summary>

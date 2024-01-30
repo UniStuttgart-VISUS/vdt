@@ -28,7 +28,7 @@ namespace Visus.DeploymentToolkit.Test {
         }
 
         [TestMethod]
-        public void EnumerateHardware() {
+        public void EnumerateSoftware() {
             var loader = new VdsServiceLoader() as IVdsServiceLoader;
             Assert.IsNotNull(loader, "Have IVdsServiceLoader");
 
@@ -42,17 +42,56 @@ namespace Visus.DeploymentToolkit.Test {
             }
 
             IEnumVdsObject enumProviders;
-            service.QueryProviders(VDS_QUERY_PROVIDER_FLAG.VIRTUALDISK_PROVIDERS,
+            service.QueryProviders(VDS_QUERY_PROVIDER_FLAG.SOFTWARE_PROVIDERS,
                 out enumProviders);
             Assert.IsNotNull(enumProviders, "Have enumerator for provider");
 
             enumProviders.Reset();
 
-            {
+            while (true) {
                 enumProviders.Next(1, out var unknown, out uint cnt);
-                Assert.AreEqual(1u, cnt, "At least one provider found");
+                if (cnt == 0) {
+                    break;
+                }
 
-                var provider = (IVdsVdProvider) unknown;
+                var provider = unknown as IVdsSwProvider;
+                Assert.IsNotNull(provider, "Provider is IVdsVdProvider");
+
+                IEnumVdsObject enumPacks;
+                provider.QueryPacks(out enumPacks);
+                Assert.IsNotNull(enumPacks, "Have pack enumerator");
+
+                while (true) {
+                    enumPacks.Next(1, out unknown, out cnt);
+                    if (cnt == 0) {
+                        break;
+                    }
+
+                    var pack = unknown as IVdsPack;
+                    Assert.IsNotNull(pack, "Got IVdsPack");
+
+                    VDS_PACK_PROP packProp;
+                    pack.GetProperties(out packProp);
+
+                    if (packProp.Status != VDS_PACK_STATUS.ONLINE) {
+                        continue;
+                    }
+
+                    IEnumVdsObject enumDisks;
+                    pack.QueryDisks(out enumDisks);
+                    Assert.IsNotNull(enumDisks, "Have disk enumerator");
+
+                    enumDisks.Next(1, out unknown, out cnt);
+                    Assert.AreEqual(1u, cnt, "At least one disk");
+
+                    var disk = unknown as IVdsDisk;
+                    Assert.IsNotNull(disk, "Have IVdsDisk");
+
+                    VDS_DISK_PROP diskProp;
+                    disk.GetProperties(out diskProp);
+
+                }
+
             }
         }
     }

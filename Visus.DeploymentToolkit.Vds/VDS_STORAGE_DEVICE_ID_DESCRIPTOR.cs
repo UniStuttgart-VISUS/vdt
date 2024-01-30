@@ -19,12 +19,12 @@ namespace Visus.DeploymentToolkit.Vds {
         /// <summary>
         /// The version of this structure.
         /// </summary>
-        uint Version;
+        public uint Version;
 
         /// <summary>
         /// The number of identifiers specified in <see cref="Identifiers"/>.
         /// </summary>
-        uint NumberOfIdentifiers;
+        public uint NumberOfIdentifiers;
 
         /// <summary>
         /// The <see cref="VDS_STORAGE_IDENTIFIER"/>s.

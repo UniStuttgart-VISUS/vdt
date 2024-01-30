@@ -19,18 +19,18 @@ namespace Visus.DeploymentToolkit.Vds {
         /// The encoding type of <see cref="Identifier"/> enumerated by 
         /// <see cref="VDS_STORAGE_IDENTIFIER_CODE_SET"/>.
         /// </summary>
-        VDS_STORAGE_IDENTIFIER_CODE_SET CodeSet;
+        public VDS_STORAGE_IDENTIFIER_CODE_SET CodeSet;
 
         /// <summary>
         /// The type of <see cref="Identifier"/> enumerated by 
         /// <see cref="VDS_STORAGE_IDENTIFIER_TYPE"/>.
         /// </summary>
-        VDS_STORAGE_IDENTIFIER_TYPE Type;
+        public VDS_STORAGE_IDENTIFIER_TYPE Type;
 
         /// <summary>
         /// The size of the <see cref="Identifier"/> array, in bytes.
         /// </summary>
-        uint SizeOfIdentifier;
+        public uint SizeOfIdentifier;
 
         /// <summary>
         /// The identifier data.

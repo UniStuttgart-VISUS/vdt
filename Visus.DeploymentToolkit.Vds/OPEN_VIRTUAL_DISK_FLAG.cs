@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="OPEN_VIRTUAL_DISK_FLAG.cs" company="Visualisierungsinstitut der Universität Stuttgart">
+// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Licensed under the MIT licence. See LICENCE file for details.
+// </copyright>
+// <author>Christoph Müller</author>
 
 namespace Visus.DeploymentToolkit.Vds {
 

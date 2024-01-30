@@ -15,52 +15,52 @@ namespace Visus.DeploymentToolkit.Vds {
     [StructLayout(LayoutKind.Sequential)]
     public struct VDS_DISK_PROP {
 
-        Guid Id;
+        public Guid Id;
 
-        VDS_DISK_STATUS Status;
+        public VDS_DISK_STATUS Status;
 
-        VDS_LUN_RESERVE_MODE ReserveMode;
+        public VDS_LUN_RESERVE_MODE ReserveMode;
 
-        VDS_HEALTH Health;
+        public VDS_HEALTH Health;
 
-        uint DeviceType;
+        public uint DeviceType;
 
-        uint MediaType;
+        public uint MediaType;
 
-        ulong Size;
+        public ulong Size;
 
-        uint BytesPerSector;
+        public uint BytesPerSector;
 
-        uint SectorsPerTrack;
+        public uint SectorsPerTrack;
 
-        uint TracksPerCylinder;
+        public uint TracksPerCylinder;
 
-        uint Flags;
+        public uint Flags;
 
-        VDS_STORAGE_BUS_TYPE BusType;
+        public VDS_STORAGE_BUS_TYPE BusType;
 
-        VDS_PARTITION_STYLE PartitionStyle;
+        public VDS_PARTITION_STYLE PartitionStyle;
 
-        Guid DiskGuid;
+        public Guid DiskGuid;
         //    union {
         //DWORD dwSignature;
         //    GUID DiskGuid;
         //};
 
         [MarshalAs(UnmanagedType.LPWStr)]
-        string DiskAddress;
+        public string DiskAddress;
 
         [MarshalAs(UnmanagedType.LPWStr)]
-        string Name;
+        public string Name;
 
         [MarshalAs(UnmanagedType.LPWStr)]
-        string FriendlyName;
+        public string FriendlyName;
 
         [MarshalAs(UnmanagedType.LPWStr)]
-        string AdaptorName;
+        public string AdaptorName;
 
         [MarshalAs(UnmanagedType.LPWStr)]
-        string DevicePath;
+        public string DevicePath;
 
     }
 }

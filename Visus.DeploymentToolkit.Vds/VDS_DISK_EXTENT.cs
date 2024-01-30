@@ -18,39 +18,39 @@ namespace Visus.DeploymentToolkit.Vds {
         /// <summary>
         /// The GUID of the disk.
         /// </summary>
-        Guid DiskId;
+        public Guid DiskId;
 
         /// <summary>
         /// A <see cref="VDS_DISK_EXTENT_TYPE"/> enumeration value that
         /// specifies the type of the disk extent.
         /// </summary>
-        VDS_DISK_EXTENT_TYPE Type;
+        public VDS_DISK_EXTENT_TYPE Type;
 
         /// <summary>
         /// The disk offset, in bytes.
         /// </summary>
-        ulong Offset;
+        public ulong Offset;
 
         /// <summary>
         /// The size of the extent, in bytes.
         /// </summary>
-        ulong Size;
+        public ulong Size;
 
         /// <summary>
         /// The GUID of the volume to which the extent belongs.
         /// </summary>
-        Guid VolumeId;
+        public Guid VolumeId;
 
         /// <summary>
         /// If the extent is from a volume, this member is the GUID of the
         /// plex to which the extent belongs.
         /// </summary>
-        Guid PlexId;
+        public Guid PlexId;
 
         /// <summary>
         /// If the extent is from a volume plex, this member is the zero-based
         /// index of the plex member to which the extent belongs.
         /// </summary>
-        uint MemberIdx;
+        public uint MemberIdx;
     }
 }

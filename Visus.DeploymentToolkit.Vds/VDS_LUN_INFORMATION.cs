@@ -16,22 +16,22 @@ namespace Visus.DeploymentToolkit.Vds {
     [StructLayout(LayoutKind.Sequential)]
     public struct VDS_LUN_INFORMATION {
 
-        uint Version;
-        byte DeviceType;
-        byte DeviceTypeModifier;
-        bool CommandQueueing;
-        VDS_STORAGE_BUS_TYPE BusType;
+        public uint Version;
+        public byte DeviceType;
+        public byte DeviceTypeModifier;
+        public bool CommandQueueing;
+        public VDS_STORAGE_BUS_TYPE BusType;
         [MarshalAs(UnmanagedType.LPWStr)]
-        string VendorId;
+        public string VendorId;
+         [MarshalAs(UnmanagedType.LPWStr)]
+        public string ProductId;
         [MarshalAs(UnmanagedType.LPWStr)]
-        string ProductId;
+        public string ProductRevision;
         [MarshalAs(UnmanagedType.LPWStr)]
-        string ProductRevision;
-        [MarshalAs(UnmanagedType.LPWStr)]
-        string SerialNumber;
-        Guid DiskSignature;
-        VDS_STORAGE_DEVICE_ID_DESCRIPTOR DeviceIdDescriptor;
-        uint NumberOfInterconnects;
-        VDS_INTERCONNECT[] Interconnects;
+        public string SerialNumber;
+        public Guid DiskSignature;
+        public VDS_STORAGE_DEVICE_ID_DESCRIPTOR DeviceIdDescriptor;
+        public uint NumberOfInterconnects;
+        VDS_INTERCONNECT[] Interconnects;    // TODO
     }
 }
