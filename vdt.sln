@@ -5,6 +5,10 @@ VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visus.DeploymentToolkit.Base", "Visus.DeploymentToolkit.Base\Visus.DeploymentToolkit.Base.csproj", "{AFC12DA6-4605-45F6-841E-FDC348922374}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visus.DeploymentToolkit.Test", "Visus.DeploymentToolkit.Test\Visus.DeploymentToolkit.Test.csproj", "{07924244-154B-4E7D-B734-94921CB0BFCE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visus.DeploymentToolkit.Agent", "Visus.DeploymentToolkit.Agent\Visus.DeploymentToolkit.Agent.csproj", "{6C8DC23C-72FB-4FD7-B07C-C10C271261F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{AFC12DA6-4605-45F6-841E-FDC348922374}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFC12DA6-4605-45F6-841E-FDC348922374}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFC12DA6-4605-45F6-841E-FDC348922374}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07924244-154B-4E7D-B734-94921CB0BFCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07924244-154B-4E7D-B734-94921CB0BFCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07924244-154B-4E7D-B734-94921CB0BFCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07924244-154B-4E7D-B734-94921CB0BFCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C8DC23C-72FB-4FD7-B07C-C10C271261F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C8DC23C-72FB-4FD7-B07C-C10C271261F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C8DC23C-72FB-4FD7-B07C-C10C271261F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C8DC23C-72FB-4FD7-B07C-C10C271261F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

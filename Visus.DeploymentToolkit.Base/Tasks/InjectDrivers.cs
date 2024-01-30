@@ -5,17 +5,20 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Dism;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Visus.DeploymentToolkit.Composition;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
 
     public sealed class InjectDrivers : TaskBase {
+
+        public InjectDrivers(ILogger<InjectDrivers> logger) : base(logger) { }
+
         public override Task ExecuteAsync() {
             //DismApi.MountImage()
             throw new NotImplementedException();

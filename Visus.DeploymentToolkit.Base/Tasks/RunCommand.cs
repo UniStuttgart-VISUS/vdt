@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -11,12 +12,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Infrastructure;
-using Visus.DeploymentToolkit.Composition;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
 
     public class RunCommand : TaskBase {
+
+        public RunCommand(ILogger<RunCommand> logger) : base(logger) { }
 
         [Required]
         public string Path { get; set; }

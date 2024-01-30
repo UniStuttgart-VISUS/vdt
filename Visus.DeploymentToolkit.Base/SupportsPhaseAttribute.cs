@@ -4,11 +4,11 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using System.Numerics;
 using System.Reflection;
+using Visus.DeploymentToolkit.Tasks;
 
-
-namespace Visus.DeploymentToolkit.Composition {
+namespace Visus.DeploymentToolkit
+{
 
     /// <summary>
     /// Annotates an implementation of <see cref="TaskBase"/> or
@@ -33,7 +33,7 @@ namespace Visus.DeploymentToolkit.Composition {
         /// <returns></returns>
         public static bool Check(Type? type, Phase phase) {
             var supported = GetPhases(type);
-            return (!supported.Any() || supported.Contains(phase));
+            return !supported.Any() || supported.Contains(phase);
         }
 
         /// <summary>
@@ -43,8 +43,8 @@ namespace Visus.DeploymentToolkit.Composition {
         /// <param name="type">The <see cref="Type"/> to check for
         /// <see cref="SupportsPhaseAttribute"/>s. It is safe to pass
         /// <c>null</c>, in which case the result will be empty.</param>
-        /// <returns>The <see cref="DeploymentToolkit.Phase"/>s the type is annotated
-        /// with.</returns>
+        /// <returns>The <see cref="DeploymentToolkit.Phase"/>s the type is
+        /// annotated with.</returns>
         public static IEnumerable<Phase> GetPhases(Type? type) {
             if (type == null) {
                 yield break;

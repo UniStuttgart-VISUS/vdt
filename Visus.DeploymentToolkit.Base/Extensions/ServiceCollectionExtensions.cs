@@ -4,7 +4,9 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using Microsoft.Dism;
 using Microsoft.Extensions.DependencyInjection;
+using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
 
 
@@ -28,6 +30,7 @@ namespace Visus.DeploymentToolkit.Extensions {
 
             that.AddTransient<InjectDrivers>();
             that.AddTransient<RunCommand>();
+            that.AddSingleton<IEnvironment, EnvironmentService>();
 
             return that;
         }

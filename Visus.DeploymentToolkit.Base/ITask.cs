@@ -5,7 +5,7 @@
 // <author>Christoph Müller</author>
 
 
-namespace Visus.DeploymentToolkit.Composition {
+namespace Visus.DeploymentToolkit {
 
     /// <summary>
     /// Defines the interface of a deployment task that asynchronously performs
