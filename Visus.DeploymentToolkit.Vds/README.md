@@ -74,8 +74,7 @@ while (true) {
                 Debug.Assert(advDisk != null);
 
                 // Do stuff, for instance check for existing partitions.
-                VDS_PARTITION_PROP[] partitionProperties;
-                advDisk.QueryPartitions(out partitionProperties, out var cntPartitions);
+                advDisk.QueryPartitions(out var partitionProperties, out var cntPartitions);
 
             }
         }
