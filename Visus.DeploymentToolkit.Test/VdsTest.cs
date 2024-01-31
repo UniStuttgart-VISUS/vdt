@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System.Runtime.InteropServices;
 using Visus.DeploymentToolkit.Vds;
 
 
@@ -90,8 +91,16 @@ namespace Visus.DeploymentToolkit.Test {
                     VDS_DISK_PROP diskProp;
                     disk.GetProperties(out diskProp);
 
-                }
+                    var advDisk = disk as IVdsAdvancedDisk;
+                    Assert.IsNotNull(advDisk, "Have IVdsAdvancedDisk");
 
+                    //VDS_PARTITION_PROP partitionProp;
+                    //advDisk.GetPartitionProperties(0, out partitionProp);
+
+                    VDS_PARTITION_PROP[] partitionProps;
+                    advDisk.QueryPartitions(out partitionProps, out var cntPartitions);
+
+                }
             }
         }
     }
