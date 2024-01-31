@@ -35,7 +35,7 @@ namespace Visus.DeploymentToolkit.Vds {
         /// Attributes of the partition.
         /// </summary>
         [FieldOffset(32)]
-        public ulong Attributes;
+        public GptPartitionAttributes Attributes;
 
         /// <summary>
         /// Name of the partition.
