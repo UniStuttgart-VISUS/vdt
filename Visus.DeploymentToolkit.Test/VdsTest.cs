@@ -101,11 +101,12 @@ namespace Visus.DeploymentToolkit.Test {
                     var advDisk = disk as IVdsAdvancedDisk;
                     Assert.IsNotNull(advDisk, "Have IVdsAdvancedDisk");
 
-                    //VDS_PARTITION_PROP partitionProp;
-                    //advDisk.GetPartitionProperties(0, out partitionProp);
-
                     VDS_PARTITION_PROP[] partitionProps;
                     advDisk.QueryPartitions(out partitionProps, out var cntPartitions);
+
+                    VDS_PARTITION_PROP partitionProp;
+                    advDisk.GetPartitionProperties(partitionProps[0].Offset, out partitionProp);
+                    Assert.AreEqual(partitionProps[0].PartitionNumber, partitionProp.PartitionNumber, "PartitionNumber matches");
 
                 }
             }
