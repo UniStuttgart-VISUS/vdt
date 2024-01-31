@@ -23,26 +23,28 @@ namespace Visus.DeploymentToolkit.Vds {
         /// Byte value indicating the partition type.
         /// </summary>
         [FieldOffset(0)]
-        byte PartitionType;
+        public byte PartitionType;
 
         /// <summary>
         /// If <c>true</c>, the partition is active and can be booted;
         /// otherwise, the partition cannot be used to boot the computer.
         /// </summary>
-        [FieldOffset(4)]
-        bool BootIndicator;
+        [FieldOffset(1)]
+        [MarshalAs(UnmanagedType.U1)]
+        public bool BootIndicator;
 
         /// <summary>
         /// If <c>true</c>, the operating system recognises the partition style;
         /// otherwise, the partition style is unknown.
         /// </summary>
-        [FieldOffset(8)]
-        bool RecognisedPartition;
+        [FieldOffset(2)]
+        [MarshalAs(UnmanagedType.U1)]
+        public bool RecognisedPartition;
 
         /// <summary>
         /// Reserved sectors.
         /// </summary>
-        [FieldOffset(16)]
-        uint HiddenSectors;
+        [FieldOffset(4)]
+        public uint HiddenSectors;
     }
 }

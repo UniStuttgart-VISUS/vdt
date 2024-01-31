@@ -9,7 +9,9 @@ using System.Runtime.InteropServices;
 
 namespace Visus.DeploymentToolkit.Vds {
 
-
+    /// <summary>
+    /// Creates and deletes partitions, and modifies partition attributes.
+    /// </summary>
     [ComImport]
     [Guid("6e6f6b40-977c-4069-bddd-ac710059f8c0")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -25,7 +27,9 @@ namespace Visus.DeploymentToolkit.Vds {
 
         //[ManagedToNativeComInteropStub(typeof(InteropStubs),
         //    nameof(InteropStubs.IVdsAdvancedDiskQueryPartitions))]
-        void QueryPartitions(out VDS_PARTITION_PROP[] partitionProps,
+        void QueryPartitions(
+            [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)]
+            out VDS_PARTITION_PROP[] partitionProps,
             out uint numberOfPartitions);
 
         [Obsolete("This method is not correctly mapped, because we did not yet "

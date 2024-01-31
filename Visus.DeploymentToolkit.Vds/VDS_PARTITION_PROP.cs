@@ -12,27 +12,13 @@ namespace Visus.DeploymentToolkit.Vds {
     /// <summary>
     /// Defines the properties of a partition.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
+    /// <remarks>
+    /// This structure needs to use <see cref="LayoutKind.Sequential"/>, because
+    /// <see cref="VDS_PARTITION_PROP.Mbr"/> and
+    /// <see cref="VDS_PARTITION_PROP.Gpt"/> form a union.
+    /// </remarks>
+    [StructLayout(LayoutKind.Explicit)]
     public struct VDS_PARTITION_PROP {
-
-        /// <summary>
-        /// Represents a union of <see cref="VDS_PARTITION_INFO_GPT"/> and
-        /// <see cref="VDS_PARTITION_INFO_MBR"/>.
-        /// </summary>
-        /// <remarks>
-        /// This indirection is required in C#, because we do not have anonymous
-        /// unions and it avoids adding a <see cref="FieldOffsetAttribute"/> to
-        /// all fields of <see cref="VDS_PARTITION_PROP"/>.
-        /// </remarks>
-        [StructLayout(LayoutKind.Explicit)]
-        public struct PartitionInfo {
-
-            [FieldOffset(0)]
-            VDS_PARTITION_INFO_GPT Gpt;
-
-            [FieldOffset(0)]
-            VDS_PARTITION_INFO_MBR Mbr;
-        }
 
         /// <summary>
         /// he styles enumerated by <see cref="VDS_PARTITION_STYLE"/>. The
@@ -41,36 +27,46 @@ namespace Visus.DeploymentToolkit.Vds {
         /// (<see cref="VDS_PARTITION_STYLE.GPT"/>). This member is the
         /// discriminant for the union.
         /// </summary>
+        [FieldOffset(0)]
         public VDS_PARTITION_STYLE PartitionStyle;
 
         /// <summary>
         /// The partition flags enumerated by <see cref="VDS_PARTITION_FLAG"/>.
         /// </summary>
+        [FieldOffset(4)]
         public uint Flags;
 
         /// <summary>
         /// The number assigned to the partition.
         /// </summary>
+        [FieldOffset(8)]
         public uint PartitionNumber;
 
         /// <summary>
         /// The partition offset.
         /// </summary>
+        [FieldOffset(16)]
         public ulong Offset;
 
         /// <summary>
         /// The size of the partition in bytes.
         /// </summary>
+        [FieldOffset(24)]
         public ulong Size;
 
         /// <summary>
         /// If <see cref="PartitionStyle"/> is
         /// <see cref="VDS_PARTITION_STYLE.MBR"/>, MBR-specific partition
         /// details ar available in <see cref="PartitionInfo.Mbr"/>.
-        /// If <see cref="PartitionStyle"/> is
+        /// </summary>
+        [FieldOffset(32)]
+        public VDS_PARTITION_INFO_MBR Mbr;
+
+        /// <summary>
         /// <see cref="VDS_PARTITION_STYLE.GPT"/>, MBR-specific partition
         /// details ar available in <see cref="PartitionInfo.Gpt"/>.
         /// </summary>
-        PartitionInfo Info;
+        [FieldOffset(32)]
+        public VDS_PARTITION_INFO_GPT Gpt;
     }
 }

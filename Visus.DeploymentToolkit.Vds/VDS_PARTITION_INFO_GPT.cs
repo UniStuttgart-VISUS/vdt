@@ -16,32 +16,32 @@ namespace Visus.DeploymentToolkit.Vds {
     /// The layout of this structure must be explicit in order to be usable
     /// in <see cref="VDS_PARTITION_PROP"/>.
     /// </remarks>
-    [StructLayout(LayoutKind.Explicit)]
+    [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
     public struct VDS_PARTITION_INFO_GPT {
 
         /// <summary>
         /// GUID for the partition type.
         /// </summary>
         [FieldOffset(0)]
-        Guid PartitionType;
+        public Guid PartitionType;
 
         /// <summary>
         /// GUID for the partition.
         /// </summary>
         [FieldOffset(16)]
-        Guid PartitionId;
+        public Guid PartitionId;
 
         /// <summary>
         /// Attributes of the partition.
         /// </summary>
         [FieldOffset(32)]
-        ulong Attributes;
+        public ulong Attributes;
 
         /// <summary>
         /// Name of the partition.
         /// </summary>
         [FieldOffset(40)]
-        [MarshalAs(UnmanagedType.LPWStr, SizeConst = 36)]
-        string name;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 36)]
+        public string name;
     }
 }

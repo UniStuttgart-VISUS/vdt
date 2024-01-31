@@ -29,6 +29,13 @@ namespace Visus.DeploymentToolkit.Test {
         }
 
         [TestMethod]
+        public void TestMarshalling() {
+            Assert.AreEqual(8, Marshal.SizeOf<VDS_PARTITION_INFO_MBR>(), "VDS_PARTITION_INFO_MBR");
+            Assert.AreEqual(112, Marshal.SizeOf<VDS_PARTITION_INFO_GPT>(), "VDS_PARTITION_INFO_GPT");
+            Assert.AreEqual(144, Marshal.SizeOf<VDS_PARTITION_PROP>(), "VDS_PARTITION_PROP");
+        }
+
+        [TestMethod]
         public void EnumerateSoftware() {
             var loader = new VdsServiceLoader() as IVdsServiceLoader;
             Assert.IsNotNull(loader, "Have IVdsServiceLoader");
