@@ -5,7 +5,6 @@
 // <author>Christoph Müller</author>
 
 using System.Runtime.InteropServices;
-using System.Runtime.Versioning;
 using Visus.DeploymentToolkit.Vds;
 
 
