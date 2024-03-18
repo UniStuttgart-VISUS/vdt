@@ -26,7 +26,9 @@ namespace Visus.DeploymentToolkit.Tasks {
         public string WorkingDirectory { get; set; } = string.Empty;
 
         public override Task ExecuteAsync() {
-            return new Command(this.Path).ExecuteAsync();
+            return new Command(this.Path)
+                .InWorkingDirectory(this.WorkingDirectory)
+                .ExecuteAsync();
         }
     }
 }

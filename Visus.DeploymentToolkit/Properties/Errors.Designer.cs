@@ -68,5 +68,14 @@ namespace Visus.DeploymentToolkit.Properties {
                 return ResourceManager.GetString("NoVdsServiceLoader", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The given task cannot execute in phase {0}..
+        /// </summary>
+        internal static string TaskCannotExecute {
+            get {
+                return ResourceManager.GetString("TaskCannotExecute", resourceCulture);
+            }
+        }
     }
 }

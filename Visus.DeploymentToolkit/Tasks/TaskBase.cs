@@ -5,6 +5,9 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Contracts;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
@@ -15,6 +18,7 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// </summary>
     public abstract class TaskBase : ITask {
 
+        #region Public methods
         /// <inheritdoc />
         public virtual bool CanExecute(Phase phase) {
             return SupportsPhaseAttribute.Check(GetType(), phase);
@@ -22,7 +26,9 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         /// <inheritdoc />
         public abstract Task ExecuteAsync();
+        #endregion
 
+        #region Protected constructors
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
@@ -34,11 +40,14 @@ namespace Visus.DeploymentToolkit.Tasks {
             this._logger = logger
                 ?? throw new ArgumentNullException(nameof(logger));
         }
+        #endregion
 
+        #region Protected fields
         /// <summary>
         /// A logger for writing progress and error notes.
         /// </summary>
         protected readonly ILogger _logger;
+        #endregion
     }
 
 
@@ -48,6 +57,7 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// </summary>
     public abstract class TaskBase<TResult> : ITask<TResult> {
 
+        #region Public methods
         /// <inheritdoc />
         public virtual bool CanExecute(Phase phase) {
             return SupportsPhaseAttribute.Check(GetType(), phase);
@@ -56,6 +66,11 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <inheritdoc />
         public abstract Task<TResult> ExecuteAsync();
 
+        /// <inheritdoc />
+        Task ITask.ExecuteAsync() => this.ExecuteAsync();
+        #endregion
+
+        #region Protected constructors
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
@@ -67,10 +82,13 @@ namespace Visus.DeploymentToolkit.Tasks {
             this._logger = logger
                 ?? throw new ArgumentNullException(nameof(logger));
         }
+        #endregion
 
+        #region Protected fields
         /// <summary>
         /// A logger for writing progress and error notes.
         /// </summary>
         protected readonly ILogger _logger;
+        #endregion
     }
 }

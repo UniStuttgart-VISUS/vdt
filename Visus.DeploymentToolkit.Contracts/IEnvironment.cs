@@ -4,8 +4,10 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System.Collections.Generic;
 
-namespace Visus.DeploymentToolkit {
+
+namespace Visus.DeploymentToolkit.Contracts {
 
     /// <summary>
     /// The interface of a service providing information about the

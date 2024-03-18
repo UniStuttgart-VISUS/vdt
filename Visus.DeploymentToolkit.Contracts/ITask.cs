@@ -4,8 +4,10 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System.Threading.Tasks;
 
-namespace Visus.DeploymentToolkit {
+
+namespace Visus.DeploymentToolkit.Contracts {
 
     /// <summary>
     /// Defines the interface of a deployment task that asynchronously performs
@@ -34,20 +36,12 @@ namespace Visus.DeploymentToolkit {
     /// some work and returns a result to be used for subsequent tasks.
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    public interface ITask<TResult> {
-
-        /// <summary>
-        /// Answer whether the task can be executed in its current state
-        /// assuming the given deployment <paramref name="phase"/>.
-        /// </summary>
-        /// <param name="phase"></param>
-        /// <returns></returns>
-        bool CanExecute(Phase phase);
+    public interface ITask<TResult> : ITask {
 
         /// <summary>
         /// Asynchronously executes the task.
         /// </summary>
         /// <returns>A <see cref="Task"/> to wait for the result.</returns>
-        Task<TResult> ExecuteAsync();
+        new Task<TResult> ExecuteAsync();
     }
 }

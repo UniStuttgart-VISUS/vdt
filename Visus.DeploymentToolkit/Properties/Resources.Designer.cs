@@ -59,5 +59,41 @@ namespace Visus.DeploymentToolkit.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adding task {0} to the list of tasks for phase {1}..
+        /// </summary>
+        internal static string AddingTaskToPhase {
+            get {
+                return ResourceManager.GetString("AddingTaskToPhase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Creating a task list for phase {0}..
+        /// </summary>
+        internal static string CreatingTaskListForPhase {
+            get {
+                return ResourceManager.GetString("CreatingTaskListForPhase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inserting task {0} at position {2}  in phase {1}..
+        /// </summary>
+        internal static string InsertingTaskToPhase {
+            get {
+                return ResourceManager.GetString("InsertingTaskToPhase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Task sequence {0}.
+        /// </summary>
+        internal static string TaskSequenceName {
+            get {
+                return ResourceManager.GetString("TaskSequenceName", resourceCulture);
+            }
+        }
     }
 }

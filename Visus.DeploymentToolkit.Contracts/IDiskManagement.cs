@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace Visus.DeploymentToolkit {
+namespace Visus.DeploymentToolkit.Contracts {
 
     /// <summary>
     /// Defines the interface of the disk management service.

@@ -4,7 +4,11 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Visus.DeploymentToolkit.Contracts;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -16,18 +20,7 @@ namespace Visus.DeploymentToolkit.Services {
     /// </summary>
     internal sealed class EnvironmentService : IEnvironment {
 
-        /// <inheritdoc />
-        public string? this[string name] {
-            get {
-                var vars = Environment.GetEnvironmentVariables();
-                if (vars?.Contains(name) == true) {
-                    return (string?) vars[name];
-                } else {
-                    return null;
-                }
-            }
-        }
-
+        #region Public methods
         /// <inheritdoc />
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator() {
             var variables = Environment.GetEnvironmentVariables();
@@ -42,5 +35,20 @@ namespace Visus.DeploymentToolkit.Services {
 
         /// <inheritdoc />
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        #endregion
+
+        #region Public indexers
+        /// <inheritdoc />
+        public string? this[string name] {
+            get {
+                var vars = Environment.GetEnvironmentVariables();
+                if (vars?.Contains(name) == true) {
+                    return (string?) vars[name];
+                } else {
+                    return null;
+                }
+            }
+        }
+        #endregion
     }
 }

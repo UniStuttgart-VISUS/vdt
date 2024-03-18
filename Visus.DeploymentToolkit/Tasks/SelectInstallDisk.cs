@@ -5,6 +5,9 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Contracts;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
@@ -22,10 +25,15 @@ namespace Visus.DeploymentToolkit.Tasks {
                 ?? throw new ArgumentNullException(nameof(diskManagement));
         }
 
+        #region Public methods
+        /// <inheritdoc />
         public override Task<int> ExecuteAsync() {
             throw new NotImplementedException();
         }
+        #endregion
 
-        IDiskManagement _diskManagement;
+        #region Private fields
+        private readonly IDiskManagement _diskManagement;
+        #endregion
     }
 }

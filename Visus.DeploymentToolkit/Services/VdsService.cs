@@ -5,6 +5,8 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using System;
+using Visus.DeploymentToolkit.Contracts;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Vds;
 
@@ -39,7 +41,9 @@ namespace Visus.DeploymentToolkit.Services {
             }
         }
 
+        #region Private fields
         private readonly ILogger _logger;
         private readonly IVdsService _service;
+        #endregion
     }
 }

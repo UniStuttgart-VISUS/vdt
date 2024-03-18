@@ -4,8 +4,9 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using Microsoft.Dism;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using Visus.DeploymentToolkit.Contracts;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
 
@@ -28,8 +29,9 @@ namespace Visus.DeploymentToolkit.Extensions {
                 this IServiceCollection that) {
             _ = that ?? throw new ArgumentNullException(nameof(that));
 
-            that.AddTransient<InjectDrivers>();
-            that.AddTransient<RunCommand>();
+            that.AddTransient<ITask, InjectDrivers>();
+            that.AddTransient<ITask, RunCommand>();
+            that.AddTransient<ITaskSequenceBuilder, TaskSequenceBuilder>();
             that.AddSingleton<IEnvironment, EnvironmentService>();
 
             return that;

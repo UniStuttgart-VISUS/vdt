@@ -4,11 +4,14 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using Visus.DeploymentToolkit.Tasks;
+using Visus.DeploymentToolkit.Contracts;
 
-namespace Visus.DeploymentToolkit
-{
+
+namespace Visus.DeploymentToolkit.Tasks {
 
     /// <summary>
     /// Annotates an implementation of <see cref="TaskBase"/> or
@@ -70,4 +73,5 @@ namespace Visus.DeploymentToolkit
         /// </summary>
         public Phase Phase { get; }
     }
+
 }

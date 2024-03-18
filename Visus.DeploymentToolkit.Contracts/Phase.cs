@@ -5,13 +5,20 @@
 // <author>Christoph Müller</author>
 
 
-namespace Visus.DeploymentToolkit {
+namespace Visus.DeploymentToolkit.Contracts {
 
     /// <summary>
     /// Defines the phases of the deployment process.
     /// </summary>
     public enum Phase {
 
+        /// <summary>
+        /// The pre-installed environment booted from TFTP.
+        /// </summary>
+        /// <remarks>
+        /// In this phase, the system will be prepared (disks) and the OS files
+        /// are copied to the disk.
+        /// </remarks>
         PreinstalledEnvironment,
 
         Installation,

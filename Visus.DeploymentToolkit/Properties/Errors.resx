@@ -120,4 +120,7 @@
   <data name="NoVdsServiceLoader" xml:space="preserve">
     <value>The service loader for the Virtual Disk Services does not implement the expected interface.</value>
   </data>
+  <data name="TaskCannotExecute" xml:space="preserve">
+    <value>The given task cannot execute in phase {0}.</value>
+  </data>
 </root>

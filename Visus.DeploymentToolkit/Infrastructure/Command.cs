@@ -4,11 +4,13 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.Versioning;
 using System.Text;
-
+using System.Threading.Tasks;
 
 namespace Visus.DeploymentToolkit.Infrastructure {
 
@@ -72,11 +74,13 @@ namespace Visus.DeploymentToolkit.Infrastructure {
             return this;
         }
 
-        public async Task ExecuteAsync() {
+        public Task ExecuteAsync() {
             using (var p = Process.Start(this._processStartInfo)) {
 
                 if (p != null) {
-                    await p.WaitForExitAsync();
+                    return p.WaitForExitAsync();
+                } else {
+                    return Task.CompletedTask;
                 }
             }
             //p.ErrorDataReceived += (sender, e) => { }

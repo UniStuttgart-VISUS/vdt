@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Title>VISUS Deployment Toolkit</Title>
     <Authors>Christoph Müller</Authors>
@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Visus.DeploymentToolkit.Contracts\Visus.DeploymentToolkit.Contracts.csproj" />
     <ProjectReference Include="..\Visus.DeploymentToolkit.Vds\Visus.DeploymentToolkit.Vds.csproj" />
   </ItemGroup>
 
