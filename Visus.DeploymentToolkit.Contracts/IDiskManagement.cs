@@ -4,11 +4,10 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Contracts.DiskManagement;
 
 
 namespace Visus.DeploymentToolkit.Contracts {
@@ -17,5 +16,14 @@ namespace Visus.DeploymentToolkit.Contracts {
     /// Defines the interface of the disk management service.
     /// </summary>
     public interface IDiskManagement {
+
+        /// <summary>
+        /// Gets a list of all known disks in the system.
+        /// </summary>
+        /// <param name="cancellationToken">A cancellation token for aborting
+        /// the operation.</param>
+        /// <returns>The list of disks in the system.</returns>
+        Task<IEnumerable<IDisk>> GetDisksAsync(
+            CancellationToken cancellationToken);
     }
 }

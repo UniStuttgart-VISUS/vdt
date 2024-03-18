@@ -29,9 +29,11 @@ namespace Visus.DeploymentToolkit.Extensions {
                 this IServiceCollection that) {
             _ = that ?? throw new ArgumentNullException(nameof(that));
 
+            that.AddTransient<ITask, PartitionFormatDisk>();
             that.AddTransient<ITask, InjectDrivers>();
             that.AddTransient<ITask, RunCommand>();
             that.AddTransient<ITaskSequenceBuilder, TaskSequenceBuilder>();
+            that.AddTransient<IDiskManagement, VdsService>();
             that.AddSingleton<IEnvironment, EnvironmentService>();
 
             return that;

@@ -123,4 +123,10 @@
   <data name="TaskCannotExecute" xml:space="preserve">
     <value>The given task cannot execute in phase {0}.</value>
   </data>
+  <data name="TaskFailed" xml:space="preserve">
+    <value>The task {0} failed in phase {1}.</value>
+  </data>
+  <data name="WaitVdsFailed" xml:space="preserve">
+    <value>Failed waiting for Virtual Disk Service to become ready.</value>
+  </data>
 </root>

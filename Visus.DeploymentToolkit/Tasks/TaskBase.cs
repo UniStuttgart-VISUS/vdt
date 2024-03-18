@@ -18,6 +18,11 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// </summary>
     public abstract class TaskBase : ITask {
 
+        #region Public properties
+        /// <inheritdoc />
+        public string Name { get; init; }
+        #endregion
+
         #region Public methods
         /// <inheritdoc />
         public virtual bool CanExecute(Phase phase) {
@@ -56,6 +61,11 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// attributes to implement as many methods as possible.
     /// </summary>
     public abstract class TaskBase<TResult> : ITask<TResult> {
+
+        #region Public properties
+        /// <inheritdoc />
+        public string Name { get; init; }
+        #endregion
 
         #region Public methods
         /// <inheritdoc />

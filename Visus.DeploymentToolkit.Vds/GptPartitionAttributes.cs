@@ -18,7 +18,7 @@ namespace Visus.DeploymentToolkit.Vds {
         /// If this attribute is set, the partition is required by a computer
         /// to function properly.
         /// </summary>
-        PlatformRequied = 0x0000000000000001,
+        PlatformRequired = 0x0000000000000001,
 
         /// <summary>
         /// If this attribute is set, the partition does not receive a drive

@@ -37,7 +37,8 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <inheritdoc />
         public ITaskSequence Build() {
             // TODO: should we deep copy here?
-            return new TaskSequence(this._phases);
+            //return new TaskSequence(this._phases);
+            throw new NotImplementedException();
         }
 
         /// <inheritdoc />

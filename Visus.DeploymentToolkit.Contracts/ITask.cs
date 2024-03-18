@@ -16,6 +16,11 @@ namespace Visus.DeploymentToolkit.Contracts {
     public interface ITask {
 
         /// <summary>
+        /// Gets the name of the task.
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
         /// Answer whether the task can be executed in its current state
         /// assuming the given deployment <paramref name="phase"/>.
         /// </summary>

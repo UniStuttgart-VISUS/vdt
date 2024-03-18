@@ -12,13 +12,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Infrastructure;
-
+using Visus.DeploymentToolkit.Properties;
 
 namespace Visus.DeploymentToolkit.Tasks {
 
     public class RunCommand : TaskBase {
 
-        public RunCommand(ILogger<RunCommand> logger) : base(logger) { }
+        public RunCommand(ILogger<RunCommand> logger) : base(logger) {
+            this.Name = Resources.RunCommand;
+        }
 
         [Required]
         public string Path { get; set; }

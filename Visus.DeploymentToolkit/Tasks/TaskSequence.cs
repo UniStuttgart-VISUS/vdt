@@ -4,11 +4,13 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Contracts;
+using Visus.DeploymentToolkit.Properties;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
@@ -22,7 +24,13 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <inheritdoc />
         public async Task ExecuteAsync(Phase phase) {
             foreach (var t in this[phase]) {
-                await t.ExecuteAsync().ConfigureAwait(false);
+                try {
+                    await t.ExecuteAsync().ConfigureAwait(false);
+                } catch (Exception ex) {
+                    this._logger.LogError(Errors.TaskFailed, t.Name,
+                        phase, ex);
+                    return;
+                }
             }
         }
         #endregion
@@ -46,13 +54,17 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// </summary>
         /// <param name="tasks"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        internal TaskSequence(Dictionary<Phase, List<ITask>> tasks) {
+        internal TaskSequence(ILogger<TaskSequence> logger,
+                Dictionary<Phase, List<ITask>> tasks) {
+            this._logger = logger
+                ?? throw new ArgumentNullException(nameof(logger));
             this._tasks = tasks
                 ?? throw new ArgumentNullException(nameof(tasks));
         }
         #endregion
 
         #region Private fields
+        private readonly ILogger _logger;
         private readonly Dictionary<Phase, List<ITask>> _tasks;
         #endregion
     }

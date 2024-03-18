@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Visus.DeploymentToolkit.Contracts;
 using Visus.DeploymentToolkit.Properties;
 
@@ -22,8 +23,8 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// Initialises a new instance.
         /// </summary>
         public TaskSequenceDescription() {
-            this.Name = string.Format(Resources.TaskSequenceName,
-                Guid.NewGuid().ToString("N"));
+            this.ID = Guid.NewGuid().ToString("N");
+            this.Name = string.Format(Resources.TaskSequenceName, this.ID);
         }
         #endregion
 
@@ -34,8 +35,14 @@ namespace Visus.DeploymentToolkit.Tasks {
         public string? Description { get; set; }
 
         /// <summary>
+        /// Gets or sets the unique ID of the task sequence.
+        /// </summary>
+        public string ID { get; set; }
+
+        /// <summary>
         /// Gets or sets the name of the task sequence.
         /// </summary>
+        [Required]
         public string Name { get; set; }
 
         /// <summary>

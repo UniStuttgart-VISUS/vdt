@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Contracts;
+using Visus.DeploymentToolkit.Properties;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
@@ -23,6 +24,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                 : base(logger) {
             this._diskManagement = diskManagement
                 ?? throw new ArgumentNullException(nameof(diskManagement));
+            this.Name = Resources.SelectInstallDisk;
         }
 
         #region Public methods

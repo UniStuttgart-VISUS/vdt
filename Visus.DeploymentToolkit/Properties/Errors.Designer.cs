@@ -77,5 +77,23 @@ namespace Visus.DeploymentToolkit.Properties {
                 return ResourceManager.GetString("TaskCannotExecute", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The task {0} failed in phase {1}..
+        /// </summary>
+        internal static string TaskFailed {
+            get {
+                return ResourceManager.GetString("TaskFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed waiting for Virtual Disk Service to become ready..
+        /// </summary>
+        internal static string WaitVdsFailed {
+            get {
+                return ResourceManager.GetString("WaitVdsFailed", resourceCulture);
+            }
+        }
     }
 }

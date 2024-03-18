@@ -105,7 +105,7 @@ namespace Visus.DeploymentToolkit.Vds {
         /// <param name="forceOem">If <c>true</c>, cleans a MBR-based disk
         /// containing the known OEM partitions in the following table or cleans
         /// a GPT-based disk containing any OEM partition. An OEM partition has
-        /// the <see cref="GptPartitionAttributes.PlatformRequied"/> flag set on
+        /// the <see cref="GptPartitionAttributes.PlatformRequired"/> flag set on
         /// a GPT-based disk.</param>
         /// <param name="fullClean">If <c>true</c>, cleans the entire disk by
         /// replacing the data on each sector with zeros; otherwise, this method

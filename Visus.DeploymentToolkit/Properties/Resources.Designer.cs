@@ -88,11 +88,47 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Partition and format disk.
+        /// </summary>
+        internal static string PartitionFormatDisk {
+            get {
+                return ResourceManager.GetString("PartitionFormatDisk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Run command.
+        /// </summary>
+        internal static string RunCommand {
+            get {
+                return ResourceManager.GetString("RunCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select installation disk.
+        /// </summary>
+        internal static string SelectInstallDisk {
+            get {
+                return ResourceManager.GetString("SelectInstallDisk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Task sequence {0}.
         /// </summary>
         internal static string TaskSequenceName {
             get {
                 return ResourceManager.GetString("TaskSequenceName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Waiting for the Virtual Disk Service to become ready..
+        /// </summary>
+        internal static string WaitingVds {
+            get {
+                return ResourceManager.GetString("WaitingVds", resourceCulture);
             }
         }
     }
