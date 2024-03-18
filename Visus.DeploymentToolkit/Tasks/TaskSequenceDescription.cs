@@ -50,12 +50,5 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// </summary>
         public Dictionary<Phase, TaskDescription[]> Steps { get; set; } = new();
         #endregion
-
-        #region Public methods
-        /// <inheritodc />
-        public override string ToString() {
-            return this.Name;
-        }
-        #endregion
     }
 }

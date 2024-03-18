@@ -4,6 +4,22 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Title>Virtual Disk Management for VISUS Deployment Services</Title>
+    <Authors>Christoph Müller</Authors>
+    <Company>Visualisierungsinstitut der Universität Stuttgart</Company>
+    <Product>VISUS Deployment Services</Product>
+    <Description>Provides access to the VDS API, which enables VISUS Deployment Services to inspect and modify hard drives for installation without the need to invoke diskpart.</Description>
+    <Copyright>© 2014 Visualisierungsinstitut der Universität Stuttgart</Copyright>
+    <RepositoryUrl>https://github.com/UniStuttgart-VISUS/vdt</RepositoryUrl>
+    <PackageTags>vds virtual-disk-service</PackageTags>
+    <PackageLicenseFile>LICENCE</PackageLicenseFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENCE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
