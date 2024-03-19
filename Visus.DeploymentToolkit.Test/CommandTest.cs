@@ -18,11 +18,21 @@ namespace Visus.DeploymentToolkit.Test {
         [TestMethod]
         public async Task TestCallHack() {
             // Cf. https://stackoverflow.com/questions/20892882/set-errorlevel-in-windows-batch-file
-            var exitCode = await new Command(@"c:\Windows\System32\cmd.exe")
-                .WithArguments("/c", "@(call)")
-                .ExecuteAsync();
-            Assert.IsNotNull(exitCode);
-            Assert.AreEqual(1, exitCode);
+            {
+                var exitCode = await new Command(@"c:\Windows\System32\cmd.exe")
+                    .WithArgumentList("/c", "@(call)")
+                    .ExecuteAsync();
+                Assert.IsNotNull(exitCode);
+                Assert.AreEqual(1, exitCode);
+            }
+
+            {
+                var exitCode = await new Command(@"c:\Windows\System32\cmd.exe")
+                    .WithArguments("/c @(call)")
+                    .ExecuteAsync();
+                Assert.IsNotNull(exitCode);
+                Assert.AreEqual(1, exitCode);
+            }
         }
 
         [TestMethod]

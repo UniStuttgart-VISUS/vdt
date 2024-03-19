@@ -106,11 +106,28 @@ namespace Visus.DeploymentToolkit.Infrastructure {
         /// </summary>
         /// <param name="arguments"></param>
         /// <returns></returns>
-        public Command WithArguments(params string[] arguments) {
+        public Command WithArgumentList(params string[] arguments) {
+            this._processStartInfo.ArgumentList.Clear();
+
             if (arguments != null) {
                 foreach (var a in arguments) {
                     this._processStartInfo.ArgumentList.Add(a);
                 }
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Splits <paramref name="arguments"/> and sets the argument list.
+        /// </summary>
+        /// <param name="arguments"></param>
+        /// <returns></returns>
+        public Command WithArguments(string arguments) {
+            this._processStartInfo.ArgumentList.Clear();
+
+            if (arguments != null) {
+                this._processStartInfo.Arguments = arguments;
             }
 
             return this;
