@@ -129,6 +129,18 @@
   <data name="CreatingTaskListForPhase" xml:space="preserve">
     <value>Creating a task list for phase {0}.</value>
   </data>
+  <data name="DismApplyUnattend" xml:space="preserve">
+    <value>Applying unattend file "{0}" to "{1}".</value>
+  </data>
+  <data name="DismCommit" xml:space="preserve">
+    <value>Committing changes.</value>
+  </data>
+  <data name="DismInitialise" xml:space="preserve">
+    <value>Initialising DISM with "{0}" as log file and "{1}" as scratch directory.</value>
+  </data>
+  <data name="DismOpenOffline" xml:space="preserve">
+    <value>Opening offline servicing session for "{0}".</value>
+  </data>
   <data name="InsertingTaskToPhase" xml:space="preserve">
     <value>Inserting task {0} at position {2}  in phase {1}.</value>
   </data>

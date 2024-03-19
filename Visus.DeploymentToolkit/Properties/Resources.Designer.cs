@@ -97,6 +97,42 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Applying unattend file &quot;{0}&quot; to &quot;{1}&quot;..
+        /// </summary>
+        internal static string DismApplyUnattend {
+            get {
+                return ResourceManager.GetString("DismApplyUnattend", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Committing changes..
+        /// </summary>
+        internal static string DismCommit {
+            get {
+                return ResourceManager.GetString("DismCommit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initialising DISM with &quot;{0}&quot; as log file and &quot;{1}&quot; as scratch directory..
+        /// </summary>
+        internal static string DismInitialise {
+            get {
+                return ResourceManager.GetString("DismInitialise", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Opening offline servicing session for &quot;{0}&quot;..
+        /// </summary>
+        internal static string DismOpenOffline {
+            get {
+                return ResourceManager.GetString("DismOpenOffline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Inserting task {0} at position {2}  in phase {1}..
         /// </summary>
         internal static string InsertingTaskToPhase {
