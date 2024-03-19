@@ -20,7 +20,8 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         public InjectDrivers(ILogger<InjectDrivers> logger) : base(logger) { }
 
-        public override Task ExecuteAsync() {
+        public override Task ExecuteAsync(IState state) {
+
             //DismApi.MountImage()
             throw new NotImplementedException();
         }

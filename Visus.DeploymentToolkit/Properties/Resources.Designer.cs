@@ -115,11 +115,29 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Task {0} finished in phase {1}..
+        /// </summary>
+        internal static string TaskFinished {
+            get {
+                return ResourceManager.GetString("TaskFinished", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Task sequence {0}.
         /// </summary>
         internal static string TaskSequenceName {
             get {
                 return ResourceManager.GetString("TaskSequenceName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Task {0} is starting in phase {1}..
+        /// </summary>
+        internal static string TaskStarting {
+            get {
+                return ResourceManager.GetString("TaskStarting", resourceCulture);
             }
         }
         

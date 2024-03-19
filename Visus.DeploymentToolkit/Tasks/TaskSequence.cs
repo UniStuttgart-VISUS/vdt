@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Contracts;
 using Visus.DeploymentToolkit.Properties;
+using Visus.DeploymentToolkit.Services;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
@@ -23,13 +24,23 @@ namespace Visus.DeploymentToolkit.Tasks {
         #region Public methods
         /// <inheritdoc />
         public async Task ExecuteAsync(Phase phase) {
+            var state = new State(this._loggers.CreateLogger<State>());
+
             foreach (var t in this[phase]) {
                 try {
-                    await t.ExecuteAsync().ConfigureAwait(false);
+                    this._logger.LogInformation(Resources.TaskStarting,
+                        t.Name, phase);
+                    await t.ExecuteAsync(state).ConfigureAwait(false);
+                    this._logger.LogInformation(Resources.TaskFinished,
+                        t.Name, phase);
                 } catch (Exception ex) {
                     this._logger.LogError(Errors.TaskFailed, t.Name,
                         phase, ex);
-                    return;
+                    if (t.IsCritical) {
+                        this._logger.LogCritical(Errors.CriticalTaskFailed,
+                            t.Name);
+                        return;
+                    }
                 }
             }
         }
@@ -52,12 +63,15 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
+        /// <param name="loggers">A factory for creating the loggers used in
+        /// the task sequence.</param>
         /// <param name="tasks"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        internal TaskSequence(ILogger<TaskSequence> logger,
+        internal TaskSequence(ILoggerFactory loggers,
                 Dictionary<Phase, List<ITask>> tasks) {
-            this._logger = logger
-                ?? throw new ArgumentNullException(nameof(logger));
+            this._loggers = loggers
+                ?? throw new ArgumentNullException(nameof(loggers));
+            this._logger = loggers.CreateLogger<TaskSequence>();
             this._tasks = tasks
                 ?? throw new ArgumentNullException(nameof(tasks));
         }
@@ -65,6 +79,7 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         #region Private fields
         private readonly ILogger _logger;
+        private readonly ILoggerFactory _loggers;
         private readonly Dictionary<Phase, List<ITask>> _tasks;
         #endregion
     }

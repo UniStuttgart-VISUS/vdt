@@ -135,8 +135,14 @@
   <data name="SelectInstallDisk" xml:space="preserve">
     <value>Select installation disk</value>
   </data>
+  <data name="TaskFinished" xml:space="preserve">
+    <value>Task {0} finished in phase {1}.</value>
+  </data>
   <data name="TaskSequenceName" xml:space="preserve">
     <value>Task sequence {0}</value>
+  </data>
+  <data name="TaskStarting" xml:space="preserve">
+    <value>Task {0} is starting in phase {1}.</value>
   </data>
   <data name="WaitingVds" xml:space="preserve">
     <value>Waiting for the Virtual Disk Service to become ready.</value>

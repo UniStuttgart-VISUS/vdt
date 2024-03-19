@@ -15,11 +15,26 @@ namespace Visus.DeploymentToolkit.Contracts {
     /// </summary>
     public interface ITask {
 
+        #region Public properties
+        /// <summary>
+        /// Inidicates whether the task is critical.
+        /// </summary>
+        /// <remarks>
+        /// If a <see cref="ITask"/> is marked critical, the
+        /// <see cref="ITaskSequence"/> cannot continue if
+        /// <see cref="ITask.ExecuteAsync(IState)"/> throws an exception.
+        /// Otherwise, this exception will be ignored and the task sequence
+        /// continues with the next task.
+        /// </remarks>
+        bool IsCritical { get; }
+
         /// <summary>
         /// Gets the name of the task.
         /// </summary>
         string Name { get; }
+        #endregion
 
+        #region Public methods
         /// <summary>
         /// Answer whether the task can be executed in its current state
         /// assuming the given deployment <paramref name="phase"/>.
@@ -31,22 +46,14 @@ namespace Visus.DeploymentToolkit.Contracts {
         /// <summary>
         /// Asynchronously executes a task.
         /// </summary>
+        /// <param name="state">The global application state, which can be used
+        /// to retrieve data from a previous <see cref="ITask"/> or leave data
+        /// for a subsequent one. It can be assumet that the built-in task
+        /// sequence will always provide a non-<c>null</c> global state.</param>
         /// <returns>A <see cref="Task"/> to wait for completion.</returns>
-        Task ExecuteAsync();
-    }
-
-
-    /// <summary>
-    /// Defines the interface of a deployment task that asynchronously performs
-    /// some work and returns a result to be used for subsequent tasks.
-    /// </summary>
-    /// <typeparam name="TResult"></typeparam>
-    public interface ITask<TResult> : ITask {
-
-        /// <summary>
-        /// Asynchronously executes the task.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> to wait for the result.</returns>
-        new Task<TResult> ExecuteAsync();
+        /// <exception cref="System.ArgumentNullException">If
+        /// <paramref name="state"/> is <c>null</c>.</exception>
+        Task ExecuteAsync(IState state);
+        #endregion
     }
 }

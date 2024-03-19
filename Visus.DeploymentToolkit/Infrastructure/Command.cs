@@ -12,6 +12,7 @@ using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Visus.DeploymentToolkit.Infrastructure {
 
     /// <summary>
@@ -46,7 +47,8 @@ namespace Visus.DeploymentToolkit.Infrastructure {
         /// <summary>
         /// Gets the working directory to run the command in.
         /// </summary>
-        public string WorkingDirectory => this._processStartInfo.WorkingDirectory;
+        public string WorkingDirectory
+            => this._processStartInfo.WorkingDirectory;
         #endregion
 
         #region Public methods
@@ -74,13 +76,14 @@ namespace Visus.DeploymentToolkit.Infrastructure {
             return this;
         }
 
-        public Task ExecuteAsync() {
+        public async Task<int?> ExecuteAsync() {
             using (var p = Process.Start(this._processStartInfo)) {
 
                 if (p != null) {
-                    return p.WaitForExitAsync();
+                    await p.WaitForExitAsync();
+                    return p.ExitCode;
                 } else {
-                    return Task.CompletedTask;
+                    return null;
                 }
             }
             //p.ErrorDataReceived += (sender, e) => { }

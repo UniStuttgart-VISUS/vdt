@@ -20,6 +20,9 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         #region Public properties
         /// <inheritdoc />
+        public bool IsCritical { get; set; } = true;
+
+        /// <inheritdoc />
         public string Name { get; init; }
         #endregion
 
@@ -30,7 +33,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         }
 
         /// <inheritdoc />
-        public abstract Task ExecuteAsync();
+        public abstract Task ExecuteAsync(IState state);
         #endregion
 
         #region Protected constructors
@@ -44,53 +47,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         protected TaskBase(ILogger logger) {
             this._logger = logger
                 ?? throw new ArgumentNullException(nameof(logger));
-        }
-        #endregion
-
-        #region Protected fields
-        /// <summary>
-        /// A logger for writing progress and error notes.
-        /// </summary>
-        protected readonly ILogger _logger;
-        #endregion
-    }
-
-
-    /// <summary>
-    /// A basic implementation of <see cref="ITask{TResult}"/> that uses
-    /// attributes to implement as many methods as possible.
-    /// </summary>
-    public abstract class TaskBase<TResult> : ITask<TResult> {
-
-        #region Public properties
-        /// <inheritdoc />
-        public string Name { get; init; }
-        #endregion
-
-        #region Public methods
-        /// <inheritdoc />
-        public virtual bool CanExecute(Phase phase) {
-            return SupportsPhaseAttribute.Check(GetType(), phase);
-        }
-
-        /// <inheritdoc />
-        public abstract Task<TResult> ExecuteAsync();
-
-        /// <inheritdoc />
-        Task ITask.ExecuteAsync() => this.ExecuteAsync();
-        #endregion
-
-        #region Protected constructors
-        /// <summary>
-        /// Initialises a new instance.
-        /// </summary>
-        /// <param name="logger">The logger for writing progress and
-        /// error notes.</param>
-        /// <exception cref="ArgumentNullException">If <paramref name="logger"/>
-        /// is <c>null</c>.</exception>
-        protected TaskBase(ILogger logger) {
-            this._logger = logger
-                ?? throw new ArgumentNullException(nameof(logger));
+            this.Name = $"{this.GetType().Name} {Guid.NewGuid().ToString("N")}";
         }
         #endregion
 

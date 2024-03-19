@@ -1,0 +1,50 @@
+﻿// <copyright file="CommandTest.cs" company="Visualisierungsinstitut der Universität Stuttgart">
+// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Licensed under the MIT licence. See LICENCE file for details.
+// </copyright>
+// <author>Christoph Müller</author>
+
+using Visus.DeploymentToolkit.Infrastructure;
+
+
+namespace Visus.DeploymentToolkit.Test {
+
+    /// <summary>
+    /// Tests for <see cref="Command"/>.
+    /// </summary>
+    [TestClass]
+    public class CommandTest {
+
+        [TestMethod]
+        public async Task TestCallHack() {
+            // Cf. https://stackoverflow.com/questions/20892882/set-errorlevel-in-windows-batch-file
+            var exitCode = await new Command(@"c:\Windows\System32\cmd.exe")
+                .WithArguments("/c", "@(call)")
+                .ExecuteAsync();
+            Assert.IsNotNull(exitCode);
+            Assert.AreEqual(1, exitCode);
+        }
+
+        [TestMethod]
+        public async Task TestEmpty() {
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => {
+                await new Command("").ExecuteAsync();
+            });
+        }
+
+        [TestMethod]
+        public async Task TestHostname() {
+            var exitCode = await new Command("hostname").ExecuteAsync();
+            Assert.IsNotNull(exitCode);
+            Assert.AreEqual(0, exitCode);
+        }
+
+        [TestMethod]
+        public async Task TestNull() {
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => {
+                await new Command(null).ExecuteAsync();
+            });
+        }
+
+    }
+}

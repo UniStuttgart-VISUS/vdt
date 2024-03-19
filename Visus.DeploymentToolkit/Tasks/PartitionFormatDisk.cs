@@ -16,7 +16,7 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// <summary>
     /// This task partitions and formats disks.
     /// </summary>
-    public sealed class PartitionFormatDisk : TaskBase<int> {
+    public sealed class PartitionFormatDisk : TaskBase {
 
         public PartitionFormatDisk(IDiskManagement diskManagement,
                 ILogger<PartitionFormatDisk> logger)
@@ -26,7 +26,7 @@ namespace Visus.DeploymentToolkit.Tasks {
             this.Name = Resources.PartitionFormatDisk;
         }
 
-        public override Task<int> ExecuteAsync() {
+        public override Task ExecuteAsync(IState state) {
             throw new NotImplementedException();
         }
 

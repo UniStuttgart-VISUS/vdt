@@ -17,7 +17,7 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// This task determines the index of the disk where Windows is to be
     /// installed.
     /// </summary>
-    public sealed class SelectInstallDisk : TaskBase<int> {
+    public sealed class SelectInstallDisk : TaskBase {
 
         public SelectInstallDisk(IDiskManagement diskManagement,
                 ILogger<SelectInstallDisk> logger)
@@ -29,7 +29,8 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         #region Public methods
         /// <inheritdoc />
-        public override Task<int> ExecuteAsync() {
+        public override Task ExecuteAsync(IState state) {
+            _ = state ?? throw new ArgumentNullException(nameof(state));
             throw new NotImplementedException();
         }
         #endregion
