@@ -1,4 +1,4 @@
-﻿// <copyright file="RunCommandTask.cs" company="Visualisierungsinstitut der Universität Stuttgart">
+﻿// <copyright file="RunCommand.cs" company="Visualisierungsinstitut der Universität Stuttgart">
 // Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
@@ -16,11 +16,19 @@ using Visus.DeploymentToolkit.Properties;
 
 namespace Visus.DeploymentToolkit.Tasks {
 
+    /// <summary>
+    /// A task that runs an external programme or command.
+    /// </summary>
     public class RunCommand : TaskBase {
 
         public RunCommand(ILogger<RunCommand> logger) : base(logger) {
             this.Name = Resources.RunCommand;
         }
+
+        /// <summary>
+        /// Gets or sets the argument list for the command.
+        /// </summary>
+        public string? Arguments { get; set; }
 
         /// <summary>
         /// Gets or sets the exit codes that indicate a failure.
@@ -64,28 +72,34 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <inheritdoc />
         public override async Task ExecuteAsync(IState state) {
             _ = state ?? throw new ArgumentNullException(nameof(state));
-            var exitCode = await new Command(this.Path)
-                .InWorkingDirectory(this.WorkingDirectory)
-                .ExecuteAsync();
+            var cmd = new Command(this.Path)
+                .WithArguments(this.Arguments)
+                .InWorkingDirectory(this.WorkingDirectory);
+
+            this._logger.LogTrace(Resources.CommandExecuting, cmd);
+            var exitCode = await cmd.ExecuteAsync();
+            this._logger.LogTrace(Resources.CommandExecuted, cmd, exitCode);
 
             if (exitCode == null) {
                 // For some reasons, the process did not start at all.
                 throw new InvalidOperationException(
-                    string.Format(Errors.CommandNotRun, this.Path));
+                    string.Format(Errors.CommandNotRun, cmd.ToString()));
 
             } else if (this.SucccessExitCodes?.Length > 0) {
                 // If the user indicated which error codes are successful, this
                 // takes precedence and we fail if any other exit code was
                 // returned.
                 if (!this.SucccessExitCodes.Contains(exitCode.Value)) {
-                    throw new CommandFailedException(this.Path, exitCode.Value);
+                    throw new CommandFailedException(cmd.ToString(),
+                        exitCode.Value);
                 }
 
             } else if (this.FailureExitCodes?.Length > 0) {
                 // If the user indicated which error codes are a failure, we
                 // fail if we encounter any of these exit codes.
                 if (this.FailureExitCodes.Contains(exitCode.Value)) {
-                    throw new CommandFailedException(this.Path, exitCode.Value);
+                    throw new CommandFailedException(cmd.ToString(),
+                        exitCode.Value);
                 }
             }
         }

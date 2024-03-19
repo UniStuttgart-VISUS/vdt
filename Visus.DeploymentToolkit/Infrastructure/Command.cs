@@ -104,9 +104,12 @@ namespace Visus.DeploymentToolkit.Infrastructure {
         /// <summary>
         /// Sets the <see cref="Arguments"/> for the command.
         /// </summary>
+        /// <remarks>
+        /// This method will remove any previously set arguments.
+        /// </remarks>
         /// <param name="arguments"></param>
         /// <returns></returns>
-        public Command WithArgumentList(params string[] arguments) {
+        public Command WithArgumentList(params string[]? arguments) {
             this._processStartInfo.ArgumentList.Clear();
 
             if (arguments != null) {
@@ -121,9 +124,12 @@ namespace Visus.DeploymentToolkit.Infrastructure {
         /// <summary>
         /// Splits <paramref name="arguments"/> and sets the argument list.
         /// </summary>
+        /// <remarks>
+        /// This method will remove any previously set arguments.
+        /// </remarks>
         /// <param name="arguments"></param>
         /// <returns></returns>
-        public Command WithArguments(string arguments) {
+        public Command WithArguments(string? arguments) {
             this._processStartInfo.ArgumentList.Clear();
 
             if (arguments != null) {

@@ -70,6 +70,24 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Command {0} finished with exit code {1}..
+        /// </summary>
+        internal static string CommandExecuted {
+            get {
+                return ResourceManager.GetString("CommandExecuted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Executing command {0}..
+        /// </summary>
+        internal static string CommandExecuting {
+            get {
+                return ResourceManager.GetString("CommandExecuting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Creating a task list for phase {0}..
         /// </summary>
         internal static string CreatingTaskListForPhase {
