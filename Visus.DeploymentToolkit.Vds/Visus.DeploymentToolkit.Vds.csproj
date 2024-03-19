@@ -7,7 +7,7 @@
     <Title>Virtual Disk Management for VISUS Deployment Services</Title>
     <Authors>Christoph Müller</Authors>
     <Company>Visualisierungsinstitut der Universität Stuttgart</Company>
-    <Product>VISUS Deployment Services</Product>
+    <Product>Project Deimos</Product>
     <Description>Provides access to the VDS API, which enables VISUS Deployment Services to inspect and modify hard drives for installation without the need to invoke diskpart.</Description>
     <Copyright>© 2014 Visualisierungsinstitut der Universität Stuttgart</Copyright>
     <RepositoryUrl>https://github.com/UniStuttgart-VISUS/vdt</RepositoryUrl>

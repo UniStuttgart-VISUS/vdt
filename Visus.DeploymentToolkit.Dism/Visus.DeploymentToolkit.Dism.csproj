@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Title>DISM for VISUS Deployment Services</Title>
+    <Authors>Christoph Müller</Authors>
+    <Company>Visualiserungsinstitut der Universität Stuttgart</Company>
+    <Product>Project Deimos</Product>
+    <Description>Provides programmatic access to DISM.</Description>
+    <Copyright>© 2014 Visualisierungsinstitut der Universität Stuttgart</Copyright>
+    <RepositoryUrl>https://github.com/UniStuttgart-VISUS/vdt</RepositoryUrl>
+    <PackageTags>dism</PackageTags>
+  </PropertyGroup>
+
+</Project>
