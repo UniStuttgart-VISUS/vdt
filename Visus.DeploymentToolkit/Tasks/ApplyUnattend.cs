@@ -24,9 +24,11 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
+        /// <param name="dism"></param>
         /// <param name="logger">The logger used to report results of the
         /// operation.</param>
-        public ApplyUnattend(ILogger<ApplyUnattend> logger) : base(logger) { }
+        public ApplyUnattend(IDismScope dism,
+            ILogger<ApplyUnattend> logger) : base(logger) { }
         #endregion
 
         #region Public properties
@@ -35,16 +37,6 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// </summary>
         [Required]
         public string InstallationPath { get; set; }
-
-        /// <summary>
-        /// Gets or sets the path for the DISM log file.
-        /// </summary>
-        public string? LogFile { get; set; }
-
-        /// <summary>
-        /// Gets or sets the scratch directory for DISM to use.
-        /// </summary>
-        public string? ScratchDirectory { get; set; }
 
         /// <summary>
         /// Gets or sets the path to the unattend file to apply.
@@ -56,11 +48,6 @@ namespace Visus.DeploymentToolkit.Tasks {
         #region Public methods
         /// <inheritdoc />
         public override Task ExecuteAsync(IState state) {
-            this._logger.LogTrace(Resources.DismInitialise, this.LogFile,
-                this.ScratchDirectory);
-            DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo,
-                this.LogFile, this.ScratchDirectory);
-
             this._logger.LogTrace(Resources.DismOpenOffline,
                 this.InstallationPath);
             var session = DismApi.OpenOfflineSession(this.InstallationPath);
@@ -72,7 +59,6 @@ namespace Visus.DeploymentToolkit.Tasks {
             this._logger.LogTrace(Resources.DismCommit);
             DismApi.CommitImage(session, false);
             DismApi.CloseSession(session);
-            DismApi.Shutdown();
 
             return Task.CompletedTask;
         }

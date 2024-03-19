@@ -35,6 +35,8 @@ namespace Visus.DeploymentToolkit.Extensions {
             that.AddTransient<ITaskSequenceBuilder, TaskSequenceBuilder>();
             that.AddTransient<IDiskManagement, VdsService>();
             that.AddSingleton<IEnvironment, EnvironmentService>();
+            that.Configure<DismOptions>(o => { })
+                .AddSingleton<IDismScope, DismScope>();
 
             return that;
         }

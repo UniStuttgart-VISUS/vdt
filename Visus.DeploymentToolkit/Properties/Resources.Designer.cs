@@ -133,6 +133,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Shutting down DISM..
+        /// </summary>
+        internal static string DismShutdown {
+            get {
+                return ResourceManager.GetString("DismShutdown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Inserting task {0} at position {2}  in phase {1}..
         /// </summary>
         internal static string InsertingTaskToPhase {
