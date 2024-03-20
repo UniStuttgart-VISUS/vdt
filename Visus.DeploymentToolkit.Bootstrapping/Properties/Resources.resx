@@ -132,6 +132,9 @@
   <data name="InsertTask" xml:space="preserve">
     <value>Inserting task {0} at position {2}  in phase {1}.</value>
   </data>
+  <data name="MountNetworkShare" xml:space="preserve">
+    <value>Mount network drive</value>
+  </data>
   <data name="RunCommand" xml:space="preserve">
     <value>Run command</value>
   </data>

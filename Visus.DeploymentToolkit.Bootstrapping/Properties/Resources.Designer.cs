@@ -106,6 +106,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mount network drive.
+        /// </summary>
+        internal static string MountNetworkShare {
+            get {
+                return ResourceManager.GetString("MountNetworkShare", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Run command.
         /// </summary>
         internal static string RunCommand {

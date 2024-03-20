@@ -21,6 +21,12 @@ namespace Visus.DeploymentToolkit.Tasks {
     public class RunCommand : TaskBase {
 
         #region Public constructors
+        /// <summary>
+        /// Initialises a new instance.
+        /// </summary>
+        /// <param name="factory"></param>
+        /// <param name="logger"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public RunCommand(ICommandBuilderFactory factory,
                 ILogger<RunCommand> logger) : base(logger) {
             this._factory = factory
