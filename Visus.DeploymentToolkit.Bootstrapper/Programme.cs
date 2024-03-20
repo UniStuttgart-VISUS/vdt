@@ -58,12 +58,21 @@ var services = new ServiceCollection()
         var logger = config.CreateLogger();
 
         o.AddSerilog(logger);
+        o.AddSimpleConsole(f => {
+            f.IncludeScopes = false;
+            f.SingleLine = true;
+        });
     })
     .BuildServiceProvider();
 
+// Prepare the global application log.
+var log = services.GetRequiredService<ILogger<Program>>();
+log.LogInformation(Resources.BootstrapperStart);
+
+
 // Perform bootstrapping.
 {
-    var log = services.GetRequiredService<ILogger<Program>>();
+
     var opts = services.GetRequiredService<IOptions<BootstrappingOptions>>();
     var drives = services.GetRequiredService<IDriveInfo>();
     var task = services.GetRequiredService<MountNetworkShare>();
@@ -81,6 +90,7 @@ var services = new ServiceCollection()
 {
     var opts = services.GetRequiredService<IOptions<BootstrappingOptions>>();
     var state = services.GetRequiredService<IState>();
+    log.LogInformation(Resources.PersistState, opts.Value.StateFile);
     await state.SaveAsync(opts.Value.StateFile);
 }
 
@@ -90,5 +100,8 @@ var services = new ServiceCollection()
     var command = factory.Run("Visus.DeploymentToolkit.Agent.exe")
         .DoNotWaitForProcess()
         .Build();
-    await command.ExecuteAsync();
+    log.LogInformation(Resources.StartAgent, command);
+    //await command.ExecuteAsync();
 }
+
+log.LogInformation(Resources.BootstrapperExit);

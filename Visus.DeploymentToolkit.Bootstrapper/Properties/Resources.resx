@@ -117,7 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BootstrapperExit" xml:space="preserve">
+    <value>The boostrapper is exiting.</value>
+  </data>
+  <data name="BootstrapperStart" xml:space="preserve">
+    <value>The bootstrapper is starting.</value>
+  </data>
   <data name="MountDeploymentShare" xml:space="preserve">
     <value>Mounting deployment share "{0}" to "{1}".</value>
+  </data>
+  <data name="PersistState" xml:space="preserve">
+    <value>Persisting the state for the deployment agent to "{0}". </value>
+  </data>
+  <data name="StartAgent" xml:space="preserve">
+    <value>Starting the deployment agent "{0}".</value>
   </data>
 </root>
