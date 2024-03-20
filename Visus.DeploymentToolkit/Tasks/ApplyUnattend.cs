@@ -8,8 +8,9 @@ using Microsoft.Dism;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Visus.DeploymentToolkit.Contracts;
 using Visus.DeploymentToolkit.Properties;
+using Visus.DeploymentToolkit.Services;
+using Visus.DeploymentToolkit.Workflow;
 
 
 namespace Visus.DeploymentToolkit.Tasks {

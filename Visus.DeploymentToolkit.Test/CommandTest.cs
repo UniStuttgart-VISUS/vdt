@@ -4,7 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using Visus.DeploymentToolkit.Infrastructure;
+using Visus.DeploymentToolkit.Services;
 
 
 namespace Visus.DeploymentToolkit.Test {
@@ -19,16 +19,18 @@ namespace Visus.DeploymentToolkit.Test {
         public async Task TestCallHack() {
             // Cf. https://stackoverflow.com/questions/20892882/set-errorlevel-in-windows-batch-file
             {
-                var exitCode = await new Command(@"c:\Windows\System32\cmd.exe")
+                var exitCode = await new CommandBuilder(@"c:\Windows\System32\cmd.exe")
                     .WithArgumentList("/c", "@(call)")
+                    .Build()
                     .ExecuteAsync();
                 Assert.IsNotNull(exitCode);
                 Assert.AreEqual(1, exitCode);
             }
 
             {
-                var exitCode = await new Command(@"c:\Windows\System32\cmd.exe")
+                var exitCode = await new CommandBuilder(@"c:\Windows\System32\cmd.exe")
                     .WithArguments("/c @(call)")
+                    .Build()
                     .ExecuteAsync();
                 Assert.IsNotNull(exitCode);
                 Assert.AreEqual(1, exitCode);
@@ -38,13 +40,17 @@ namespace Visus.DeploymentToolkit.Test {
         [TestMethod]
         public async Task TestEmpty() {
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => {
-                await new Command("").ExecuteAsync();
+                await new CommandBuilder("")
+                .Build()
+                .ExecuteAsync();
             });
         }
 
         [TestMethod]
         public async Task TestHostname() {
-            var exitCode = await new Command("hostname").ExecuteAsync();
+            var exitCode = await new CommandBuilder("hostname")
+                .Build()
+                .ExecuteAsync();
             Assert.IsNotNull(exitCode);
             Assert.AreEqual(0, exitCode);
         }
@@ -52,7 +58,9 @@ namespace Visus.DeploymentToolkit.Test {
         [TestMethod]
         public async Task TestNull() {
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => {
-                await new Command(null).ExecuteAsync();
+                await new CommandBuilder(null)
+                    .Build()
+                    .ExecuteAsync();
             });
         }
 

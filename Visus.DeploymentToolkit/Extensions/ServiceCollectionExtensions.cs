@@ -6,9 +6,9 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using Visus.DeploymentToolkit.Contracts;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
+using Visus.DeploymentToolkit.Workflow;
 
 
 namespace Visus.DeploymentToolkit.Extensions {
@@ -32,9 +32,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             that.AddTransient<ITask, PartitionFormatDisk>();
             that.AddTransient<ITask, InjectDrivers>();
             that.AddTransient<ITask, RunCommand>();
-            that.AddTransient<ITaskSequenceBuilder, TaskSequenceBuilder>();
             that.AddTransient<IDiskManagement, VdsService>();
-            that.AddSingleton<IEnvironment, EnvironmentService>();
             that.Configure<DismOptions>(o => { })
                 .AddSingleton<IDismScope, DismScope>();
 

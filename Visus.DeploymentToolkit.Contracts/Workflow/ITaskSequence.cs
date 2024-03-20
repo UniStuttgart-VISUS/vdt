@@ -6,9 +6,10 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Tasks;
 
 
-namespace Visus.DeploymentToolkit.Contracts {
+namespace Visus.DeploymentToolkit.Workflow {
 
     /// <summary>
     /// Defines the interface of a task sequence, which describes how the

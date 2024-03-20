@@ -5,9 +5,11 @@
 // <author>Christoph Müller</author>
 
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Services;
+using Visus.DeploymentToolkit.Workflow;
 
 
-namespace Visus.DeploymentToolkit.Contracts {
+namespace Visus.DeploymentToolkit.Tasks {
 
     /// <summary>
     /// Defines the interface of a deployment task that asynchronously performs
@@ -22,7 +24,7 @@ namespace Visus.DeploymentToolkit.Contracts {
         /// <remarks>
         /// If a <see cref="ITask"/> is marked critical, the
         /// <see cref="ITaskSequence"/> cannot continue if
-        /// <see cref="ITask.ExecuteAsync(IState)"/> throws an exception.
+        /// <see cref="ExecuteAsync(IState)"/> throws an exception.
         /// Otherwise, this exception will be ignored and the task sequence
         /// continues with the next task.
         /// </remarks>

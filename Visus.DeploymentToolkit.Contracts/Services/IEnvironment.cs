@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 
 
-namespace Visus.DeploymentToolkit.Contracts {
+namespace Visus.DeploymentToolkit.Services {
 
     /// <summary>
     /// The interface of a service providing information about the

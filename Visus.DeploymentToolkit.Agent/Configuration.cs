@@ -4,12 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Visus.DeploymentToolkit.Contracts;
+using Visus.DeploymentToolkit.Workflow;
 
 
 namespace Visus.DeploymentToolkit.Agent {

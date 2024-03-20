@@ -5,7 +5,7 @@
 // <author>Christoph Müller</author>
 
 
-namespace Visus.DeploymentToolkit.Contracts {
+namespace Visus.DeploymentToolkit.Services {
 
     /// <summary>
     /// Allows for controlling the global behaviour of the DISM scope.

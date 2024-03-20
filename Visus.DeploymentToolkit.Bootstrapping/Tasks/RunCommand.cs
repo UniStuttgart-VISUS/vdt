@@ -9,9 +9,8 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using Visus.DeploymentToolkit.Contracts;
-using Visus.DeploymentToolkit.Infrastructure;
 using Visus.DeploymentToolkit.Properties;
+using Visus.DeploymentToolkit.Services;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
@@ -21,9 +20,14 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// </summary>
     public class RunCommand : TaskBase {
 
-        public RunCommand(ILogger<RunCommand> logger) : base(logger) {
+        #region Public constructors
+        public RunCommand(ICommandBuilderFactory factory,
+                ILogger<RunCommand> logger) : base(logger) {
+            this._factory = factory
+                ?? throw new ArgumentNullException(nameof(factory));
             this.Name = Resources.RunCommand;
         }
+        #endregion
 
         /// <summary>
         /// Gets or sets the argument list for the command.
@@ -72,9 +76,10 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <inheritdoc />
         public override async Task ExecuteAsync(IState state) {
             _ = state ?? throw new ArgumentNullException(nameof(state));
-            var cmd = new Command(this.Path)
+            var cmd = this._factory.Run(this.Path)
                 .WithArguments(this.Arguments)
-                .InWorkingDirectory(this.WorkingDirectory);
+                .InWorkingDirectory(this.WorkingDirectory)
+                .Build();
 
             this._logger.LogTrace(Resources.CommandExecuting, cmd);
             var exitCode = await cmd.ExecuteAsync();
@@ -90,7 +95,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                 // takes precedence and we fail if any other exit code was
                 // returned.
                 if (!this.SucccessExitCodes.Contains(exitCode.Value)) {
-                    throw new CommandFailedException(cmd.ToString(),
+                    throw new CommandFailedException(cmd.ToString()!,
                         exitCode.Value);
                 }
 
@@ -98,10 +103,14 @@ namespace Visus.DeploymentToolkit.Tasks {
                 // If the user indicated which error codes are a failure, we
                 // fail if we encounter any of these exit codes.
                 if (this.FailureExitCodes.Contains(exitCode.Value)) {
-                    throw new CommandFailedException(cmd.ToString(),
+                    throw new CommandFailedException(cmd.ToString()!,
                         exitCode.Value);
                 }
             }
         }
+
+        #region Private fields
+        private readonly ICommandBuilderFactory _factory;
+        #endregion
     }
 }

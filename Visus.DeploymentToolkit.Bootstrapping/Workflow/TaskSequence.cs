@@ -9,12 +9,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Visus.DeploymentToolkit.Contracts;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
+using Visus.DeploymentToolkit.Tasks;
 
 
-namespace Visus.DeploymentToolkit.Tasks {
+namespace Visus.DeploymentToolkit.Workflow
+{
 
     /// <summary>
     /// The default implementation of a <see cref="ITaskSequence"/>

@@ -8,13 +8,13 @@ using System;
 using Visus.DeploymentToolkit.Properties;
 
 
-namespace Visus.DeploymentToolkit.Infrastructure {
+namespace Visus.DeploymentToolkit.Services {
 
     /// <summary>
     /// An exception that represents a <see cref="Command"/> being executed, but
     /// indicating failure via its exit code.
     /// </summary>
-    internal class CommandFailedException : Exception {
+    public sealed class CommandFailedException : Exception {
 
         /// <summary>
         /// Initialsies a new instance.

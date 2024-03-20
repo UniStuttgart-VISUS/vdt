@@ -61,101 +61,74 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The command &quot;{0}&quot; failed with exit code {1}..
+        ///   Looks up a localized string similar to Adding task {0} to the list of tasks for phase {1}..
         /// </summary>
-        internal static string CommandFailed {
+        internal static string AddTask {
             get {
-                return ResourceManager.GetString("CommandFailed", resourceCulture);
+                return ResourceManager.GetString("AddTask", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The command &quot;{0}&quot; did not run..
+        ///   Looks up a localized string similar to Command {0} finished with exit code {1}..
         /// </summary>
-        internal static string CommandNotRun {
+        internal static string CommandExecuted {
             get {
-                return ResourceManager.GetString("CommandNotRun", resourceCulture);
+                return ResourceManager.GetString("CommandExecuted", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Applying unattend file &quot;{0}&quot; to &quot;{1}&quot;..
+        ///   Looks up a localized string similar to Executing command {0}..
         /// </summary>
-        internal static string DismApplyUnattend {
+        internal static string CommandExecuting {
             get {
-                return ResourceManager.GetString("DismApplyUnattend", resourceCulture);
+                return ResourceManager.GetString("CommandExecuting", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Committing changes..
+        ///   Looks up a localized string similar to Creating a task list for phase {0}..
         /// </summary>
-        internal static string DismCommit {
+        internal static string CreatingTaskListForPhase {
             get {
-                return ResourceManager.GetString("DismCommit", resourceCulture);
+                return ResourceManager.GetString("CreatingTaskListForPhase", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Initialising DISM with &quot;{0}&quot; as log file and &quot;{1}&quot; as scratch directory..
+        ///   Looks up a localized string similar to Inserting task {0} at position {2}  in phase {1}..
         /// </summary>
-        internal static string DismInitialise {
+        internal static string InsertTask {
             get {
-                return ResourceManager.GetString("DismInitialise", resourceCulture);
+                return ResourceManager.GetString("InsertTask", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Opening offline servicing session for &quot;{0}&quot;..
+        ///   Looks up a localized string similar to Run command.
         /// </summary>
-        internal static string DismOpenOffline {
+        internal static string RunCommand {
             get {
-                return ResourceManager.GetString("DismOpenOffline", resourceCulture);
+                return ResourceManager.GetString("RunCommand", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Shutting down DISM..
+        ///   Looks up a localized string similar to Task {0} finished in phase {1}..
         /// </summary>
-        internal static string DismShutdown {
+        internal static string TaskFinished {
             get {
-                return ResourceManager.GetString("DismShutdown", resourceCulture);
+                return ResourceManager.GetString("TaskFinished", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Partition and format disk.
+        ///   Looks up a localized string similar to Task {0} is starting in phase {1}..
         /// </summary>
-        internal static string PartitionFormatDisk {
+        internal static string TaskStarting {
             get {
-                return ResourceManager.GetString("PartitionFormatDisk", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Select installation disk.
-        /// </summary>
-        internal static string SelectInstallDisk {
-            get {
-                return ResourceManager.GetString("SelectInstallDisk", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Task sequence {0}.
-        /// </summary>
-        internal static string TaskSequenceName {
-            get {
-                return ResourceManager.GetString("TaskSequenceName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Waiting for the Virtual Disk Service to become ready..
-        /// </summary>
-        internal static string WaitingVds {
-            get {
-                return ResourceManager.GetString("WaitingVds", resourceCulture);
+                return ResourceManager.GetString("TaskStarting", resourceCulture);
             }
         }
     }

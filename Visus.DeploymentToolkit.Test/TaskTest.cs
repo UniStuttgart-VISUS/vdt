@@ -6,7 +6,7 @@
 
 using Microsoft.Extensions.Logging;
 using Moq;
-using Visus.DeploymentToolkit.Contracts;
+using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
 
 
@@ -20,7 +20,7 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public async Task TestRunCommand() {
-            var task = new RunCommand(Mock.Of<ILogger<RunCommand>>());
+            var task = new RunCommand(new CommandBuilderFactory(), Mock.Of<ILogger<RunCommand>>());
             task.Path = @"c:\Windows\System32\cmd.exe";
             task.Arguments = "/c @(call)";
             task.SucccessExitCodes = new[] { 1 };

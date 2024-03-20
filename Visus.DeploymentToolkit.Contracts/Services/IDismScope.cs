@@ -5,7 +5,7 @@
 // <author>Christoph Müller</author>
 
 
-namespace Visus.DeploymentToolkit.Contracts {
+namespace Visus.DeploymentToolkit.Services {
 
     /// <summary>
     /// Allows callers to have DISM being initialised for the calling process.

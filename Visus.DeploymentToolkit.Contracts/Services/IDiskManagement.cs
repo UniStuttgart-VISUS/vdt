@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Contracts.DiskManagement;
 
 
-namespace Visus.DeploymentToolkit.Contracts {
+namespace Visus.DeploymentToolkit.Services {
 
     /// <summary>
     /// Defines the interface of the disk management service.

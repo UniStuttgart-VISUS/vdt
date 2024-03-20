@@ -117,37 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CommandFailed" xml:space="preserve">
-    <value>The command "{0}" failed with exit code {1}.</value>
+  <data name="AddTask" xml:space="preserve">
+    <value>Adding task {0} to the list of tasks for phase {1}.</value>
   </data>
-  <data name="CommandNotRun" xml:space="preserve">
-    <value>The command "{0}" did not run.</value>
+  <data name="CommandExecuted" xml:space="preserve">
+    <value>Command {0} finished with exit code {1}.</value>
   </data>
-  <data name="DismApplyUnattend" xml:space="preserve">
-    <value>Applying unattend file "{0}" to "{1}".</value>
+  <data name="CommandExecuting" xml:space="preserve">
+    <value>Executing command {0}.</value>
   </data>
-  <data name="DismCommit" xml:space="preserve">
-    <value>Committing changes.</value>
+  <data name="CreatingTaskListForPhase" xml:space="preserve">
+    <value>Creating a task list for phase {0}.</value>
   </data>
-  <data name="DismInitialise" xml:space="preserve">
-    <value>Initialising DISM with "{0}" as log file and "{1}" as scratch directory.</value>
+  <data name="InsertTask" xml:space="preserve">
+    <value>Inserting task {0} at position {2}  in phase {1}.</value>
   </data>
-  <data name="DismOpenOffline" xml:space="preserve">
-    <value>Opening offline servicing session for "{0}".</value>
+  <data name="RunCommand" xml:space="preserve">
+    <value>Run command</value>
   </data>
-  <data name="DismShutdown" xml:space="preserve">
-    <value>Shutting down DISM.</value>
+  <data name="TaskFinished" xml:space="preserve">
+    <value>Task {0} finished in phase {1}.</value>
   </data>
-  <data name="PartitionFormatDisk" xml:space="preserve">
-    <value>Partition and format disk</value>
-  </data>
-  <data name="SelectInstallDisk" xml:space="preserve">
-    <value>Select installation disk</value>
-  </data>
-  <data name="TaskSequenceName" xml:space="preserve">
-    <value>Task sequence {0}</value>
-  </data>
-  <data name="WaitingVds" xml:space="preserve">
-    <value>Waiting for the Virtual Disk Service to become ready.</value>
+  <data name="TaskStarting" xml:space="preserve">
+    <value>Task {0} is starting in phase {1}.</value>
   </data>
 </root>

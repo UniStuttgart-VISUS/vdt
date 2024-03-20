@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Diagnostics;
-using Visus.DeploymentToolkit.Contracts;
 using Visus.DeploymentToolkit.Properties;
 
 

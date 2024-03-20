@@ -6,7 +6,6 @@
 
 using Microsoft.Extensions.Logging;
 using System;
-using Visus.DeploymentToolkit.Contracts;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -15,6 +14,11 @@ namespace Visus.DeploymentToolkit.Services {
     /// The default implementation of the application state.
     /// </summary>
     internal sealed class State : IState {
+
+        #region Public properties
+        /// <inheritdoc />
+        public string Phase => throw new NotImplementedException();
+        #endregion
 
         #region Internal constructors
         /// <summary>
@@ -25,7 +29,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <exception cref="ArgumentNullException">If
         /// <paramref name="logger"/> is <c>null</c>.</exception>
         internal State(ILogger<State> logger) {
-            this._logger = logger
+            _logger = logger
                 ?? throw new ArgumentNullException(nameof(logger));
         }
         #endregion

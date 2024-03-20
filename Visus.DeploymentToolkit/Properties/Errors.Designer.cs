@@ -61,56 +61,11 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The command &quot;{0}&quot; failed with exit code {1}..
-        /// </summary>
-        internal static string CommandFailed {
-            get {
-                return ResourceManager.GetString("CommandFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The command &quot;{0}&quot; did not run..
-        /// </summary>
-        internal static string CommandNotRun {
-            get {
-                return ResourceManager.GetString("CommandNotRun", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The task sequence is being aborted as the failed task {0} was marked critical for the sequence..
-        /// </summary>
-        internal static string CriticalTaskFailed {
-            get {
-                return ResourceManager.GetString("CriticalTaskFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The service loader for the Virtual Disk Services does not implement the expected interface..
         /// </summary>
         internal static string NoVdsServiceLoader {
             get {
                 return ResourceManager.GetString("NoVdsServiceLoader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The given task cannot execute in phase {0}..
-        /// </summary>
-        internal static string TaskCannotExecute {
-            get {
-                return ResourceManager.GetString("TaskCannotExecute", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The task {0} failed in phase {1}..
-        /// </summary>
-        internal static string TaskFailed {
-            get {
-                return ResourceManager.GetString("TaskFailed", resourceCulture);
             }
         }
         

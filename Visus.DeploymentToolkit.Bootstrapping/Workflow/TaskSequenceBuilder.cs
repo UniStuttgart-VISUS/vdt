@@ -7,11 +7,11 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using Visus.DeploymentToolkit.Contracts;
 using Visus.DeploymentToolkit.Properties;
+using Visus.DeploymentToolkit.Tasks;
 
 
-namespace Visus.DeploymentToolkit.Tasks {
+namespace Visus.DeploymentToolkit.Workflow {
 
     /// <summary>
     /// Default implementation of the <see cref="ITaskSequenceBuilder"/>.
@@ -29,7 +29,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <inheritdoc />
         public ITaskSequenceBuilder Add(Phase phase, ITask task) {
             CheckTask(phase, task);
-            this._logger.LogDebug(Resources.AddingTaskToPhase, task, phase);
+            this._logger.LogDebug(Resources.AddTask, task, phase);
             this.GetTasks(phase).Add(task);
             return this;
         }
@@ -44,8 +44,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <inheritdoc />
         public ITaskSequenceBuilder Insert(Phase phase, int index, ITask task) {
             CheckTask(phase, task);
-            this._logger.LogDebug(Resources.InsertingTaskToPhase, task, phase,
-                index);
+            this._logger.LogDebug(Resources.InsertTask, task, phase, index);
             this.GetTasks(phase).Insert(index, task);
             return this;
         }

@@ -22,14 +22,14 @@ namespace Visus.DeploymentToolkit.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    internal class Errors {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+        internal Errors() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Visus.DeploymentToolkit.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Visus.DeploymentToolkit.Properties.Errors", typeof(Errors).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -79,83 +79,29 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Applying unattend file &quot;{0}&quot; to &quot;{1}&quot;..
+        ///   Looks up a localized string similar to The task sequence is being aborted as the failed task {0} was marked critical for the sequence..
         /// </summary>
-        internal static string DismApplyUnattend {
+        internal static string CriticalTaskFailed {
             get {
-                return ResourceManager.GetString("DismApplyUnattend", resourceCulture);
+                return ResourceManager.GetString("CriticalTaskFailed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Committing changes..
+        ///   Looks up a localized string similar to The given task cannot execute in phase {0}..
         /// </summary>
-        internal static string DismCommit {
+        internal static string TaskCannotExecute {
             get {
-                return ResourceManager.GetString("DismCommit", resourceCulture);
+                return ResourceManager.GetString("TaskCannotExecute", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Initialising DISM with &quot;{0}&quot; as log file and &quot;{1}&quot; as scratch directory..
+        ///   Looks up a localized string similar to The task {0} failed in phase {1}..
         /// </summary>
-        internal static string DismInitialise {
+        internal static string TaskFailed {
             get {
-                return ResourceManager.GetString("DismInitialise", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Opening offline servicing session for &quot;{0}&quot;..
-        /// </summary>
-        internal static string DismOpenOffline {
-            get {
-                return ResourceManager.GetString("DismOpenOffline", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Shutting down DISM..
-        /// </summary>
-        internal static string DismShutdown {
-            get {
-                return ResourceManager.GetString("DismShutdown", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Partition and format disk.
-        /// </summary>
-        internal static string PartitionFormatDisk {
-            get {
-                return ResourceManager.GetString("PartitionFormatDisk", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Select installation disk.
-        /// </summary>
-        internal static string SelectInstallDisk {
-            get {
-                return ResourceManager.GetString("SelectInstallDisk", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Task sequence {0}.
-        /// </summary>
-        internal static string TaskSequenceName {
-            get {
-                return ResourceManager.GetString("TaskSequenceName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Waiting for the Virtual Disk Service to become ready..
-        /// </summary>
-        internal static string WaitingVds {
-            get {
-                return ResourceManager.GetString("WaitingVds", resourceCulture);
+                return ResourceManager.GetString("TaskFailed", resourceCulture);
             }
         }
     }

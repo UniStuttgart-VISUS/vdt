@@ -7,8 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Visus.DeploymentToolkit.Contracts;
 using Visus.DeploymentToolkit.Properties;
+using Visus.DeploymentToolkit.Workflow;
 
 
 namespace Visus.DeploymentToolkit.Tasks {

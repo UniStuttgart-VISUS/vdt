@@ -4,6 +4,8 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using Visus.DeploymentToolkit.Services;
+
 
 namespace Visus.DeploymentToolkit.Test {
 
@@ -13,13 +15,13 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public void Enumerate() {
-            var service = new Services.EnvironmentService();
+            var service = new EnvironmentService();
             Assert.IsTrue(service.Any(), "Any environment variable");
         }
 
         [TestMethod]
         public void Index() {
-            var service = new Services.EnvironmentService();
+            var service = new EnvironmentService();
             Assert.IsNotNull(service["COMPUTERNAME"], "COMPUTERNAME is available");
             Assert.IsNull(service["::__%%]"], "::__%%] is not available");
         }

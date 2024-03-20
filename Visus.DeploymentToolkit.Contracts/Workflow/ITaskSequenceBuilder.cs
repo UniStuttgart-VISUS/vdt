@@ -4,8 +4,10 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using Visus.DeploymentToolkit.Tasks;
 
-namespace Visus.DeploymentToolkit.Contracts {
+
+namespace Visus.DeploymentToolkit.Workflow {
 
     /// <summary>
     /// Defines the interface of a builder that can be used to create
@@ -28,6 +30,14 @@ namespace Visus.DeploymentToolkit.Contracts {
         /// <returns>A task sequence.</returns>
         ITaskSequence Build();
 
+        /// <summary>
+        /// Insert the given <paramref name="task"/> at the given position in
+        /// the workflow of the specified <paramref name="phase"/>.
+        /// </summary>
+        /// <param name="phase"></param>
+        /// <param name="index"></param>
+        /// <param name="task"></param>
+        /// <returns></returns>
         ITaskSequenceBuilder Insert(Phase phase, int index, ITask task);
     }
 }

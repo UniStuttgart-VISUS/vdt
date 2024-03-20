@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace Visus.DeploymentToolkit.Contracts {
+namespace Visus.DeploymentToolkit.Services {
 
     /// <summary>
     /// Provides access to the gobal application state.
@@ -22,5 +22,10 @@ namespace Visus.DeploymentToolkit.Contracts {
     /// to another.
     /// </remarks>
     public interface IState {
+
+        /// <summary>
+        /// Gets the phase that we are running.
+        /// </summary>
+        public string Phase { get; }
     }
 }

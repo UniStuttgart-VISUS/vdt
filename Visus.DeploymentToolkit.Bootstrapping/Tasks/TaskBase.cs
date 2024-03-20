@@ -7,7 +7,8 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using Visus.DeploymentToolkit.Contracts;
+using Visus.DeploymentToolkit.Services;
+using Visus.DeploymentToolkit.Workflow;
 
 
 namespace Visus.DeploymentToolkit.Tasks {

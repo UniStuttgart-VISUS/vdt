@@ -7,11 +7,12 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using Visus.DeploymentToolkit.Contracts;
 using Visus.DeploymentToolkit.Properties;
+using Visus.DeploymentToolkit.Services;
 
 
-namespace Visus.DeploymentToolkit.Tasks {
+namespace Visus.DeploymentToolkit.Tasks
+{
 
     /// <summary>
     /// This task determines the index of the disk where Windows is to be
