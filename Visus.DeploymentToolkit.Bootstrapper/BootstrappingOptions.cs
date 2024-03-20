@@ -24,10 +24,9 @@ namespace Visus.DeploymentToolkit.Bootstrapper {
         public string DeploymentShare { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the name of the user to connect to the deployment
-        /// share.
+        /// Gets the path to the log file.
         /// </summary>
-        public string? User { get; set; }
+        public string LogFile { get; set; } = "deimosbootstrapper.log";
 
         /// <summary>
         /// Gets or sets the path to the state file where the bootstrapper
@@ -35,5 +34,11 @@ namespace Visus.DeploymentToolkit.Bootstrapper {
         /// into the agent.
         /// </summary>
         public string StateFile { get; set; } = "deimosstate.json";
+
+        /// <summary>
+        /// Gets or sets the name of the user to connect to the deployment
+        /// share.
+        /// </summary>
+        public string? User { get; set; }
     }
 }

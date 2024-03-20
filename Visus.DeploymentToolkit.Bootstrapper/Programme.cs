@@ -8,7 +8,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Serilog;
+using System.Runtime.Versioning;
 using Visus.DeploymentToolkit.Bootstrapper;
+using Visus.DeploymentToolkit.Bootstrapper.Properties;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
@@ -24,20 +27,41 @@ var configuration = new ConfigurationBuilder()
 var services = new ServiceCollection()
     .AddBootstrappingServices()
     .AddState()
-    .Configure<BootstrappingOptions>(o => {
-        configuration.Bind(o);
-    })
+    .Configure<BootstrappingOptions>(configuration.Bind)
     .AddLogging(o=> {
-        o.AddConsole();
+#if DEBUG
+        o.AddDebug();
+#endif // DEBUG
+
+        var options = new BootstrappingOptions();
+        configuration.Bind(options);
+
+        var config = new LoggerConfiguration()
+            .WriteTo.File(options.LogFile);
+
+#if DEBUG
+        config.MinimumLevel.Verbose();
+#else // DEBUG
+        config.MinimumLevel.Info();
+#endif // DEBUG
+
+        var logger = config.CreateLogger();
+
+        o.AddSerilog(logger);
     })
     .BuildServiceProvider();
 
 // Perform bootstrapping.
 {
+    var log = services.GetRequiredService<ILogger<Program>>();
     var opts = services.GetRequiredService<IOptions<BootstrappingOptions>>();
     var task = services.GetRequiredService<MountNetworkShare>();
     task.Path = opts.Value.DeploymentShare;
     task.MountPoint = "a:";
+
+    log.LogInformation(Resources.MountDeploymentShare,
+        task.Path,
+        task.MountPoint);
     //await task.ExecuteAsync(host.Services.GetRequiredService<IState>());
 }
 
