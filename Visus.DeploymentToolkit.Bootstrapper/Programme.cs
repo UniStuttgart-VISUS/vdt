@@ -9,13 +9,21 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Serilog;
-using System.Runtime.Versioning;
 using Visus.DeploymentToolkit.Bootstrapper;
 using Visus.DeploymentToolkit.Bootstrapper.Properties;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
 
+// The Project Deimos bootstrapper is responsible for preparing the automated
+// installation, which is performed by the agent. The bootstrapper is fairly
+// minimal by design. It only mounts the deployment share and makes the agent
+// and its configuration available. The reason for this design is that the
+// boostrapper needs to live in the Windows PE image. It should therefore be
+// as small as possible as the image is transferred via TFTP. Furhtermore, we
+// want to minimise the need to rebuild the Windows PE image as far as
+// possible. Therefore, changes the the configuration of the agent should not
+// require a rebuild as only the boostrapper is in the image.
 
 // Build the configuration from appsettings and the command line.
 var configuration = new ConfigurationBuilder()
