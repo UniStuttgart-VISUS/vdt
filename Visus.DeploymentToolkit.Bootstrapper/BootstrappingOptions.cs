@@ -13,15 +13,24 @@ namespace Visus.DeploymentToolkit.Bootstrapper {
     internal sealed class BootstrappingOptions {
 
         /// <summary>
-        /// Gets or sets the name of the domain the deployment server belongs
-        /// to.
+        /// Gets or sets the drive where the deployment share should be mapped.
         /// </summary>
-        public string? Domain { get; set; }
+        /// <remarks>
+        /// This property can be <c>null</c>, in which case the programme will
+        /// choose a free drive on its own.
+        /// </remarks>
+        public string? DeploymentDrive { get; set; }
 
         /// <summary>
         /// Gets or sets the UNC path of the deployment share.
         /// </summary>
         public string DeploymentShare { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the name of the domain the deployment server belongs
+        /// to.
+        /// </summary>
+        public string? Domain { get; set; }
 
         /// <summary>
         /// Gets the path to the log file.

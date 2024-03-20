@@ -77,7 +77,7 @@ log.LogInformation(Resources.BootstrapperStart);
     var drives = services.GetRequiredService<IDriveInfo>();
     var task = services.GetRequiredService<MountNetworkShare>();
     task.Path = opts.Value.DeploymentShare;
-    task.MountPoint = drives.GetFreeDrives().Last();
+    task.MountPoint = opts.Value.DeploymentDrive ?? drives.GetFreeDrives().Last();
 
     log.LogInformation(Resources.MountDeploymentShare,
         task.Path,
