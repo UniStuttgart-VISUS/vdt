@@ -6,6 +6,9 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -15,12 +18,7 @@ namespace Visus.DeploymentToolkit.Services {
     /// </summary>
     internal sealed class State : IState {
 
-        #region Public properties
-        /// <inheritdoc />
-        public string Phase => throw new NotImplementedException();
-        #endregion
-
-        #region Internal constructors
+        #region Public constructors
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
@@ -28,9 +26,26 @@ namespace Visus.DeploymentToolkit.Services {
         /// </param>
         /// <exception cref="ArgumentNullException">If
         /// <paramref name="logger"/> is <c>null</c>.</exception>
-        internal State(ILogger<State> logger) {
+        public State(ILogger<State> logger) {
             _logger = logger
                 ?? throw new ArgumentNullException(nameof(logger));
+        }
+        #endregion
+
+        #region Public properties
+        /// <inheritdoc />
+        public string Phase { get; set; }
+        #endregion
+
+        #region Public methods
+        /// <inheritdoc />
+        public async Task SaveAsync(string path) {
+            using (var fs = File.OpenWrite(path)) {
+                var opts = new JsonSerializerOptions() {
+                    WriteIndented = true
+                };
+                await JsonSerializer.SerializeAsync(fs, this, opts);
+            }
         }
         #endregion
 

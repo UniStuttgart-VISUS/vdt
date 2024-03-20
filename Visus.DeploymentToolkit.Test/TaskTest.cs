@@ -18,9 +18,19 @@ namespace Visus.DeploymentToolkit.Test {
     [TestClass]
     public sealed class TaskTest {
 
+        [TestMethod]
+        public async Task TestCopyFilesFlat() {
+            var task = new CopyFiles(this._loggerFactory.CreateLogger<CopyFiles>());
+            task.Source = ".";
+            task.Destination = Path.Combine(Path.GetTempPath(), "DeimosTest2");
+            task.IsRecursive = false;
+            task.IsOverwrite = true;
+            await task.ExecuteAsync(Mock.Of<IState>());
+            Assert.IsFalse(Directory.GetDirectories(task.Destination).Any());
+        }
 
         [TestMethod]
-        public async Task TestCopyFiles() {
+        public async Task TestCopyFilesRecursive() {
             var task = new CopyFiles(this._loggerFactory.CreateLogger<CopyFiles>());
             task.Source = ".";
             task.Destination = Path.Combine(Path.GetTempPath(), "DeimosTest");

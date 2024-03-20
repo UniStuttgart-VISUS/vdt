@@ -4,10 +4,6 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 
@@ -26,6 +22,15 @@ namespace Visus.DeploymentToolkit.Services {
         /// <summary>
         /// Gets the phase that we are running.
         /// </summary>
-        public string Phase { get; }
+        string Phase { get; }
+
+        #region Public methods
+        /// <summary>
+        /// Persists the state to a JSON file at the specified location.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        Task SaveAsync(string path);
+        #endregion
     }
 }

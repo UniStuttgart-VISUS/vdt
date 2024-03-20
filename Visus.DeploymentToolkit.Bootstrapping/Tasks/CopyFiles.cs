@@ -6,7 +6,6 @@
 
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Properties;
@@ -18,7 +17,7 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// <summary>
     /// A task for copying one or more files.
     /// </summary>
-    internal sealed class CopyFiles : TaskBase {
+    public sealed class CopyFiles : TaskBase {
 
         #region Public constructors
         /// <summary>
@@ -97,9 +96,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                         : SearchOption.TopDirectoryOnly;
                     var src = this.Source;
 
-                    this._logger.LogTrace(fmt,
-                        this.Source,
-                        this.Destination);
+                    this._logger.LogTrace(fmt, this.Source, this.Destination);
 
                     foreach (var f in Directory.GetFiles(src, "*", opt)) {
                         var d = RemovePrefix(f, src).TrimStart(Separators);

@@ -4,9 +4,12 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using Visus.DeploymentToolkit.Services;
+using Visus.DeploymentToolkit.Tasks;
 
 
 namespace Visus.DeploymentToolkit.Extensions {
@@ -17,18 +20,128 @@ namespace Visus.DeploymentToolkit.Extensions {
     /// </summary>
     public static class ServiceCollectionExtensions {
 
+        #region Public methods
+        /// <summary>
+        /// Adds all services exported by the bootstrapping library.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns><paramref name="services"/>.</returns>
+        /// <exception cref="ArgumentNullException">If
+        /// <paramref name="services"/> is <c>null</c>.</exception>
+        public static IServiceCollection AddBootstrappingServices(
+                this IServiceCollection services) {
+            services.AddBootstrappingTasks();
+            services.AddCommands();
+            services.AddDriveInfo();
+            services.AddEnvironment();
+            return services;
+        }
+
+        /// <summary>
+        /// Adds <see cref="IState"/> to the service collection.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static IServiceCollection AddState(
+                this IServiceCollection services) {
+            _ = services ?? throw new ArgumentNullException(nameof(services));
+            services.AddSingleton<IState, State>();
+            return services;
+        }
+
+        /// <summary>
+        /// Adds <see cref="IState"/> to the service collection and
+        /// initialises it from the given configuration section.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static IServiceCollection AddState(
+                this IServiceCollection services,
+                IConfiguration configuration) {
+            _ = services
+                ?? throw new ArgumentNullException(nameof(services));
+            _ = configuration
+                ?? throw new ArgumentNullException(nameof(configuration));
+
+            services.AddSingleton<IState>(s => {
+                var logger = s.GetRequiredService<ILogger<State>>();
+                var state = new State(logger);
+                configuration.Bind(state);
+                return state;
+            });
+
+            return services;
+        }
+
+        /// <summary>
+        /// Adds <see cref="IState"/> to the service collection and restores
+        /// it from the given JSON file.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="stateFile"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static IServiceCollection AddState(
+                this IServiceCollection services,
+                string stateFile) {
+            _ = services ?? throw new ArgumentNullException(nameof(services));
+            _ = stateFile ?? throw new ArgumentNullException(nameof(stateFile));
+
+            services.AddState(new ConfigurationBuilder()
+                .AddJsonFile(stateFile)
+                .Build());
+
+            return services;
+        }
+        #endregion
+
+        #region Internal methods
+        /// <summary>
+        /// Adds the tasks exported by the bootstrapping library as transient
+        /// services.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns><paramref name="services"/>.</returns>
+        /// <exception cref="ArgumentNullException">If
+        /// <paramref name="services"/> is <c>null</c>.</exception>
+        internal static IServiceCollection AddBootstrappingTasks(
+                this IServiceCollection services) {
+            _ = services ?? throw new ArgumentNullException(nameof(services));
+            services.AddTransient<CopyFiles>();
+            services.AddTransient<MountNetworkShare>();
+            services.AddTransient<RunCommand>();
+            return services;
+        }
+
         /// <summary>
         /// Adds the infrastructure to build <see cref="ICommand"/>s via the
         /// <see cref="ICommandBuilderFactory"/> to the service collection.
         /// </summary>
         /// <param name="services"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public static IServiceCollection AddCommands(
+        /// <returns><paramref name="services"/>.</returns>
+        /// <exception cref="ArgumentNullException">If
+        /// <paramref name="services"/> is <c>null</c>.</exception>
+        internal static IServiceCollection AddCommands(
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             services.AddSingleton<ICommandBuilderFactory,
                 CommandBuilderFactory>();
+            return services;
+        }
+
+        /// <summary>
+        /// Adds the <see cref="IDriveInfo"/> service to the service collection.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        internal static IServiceCollection AddDriveInfo(
+                this IServiceCollection services) {
+            _ = services ?? throw new ArgumentNullException(nameof(services));
+            services.AddSingleton<IDriveInfo, DriveInfoService>();
             return services;
         }
 
@@ -39,11 +152,12 @@ namespace Visus.DeploymentToolkit.Extensions {
         /// <param name="services"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static IServiceCollection AddEnvironment(
+        internal static IServiceCollection AddEnvironment(
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             services.AddSingleton<IEnvironment, EnvironmentService>();
             return services;
         }
+        #endregion
     }
 }
