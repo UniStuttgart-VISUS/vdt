@@ -178,6 +178,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Persisting the deployment state to &quot;{0}&quot;..
+        /// </summary>
+        internal static string SavingState {
+            get {
+                return ResourceManager.GetString("SavingState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Task {0} finished in phase {1}..
         /// </summary>
         internal static string TaskFinished {

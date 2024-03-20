@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Properties;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -40,6 +41,8 @@ namespace Visus.DeploymentToolkit.Services {
         #region Public methods
         /// <inheritdoc />
         public async Task SaveAsync(string path) {
+            this._logger.LogTrace(Resources.SavingState, path);
+
             using (var fs = File.OpenWrite(path)) {
                 var opts = new JsonSerializerOptions() {
                     WriteIndented = true

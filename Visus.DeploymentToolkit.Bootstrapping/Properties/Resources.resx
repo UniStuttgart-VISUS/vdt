@@ -156,6 +156,9 @@
   <data name="RunCommand" xml:space="preserve">
     <value>Run command</value>
   </data>
+  <data name="SavingState" xml:space="preserve">
+    <value>Persisting the deployment state to "{0}".</value>
+  </data>
   <data name="TaskFinished" xml:space="preserve">
     <value>Task {0} finished in phase {1}.</value>
   </data>
