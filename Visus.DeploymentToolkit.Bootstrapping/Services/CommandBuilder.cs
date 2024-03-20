@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Runtime.Versioning;
 
@@ -23,11 +24,32 @@ namespace Visus.DeploymentToolkit.Services {
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
-        /// <param name="processImage">The absolute path to the process image
-        /// to be started.</param>
+        /// <param name="processImage">The path to the process image to be
+        /// started. If the process image is not an absolute path and not
+        /// located in the current working directory, the builder will try
+        /// resolving the absolute path using the PATH environment variable.
+        /// </param>
         public CommandBuilder(string processImage) {
             _ = processImage
                 ?? throw new ArgumentNullException(nameof(processImage));
+
+            // If the path to the process image is not absolute or in the
+            // current working directory, resolve it using the path
+            // variable.
+            if (!File.Exists(processImage)) {
+                var path = Environment.GetEnvironmentVariable("PATH");
+                if (path != null) {
+                    foreach (var p in path.Split(Path.PathSeparator,
+                            StringSplitOptions.RemoveEmptyEntries)) {
+                        var pi = Path.Combine(p, processImage);
+                        if (File.Exists(pi)) {
+                            processImage = pi;
+                            break;
+                        }
+                    }
+                }
+            }
+
             this._processStartInfo = new ProcessStartInfo(processImage);
         }
         #endregion
@@ -51,13 +73,27 @@ namespace Visus.DeploymentToolkit.Services {
 
         /// <inheritdoc />
         public ICommand Build() {
-            return new Command(this._processStartInfo);
+            return new Command(this._processStartInfo) {
+                DoNotWait = this._doNotWait
+            };
+        }
+
+        /// <inheritdoc />
+        public ICommandBuilder DoNotWaitForProcess() {
+            this._doNotWait = true;
+            return this;
         }
 
         /// <inheritdoc />
         public ICommandBuilder InWorkingDirectory(string? workingDirectory) {
             this._processStartInfo.WorkingDirectory
                 = workingDirectory ?? string.Empty;
+            return this;
+        }
+
+        /// <inheritdoc />
+        public ICommandBuilder WaitForProcess() {
+            this._doNotWait = false;
             return this;
         }
 
@@ -100,6 +136,7 @@ namespace Visus.DeploymentToolkit.Services {
         #endregion
 
         #region Private fields
+        private bool _doNotWait = false;
         private readonly ProcessStartInfo _processStartInfo;
         #endregion
     }

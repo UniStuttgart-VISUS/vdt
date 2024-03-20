@@ -21,7 +21,7 @@ namespace Visus.DeploymentToolkit.Agent {
     /// </summary>
     internal class Agent : IHostedService {
 
-        public Agent(IOptions<Configuration> configuration,
+        public Agent(IOptions<AgentOptions> configuration,
                 IHostApplicationLifetime lifetime,
                 ILogger<Agent> logger) {
             this._configuration = configuration?.Value
@@ -54,7 +54,7 @@ namespace Visus.DeploymentToolkit.Agent {
             //throw new NotImplementedException();
         }
 
-        private readonly Configuration _configuration;
+        private readonly AgentOptions _configuration;
         private readonly IHostApplicationLifetime _lifetime;
         private readonly ILogger _logger;
     }

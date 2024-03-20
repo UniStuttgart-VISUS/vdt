@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Serilog;
+using System.Linq;
 using Visus.DeploymentToolkit.Bootstrapper;
 using Visus.DeploymentToolkit.Bootstrapper.Properties;
 using Visus.DeploymentToolkit.Extensions;
@@ -28,6 +29,7 @@ using Visus.DeploymentToolkit.Tasks;
 // Build the configuration from appsettings and the command line.
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", true, true)
+    .AddEnvironmentVariables()
     .AddCommandLine(args)
     .Build();
 
@@ -63,9 +65,10 @@ var services = new ServiceCollection()
 {
     var log = services.GetRequiredService<ILogger<Program>>();
     var opts = services.GetRequiredService<IOptions<BootstrappingOptions>>();
+    var drives = services.GetRequiredService<IDriveInfo>();
     var task = services.GetRequiredService<MountNetworkShare>();
     task.Path = opts.Value.DeploymentShare;
-    task.MountPoint = "a:";
+    task.MountPoint = drives.GetFreeDrives().Last();
 
     log.LogInformation(Resources.MountDeploymentShare,
         task.Path,
@@ -79,4 +82,13 @@ var services = new ServiceCollection()
     var opts = services.GetRequiredService<IOptions<BootstrappingOptions>>();
     var state = services.GetRequiredService<IState>();
     await state.SaveAsync(opts.Value.StateFile);
+}
+
+// Start the agent.
+{
+    var factory = services.GetRequiredService<ICommandBuilderFactory>();
+    var command = factory.Run("Visus.DeploymentToolkit.Agent.exe")
+        .DoNotWaitForProcess()
+        .Build();
+    await command.ExecuteAsync();
 }

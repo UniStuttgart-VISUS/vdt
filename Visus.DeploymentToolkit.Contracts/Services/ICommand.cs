@@ -23,6 +23,12 @@ namespace Visus.DeploymentToolkit.Services {
         IEnumerable<string> Arguments { get; }
 
         /// <summary>
+        /// Gets whether the command is not awaited when calling
+        /// <see cref="ExecuteAsync"/>.
+        /// </summary>
+        bool DoNotWait { get; }
+
+        /// <summary>
         /// Gets the path to the file to be executed.
         /// </summary>
         string Path { get; }
@@ -38,7 +44,8 @@ namespace Visus.DeploymentToolkit.Services {
         /// Execute the command and answer its exit code.
         /// </summary>
         /// <returns>A task for waiting for the exit code. The exit code
-        /// might be <c>null</c> if the process could not be started.</returns>
+        /// might be <c>null</c> if the process could not be started or if
+        /// the process is not awaited.</returns>
         Task<int?> ExecuteAsync();
         #endregion
     }

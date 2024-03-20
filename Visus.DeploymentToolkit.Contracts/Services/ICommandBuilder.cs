@@ -40,11 +40,27 @@ namespace Visus.DeploymentToolkit.Services {
         ICommand Build();
 
         /// <summary>
+        /// Instructs the builder to have the command not wait for the spawned
+        /// process to exit, but to return immediately from
+        /// <see cref="ICommand.ExecuteAsync"/>.
+        /// </summary>
+        /// <returns></returns>
+        ICommandBuilder DoNotWaitForProcess();
+
+        /// <summary>
         /// Sets the <see cref="WorkingDirectory"/> for the command.
         /// </summary>
         /// <param name="workingDirectory"></param>
         /// <returns></returns>
         ICommandBuilder InWorkingDirectory(string? workingDirectory);
+
+        /// <summary>
+        /// Instructs the builder to wait for the spawned process to exit before
+        /// returning from <see cref="ICommand.ExecuteAsync"/>. This is the
+        /// default behaviour.
+        /// </summary>
+        /// <returns></returns>
+        ICommandBuilder WaitForProcess();
 
         /// <summary>
         /// Sets the <see cref="Arguments"/> for the command.

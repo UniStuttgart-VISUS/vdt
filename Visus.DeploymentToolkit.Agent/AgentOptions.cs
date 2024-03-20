@@ -16,14 +16,31 @@ namespace Visus.DeploymentToolkit.Agent {
     /// <remarks>
     /// The configuration is read from the application settings file or from the
     /// command line and most importantly determines in which phase the process
-    /// is. In the application settings file, the <see cref="Configuration"/>
+    /// is. In the application settings file, the <see cref="AgentOptions"/>
     /// class maps to the root of the file.
     /// </remarks>
-    internal sealed class Configuration {
+    internal sealed class AgentOptions {
 
         /// <summary>
         /// Gets or sets the phase in which the agent is currently running.
         /// </summary>
         public Phase Phase { get; set; }
+
+        /// <summary>
+        /// Gets or sets the path of the deployment share, either the UNC path
+        /// or the drive letter.
+        /// </summary>
+        public string DeploymentShare { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets the path to the log file.
+        /// </summary>
+        public string LogFile { get; set; } = "deimosagent.log";
+
+        /// <summary>
+        /// Gets or sets the path to the state file where the bootstrapper
+        /// has persisted the state that is loaded when starting.
+        /// </summary>
+        public string StateFile { get; set; } = "deimosstate.json";
     }
 }

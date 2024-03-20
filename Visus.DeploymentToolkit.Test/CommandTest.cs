@@ -64,5 +64,12 @@ namespace Visus.DeploymentToolkit.Test {
             });
         }
 
+        [TestMethod]
+        public async Task ResolveCmd() {
+            await new CommandBuilder("cmd.exe")
+                .WithArguments("/c echo \"Hello from Test.\"")
+                .Build()
+                .ExecuteAsync();
+        }
     }
 }

@@ -37,6 +37,9 @@ namespace Visus.DeploymentToolkit.Services {
             => this._processStartInfo.ArgumentList;
 
         /// <inheritdoc />
+        public bool DoNotWait { get; internal set; }
+
+        /// <inheritdoc />
         public string Path => this._processStartInfo.FileName;
 
         /// <inheritdoc />
@@ -48,7 +51,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <inheritdoc />
         public async Task<int?> ExecuteAsync() {
             using (var p = Process.Start(this._processStartInfo)) {
-                if (p != null) {
+                if ((p != null) && !this.DoNotWait) {
                     await p.WaitForExitAsync();
                     return p.ExitCode;
                 } else {

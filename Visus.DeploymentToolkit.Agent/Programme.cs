@@ -31,7 +31,7 @@ builder.ConfigureServices((c, s) => {
     //var config = new Configuration();
     //c.Configuration.Bind(config);
 
-    s.Configure<Configuration>(c.Configuration);
+    s.Configure<AgentOptions>(c.Configuration);
 
     s.AddDeploymentServices();
 
