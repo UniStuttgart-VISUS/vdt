@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 using Visus.DeploymentToolkit.Vds;
 
 
@@ -15,16 +16,18 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public void BasicObjects() {
-            var loader = new VdsServiceLoader() as IVdsServiceLoader;
-            Assert.IsNotNull(loader, "Have IVdsServiceLoader");
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                var loader = new VdsServiceLoader() as IVdsServiceLoader;
+                Assert.IsNotNull(loader, "Have IVdsServiceLoader");
 
-            IVdsService service;
-            loader.LoadService(null, out service);
-            Assert.IsNotNull(service, "Have IVdsService");
+                IVdsService service;
+                loader.LoadService(null, out service);
+                Assert.IsNotNull(service, "Have IVdsService");
 
-            {
-                var status = service.WaitForServiceReady();
-                Assert.AreEqual(0u, status, "WaitForServiceReady succeeded");
+                {
+                    var status = service.WaitForServiceReady();
+                    Assert.AreEqual(0u, status, "WaitForServiceReady succeeded");
+                }
             }
         }
 
@@ -40,77 +43,80 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public void EnumerateSoftware() {
-            var loader = new VdsServiceLoader() as IVdsServiceLoader;
-            Assert.IsNotNull(loader, "Have IVdsServiceLoader");
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                var loader = new VdsServiceLoader() as IVdsServiceLoader;
+                Assert.IsNotNull(loader, "Have IVdsServiceLoader");
 
-            IVdsService service;
-            loader.LoadService(null, out service);
-            Assert.IsNotNull(service, "Have IVdsService");
+                IVdsService service;
+                loader.LoadService(null, out service);
+                Assert.IsNotNull(service, "Have IVdsService");
 
-            {
-                var status = service.WaitForServiceReady();
-                Assert.AreEqual(0u, status, "WaitForServiceReady succeeded");
-            }
-
-            IEnumVdsObject enumProviders;
-            service.QueryProviders(VDS_QUERY_PROVIDER_FLAG.SOFTWARE_PROVIDERS,
-                out enumProviders);
-            Assert.IsNotNull(enumProviders, "Have enumerator for provider");
-
-            enumProviders.Reset();
-
-            while (true) {
-                enumProviders.Next(1, out var unknown, out uint cnt);
-                if (cnt == 0) {
-                    break;
+                {
+                    var status = service.WaitForServiceReady();
+                    Assert.AreEqual(0u, status, "WaitForServiceReady succeeded");
                 }
 
-                var provider = unknown as IVdsSwProvider;
-                Assert.IsNotNull(provider, "Provider is IVdsVdProvider");
+                IEnumVdsObject enumProviders;
+                service.QueryProviders(VDS_QUERY_PROVIDER_FLAG.SOFTWARE_PROVIDERS,
+                    out enumProviders);
+                Assert.IsNotNull(enumProviders, "Have enumerator for provider");
 
-                IEnumVdsObject enumPacks;
-                provider.QueryPacks(out enumPacks);
-                Assert.IsNotNull(enumPacks, "Have pack enumerator");
+                enumProviders.Reset();
 
                 while (true) {
-                    enumPacks.Next(1, out unknown, out cnt);
+                    enumProviders.Next(1, out var unknown, out uint cnt);
                     if (cnt == 0) {
                         break;
                     }
 
-                    var pack = unknown as IVdsPack;
-                    Assert.IsNotNull(pack, "Got IVdsPack");
+                    var provider = unknown as IVdsSwProvider;
+                    Assert.IsNotNull(provider, "Provider is IVdsVdProvider");
 
-                    VDS_PACK_PROP packProp;
-                    pack.GetProperties(out packProp);
+                    IEnumVdsObject enumPacks;
+                    provider.QueryPacks(out enumPacks);
+                    Assert.IsNotNull(enumPacks, "Have pack enumerator");
 
-                    if (packProp.Status != VDS_PACK_STATUS.ONLINE) {
-                        continue;
+                    while (true) {
+                        enumPacks.Next(1, out unknown, out cnt);
+                        if (cnt == 0) {
+                            break;
+                        }
+
+                        var pack = unknown as IVdsPack;
+                        Assert.IsNotNull(pack, "Got IVdsPack");
+
+                        VDS_PACK_PROP packProp;
+                        pack.GetProperties(out packProp);
+
+                        if (packProp.Status != VDS_PACK_STATUS.ONLINE) {
+                            continue;
+                        }
+
+                        IEnumVdsObject enumDisks;
+                        pack.QueryDisks(out enumDisks);
+                        Assert.IsNotNull(enumDisks, "Have disk enumerator");
+
+                        enumDisks.Next(1, out unknown, out cnt);
+                        Assert.AreEqual(1u, cnt, "At least one disk");
+
+                        var disk = unknown as IVdsDisk;
+                        Assert.IsNotNull(disk, "Have IVdsDisk");
+
+                        VDS_DISK_PROP diskProp;
+                        disk.GetProperties(out diskProp);
+
+                        var advDisk = disk as IVdsAdvancedDisk;
+                        Assert.IsNotNull(advDisk, "Have IVdsAdvancedDisk");
+
+                        advDisk.QueryPartitions(out var partitionProps, out var cntPartitions);
+
+                        advDisk.GetPartitionProperties(partitionProps[0].Offset, out var partitionProp);
+                        Assert.AreEqual(partitionProps[0].PartitionNumber, partitionProp.PartitionNumber, "PartitionNumber matches");
+
                     }
-
-                    IEnumVdsObject enumDisks;
-                    pack.QueryDisks(out enumDisks);
-                    Assert.IsNotNull(enumDisks, "Have disk enumerator");
-
-                    enumDisks.Next(1, out unknown, out cnt);
-                    Assert.AreEqual(1u, cnt, "At least one disk");
-
-                    var disk = unknown as IVdsDisk;
-                    Assert.IsNotNull(disk, "Have IVdsDisk");
-
-                    VDS_DISK_PROP diskProp;
-                    disk.GetProperties(out diskProp);
-
-                    var advDisk = disk as IVdsAdvancedDisk;
-                    Assert.IsNotNull(advDisk, "Have IVdsAdvancedDisk");
-
-                    advDisk.QueryPartitions(out var partitionProps, out var cntPartitions);
-
-                    advDisk.GetPartitionProperties(partitionProps[0].Offset, out var partitionProp);
-                    Assert.AreEqual(partitionProps[0].PartitionNumber, partitionProp.PartitionNumber, "PartitionNumber matches");
-
                 }
             }
         }
+
     }
 }

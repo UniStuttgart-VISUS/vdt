@@ -79,6 +79,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The source &quot;{0}&quot; is a directory, but the specified destination &quot;{1}&quot; is a file..
+        /// </summary>
+        internal static string CopyDirectoryToFile {
+            get {
+                return ResourceManager.GetString("CopyDirectoryToFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The task sequence is being aborted as the failed task {0} was marked critical for the sequence..
         /// </summary>
         internal static string CriticalTaskFailed {

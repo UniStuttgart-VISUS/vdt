@@ -5,7 +5,7 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
-using Moq;
+using System.Security.Principal;
 using Visus.DeploymentToolkit.Services;
 
 
@@ -19,17 +19,21 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public void GetDisks() {
-            var service = new VdsService(Mock.Of<ILogger<VdsService>>());
-            Assert.IsNotNull(service);
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                var service = new VdsService(this._loggerFactory.CreateLogger<VdsService>());
+                Assert.IsNotNull(service);
 
-            var task = service.GetDisksAsync(CancellationToken.None);
-            task.Wait();
-            var disks = task.Result;
-            Assert.IsTrue(disks.Any());
+                var task = service.GetDisksAsync(CancellationToken.None);
+                task.Wait();
+                var disks = task.Result;
+                Assert.IsTrue(disks.Any());
 
-            foreach (var disk in disks ) {
-                Assert.IsTrue(disk.Partitions.Any());
+                foreach (var disk in disks) {
+                    Assert.IsTrue(disk.Partitions.Any());
+                }
             }
         }
+
+        private readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(l => l.AddDebug());
     }
 }

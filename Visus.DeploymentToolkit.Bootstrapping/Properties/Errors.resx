@@ -123,6 +123,9 @@
   <data name="CommandNotRun" xml:space="preserve">
     <value>The command "{0}" did not run.</value>
   </data>
+  <data name="CopyDirectoryToFile" xml:space="preserve">
+    <value>The source "{0}" is a directory, but the specified destination "{1}" is a file.</value>
+  </data>
   <data name="CriticalTaskFailed" xml:space="preserve">
     <value>The task sequence is being aborted as the failed task {0} was marked critical for the sequence.</value>
   </data>

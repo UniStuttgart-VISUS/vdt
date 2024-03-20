@@ -18,13 +18,25 @@ namespace Visus.DeploymentToolkit.Test {
     [TestClass]
     public sealed class TaskTest {
 
+
+        [TestMethod]
+        public async Task TestCopyFiles() {
+            var task = new CopyFiles(this._loggerFactory.CreateLogger<CopyFiles>());
+            task.Source = ".";
+            task.Destination = Path.Combine(Path.GetTempPath(), "DeimosTest");
+            task.IsOverwrite = true;
+            await task.ExecuteAsync(Mock.Of<IState>());
+        }
+
         [TestMethod]
         public async Task TestRunCommand() {
-            var task = new RunCommand(new CommandBuilderFactory(), Mock.Of<ILogger<RunCommand>>());
+            var task = new RunCommand(new CommandBuilderFactory(), this._loggerFactory.CreateLogger<RunCommand>());
             task.Path = @"c:\Windows\System32\cmd.exe";
             task.Arguments = "/c @(call)";
             task.SucccessExitCodes = new[] { 1 };
             await task.ExecuteAsync(Mock.Of<IState>());
         }
+
+        private readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(l => l.AddDebug());
     }
 }

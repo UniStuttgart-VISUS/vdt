@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 
 
@@ -62,6 +63,10 @@ namespace Visus.DeploymentToolkit.Tasks {
                 this.MountPoint = this._driveInfo.GetFreeDrives().First();
             }
 
+            this._logger.LogTrace(Resources.MountingShare,
+                this.Path,
+                this.MountPoint,
+                this.Credential?.UserName ?? Resources.CurrentUser);
             MprApi.Connect(this.MountPoint, this.Path, this.Credential,
                 MprApi.ConnectionFlags.Temporary);
 

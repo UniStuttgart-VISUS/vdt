@@ -88,6 +88,42 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copying &quot;{0}&quot; to &quot;{1}&quot;..
+        /// </summary>
+        internal static string CopyFile {
+            get {
+                return ResourceManager.GetString("CopyFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copying all files from &quot;{0}&quot; to &quot;{1}&quot;..
+        /// </summary>
+        internal static string CopyFiles {
+            get {
+                return ResourceManager.GetString("CopyFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copying recursively from &quot;{0}&quot; to &quot;{1}&quot;..
+        /// </summary>
+        internal static string CopyRecursively {
+            get {
+                return ResourceManager.GetString("CopyRecursively", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ensuring that the destination folder &quot;{0}&quot; exists..
+        /// </summary>
+        internal static string CreatingDestinationFolder {
+            get {
+                return ResourceManager.GetString("CreatingDestinationFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Creating a task list for phase {0}..
         /// </summary>
         internal static string CreatingTaskListForPhase {
@@ -97,11 +133,29 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to current user.
+        /// </summary>
+        internal static string CurrentUser {
+            get {
+                return ResourceManager.GetString("CurrentUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Inserting task {0} at position {2}  in phase {1}..
         /// </summary>
         internal static string InsertTask {
             get {
                 return ResourceManager.GetString("InsertTask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mapping &quot;{0}&quot; to &quot;{1}&quot; as {2}..
+        /// </summary>
+        internal static string MountingShare {
+            get {
+                return ResourceManager.GetString("MountingShare", resourceCulture);
             }
         }
         

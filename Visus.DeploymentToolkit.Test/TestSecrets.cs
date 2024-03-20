@@ -23,8 +23,8 @@ namespace Visus.DeploymentToolkit.Test {
             return retval;
         }
 
-        public string NetworkShare { get; set; }
-        public string NetworkPassword { get; set; }
-        public string NetworkUser { get; set; }
+        public string? NetworkShare { get; set; }
+        public string? NetworkPassword { get; set; }
+        public string? NetworkUser { get; set; }
     }
 }
