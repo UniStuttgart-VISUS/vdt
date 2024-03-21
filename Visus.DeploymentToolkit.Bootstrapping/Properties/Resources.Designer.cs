@@ -70,6 +70,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Changing state &quot;{0}&quot; from &quot;{1}&quot; to &quot;{2}&quot;..
+        /// </summary>
+        internal static string ChangeState {
+            get {
+                return ResourceManager.GetString("ChangeState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Command {0} finished with exit code {1}..
         /// </summary>
         internal static string CommandExecuted {

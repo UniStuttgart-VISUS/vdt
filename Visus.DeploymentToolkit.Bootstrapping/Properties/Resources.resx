@@ -120,6 +120,9 @@
   <data name="AddTask" xml:space="preserve">
     <value>Adding task {0} to the list of tasks for phase {1}.</value>
   </data>
+  <data name="ChangeState" xml:space="preserve">
+    <value>Changing state "{0}" from "{1}" to "{2}".</value>
+  </data>
   <data name="CommandExecuted" xml:space="preserve">
     <value>Command {0} finished with exit code {1}.</value>
   </data>

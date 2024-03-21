@@ -39,6 +39,10 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public properties
         /// <inheritdoc />
+        public string? DeploymentShare
+            => this.Get(WellKnownStates.DeploymentShare) as string;
+
+        /// <inheritdoc />
         public Phase Phase {
             get {
                 var retval = this.Get(WellKnownStates.Phase);
@@ -90,6 +94,8 @@ namespace Visus.DeploymentToolkit.Services {
         public object? Set(string key, object value) {
             this._values.TryGetValue(key, out var retval);
             this._values[key] = value;
+            this._logger.LogInformation(Properties.Resources.ChangeState,
+                key, retval, value);
             return retval;
         }
         #endregion

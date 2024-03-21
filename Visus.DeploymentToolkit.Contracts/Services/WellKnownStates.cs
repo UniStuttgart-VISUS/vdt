@@ -13,8 +13,13 @@ namespace Visus.DeploymentToolkit.Services {
     public static class WellKnownStates {
 
         /// <summary>
+        /// The location of the deployment share.
+        /// </summary>
+        public const string DeploymentShare = nameof(IState.DeploymentShare);
+
+        /// <summary>
         /// The current <see cref="Workflow.Phase"/>.
         /// </summary>
-        public const string Phase = nameof(Phase);
+        public const string Phase = nameof(IState.Phase);
     }
 }

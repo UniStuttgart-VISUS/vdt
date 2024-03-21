@@ -29,6 +29,11 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public properties
         /// <summary>
+        /// Gets the location of the deployment share.
+        /// </summary>
+        string? DeploymentShare { get; }
+
+        /// <summary>
         /// Gets the phase that we are running.
         /// </summary>
         Phase Phase { get; }

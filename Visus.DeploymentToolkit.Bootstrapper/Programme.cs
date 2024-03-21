@@ -71,6 +71,7 @@ var log = services.GetRequiredService<ILogger<Program>>();
 log.LogInformation(Resources.BootstrapperStart);
 
 
+
 // Perform bootstrapping.
 {
     var state = services.GetRequiredService<IState>();
@@ -82,6 +83,8 @@ log.LogInformation(Resources.BootstrapperStart);
     var opts = services.GetRequiredService<IOptions<BootstrappingOptions>>();
     var drives = services.GetRequiredService<IDriveInfo>();
     var task = services.GetRequiredService<MountNetworkShare>();
+    var state = services.GetRequiredService<IState>();
+
     task.Path = opts.Value.DeploymentShare;
     task.MountPoint = opts.Value.DeploymentDrive ?? drives.GetFreeDrives().Last();
 
@@ -89,6 +92,8 @@ log.LogInformation(Resources.BootstrapperStart);
         task.Path,
         task.MountPoint);
     //await task.ExecuteAsync(host.Services.GetRequiredService<IState>());
+
+    state.Set(WellKnownStates.DeploymentShare, task.MountPoint);
 }
 
 
@@ -96,6 +101,7 @@ log.LogInformation(Resources.BootstrapperStart);
 {
     var opts = services.GetRequiredService<IOptions<BootstrappingOptions>>();
     var state = services.GetRequiredService<IState>();
+    state.Set(WellKnownStates.Phase, Phase.Installation);
     log.LogInformation(Resources.PersistState, opts.Value.StateFile);
     await state.SaveAsync(opts.Value.StateFile);
 }
