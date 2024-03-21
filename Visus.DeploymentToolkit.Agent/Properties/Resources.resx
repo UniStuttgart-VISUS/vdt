@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AgentStart" xml:space="preserve">
-    <value>The VISUS Deployment Toolkit agent started in phase {0}.</value>
+    <value>The VISUS Deployment Toolkit agent started.</value>
   </data>
 </root>

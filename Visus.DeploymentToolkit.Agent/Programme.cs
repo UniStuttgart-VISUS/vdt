@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using Visus.DeploymentToolkit.Agent;
 using Visus.DeploymentToolkit.Agent.Properties;
 using Visus.DeploymentToolkit.Extensions;
-using Visus.DeploymentToolkit.Services;
 
 
 // Build the configuration from appsettings.json and the command line.
@@ -33,7 +32,4 @@ var services = new ServiceCollection()
 
 // Prepare the global application log.
 var log = services.GetRequiredService<ILogger<Program>>();
-
-// Restore the state if possible.
-var state = services.GetRequiredService<IState>();
-log.LogInformation(Resources.AgentStart, state.Phase);
+log.LogInformation(Resources.AgentStart);
