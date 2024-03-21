@@ -51,32 +51,6 @@ namespace Visus.DeploymentToolkit.Extensions {
         }
 
         /// <summary>
-        /// Adds <see cref="IState"/> to the service collection and
-        /// initialises it from the given configuration section.
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="configuration"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public static IServiceCollection AddState(
-                this IServiceCollection services,
-                IConfiguration configuration) {
-            _ = services
-                ?? throw new ArgumentNullException(nameof(services));
-            _ = configuration
-                ?? throw new ArgumentNullException(nameof(configuration));
-
-            services.AddSingleton<IState>(s => {
-                var logger = s.GetRequiredService<ILogger<State>>();
-                var state = new State(logger);
-                configuration.Bind(state);
-                return state;
-            });
-
-            return services;
-        }
-
-        /// <summary>
         /// Adds <see cref="IState"/> to the service collection and restores
         /// it from the given JSON file.
         /// </summary>
@@ -90,9 +64,12 @@ namespace Visus.DeploymentToolkit.Extensions {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             _ = stateFile ?? throw new ArgumentNullException(nameof(stateFile));
 
-            services.AddState(new ConfigurationBuilder()
-                .AddJsonFile(stateFile)
-                .Build());
+            services.AddSingleton<IState>(s => {
+                var logger = s.GetRequiredService<ILogger<State>>();
+                var state = new State(logger);
+                state.LoadAsync(stateFile).Wait();
+                return state;
+            });
 
             return services;
         }

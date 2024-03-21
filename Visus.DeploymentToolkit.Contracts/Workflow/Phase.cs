@@ -13,10 +13,20 @@ namespace Visus.DeploymentToolkit.Workflow {
     public enum Phase {
 
         /// <summary>
+        /// The phase is unknown.
+        /// </summary>
+        Unknown = 0,
+
+        /// <summary>
         /// Servicing of the pre-installed environment that the computers will
         /// boot into from TFTP.
         /// </summary>
-        PreinstalledEnvironment,
+        PreinstalledEnvironment = 100,
+
+        /// <summary>
+        /// We are running in the boostrapper preparing the deployment agent.
+        /// </summary>
+        Bootstrapping = 200,
 
         /// <summary>
         /// The installation phase which is running from the preinstalled
@@ -24,12 +34,12 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <see cref="PreinstalledEnvironment"/> phase and loaded from TFTP to
         /// the computer being installed.
         /// </summary>
-        Installation,
+        Installation = 300,
 
         /// <summary>
         /// The first boot into the actual system that has been deployed in the
         /// <see cref="Installation"/> phase.
         /// </summary>
-        PostInstallation
+        PostInstallation = 400
     }
 }

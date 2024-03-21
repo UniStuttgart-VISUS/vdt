@@ -169,6 +169,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Restoring the deployment state from &quot;{0}&quot;..
+        /// </summary>
+        internal static string RestoringState {
+            get {
+                return ResourceManager.GetString("RestoringState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Run command.
         /// </summary>
         internal static string RunCommand {

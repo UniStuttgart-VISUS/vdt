@@ -15,6 +15,7 @@ using Visus.DeploymentToolkit.Bootstrapper.Properties;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
+using Visus.DeploymentToolkit.Workflow;
 
 // The Project Deimos bootstrapper is responsible for preparing the automated
 // installation, which is performed by the agent. The bootstrapper is fairly
@@ -71,6 +72,11 @@ log.LogInformation(Resources.BootstrapperStart);
 
 
 // Perform bootstrapping.
+{
+    var state = services.GetRequiredService<IState>();
+    state.Set(WellKnownStates.Phase, Phase.Bootstrapping);
+}
+
 {
 
     var opts = services.GetRequiredService<IOptions<BootstrappingOptions>>();
