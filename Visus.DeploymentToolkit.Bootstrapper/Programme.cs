@@ -128,6 +128,9 @@ try {
     var state = services.GetRequiredService<IState>();
     var agent = Path.Combine(state.DeploymentShare!, opts.Value.AgentPath);
     var command = factory.Run(agent)
+        .WithArgumentList($"--DeploymentShare={state.DeploymentShare}",
+            $"--StateFile={opts.Value.StateFile}",
+            $"--Phase={Phase.Installation}")
         .DoNotWaitForProcess()
         .Build();
     log.LogInformation(Resources.StartAgent, command);

@@ -142,7 +142,7 @@ namespace Visus.DeploymentToolkit.Bootstrapper.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Starting the deployment agent &quot;{0}&quot;..
+        ///   Looks up a localized string similar to Starting the deployment agent as {0}..
         /// </summary>
         internal static string StartAgent {
             get {

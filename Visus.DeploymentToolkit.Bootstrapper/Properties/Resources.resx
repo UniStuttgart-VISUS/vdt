@@ -145,6 +145,6 @@
     <value>User name</value>
   </data>
   <data name="StartAgent" xml:space="preserve">
-    <value>Starting the deployment agent "{0}".</value>
+    <value>Starting the deployment agent as {0}.</value>
   </data>
 </root>

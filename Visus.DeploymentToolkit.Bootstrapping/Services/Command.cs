@@ -67,7 +67,7 @@ namespace Visus.DeploymentToolkit.Services {
             var sb = new StringBuilder(this.Path);
 
             foreach (var a in this.Arguments) {
-                sb.Append('"').Append(a).Append('"');
+                sb.Append(" \"").Append(a).Append('"');
             }
 
             return sb.ToString();

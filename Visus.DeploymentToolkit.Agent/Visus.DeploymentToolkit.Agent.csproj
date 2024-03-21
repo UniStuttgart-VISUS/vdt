@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Visus.DeploymentToolkit.Bootstrapping\Visus.DeploymentToolkit.Bootstrapping.csproj" />
     <ProjectReference Include="..\Visus.DeploymentToolkit\Visus.DeploymentToolkit.csproj" />
   </ItemGroup>
 
