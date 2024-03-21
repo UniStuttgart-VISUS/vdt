@@ -61,8 +61,15 @@ namespace Visus.DeploymentToolkit.Services {
         public async Task LoadAsync(string path) {
             this._logger.LogTrace(Resources.RestoringState, path);
             using var file = File.Open(path, FileMode.Open, FileAccess.Read);
-            await JsonSerializer.DeserializeAsync<Dictionary<string, object>>(
-                file);
+            var values = await JsonSerializer.DeserializeAsync<
+                Dictionary<string, object>>(file);
+
+            if (values != null) {
+                foreach (var v in values) {
+                    // TODO: this does not work
+                    this._values[v.Key] = v.Value;
+                }
+            }
         }
 
         /// <inheritdoc />

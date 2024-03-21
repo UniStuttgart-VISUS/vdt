@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Serilog;
 using System;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
@@ -36,6 +37,47 @@ namespace Visus.DeploymentToolkit.Extensions {
             services.AddEnvironment();
             return services;
         }
+
+        /// <summary>
+        /// Configures our own logging to the console and to a log file (and to
+        /// diverse debug outputs).
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static IServiceCollection AddLogging(
+                this IServiceCollection services,
+                string file) {
+            _ = services ?? throw new ArgumentNullException(nameof(services));
+            _ = file ?? throw new ArgumentNullException(nameof(file));
+
+            services.AddLogging(o => {
+#if DEBUG
+                o.AddDebug();
+#endif // DEBUG
+
+                var config = new LoggerConfiguration().WriteTo.File(file);
+#if DEBUG
+                config.MinimumLevel.Verbose();
+#else // DEBUG
+                config.MinimumLevel.Info();
+#endif // DEBUG
+
+                o.AddSerilog(config.CreateLogger());
+                o.AddSimpleConsole(f => {
+                    f.IncludeScopes = false;
+                    f.SingleLine = true;
+                });
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection AddLogging(
+                this IServiceCollection services,
+                Func<string> file)
+            => services.AddLogging(file());
 
         /// <summary>
         /// Adds <see cref="IState"/> to the service collection.

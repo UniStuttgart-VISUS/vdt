@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Serilog;
 using System;
 using System.IO;
 using System.Linq;
@@ -32,41 +31,20 @@ using Visus.DeploymentToolkit.Workflow;
 
 // Build the configuration from appsettings.json and the command line.
 var configuration = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json", true, true)
     .AddEnvironmentVariables()
+    .AddJsonFile("appsettings.json", true, true)
     .AddCommandLine(args)
     .Build();
+
+var options = new BootstrappingOptions();
+configuration.Bind(options);
 
 // Collect all the services we need for bootstrapping.
 var services = new ServiceCollection()
     .AddBootstrappingServices()
     .AddState()
     .Configure<BootstrappingOptions>(configuration.Bind)
-    .AddLogging(o=> {
-#if DEBUG
-        o.AddDebug();
-#endif // DEBUG
-
-        var options = new BootstrappingOptions();
-        configuration.Bind(options);
-
-        var config = new LoggerConfiguration()
-            .WriteTo.File(options.LogFile);
-
-#if DEBUG
-        config.MinimumLevel.Verbose();
-#else // DEBUG
-        config.MinimumLevel.Info();
-#endif // DEBUG
-
-        var logger = config.CreateLogger();
-
-        o.AddSerilog(logger);
-        o.AddSimpleConsole(f => {
-            f.IncludeScopes = false;
-            f.SingleLine = true;
-        });
-    })
+    .AddLogging(options.LogFile)
     .BuildServiceProvider();
 
 
@@ -84,19 +62,18 @@ try {
 }
 
 try {
-    var opts = services.GetRequiredService<IOptions<BootstrappingOptions>>();
     var drives = services.GetRequiredService<IDriveInfo>();
     var input = services.GetRequiredService<IConsoleInput>();
     var task = services.GetRequiredService<MountNetworkShare>();
     var state = services.GetRequiredService<IState>();
 
     task.Path = input.ReadInput(Resources.PromptDeploymentShare,
-        opts.Value.DeploymentShare)!;
+        options.DeploymentShare)!;
     task.MountPoint = input.ReadInput(Resources.PromptMountPoint,
-        opts.Value.DeploymentDrive ?? drives.GetFreeDrives().Last());
+        options.DeploymentDrive ?? drives.GetFreeDrives().Last());
 
-    var domain = input.ReadInput(Resources.PromptDomain, opts.Value.Domain);
-    var user = input.ReadInput(Resources.PromptUser, opts.Value.User);
+    var domain = input.ReadInput(Resources.PromptDomain, options.Domain);
+    var user = input.ReadInput(Resources.PromptUser, options.User);
     var password = input.ReadPassword(Resources.PromptPassword);
     task.Credential = new(user, password, domain);
 
@@ -112,11 +89,10 @@ try {
 
 // Persist the state for the agent to run next.
 try {
-    var opts = services.GetRequiredService<IOptions<BootstrappingOptions>>();
     var state = services.GetRequiredService<IState>();
     state.Set(WellKnownStates.Phase, Phase.Installation);
-    log.LogInformation(Resources.PersistState, opts.Value.StateFile);
-    await state.SaveAsync(opts.Value.StateFile);
+    log.LogInformation(Resources.PersistState, options.StateFile);
+    await state.SaveAsync(options.StateFile);
 } catch (Exception ex) {
     log.LogError(ex, Errors.PersistState);
 }
@@ -124,12 +100,11 @@ try {
 // Start the agent.
 try {
     var factory = services.GetRequiredService<ICommandBuilderFactory>();
-    var opts = services.GetRequiredService<IOptions<BootstrappingOptions>>();
     var state = services.GetRequiredService<IState>();
-    var agent = Path.Combine(state.DeploymentShare!, opts.Value.AgentPath);
+    var agent = Path.Combine(state.DeploymentShare!, options.AgentPath);
     var command = factory.Run(agent)
         .WithArgumentList($"--DeploymentShare={state.DeploymentShare}",
-            $"--StateFile={opts.Value.StateFile}",
+            $"--StateFile={options.StateFile}",
             $"--Phase={Phase.Installation}")
         .DoNotWaitForProcess()
         .Build();

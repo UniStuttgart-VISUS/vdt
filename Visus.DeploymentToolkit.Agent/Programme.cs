@@ -6,37 +6,34 @@
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Visus.DeploymentToolkit.Agent;
+using Visus.DeploymentToolkit.Agent.Properties;
 using Visus.DeploymentToolkit.Extensions;
+using Visus.DeploymentToolkit.Services;
 
 
-var builder = Host.CreateDefaultBuilder(args);
+// Build the configuration from appsettings.json and the command line.
+var configuration = new ConfigurationBuilder()
+    .AddEnvironmentVariables()
+    .AddJsonFile("appsettings.json", true, true)
+    .AddCommandLine(args)
+    .Build();
 
-// Configure application options from either a file or from the command line.
-builder.ConfigureAppConfiguration(o => {
-    o.AddJsonFile("appsettings.json", true);
-    o.AddCommandLine(args);
-});
+var options = new AgentOptions();
+configuration.Bind(options);
 
-// Configure logging.
-builder.ConfigureLogging(o => {
-    o.AddConsole();
-    o.AddDebug();
-});
+// Collect all the bootstrapping and standard services.
+var services = new ServiceCollection()
+    .AddBootstrappingServices()
+    .AddState(options.StateFile)
+    .Configure<AgentOptions>(configuration.Bind)
+    .AddLogging(options.LogFile)
+    .BuildServiceProvider();
 
-// Configure the service services.
-builder.ConfigureServices((c, s) => {
-    //var config = new Configuration();
-    //c.Configuration.Bind(config);
+// Prepare the global application log.
+var log = services.GetRequiredService<ILogger<Program>>();
 
-    s.Configure<AgentOptions>(c.Configuration);
-
-    s.AddDeploymentServices();
-
-    s.AddHostedService<Agent>();
-});
-
-// Run the deployment agent.
-builder.RunConsoleAsync().Wait();
+// Restore the state if possible.
+var state = services.GetRequiredService<IState>();
+log.LogInformation(Resources.AgentStart, state.Phase);

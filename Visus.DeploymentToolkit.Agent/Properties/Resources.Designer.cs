@@ -63,9 +63,9 @@ namespace Visus.DeploymentToolkit.Agent.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The VISUS Deployment Toolkit agent started in phase {0}..
         /// </summary>
-        internal static string AgentStarting {
+        internal static string AgentStart {
             get {
-                return ResourceManager.GetString("AgentStarting", resourceCulture);
+                return ResourceManager.GetString("AgentStart", resourceCulture);
             }
         }
     }
