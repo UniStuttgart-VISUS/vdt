@@ -24,7 +24,7 @@ namespace Visus.DeploymentToolkit.Agent {
         /// <summary>
         /// Gets or sets the phase in which the agent is currently running.
         /// </summary>
-        public Phase Phase { get; set; }
+        public Phase Phase { get; set; } = Phase.Unknown;
 
         /// <summary>
         /// Gets or sets the path of the deployment share, either the UNC path

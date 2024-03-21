@@ -4,7 +4,6 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
@@ -32,6 +31,7 @@ namespace Visus.DeploymentToolkit.Extensions {
                 this IServiceCollection services) {
             services.AddBootstrappingTasks();
             services.AddCommands();
+            services.AddConsoleInput();
             services.AddDriveInfo();
             services.AddEnvironment();
             return services;
@@ -106,6 +106,20 @@ namespace Visus.DeploymentToolkit.Extensions {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             services.AddSingleton<ICommandBuilderFactory,
                 CommandBuilderFactory>();
+            return services;
+        }
+
+        /// <summary>
+        /// Adds the <see cref="IConsoleInput"/> service to the service
+        /// collection.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        internal static IServiceCollection AddConsoleInput(
+                this IServiceCollection services) {
+            _ = services ?? throw new ArgumentNullException(nameof(services));
+            services.AddSingleton<IConsoleInput, ConsoleInputService>();
             return services;
         }
 

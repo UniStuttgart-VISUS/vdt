@@ -13,6 +13,15 @@ namespace Visus.DeploymentToolkit.Bootstrapper {
     internal sealed class BootstrappingOptions {
 
         /// <summary>
+        /// Gets or sets the path to the deployment agent relative to the
+        /// location of the <see cref="DeploymentShare"/>.
+        /// </summary>
+        public string AgentPath {
+            get;
+            set;
+        } = @"bin\Visus.DeploymentToolkit.Agent.exe";
+
+        /// <summary>
         /// Gets or sets the drive where the deployment share should be mapped.
         /// </summary>
         /// <remarks>

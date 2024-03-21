@@ -69,7 +69,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <param name="value">The value of the specified key.</param>
         /// <returns>The previous value of the key or <c>null</c> if the key
         /// was not present in the state before.</returns>
-        object? Set(string key, object value);
+        object? Set(string key, object? value);
         #endregion
     }
 }

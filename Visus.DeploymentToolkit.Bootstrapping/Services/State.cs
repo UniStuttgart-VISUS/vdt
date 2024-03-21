@@ -91,7 +91,7 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         /// <inheritdoc />
-        public object? Set(string key, object value) {
+        public object? Set(string key, object? value) {
             this._values.TryGetValue(key, out var retval);
             this._values[key] = value;
             this._logger.LogInformation(Properties.Resources.ChangeState,

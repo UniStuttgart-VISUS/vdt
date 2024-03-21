@@ -9,7 +9,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Serilog;
+using System;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Visus.DeploymentToolkit.Bootstrapper;
 using Visus.DeploymentToolkit.Bootstrapper.Properties;
 using Visus.DeploymentToolkit.Extensions;
@@ -27,7 +31,8 @@ using Visus.DeploymentToolkit.Workflow;
 // possible. Therefore, changes the the configuration of the agent should not
 // require a rebuild as only the boostrapper is in the image.
 
-// Build the configuration from appsettings and the command line.
+
+// Build the configuration from appsettings.json and the command line.
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", true, true)
     .AddEnvironmentVariables()
@@ -66,54 +71,71 @@ var services = new ServiceCollection()
     })
     .BuildServiceProvider();
 
+
 // Prepare the global application log.
 var log = services.GetRequiredService<ILogger<Program>>();
 log.LogInformation(Resources.BootstrapperStart);
 
 
-
 // Perform bootstrapping.
-{
+try {
     var state = services.GetRequiredService<IState>();
     state.Set(WellKnownStates.Phase, Phase.Bootstrapping);
+} catch (Exception ex) {
+    log.LogError(ex, Errors.SetBoostrappingState);
 }
 
-{
-
+try {
     var opts = services.GetRequiredService<IOptions<BootstrappingOptions>>();
     var drives = services.GetRequiredService<IDriveInfo>();
+    var input = services.GetRequiredService<IConsoleInput>();
     var task = services.GetRequiredService<MountNetworkShare>();
     var state = services.GetRequiredService<IState>();
 
-    task.Path = opts.Value.DeploymentShare;
-    task.MountPoint = opts.Value.DeploymentDrive ?? drives.GetFreeDrives().Last();
+    task.Path = input.ReadInput(Resources.PromptDeploymentShare,
+        opts.Value.DeploymentShare)!;
+    task.MountPoint = input.ReadInput(Resources.PromptMountPoint,
+        opts.Value.DeploymentDrive ?? drives.GetFreeDrives().Last());
+
+    var domain = input.ReadInput(Resources.PromptDomain, opts.Value.Domain);
+    var user = input.ReadInput(Resources.PromptUser, opts.Value.User);
+    var password = input.ReadPassword(Resources.PromptPassword);
+    task.Credential = new(user, password, domain);
 
     log.LogInformation(Resources.MountDeploymentShare,
         task.Path,
         task.MountPoint);
-    //await task.ExecuteAsync(host.Services.GetRequiredService<IState>());
+    await task.ExecuteAsync(state);
 
     state.Set(WellKnownStates.DeploymentShare, task.MountPoint);
+} catch (Exception ex) {
+    log.LogCritical(ex, Errors.MountDeploymentShare);
 }
 
-
 // Persist the state for the agent to run next.
-{
+try {
     var opts = services.GetRequiredService<IOptions<BootstrappingOptions>>();
     var state = services.GetRequiredService<IState>();
     state.Set(WellKnownStates.Phase, Phase.Installation);
     log.LogInformation(Resources.PersistState, opts.Value.StateFile);
     await state.SaveAsync(opts.Value.StateFile);
+} catch (Exception ex) {
+    log.LogError(ex, Errors.PersistState);
 }
 
 // Start the agent.
-{
+try {
     var factory = services.GetRequiredService<ICommandBuilderFactory>();
-    var command = factory.Run("Visus.DeploymentToolkit.Agent.exe")
+    var opts = services.GetRequiredService<IOptions<BootstrappingOptions>>();
+    var state = services.GetRequiredService<IState>();
+    var agent = Path.Combine(state.DeploymentShare!, opts.Value.AgentPath);
+    var command = factory.Run(agent)
         .DoNotWaitForProcess()
         .Build();
     log.LogInformation(Resources.StartAgent, command);
-    //await command.ExecuteAsync();
+    await command.ExecuteAsync();
+} catch (Exception ex) {
+    log.LogCritical(ex, Errors.StartAgent);
 }
 
 log.LogInformation(Resources.BootstrapperExit);

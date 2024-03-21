@@ -22,14 +22,14 @@ namespace Visus.DeploymentToolkit.Bootstrapper.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    internal class Errors {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+        internal Errors() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Visus.DeploymentToolkit.Bootstrapper.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Visus.DeploymentToolkit.Bootstrapper.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Visus.DeploymentToolkit.Bootstrapper.Properties.Errors", typeof(Errors).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,25 +61,7 @@ namespace Visus.DeploymentToolkit.Bootstrapper.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The boostrapper is exiting..
-        /// </summary>
-        internal static string BootstrapperExit {
-            get {
-                return ResourceManager.GetString("BootstrapperExit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The bootstrapper is starting..
-        /// </summary>
-        internal static string BootstrapperStart {
-            get {
-                return ResourceManager.GetString("BootstrapperStart", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Mounting deployment share &quot;{0}&quot; to &quot;{1}&quot;..
+        ///   Looks up a localized string similar to Failed to mount the deployment share..
         /// </summary>
         internal static string MountDeploymentShare {
             get {
@@ -88,7 +70,7 @@ namespace Visus.DeploymentToolkit.Bootstrapper.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Persisting the state for the deployment agent to &quot;{0}&quot;. .
+        ///   Looks up a localized string similar to Failed to persist the deployment state for the agent..
         /// </summary>
         internal static string PersistState {
             get {
@@ -97,52 +79,16 @@ namespace Visus.DeploymentToolkit.Bootstrapper.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Path to deployment share.
+        ///   Looks up a localized string similar to Failed to set bootstrapping as the current state..
         /// </summary>
-        internal static string PromptDeploymentShare {
+        internal static string SetBoostrappingState {
             get {
-                return ResourceManager.GetString("PromptDeploymentShare", resourceCulture);
+                return ResourceManager.GetString("SetBoostrappingState", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Domain.
-        /// </summary>
-        internal static string PromptDomain {
-            get {
-                return ResourceManager.GetString("PromptDomain", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Deployment mount point.
-        /// </summary>
-        internal static string PromptMountPoint {
-            get {
-                return ResourceManager.GetString("PromptMountPoint", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Password.
-        /// </summary>
-        internal static string PromptPassword {
-            get {
-                return ResourceManager.GetString("PromptPassword", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to User name.
-        /// </summary>
-        internal static string PromptUser {
-            get {
-                return ResourceManager.GetString("PromptUser", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Starting the deployment agent &quot;{0}&quot;..
+        ///   Looks up a localized string similar to Failed to start the deployment agent..
         /// </summary>
         internal static string StartAgent {
             get {
