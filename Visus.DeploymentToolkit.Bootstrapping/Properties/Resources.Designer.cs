@@ -70,6 +70,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Changing environment variable &quot;{0}&quot; for the current user to &quot;{1}&quot;..
+        /// </summary>
+        internal static string ChangeEnvironment {
+            get {
+                return ResourceManager.GetString("ChangeEnvironment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Changing state &quot;{0}&quot; from &quot;{1}&quot; to &quot;{2}&quot;..
         /// </summary>
         internal static string ChangeState {

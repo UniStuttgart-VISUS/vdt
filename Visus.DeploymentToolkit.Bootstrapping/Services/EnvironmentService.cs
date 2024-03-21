@@ -4,10 +4,13 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
+using Visus.DeploymentToolkit.Properties;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -18,6 +21,18 @@ namespace Visus.DeploymentToolkit.Services {
     /// variables.
     /// </summary>
     internal sealed class EnvironmentService : IEnvironment {
+
+        #region Public constructors
+        /// <summary>
+        /// Initialises a new instance.
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public EnvironmentService(ILogger<EnvironmentService> logger) {
+            this._logger = logger
+                ?? throw new ArgumentNullException(nameof(logger));
+        }
+        #endregion
 
         #region Public methods
         /// <inheritdoc />
@@ -47,7 +62,26 @@ namespace Visus.DeploymentToolkit.Services {
                     return null;
                 }
             }
+            set {
+                Environment.SetEnvironmentVariable(name,
+                    value,
+                    EnvironmentVariableTarget.Process);
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                    Environment.SetEnvironmentVariable(name,
+                    value,
+                    EnvironmentVariableTarget.User);
+                }
+
+                this._logger.LogInformation(Resources.ChangeEnvironment,
+                    name,
+                    value);
+            }
         }
+        #endregion
+
+        #region Private fields
+        private readonly ILogger _logger;
         #endregion
     }
 }
