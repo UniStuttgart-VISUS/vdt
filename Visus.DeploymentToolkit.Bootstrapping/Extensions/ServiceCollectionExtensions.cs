@@ -33,6 +33,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             services.AddBootstrappingTasks();
             services.AddCommands();
             services.AddConsoleInput();
+            services.AddCopyService();
             services.AddDriveInfo();
             services.AddEnvironment();
             return services;
@@ -162,6 +163,19 @@ namespace Visus.DeploymentToolkit.Extensions {
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             services.AddSingleton<IConsoleInput, ConsoleInputService>();
+            return services;
+        }
+
+        /// <summary>
+        /// Adds the <see cref="ICopy"/> service to the service collection.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        internal static IServiceCollection AddCopyService(
+                this IServiceCollection services) {
+            _ = services ?? throw new ArgumentNullException(nameof(services));
+            services.AddSingleton<ICopy, CopyService>();
             return services;
         }
 

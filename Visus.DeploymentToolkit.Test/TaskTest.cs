@@ -20,7 +20,8 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public async Task TestCopyFilesFlat() {
-            var task = new CopyFiles(this._loggerFactory.CreateLogger<CopyFiles>());
+            var copy = new CopyService(this._loggerFactory.CreateLogger<CopyService>());
+            var task = new CopyFiles(copy, this._loggerFactory.CreateLogger<CopyFiles>());
             task.Source = ".";
             task.Destination = Path.Combine(Path.GetTempPath(), "DeimosTest2");
             task.IsRecursive = false;
@@ -31,7 +32,8 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public async Task TestCopyFilesRecursive() {
-            var task = new CopyFiles(this._loggerFactory.CreateLogger<CopyFiles>());
+            var copy = new CopyService(this._loggerFactory.CreateLogger<CopyService>());
+            var task = new CopyFiles(copy, this._loggerFactory.CreateLogger<CopyFiles>());
             task.Source = ".";
             task.Destination = Path.Combine(Path.GetTempPath(), "DeimosTest");
             task.IsOverwrite = true;

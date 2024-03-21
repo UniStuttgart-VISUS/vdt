@@ -23,9 +23,13 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
+        /// <param name="copy"></param>
         /// <param name="logger"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public CopyFiles(ILogger<CopyFiles> logger) : base(logger) { }
+        public CopyFiles(ICopy copy, ILogger<CopyFiles> logger)
+                : base(logger) {
+            this._copy = copy ?? throw new ArgumentNullException(nameof(copy));
+        }
         #endregion
 
         #region Public properties
@@ -62,77 +66,20 @@ namespace Visus.DeploymentToolkit.Tasks {
         #region Public methods
         /// <inheritdoc />
         public override Task ExecuteAsync(IState state) {
-            _ = state ?? throw new ArgumentNullException(nameof(state));
-            var sourceDir = Directory.Exists(this.Source);
-            var destDir = Directory.Exists(this.Destination);
-
-            if (sourceDir && File.Exists(this.Destination)) {
-                throw new InvalidOperationException(string.Format(
-                    Errors.CopyDirectoryToFile,
-                    this.Source,
-                    this.Destination));
+            var flags = CopyFlags.None;
+            if (this.IsRecursive) {
+                flags |= CopyFlags.Recursive;
+            }
+            if (this.IsOverwrite) {
+                flags |= CopyFlags.Overwrite;
             }
 
-            return Task.Factory.StartNew(() => {
-                // Make sure that the destination directory exists.
-                {
-                    var dir = sourceDir
-                        ? this.Destination
-                        : Path.GetDirectoryName(this.Destination);
-                    if ((dir != null) && !Directory.Exists(dir)) {
-                        this._logger.LogTrace(
-                            Resources.CreatingDestinationFolder,
-                            dir);
-                        Directory.CreateDirectory(dir);
-                    }
-                }
-
-                if (sourceDir) {
-                    var fmt = this.IsRecursive
-                        ? Resources.CopyRecursively
-                        : Resources.CopyFiles;
-                    var opt = this.IsRecursive
-                        ? SearchOption.AllDirectories
-                        : SearchOption.TopDirectoryOnly;
-                    var src = this.Source;
-
-                    this._logger.LogTrace(fmt, this.Source, this.Destination);
-
-                    foreach (var f in Directory.GetFiles(src, "*", opt)) {
-                        var d = RemovePrefix(f, src).TrimStart(Separators);
-                        d = Path.Combine(this.Destination, d);
-
-                        var dd = Path.GetDirectoryName(d);
-                        if (dd != null) {
-                            Directory.CreateDirectory(dd);
-                        }
-
-                        File.Copy(f, d, this.IsOverwrite);
-                    }
-                }
-            });
+            return this._copy.CopyAsync(this.Source, this.Destination, flags);
         }
         #endregion
 
-        #region Private class methods
-        private static string RemovePrefix(string path, string prefix) {
-            if (path.Length >= prefix.Length) {
-                if (path.StartsWith(prefix, CompareMode)) {
-                    return path.Substring(prefix.Length);
-                }
-            }
-
-            return path;
-        }
-        #endregion
-
-        #region Private constants
-        private const StringComparison CompareMode
-            = StringComparison.InvariantCultureIgnoreCase;
-        private static readonly char[] Separators = {
-            Path.DirectorySeparatorChar,
-            Path.AltDirectorySeparatorChar
-        };
+        #region Private fields
+        private readonly ICopy _copy;
         #endregion
     }
 }
