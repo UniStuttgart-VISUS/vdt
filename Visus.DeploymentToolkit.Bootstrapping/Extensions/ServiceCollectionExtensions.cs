@@ -4,10 +4,13 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Serilog;
 using System;
+using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
 
@@ -109,8 +112,12 @@ namespace Visus.DeploymentToolkit.Extensions {
 
             services.AddSingleton<IState>(s => {
                 var logger = s.GetRequiredService<ILogger<State>>();
+                logger.LogTrace(Resources.RestoringState, stateFile);
                 var state = new State(logger);
-                state.LoadAsync(stateFile).Wait();
+                new ConfigurationBuilder()
+                    .AddJsonFile(stateFile)
+                    .Build()
+                    .Bind(state);
                 return state;
             });
 

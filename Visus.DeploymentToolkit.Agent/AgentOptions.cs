@@ -42,5 +42,13 @@ namespace Visus.DeploymentToolkit.Agent {
         /// has persisted the state that is loaded when starting.
         /// </summary>
         public string StateFile { get; set; } = "deimosstate.json";
+
+        /// <summary>
+        /// Gets or sets the name of the task sequence to execute.
+        /// </summary>
+        /// <remarks>
+        /// If this option is not set, the agent will ask for what to do.
+        /// </remarks>
+        public string? TaskSequence { get; set; }
     }
 }

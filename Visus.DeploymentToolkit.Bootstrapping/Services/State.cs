@@ -38,15 +38,15 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public properties
         /// <inheritdoc />
-        public string? DeploymentShare
-            => this.Get(WellKnownStates.DeploymentShare) as string;
+        public string? DeploymentShare {
+            get => this.Get(WellKnownStates.DeploymentShare) as string;
+            set => this.Set(WellKnownStates.DeploymentShare, value);
+        }
 
         /// <inheritdoc />
         public Phase Phase {
-            get {
-                var retval = this.Get(WellKnownStates.Phase);
-                return retval as Phase? ?? Phase.Unknown;
-            }
+            get => this.Get(WellKnownStates.Phase) as Phase? ?? Phase.Unknown;
+            set => this.Set(WellKnownStates.Phase, value);
         }
         #endregion
 
@@ -54,21 +54,6 @@ namespace Visus.DeploymentToolkit.Services {
         /// <inheritdoc />
         public object? Get(string key) {
             return this._values.TryGetValue(key, out var value) ? value : null;
-        }
-
-        /// <inheritdoc />
-        public async Task LoadAsync(string path) {
-            this._logger.LogTrace(Resources.RestoringState, path);
-            using var file = File.Open(path, FileMode.Open, FileAccess.Read);
-            var values = await JsonSerializer.DeserializeAsync<
-                Dictionary<string, object>>(file);
-
-            if (values != null) {
-                foreach (var v in values) {
-                    // TODO: this does not work
-                    this._values[v.Key] = v.Value;
-                }
-            }
         }
 
         /// <inheritdoc />
@@ -80,20 +65,7 @@ namespace Visus.DeploymentToolkit.Services {
                 WriteIndented = true,
             };
 
-            // Copy only the values that we can actually restore.
-            var supportedValues = new Dictionary<string, object>();
-            foreach (var v in this._values) {
-                var valueType = v.Value.GetType();
-                var supported = valueType.IsBasicJson()
-                    || valueType.IsEnum
-                    || valueType.IsEnumerable(TypeExtensions.IsBasicJson)
-                    || valueType.IsEnumerable(t => t.IsEnum);
-                if (supported) {
-                    supportedValues[v.Key] = v.Value;
-                }
-            }
-
-            await JsonSerializer.SerializeAsync(file, supportedValues, opts);
+            await JsonSerializer.SerializeAsync(file, this._values, opts);
         }
 
         /// <inheritdoc />
@@ -108,7 +80,7 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Private fields
         private readonly ILogger _logger;
-        private readonly Dictionary<string, object> _values = new();
+        private readonly Dictionary<string, object?> _values = new();
         #endregion
     }
 }

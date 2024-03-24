@@ -18,12 +18,9 @@ namespace Visus.DeploymentToolkit.Services {
     /// executing. It can be used to transport information from one
     /// <see cref="ITask"/> to another.</para>
     /// <para>Tasks can store any type of data in the state, but serialisation
-    /// is only supported for basic JSON data types, which are
-    /// <see cref="string"/>, <see cref="bool"/>, any
-    /// <see cref="System.Numerics.INumber{T}"/>, or
-    /// <see cref="System.Collections.Generic.IEnumerable{T}"/> thereof.
-    /// Implementations may strip other values from the file or fail to
-    /// reconstruct them.</para>
+    /// is only supported for the structured data stored in the properties
+    /// of the state object. Anything else is lost when transferring the state
+    /// from one process to another.</para>
     /// </remarks>
     public interface IState {
 
@@ -47,13 +44,6 @@ namespace Visus.DeploymentToolkit.Services {
         /// <returns>The value of the state or <c>null</c> if the specified
         /// key is not part of the state.</returns>
         object? Get(string key);
-
-        /// <summary>
-        /// Restores the state object from a JSON file.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        Task LoadAsync(string path);
 
         /// <summary>
         /// Persists the state to a JSON file at the specified location.
