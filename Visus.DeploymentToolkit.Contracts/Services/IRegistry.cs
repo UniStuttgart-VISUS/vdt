@@ -16,11 +16,14 @@ namespace Visus.DeploymentToolkit.Services {
         /// <summary>
         /// Gets the given value from the registry.
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="name"></param>
-        /// <param name="fallback"></param>
+        /// <param name="key">The full path to the registry key.</param>
+        /// <param name="name">The name of the value to open or <c>null</c> for
+        /// the default value.</param>
+        /// <param name="fallback">The default value being returned if the
+        /// requested value was not in the registry. This parameter defaults
+        /// to <c>null</c>.</param>
         /// <returns></returns>
-        object? GetValue(string key, string name, object? fallback = null);
+        object? GetValue(string key, string? name, object? fallback = null);
 
         /// <summary>
         /// Answer whether the given registry key exists.

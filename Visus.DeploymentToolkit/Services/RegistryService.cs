@@ -32,7 +32,7 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public methods
         /// <inheritdoc />
-        public object? GetValue(string key, string name, object? fallback) {
+        public object? GetValue(string key, string? name, object? fallback) {
             using var k = this.OpenKey(key, RegistryRights.ReadKey);
             return k?.GetValue(name, fallback);
         }
