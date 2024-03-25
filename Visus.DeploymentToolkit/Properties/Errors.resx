@@ -120,6 +120,9 @@
   <data name="CouldNotGetProductType" xml:space="preserve">
     <value>Failed to retrieve the product type from the registry.</value>
   </data>
+  <data name="HalNotFound" xml:space="preserve">
+    <value>The system could not determine the type of the HAL.</value>
+  </data>
   <data name="NoRegistryHive" xml:space="preserve">
     <value>"{0}" does not designate or does not begin with a valid registry hive.</value>
   </data>

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management;
 using System.Runtime.Versioning;
+using Visus.DeploymentToolkit.Properties;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -52,6 +53,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <inheritdoc />
         public IEnumerable<ManagementObject> Query(string query,
                 ManagementScope? scope) {
+            this._logger.LogTrace(Resources.IssuingWmiQuery, query);
             var search = new ManagementObjectSearcher(
                 scope ?? this.DefaultScope,
                  new ObjectQuery(query));

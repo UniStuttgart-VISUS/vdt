@@ -124,6 +124,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Issuing WMI query &quot;{0}&quot;..
+        /// </summary>
+        internal static string IssuingWmiQuery {
+            get {
+                return ResourceManager.GetString("IssuingWmiQuery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Registry hive is &quot;{0}&quot;..
         /// </summary>
         internal static string ParsingAsRegistryHive {

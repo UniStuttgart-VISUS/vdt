@@ -138,6 +138,9 @@
   <data name="DismShutdown" xml:space="preserve">
     <value>Shutting down DISM.</value>
   </data>
+  <data name="IssuingWmiQuery" xml:space="preserve">
+    <value>Issuing WMI query "{0}".</value>
+  </data>
   <data name="ParsingAsRegistryHive" xml:space="preserve">
     <value>Registry hive is "{0}".</value>
   </data>

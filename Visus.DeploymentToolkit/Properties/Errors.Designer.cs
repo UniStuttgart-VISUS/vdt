@@ -70,6 +70,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The system could not determine the type of the HAL..
+        /// </summary>
+        internal static string HalNotFound {
+            get {
+                return ResourceManager.GetString("HalNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &quot;{0}&quot; does not designate or does not begin with a valid registry hive..
         /// </summary>
         internal static string NoRegistryHive {

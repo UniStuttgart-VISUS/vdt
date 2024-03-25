@@ -6,7 +6,13 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 
 
@@ -19,38 +25,27 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public constructors
         public SystemInformationService(IRegistry registry,
+                IManagementService wmi,
                 ILogger<SystemInformationService> logger) {
             this._logger = logger
                 ?? throw new ArgumentNullException(nameof(logger));
-            this._registry = registry
-                ?? throw new ArgumentNullException(nameof(registry));
+            _ = registry ?? throw new ArgumentNullException(nameof(registry));
+            _ = wmi ?? throw new ArgumentNullException(nameof(wmi));
 
-            // Check for WinPE and Server/Server Core from MDT.
-            this.IsWinPE = this._registry.KeyExists(
-                @"HKLM\System\CurrentControlSet\Control\MiniNT");
-
-            try {
-                var productType = this._registry.GetValue(
-                    @"HKLM\SYSTEM\CurrentControlSet\Control\ProductOptions",
-                    "ProductType");
-                this.IsServer = productType switch {
-                    "ServerNT" => true,
-                    "LanmanNT" => true,
-                    _ => false,
-                };
-            } catch (Exception ex) {
-                this._logger.LogError(ex, Errors.CouldNotGetProductType);
-            }
-
-            {
-                var explorerPath = Environment.ExpandEnvironmentVariables(
-                    @"%WINDIR%\explorer.exe");
-                this.IsServerCore = !this.IsWinPE && !File.Exists(explorerPath);
-            }
+            this._hal = new(() => this.GetHal(wmi, registry));
+            this.IsWinPE = this.GetIsWinPE(registry);
+            this.IsServer = this.GetIsServer(registry);
+            this.IsServerCore = !this.IsWinPE && !this.HasWindowsExplorer();
         }
         #endregion
 
         #region Public properties
+        /// <inheritdoc />
+        public string? Hal => this._hal.Value;
+
+        /// <inheritdoc />
+        public string HostName => Environment.MachineName;
+
         /// <inheritdoc />
         public bool IsWinPE { get; }
 
@@ -68,9 +63,85 @@ namespace Visus.DeploymentToolkit.Services {
         public Version OperatingSystemVersion => Environment.OSVersion.Version;
         #endregion
 
+        #region Private methods
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private string GetHal(IManagementService wmi, IRegistry registry) {
+            Debug.Assert(wmi != null);
+            Debug.Assert(registry != null);
+            string? retval = null;
+
+            var query = "SELECT DeviceID "
+                + "FROM Win32_PnPEntity "
+                + @"WHERE ClassGUID=""{4D36E966-E325-11CE-BFC1-08002BE10318}"" "
+                + @"OR DeviceID LIKE ""ROOT\\%HAL%""";
+
+            var device = wmi.Query(query).FirstOrDefault();
+
+            if (device != null) {
+                var key = @"HKLM\SYSTEM\CurrentControlSet\Enum\"
+                    + device["DeviceID"];
+                var hwID = registry.GetValue(key, "HardwareID");
+                if (hwID is IEnumerable<object> e) {
+                    retval = e.FirstOrDefault() as string;
+                } else {
+                    retval = hwID as string;
+                }
+            }
+
+            // Like MDT, try the registry if we did not get the HAL via WMI.
+            if (retval == null) {
+                for (int i = 0; i < 9999; ++i) {
+                    var key = @"HKLM\System\CurrentControlSet\Control\Class\"
+                        + @"{4D36E966-E325-11CE-BFC1-08002BE10318}\"
+                        + i.ToString("D4");
+                    var hwID = registry.GetValue(key, "MatchingDeviceID");
+                    if ((hwID != null) && (hwID is string s)) {
+                        retval = s;
+                        break;
+                    }
+                }
+            }
+
+            return retval ?? throw new NotFoundException(Errors.HalNotFound);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool GetIsWinPE(IRegistry registry) {
+            Debug.Assert(registry != null);
+            var key = @"HKLM\System\CurrentControlSet\Control\MiniNT";
+            return registry.KeyExists(key);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool GetIsServer(IRegistry registry) {
+            Debug.Assert(registry != null);
+
+            try {
+                var productType = registry.GetValue(
+                    @"HKLM\SYSTEM\CurrentControlSet\Control\ProductOptions",
+                    "ProductType");
+                return productType switch {
+                    "ServerNT" => true,
+                    "LanmanNT" => true,
+                    _ => false,
+                };
+            } catch (Exception ex) {
+                this._logger.LogError(ex, Errors.CouldNotGetProductType);
+                return false;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool HasWindowsExplorer() {
+            var path = @"%WINDIR%\explorer.exe";
+            path = Environment.ExpandEnvironmentVariables(path);
+            return File.Exists(path);
+        }
+        #endregion
+
         #region Private fields
+        private readonly Lazy<string> _hal;
         private readonly ILogger _logger;
-        private readonly IRegistry _registry;
         #endregion
     }
 }

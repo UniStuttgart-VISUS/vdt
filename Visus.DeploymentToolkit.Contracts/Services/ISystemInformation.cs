@@ -5,10 +5,6 @@
 // <author>Christoph Müller</author>
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -17,6 +13,16 @@ namespace Visus.DeploymentToolkit.Services {
     /// A service for retrieving information about the system we are running.
     /// </summary>
     public interface ISystemInformation {
+
+        /// <summary>
+        /// Gets the HAL.
+        /// </summary>
+        string? Hal { get; }
+
+        /// <summary>
+        /// Gets the host name of the system.
+        /// </summary>
+        string HostName { get; }
 
         /// <summary>
         /// Gets whether the Windows version is a preinstalled environment.

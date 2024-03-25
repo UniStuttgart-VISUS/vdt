@@ -13,17 +13,30 @@ namespace Visus.DeploymentToolkit.Test {
     [TestClass]
     public sealed class SystemInformationTest {
 
-        [TestMethod]
-        public void OperatingSystem() {
-            var registry = new RegistryService(this._loggerFactory.CreateLogger<RegistryService>());
-            var sysInfo = new SystemInformationService(registry, this._loggerFactory.CreateLogger<SystemInformationService>());
-
-            Assert.AreEqual(PlatformID.Win32NT, sysInfo.OperatingSystemPlatform);
-            Assert.IsFalse(sysInfo.IsWinPE);
-            Assert.IsFalse(sysInfo.IsServerCore);
+        public SystemInformationTest() {
+            var loggers = LoggerFactory.Create(l => l.AddDebug());
+            var registry = new RegistryService(loggers.CreateLogger<RegistryService>());
+            var wmi = new ManagementService(loggers.CreateLogger<ManagementService>());
+            this._sysInfo = new SystemInformationService(registry, wmi, loggers.CreateLogger<SystemInformationService>()); ;
         }
 
+        [TestMethod]
+        public void Hal() {
+            Assert.IsNotNull(this._sysInfo.Hal);
+        }
 
-        private readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(l => l.AddDebug());
+        [TestMethod]
+        public void HostName() {
+            Assert.AreEqual(Environment.MachineName, this._sysInfo.HostName);
+        }
+
+        [TestMethod]
+        public void OperatingSystem() {
+            Assert.AreEqual(PlatformID.Win32NT, this._sysInfo.OperatingSystemPlatform);
+            Assert.IsFalse(this._sysInfo.IsWinPE);
+            Assert.IsFalse(this._sysInfo.IsServerCore);
+        }
+
+        private readonly SystemInformationService _sysInfo;
     }
 }
