@@ -6,11 +6,8 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Visus.DeploymentToolkit.Services;
-using Visus.DeploymentToolkit.Tasks;
-using Visus.DeploymentToolkit.Workflow;
 
 
 namespace Visus.DeploymentToolkit.Extensions {

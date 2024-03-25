@@ -33,6 +33,14 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public methods
         /// <summary>
+        /// Get all instances of the specified objec class.
+        /// </summary>
+        /// <param name="class"></param>
+        /// <returns></returns>
+        IEnumerable<ManagementObject> GetInstancesOf(string @class,
+            ManagementScope? scope = null);
+
+        /// <summary>
         /// Runs the given WQL query on the specified <paramref name="scope"/>
         /// or on <see cref="DefaultScope"/> if <paramref name="scope"/> is
         /// <c>null</c>.

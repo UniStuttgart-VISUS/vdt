@@ -51,6 +51,12 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public methods
         /// <inheritdoc />
+        public IEnumerable<ManagementObject> GetInstancesOf(string @class,
+                ManagementScope? scope = null) {
+            return this.Query($"SELECT * FROM {@class}", scope);
+        }
+
+        /// <inheritdoc />
         public IEnumerable<ManagementObject> Query(string query,
                 ManagementScope? scope) {
             this._logger.LogTrace(Resources.IssuingWmiQuery, query);

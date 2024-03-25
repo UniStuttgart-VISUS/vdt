@@ -5,6 +5,8 @@
 // <author>Christoph Müller</author>
 
 using System;
+using System.Collections.Generic;
+using System.Net.NetworkInformation;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -13,6 +15,16 @@ namespace Visus.DeploymentToolkit.Services {
     /// A service for retrieving information about the system we are running.
     /// </summary>
     public interface ISystemInformation {
+
+        /// <summary>
+        /// Gets an optional asset tag that might be set via SMBIOS.
+        /// </summary>
+        string? AssetTag { get; }
+
+        /// <summary>
+        /// Gets the chassis or form factor of the system.
+        /// </summary>
+        IEnumerable<ChassisType> Chassis { get; }
 
         /// <summary>
         /// Gets the HAL.
@@ -41,6 +53,17 @@ namespace Visus.DeploymentToolkit.Services {
         bool IsServerCore { get; }
 
         /// <summary>
+        /// Gets the manufacturer of the computer as reported by the SMBIOS.
+        /// </summary>
+        string? Manufacturer { get; }
+
+        /// <summary>
+        /// Gets the model of the computer as reported by the SMBIOS.
+        /// </summary>
+        string? Model { get; }
+
+
+        /// <summary>
         /// Gets the OS platform.
         /// </summary>
         PlatformID OperatingSystemPlatform { get; }
@@ -49,5 +72,20 @@ namespace Visus.DeploymentToolkit.Services {
         /// Gets the version of the operating system we are running on.
         /// </summary>
         Version OperatingSystemVersion { get; }
+
+        /// <summary>
+        /// Gets the MAC addresses of the system.
+        /// </summary>
+        IEnumerable<PhysicalAddress> PhysicalAddresses { get; }
+
+        /// <summary>
+        /// Gets the system's serial number as reported by the BIOS.
+        /// </summary>
+        string? SerialNumber { get; }
+
+        /// <summary>
+        /// Gets the UUID of the system, if any.
+        /// </summary>
+        Guid? Uuid { get; }
     }
 }

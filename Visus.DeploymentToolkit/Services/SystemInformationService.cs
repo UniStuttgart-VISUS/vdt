@@ -11,8 +11,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Management;
+using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
-using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 
 
@@ -29,10 +30,15 @@ namespace Visus.DeploymentToolkit.Services {
                 ILogger<SystemInformationService> logger) {
             this._logger = logger
                 ?? throw new ArgumentNullException(nameof(logger));
-            _ = registry ?? throw new ArgumentNullException(nameof(registry));
-            _ = wmi ?? throw new ArgumentNullException(nameof(wmi));
+            this._wmi = wmi ?? throw new ArgumentNullException(nameof(wmi));
 
-            this._hal = new(() => this.GetHal(wmi, registry));
+            _ = registry ?? throw new ArgumentNullException(nameof(registry));
+
+            this._bios = new(() => this.GetWmi("Win32_BIOS"));
+            this._computer = new(() => this.GetWmi("Win32_ComputerSystem"));
+            this._computerProduct = new(() => this.GetWmi("Win32_ComputerSystemProduct"));
+            this._enclosure = new(() => this.GetWmi("Win32_SystemEnclosure"));
+            this._hal = new(() => this.GetHal(this._wmi, registry));
             this.IsWinPE = this.GetIsWinPE(registry);
             this.IsServer = this.GetIsServer(registry);
             this.IsServerCore = !this.IsWinPE && !this.HasWindowsExplorer();
@@ -40,6 +46,19 @@ namespace Visus.DeploymentToolkit.Services {
         #endregion
 
         #region Public properties
+        /// <inheritdoc />
+        public string? AssetTag => (this._enclosure.Value?["SMBIOSAssetTag"]
+            as string)?.Trim();
+
+        /// <inheritdoc />
+        public IEnumerable<ChassisType> Chassis {
+            get {
+                return (this._enclosure.Value?["ChassisTypes"] as IEnumerable)
+                    ?.Cast<ChassisType>()
+                    ?? Enumerable.Empty<ChassisType>();
+            }
+        }
+
         /// <inheritdoc />
         public string? Hal => this._hal.Value;
 
@@ -56,11 +75,43 @@ namespace Visus.DeploymentToolkit.Services {
         public bool IsServerCore { get; }
 
         /// <inheritdoc />
+        public string? Manufacturer
+            => this._computer.Value?["Manufacturer"] as string;
+
+        /// <inheritdoc />
+        public string? Model
+            => this._computer.Value?["Model"] as string;
+
+        /// <inheritdoc />
         public PlatformID OperatingSystemPlatform
             => Environment.OSVersion.Platform;
 
         /// <inheritdoc />
         public Version OperatingSystemVersion => Environment.OSVersion.Version;
+
+        /// <inheritdoc />
+        public IEnumerable<PhysicalAddress> PhysicalAddresses {
+            get {
+                foreach (var i in NetworkInterface.GetAllNetworkInterfaces()) {
+                    var retval = i.GetPhysicalAddress();
+                    if ((retval != null) && retval.GetAddressBytes().Any()) {
+                        yield return retval;
+                    }
+                }
+            }
+        }
+
+        /// <inheritdoc />
+        public string? SerialNumber
+            => this._bios.Value?["SerialNumber"] as string;
+
+        /// <inheritdoc />
+        public Guid? Uuid {
+            get {
+                var uuid = this._computerProduct.Value?["UUID"] as string;
+                return (uuid != null) ? new Guid(uuid) : null;
+            }
+        }
         #endregion
 
         #region Private methods
@@ -132,6 +183,12 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private ManagementObject? GetWmi(string @class) {
+            Debug.Assert(@class != null);
+            return this._wmi.GetInstancesOf(@class).FirstOrDefault();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool HasWindowsExplorer() {
             var path = @"%WINDIR%\explorer.exe";
             path = Environment.ExpandEnvironmentVariables(path);
@@ -140,8 +197,13 @@ namespace Visus.DeploymentToolkit.Services {
         #endregion
 
         #region Private fields
+        private readonly Lazy<ManagementObject?> _bios;
+        private readonly Lazy<ManagementObject?> _computer;
+        private readonly Lazy<ManagementObject?> _computerProduct;
+        private readonly Lazy<ManagementObject?> _enclosure;
         private readonly Lazy<string> _hal;
         private readonly ILogger _logger;
+        private readonly IManagementService _wmi;
         #endregion
     }
 }
