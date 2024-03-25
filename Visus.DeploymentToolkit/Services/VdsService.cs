@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Contracts.DiskManagement;
@@ -20,6 +21,7 @@ namespace Visus.DeploymentToolkit.Services {
     /// <summary>
     /// Provides access to disk management via the Virtual Disk Service VDS.
     /// </summary>
+    [SupportedOSPlatform("windows")]
     internal sealed class VdsService : IDiskManagement {
 
         /// <summary>

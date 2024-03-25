@@ -61,11 +61,38 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to retrieve the product type from the registry..
+        /// </summary>
+        internal static string CouldNotGetProductType {
+            get {
+                return ResourceManager.GetString("CouldNotGetProductType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;{0}&quot; does not designate or does not begin with a valid registry hive..
+        /// </summary>
+        internal static string NoRegistryHive {
+            get {
+                return ResourceManager.GetString("NoRegistryHive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The service loader for the Virtual Disk Services does not implement the expected interface..
         /// </summary>
         internal static string NoVdsServiceLoader {
             get {
                 return ResourceManager.GetString("NoVdsServiceLoader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to open the registry path &quot;{0}&quot;..
+        /// </summary>
+        internal static string OpenRegistryFailed {
+            get {
+                return ResourceManager.GetString("OpenRegistryFailed", resourceCulture);
             }
         }
         
