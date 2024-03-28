@@ -52,6 +52,12 @@ namespace Visus.DeploymentToolkit.Services {
         /// <summary>
         /// Gets the partition style.
         /// </summary>
+        /// <remarks>
+        /// The partition style of the disk determines whether certain
+        /// properties are applicable for a partition. Although the partition
+        /// style is a property of the whole disk, we have it in the partition
+        /// as well for convenience.
+        /// </remarks>
         PartitionStyle Style { get; }
     }
 }

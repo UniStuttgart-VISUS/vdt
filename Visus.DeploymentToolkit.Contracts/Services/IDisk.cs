@@ -39,5 +39,10 @@ namespace Visus.DeploymentToolkit.Services {
         /// formatted.
         /// </remarks>
         IEnumerable<IPartition> Partitions { get; }
+
+        /// <summary>
+        /// Gets the partition style of the disk.
+        /// </summary>
+        PartitionStyle PartitionStyle { get; }
     }
 }

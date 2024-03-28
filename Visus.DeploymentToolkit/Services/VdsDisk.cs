@@ -30,6 +30,10 @@ namespace Visus.DeploymentToolkit.Services {
 
         /// <inheritdoc />
         public IEnumerable<IPartition> Partitions => this._partitions.Value;
+
+        /// <inheritdoc />
+        public PartitionStyle PartitionStyle
+            => (PartitionStyle) this._properties.PartitionStyle;
         #endregion
 
         #region Internal constructors

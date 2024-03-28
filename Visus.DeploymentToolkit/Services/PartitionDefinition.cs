@@ -11,6 +11,10 @@ namespace Visus.DeploymentToolkit.Services {
     /// Generic implementation of <see cref="IPartition"/>, which can be used to
     /// define the partitioning of a disk.
     /// </summary>
+    /// <remarks>
+    /// Objects of this class are used in the JSON file defining the installation
+    /// task sequence to specify how the disk should be configured.
+    /// </remarks>
     public sealed class PartitionDefinition : IPartition {
 
         /// <inheritdoc />
@@ -39,8 +43,12 @@ namespace Visus.DeploymentToolkit.Services {
         public ulong Size { get; set; }
 
         /// <summary>
-        /// Gets or sets the partition style.
+        /// Gets the partition style.
         /// </summary>
-        public PartitionStyle Style { get; set; }
+        /// <remarks>
+        /// This property is not used when partitioning as the disk as a whole
+        /// needs to have the same parition style.
+        /// </remarks>
+        public PartitionStyle Style => PartitionStyle.Unknown;
     }
 }
