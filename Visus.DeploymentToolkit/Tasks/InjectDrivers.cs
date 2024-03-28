@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Services;
 
@@ -16,7 +17,8 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         public InjectDrivers(ILogger<InjectDrivers> logger) : base(logger) { }
 
-        public override Task ExecuteAsync(IState state) {
+        public override Task ExecuteAsync(IState state,
+                CancellationToken cancellationToken) {
 
             //DismApi.MountImage()
             throw new NotImplementedException();

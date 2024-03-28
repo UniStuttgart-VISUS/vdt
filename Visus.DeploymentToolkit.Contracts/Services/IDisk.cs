@@ -4,10 +4,11 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System;
 using System.Collections.Generic;
 
 
-namespace Visus.DeploymentToolkit.Contracts.DiskManagement {
+namespace Visus.DeploymentToolkit.Services {
 
     /// <summary>
     /// The interface of a disk that can be used to install the operating system
@@ -16,14 +17,19 @@ namespace Visus.DeploymentToolkit.Contracts.DiskManagement {
     public interface IDisk {
 
         /// <summary>
+        /// Gets the storage bus used by the disk.
+        /// </summary>
+        StorageBusType BusType { get; }
+
+        /// <summary>
         /// Gets the friendly name of the disk.
         /// </summary>
         string FriendlyName { get; }
 
         /// <summary>
-        /// Gets the zero-based index of the disk.
+        /// Gets the unique ID of the disk.
         /// </summary>
-        int Index { get; }
+        Guid ID { get; }
 
         /// <summary>
         /// Gets the partitions on the disk.

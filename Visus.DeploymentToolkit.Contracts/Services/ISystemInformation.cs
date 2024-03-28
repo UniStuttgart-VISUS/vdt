@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.NetworkInformation;
 
 
@@ -37,6 +38,11 @@ namespace Visus.DeploymentToolkit.Services {
         string HostName { get; }
 
         /// <summary>
+        /// Gets all IP addresses assigned to any network adapter of the system.
+        /// </summary>
+        IEnumerable<IPAddress> IPAddresses { get; }
+
+        /// <summary>
         /// Gets whether the Windows version is a preinstalled environment.
         /// </summary>
         bool IsWinPE { get; }
@@ -61,7 +67,6 @@ namespace Visus.DeploymentToolkit.Services {
         /// Gets the model of the computer as reported by the SMBIOS.
         /// </summary>
         string? Model { get; }
-
 
         /// <summary>
         /// Gets the OS platform.

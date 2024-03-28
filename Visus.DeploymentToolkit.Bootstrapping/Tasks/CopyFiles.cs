@@ -7,6 +7,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
@@ -65,7 +66,8 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         #region Public methods
         /// <inheritdoc />
-        public override Task ExecuteAsync(IState state) {
+        public override Task ExecuteAsync(IState state,
+                CancellationToken cancellationToken) {
             var flags = CopyFlags.None;
             if (this.IsRecursive) {
                 flags |= CopyFlags.Recursive;

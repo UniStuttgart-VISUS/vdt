@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
@@ -80,7 +81,8 @@ namespace Visus.DeploymentToolkit.Tasks {
         public int[]? SucccessExitCodes { get; set; }
 
         /// <inheritdoc />
-        public override async Task ExecuteAsync(IState state) {
+        public override async Task ExecuteAsync(IState state,
+                CancellationToken cancellationToken) {
             _ = state ?? throw new ArgumentNullException(nameof(state));
             var cmd = this._factory.Run(this.Path)
                 .WithArguments(this.Arguments)

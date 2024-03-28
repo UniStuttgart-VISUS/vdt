@@ -5,7 +5,7 @@
 // <author>Christoph Müller</author>
 
 
-namespace Visus.DeploymentToolkit.Contracts.DiskManagement {
+namespace Visus.DeploymentToolkit.Services {
 
     /// <summary>
     /// The interface of a disk partition.

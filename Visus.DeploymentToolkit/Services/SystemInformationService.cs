@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Management;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 using Visus.DeploymentToolkit.Properties;
@@ -64,6 +65,17 @@ namespace Visus.DeploymentToolkit.Services {
 
         /// <inheritdoc />
         public string HostName => Environment.MachineName;
+
+        /// <inheritdoc />
+        public IEnumerable<IPAddress> IPAddresses {
+            get {
+                foreach (var i in NetworkInterface.GetAllNetworkInterfaces()) {
+                    foreach (var a in i.GetIPProperties().UnicastAddresses) {
+                        yield return a.Address;
+                    }
+                }
+            }
+        }
 
         /// <inheritdoc />
         public bool IsWinPE { get; }

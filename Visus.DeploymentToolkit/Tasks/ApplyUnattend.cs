@@ -7,6 +7,7 @@
 using Microsoft.Dism;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
@@ -48,7 +49,8 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         #region Public methods
         /// <inheritdoc />
-        public override Task ExecuteAsync(IState state) {
+        public override Task ExecuteAsync(IState state,
+                CancellationToken cancellationToken) {
             this._logger.LogTrace(Resources.DismOpenOffline,
                 this.InstallationPath);
             var session = DismApi.OpenOfflineSession(this.InstallationPath);

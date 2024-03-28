@@ -4,8 +4,10 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using Microsoft.Extensions.Logging;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Vds;
 
 
@@ -118,5 +120,16 @@ namespace Visus.DeploymentToolkit.Test {
             }
         }
 
+
+        [TestMethod]
+        public async Task DisksFromVdsService() {
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                var vds = new VdsService(this._loggerFactory.CreateLogger<VdsService>());
+                var disks = await vds.GetDisksAsync(CancellationToken.None);
+                Assert.IsTrue(disks.Any());
+            }
+        }
+
+        private readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(l => l.AddDebug());
     }
 }

@@ -9,6 +9,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Runtime.Versioning;
+using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
@@ -56,7 +57,8 @@ namespace Visus.DeploymentToolkit.Tasks {
         #region Public methods
         /// <inheritdoc />
         [SupportedOSPlatform("windows")]
-        public override Task ExecuteAsync(IState state) {
+        public override Task ExecuteAsync(IState state,
+                CancellationToken cancellationToken) {
             _ = state ?? throw new ArgumentNullException(nameof(state));
 
             if (this.MountPoint == null) {

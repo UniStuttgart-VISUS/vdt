@@ -4,7 +4,6 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using Visus.DeploymentToolkit.Contracts.DiskManagement;
 using Visus.DeploymentToolkit.Vds;
 
 

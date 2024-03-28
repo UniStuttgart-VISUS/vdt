@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Workflow;
@@ -34,7 +35,8 @@ namespace Visus.DeploymentToolkit.Tasks {
         }
 
         /// <inheritdoc />
-        public abstract Task ExecuteAsync(IState state);
+        public abstract Task ExecuteAsync(IState state,
+            CancellationToken cancellationToken);
         #endregion
 
         #region Protected constructors

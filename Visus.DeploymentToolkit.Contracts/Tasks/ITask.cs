@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Workflow;
@@ -52,10 +53,12 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// to retrieve data from a previous <see cref="ITask"/> or leave data
         /// for a subsequent one. It can be assumet that the built-in task
         /// sequence will always provide a non-<c>null</c> global state.</param>
+        /// <param name="cancellationToken">A cancellation token for aborting
+        /// the task.</param>
         /// <returns>A <see cref="Task"/> to wait for completion.</returns>
         /// <exception cref="System.ArgumentNullException">If
         /// <paramref name="state"/> is <c>null</c>.</exception>
-        Task ExecuteAsync(IState state);
+        Task ExecuteAsync(IState state, CancellationToken cancellationToken);
         #endregion
     }
 }
