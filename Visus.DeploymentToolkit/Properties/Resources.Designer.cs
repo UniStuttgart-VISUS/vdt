@@ -79,6 +79,51 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Applying the condition &quot;{Condition}&quot; to {Action} disks..
+        /// </summary>
+        internal static string DiskSelectionCondition {
+            get {
+                return ResourceManager.GetString("DiskSelectionCondition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ignoring disk selection step as the result would be empty..
+        /// </summary>
+        internal static string DiskSelectionEmpty {
+            get {
+                return ResourceManager.GetString("DiskSelectionEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Excluding {Disks] disks that matched the specified condition..
+        /// </summary>
+        internal static string DiskSelectionExclude {
+            get {
+                return ResourceManager.GetString("DiskSelectionExclude", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Including {Disks} disks that matched the specified condition..
+        /// </summary>
+        internal static string DiskSelectionInclude {
+            get {
+                return ResourceManager.GetString("DiskSelectionInclude", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No action has been specified. Therefore all input disks are eligible..
+        /// </summary>
+        internal static string DiskSelectionNone {
+            get {
+                return ResourceManager.GetString("DiskSelectionNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Applying unattend file &quot;{0}&quot; to &quot;{1}&quot;..
         /// </summary>
         internal static string DismApplyUnattend {
@@ -178,7 +223,7 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Task sequence {0}.
+        ///   Looks up a localized string similar to Task sequence {SequencName}.
         /// </summary>
         internal static string TaskSequenceName {
             get {

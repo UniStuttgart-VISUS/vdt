@@ -32,7 +32,7 @@ namespace Visus.DeploymentToolkit.Services {
         Virtual = 0x0e,
         FileBackedVirtual = 0x0f,
         Spaces = 0x10,
-        NVMe = 0x11,
+        Nvme = 0x11,
         Scm = 0x12,
         Ufs = 0x13
     }

@@ -123,6 +123,21 @@
   <data name="CommandNotRun" xml:space="preserve">
     <value>The command "{0}" did not run.</value>
   </data>
+  <data name="DiskSelectionCondition" xml:space="preserve">
+    <value>Applying the condition "{Condition}" to {Action} disks.</value>
+  </data>
+  <data name="DiskSelectionEmpty" xml:space="preserve">
+    <value>Ignoring disk selection step as the result would be empty.</value>
+  </data>
+  <data name="DiskSelectionExclude" xml:space="preserve">
+    <value>Excluding {Disks] disks that matched the specified condition.</value>
+  </data>
+  <data name="DiskSelectionInclude" xml:space="preserve">
+    <value>Including {Disks} disks that matched the specified condition.</value>
+  </data>
+  <data name="DiskSelectionNone" xml:space="preserve">
+    <value>No action has been specified. Therefore all input disks are eligible.</value>
+  </data>
   <data name="DismApplyUnattend" xml:space="preserve">
     <value>Applying unattend file "{0}" to "{1}".</value>
   </data>
@@ -157,7 +172,7 @@
     <value>Select installation disk</value>
   </data>
   <data name="TaskSequenceName" xml:space="preserve">
-    <value>Task sequence {0}</value>
+    <value>Task sequence {SequencName}</value>
   </data>
   <data name="WaitingVds" xml:space="preserve">
     <value>Waiting for the Virtual Disk Service to become ready.</value>

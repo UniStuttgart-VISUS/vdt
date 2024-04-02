@@ -34,6 +34,36 @@ namespace Visus.DeploymentToolkit.Test {
             }
         }
 
+        [TestMethod]
+        public void SelectDisks() {
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                var logger = this._loggerFactory.CreateLogger<VdsService>();
+                var service = new VdsService(logger);
+                Assert.IsNotNull(service);
+
+                var task = service.GetDisksAsync(CancellationToken.None);
+                task.Wait();
+                var disks = task.Result;
+                Assert.IsTrue(disks.Any());
+
+                var selection = new DiskSelectionStep() {
+                    Action = DiskSelectionAction.Include,
+                    Condition = "BusType == Visus.DeploymentToolkit.Services.StorageBusType.Nvme"
+                };
+
+                {
+                    var selected = selection.Apply(disks, logger);
+                    Assert.IsTrue(selected.Any());
+                }
+
+                {
+                    selection.Condition = "BusType == Visus.DeploymentToolkit.Services.StorageBusType.SD";
+                    var selected = selection.Apply(disks, logger);
+                    Assert.IsTrue(selected.Any());
+                }
+            }
+        }
+
         private readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(l => l.AddDebug());
     }
 }
