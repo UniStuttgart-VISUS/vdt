@@ -28,6 +28,16 @@ namespace Visus.DeploymentToolkit.Services {
         /// <summary>
         /// Selects the disk with the smallest overall capacity.
         /// </summary>
-        IsSmallest
+        IsSmallest,
+
+        /// <summary>
+        /// Selects disks with a FAT32-formatted EFI boot partition.
+        /// </summary>
+        IsEfiBootDisk,
+
+        /// <summary>
+        /// Selects MBR disks with the boot flag set.
+        /// </summary>
+        IsMbrBootDisk
     }
 }

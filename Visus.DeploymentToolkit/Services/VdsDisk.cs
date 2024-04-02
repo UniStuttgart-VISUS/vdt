@@ -34,6 +34,9 @@ namespace Visus.DeploymentToolkit.Services {
         /// <inheritdoc />
         public PartitionStyle PartitionStyle
             => (PartitionStyle) this._properties.PartitionStyle;
+
+        /// <inheritdoc />
+        public ulong Size => this._properties.Size;
         #endregion
 
         #region Internal constructors

@@ -26,8 +26,6 @@ namespace Visus.DeploymentToolkit.Tasks {
                 : base(logger) {
             this._diskManagement = diskManagement
                 ?? throw new ArgumentNullException(nameof(diskManagement));
-            this._logger = logger
-                ?? throw new ArgumentNullException(nameof(logger));
             this.Name = Resources.SelectInstallDisk;
         }
         #endregion
@@ -49,7 +47,6 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         #region Private fields
         private readonly IDiskManagement _diskManagement;
-        private readonly ILogger _logger;
         #endregion
     }
 }

@@ -7,9 +7,9 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Dynamic.Core;
-using System.Numerics;
 using Visus.DeploymentToolkit.Properties;
 
 
@@ -72,14 +72,31 @@ namespace Visus.DeploymentToolkit.Services {
                 return retval;
             }
 
-
             switch (this.BuiltInCondition) {
                 case BuiltInCondition.IsLargest:
-                    throw new NotImplementedException();
+                    logger.LogInformation(Resources.DiskSelectionLargest);
+                    retval = (from d in disks
+                              orderby d.Size descending
+                              select d).Take(1);
                     break;
 
                 case BuiltInCondition.IsSmallest:
-                    throw new NotImplementedException();
+                    logger.LogInformation(Resources.DiskSelectionSmallest);
+                    retval = (from d in disks
+                              orderby d.Size ascending
+                              select d).Take(1);
+                    break;
+
+                case BuiltInCondition.IsEfiBootDisk:
+                    logger.LogInformation(Resources.DiskSelectionEfiBootDisk);
+                    retval = SelectEfiBootDisks(disks, EfiPartitionType.Any);
+                    break;
+
+                case BuiltInCondition.IsMbrBootDisk:
+                    logger.LogInformation(Resources.DiskSelectionMbrBootDisk);
+                    retval = from d in disks
+                             where d.Partitions.Any(p => p.IsBoot)
+                             select d;
                     break;
 
                 case BuiltInCondition.None:
@@ -115,6 +132,48 @@ namespace Visus.DeploymentToolkit.Services {
                     retval = disks;
                     break;
             }
+
+            return retval;
+        }
+        #endregion
+
+        #region Nested enum
+        /// <summary>
+        /// Allows for selecting specific types of EFI boot partitions.
+        /// </summary>
+        private enum EfiPartitionType {
+            /// <summary>
+            /// Get any EFI boot partition, which means that the partition must
+            /// be FAT32 and contain a top-level EFI folder.
+            /// </summary>
+            Any,
+
+            /// <summary>
+            /// Restrict the selection to EFI folders that contain a Microsoft
+            /// boot loader.
+            /// </summary>
+            Microsoft,
+
+            /// <summary>
+            /// Restrict the selection to EFI folders that contan a
+            /// non-Microsoft boot loader.
+            /// </summary>
+            NonMicrosoft
+        }
+        #endregion
+
+        #region Private methods
+        private static IEnumerable<IDisk> SelectEfiBootDisks(
+                IEnumerable<IDisk> disks, EfiPartitionType type) {
+            Debug.Assert(disks != null);
+            // First, filter for GPT disks with at least one partition.
+            var retval = from d in disks
+                         where d.PartitionStyle == PartitionStyle.Gpt
+                         where d.Partitions.Any()
+                         select d;
+
+            // TODO: Need to find out the file system
+            // TODO: Need to assign a letter if necessary.
 
             return retval;
         }

@@ -126,6 +126,9 @@
   <data name="DiskSelectionCondition" xml:space="preserve">
     <value>Applying the condition "{Condition}" to {Action} disks.</value>
   </data>
+  <data name="DiskSelectionEfiBootDisk" xml:space="preserve">
+    <value>Selecting disks with an EFI boot partition on it.</value>
+  </data>
   <data name="DiskSelectionEmpty" xml:space="preserve">
     <value>Ignoring disk selection step as the result would be empty.</value>
   </data>
@@ -135,8 +138,17 @@
   <data name="DiskSelectionInclude" xml:space="preserve">
     <value>Including {Disks} disks that matched the specified condition.</value>
   </data>
+  <data name="DiskSelectionLargest" xml:space="preserve">
+    <value>Selecting the largest disk.</value>
+  </data>
+  <data name="DiskSelectionMbrBootDisk" xml:space="preserve">
+    <value>Selecting MBR disks having the boot flag set.</value>
+  </data>
   <data name="DiskSelectionNone" xml:space="preserve">
     <value>No action has been specified. Therefore all input disks are eligible.</value>
+  </data>
+  <data name="DiskSelectionSmallest" xml:space="preserve">
+    <value>Selecting the smallest disk.</value>
   </data>
   <data name="DismApplyUnattend" xml:space="preserve">
     <value>Applying unattend file "{0}" to "{1}".</value>

@@ -44,5 +44,10 @@ namespace Visus.DeploymentToolkit.Services {
         /// Gets the partition style of the disk.
         /// </summary>
         PartitionStyle PartitionStyle { get; }
+
+        /// <summary>
+        /// Gets the overall size of the disk in bytes.
+        /// </summary>
+        ulong Size { get; }
     }
 }

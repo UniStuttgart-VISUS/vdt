@@ -19,7 +19,7 @@ namespace Visus.DeploymentToolkit.Services {
         public StorageBusType BusType => StorageBusType.Unknown;
 
         /// <inheritdoc />
-        public string FriendlyName { get; } = string.Empty;
+        public string FriendlyName => string.Empty;
 
         /// <summary>
         /// Gets or sets the ID of the disk to be partitioned.
@@ -40,5 +40,8 @@ namespace Visus.DeploymentToolkit.Services {
 
         /// <inheritdoc />
         IEnumerable<IPartition> IDisk.Partitions => this.Partitions;
+
+        /// <inheritdoc />
+        public ulong Size => 0;
     }
 }

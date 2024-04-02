@@ -88,6 +88,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Selecting disks with an EFI boot partition on it..
+        /// </summary>
+        internal static string DiskSelectionEfiBootDisk {
+            get {
+                return ResourceManager.GetString("DiskSelectionEfiBootDisk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ignoring disk selection step as the result would be empty..
         /// </summary>
         internal static string DiskSelectionEmpty {
@@ -115,11 +124,38 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Selecting the largest disk..
+        /// </summary>
+        internal static string DiskSelectionLargest {
+            get {
+                return ResourceManager.GetString("DiskSelectionLargest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selecting MBR disks having the boot flag set..
+        /// </summary>
+        internal static string DiskSelectionMbrBootDisk {
+            get {
+                return ResourceManager.GetString("DiskSelectionMbrBootDisk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No action has been specified. Therefore all input disks are eligible..
         /// </summary>
         internal static string DiskSelectionNone {
             get {
                 return ResourceManager.GetString("DiskSelectionNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selecting the smallest disk..
+        /// </summary>
+        internal static string DiskSelectionSmallest {
+            get {
+                return ResourceManager.GetString("DiskSelectionSmallest", resourceCulture);
             }
         }
         

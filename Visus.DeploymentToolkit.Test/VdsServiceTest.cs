@@ -48,16 +48,37 @@ namespace Visus.DeploymentToolkit.Test {
 
                 var selection = new DiskSelectionStep() {
                     Action = DiskSelectionAction.Include,
-                    Condition = "BusType == Visus.DeploymentToolkit.Services.StorageBusType.Nvme"
                 };
 
                 {
+                    selection.BuiltInCondition = BuiltInCondition.None;
+                    selection.Condition = "BusType == Visus.DeploymentToolkit.Services.StorageBusType.Nvme";
                     var selected = selection.Apply(disks, logger);
                     Assert.IsTrue(selected.Any());
                 }
 
                 {
+                    selection.BuiltInCondition = BuiltInCondition.None;
                     selection.Condition = "BusType == Visus.DeploymentToolkit.Services.StorageBusType.SD";
+                    var selected = selection.Apply(disks, logger);
+                    Assert.IsTrue(selected.Any());
+                }
+
+                {
+                    selection.BuiltInCondition = BuiltInCondition.IsSmallest;
+                    var selected = selection.Apply(disks, logger);
+                    Assert.IsTrue(selected.Any());
+                }
+
+                {
+                    selection.BuiltInCondition = BuiltInCondition.IsLargest;
+                    var selected = selection.Apply(disks, logger);
+                    Assert.IsTrue(selected.Any());
+                }
+
+                {
+                    selection.BuiltInCondition = BuiltInCondition.None;
+                    selection.Condition = "PartitionStyle == Visus.DeploymentToolkit.Services.PartitionStyle.Gpt";
                     var selected = selection.Apply(disks, logger);
                     Assert.IsTrue(selected.Any());
                 }
