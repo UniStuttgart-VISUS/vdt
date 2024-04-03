@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System;
 using System.Runtime.InteropServices;
 
 
@@ -39,12 +40,13 @@ namespace Visus.DeploymentToolkit.Vds {
             + "need it. However, the method still needs to be there fore the "
             + "interface to work. Callers must fix the sigature before using "
             + "this method or the call will most likely crash the application.")]
-        void CreateVolume(/* [in] VDS_VOLUME_TYPE type,
-            /* [size_is][in] __RPC__in_ecount_full(lNumberOfDisks) VDS_INPUT_DISK *pInputDiskArray,
-        /* [in]  LONG lNumberOfDisks,
-            /* [in] ULONG ulStripeSize,
-            /* [out]  __RPC__deref_out_opt IVdsAsync **ppAsync*/);
-        
+        void CreateVolume(VDS_VOLUME_TYPE type,
+            [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)]
+            VDS_INPUT_DISK[] inputDiskArray,
+            int numberOfDisks,
+            uint stripeSize,
+            out IVdsAsync vdsAsync);
+
         void AddDisk(Guid diskId, VDS_PARTITION_STYLE partitionStyle,
             bool asHotSpare);
 
@@ -72,10 +74,6 @@ namespace Visus.DeploymentToolkit.Vds {
         
         void RemoveMissingDisk(Guid diskId);
 
-        [Obsolete("This method is not correctly mapped, because we did not yet "
-            + "need it. However, the method still needs to be there fore the "
-            + "interface to work. Callers must fix the sigature before using "
-            + "this method or the call will most likely crash the application.")]
-        void Recover(/* [out] __RPC__deref_out_opt IVdsAsync **ppAsync*/);
+        void Recover(out IVdsAsync vdsAsync);
     }
 }

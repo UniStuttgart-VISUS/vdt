@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System;
 using System.Runtime.InteropServices;
 
 
@@ -20,13 +21,13 @@ namespace Visus.DeploymentToolkit.Vds {
         /// Discriminant for the union.
         /// </summary>
         [FieldOffset(0)]
-        VDS_ASYNC_OUTPUT_TYPE Type;
+        public VDS_ASYNC_OUTPUT_TYPE Type;
 
         /// <summary>
         /// Actual offset of a created partition.
         /// </summary>
         [FieldOffset(8)]
-        ulong Offset;
+        public ulong Offset;
 
         /// <summary>
         /// A volume, target, portal group, or disk object.
@@ -39,19 +40,18 @@ namespace Visus.DeploymentToolkit.Vds {
         /// the reference count.
         /// </remarks>
         [FieldOffset(8)]
-        IntPtr Unknown;
+        public IntPtr Unknown;
 
         /// <summary>
         /// The number of bytes that were reclaimed by a shrink operation.
         /// </summary>
         [FieldOffset(8)]
-        ulong ReclaimedBytes;
+        public ulong ReclaimedBytes;
 
         /// <summary>
         /// The ID of the volume object associated with a created partition.
         /// </summary>
         [FieldOffset(16)]
-        Guid VolumeId;
-
+        public Guid VolumeId;
     }
 }

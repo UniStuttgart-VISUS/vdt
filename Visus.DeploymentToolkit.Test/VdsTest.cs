@@ -114,12 +114,10 @@ namespace Visus.DeploymentToolkit.Test {
 
                         advDisk.GetPartitionProperties(partitionProps[0].Offset, out var partitionProp);
                         Assert.AreEqual(partitionProps[0].PartitionNumber, partitionProp.PartitionNumber, "PartitionNumber matches");
-
                     }
                 }
             }
         }
-
 
         [TestMethod]
         public async Task DisksFromVdsService() {
@@ -127,6 +125,110 @@ namespace Visus.DeploymentToolkit.Test {
                 var vds = new VdsService(this._loggerFactory.CreateLogger<VdsService>());
                 var disks = await vds.GetDisksAsync(CancellationToken.None);
                 Assert.IsTrue(disks.Any());
+            }
+        }
+
+        [TestMethod]
+        public void FileSystemTypes() {
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                var loader = new VdsServiceLoader() as IVdsServiceLoader;
+                Assert.IsNotNull(loader, "Have IVdsServiceLoader");
+
+                IVdsService service;
+                loader.LoadService(null, out service);
+                Assert.IsNotNull(service, "Have IVdsService");
+
+                {
+                    var status = service.WaitForServiceReady();
+                    Assert.AreEqual(0u, status, "WaitForServiceReady succeeded");
+                }
+
+                var fstp = service.QueryFileSystemTypes();
+                Assert.IsTrue(fstp.Any());
+            }
+        }
+
+        [TestMethod]
+        public void EnumerateVolumes() {
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                var loader = new VdsServiceLoader() as IVdsServiceLoader;
+                Assert.IsNotNull(loader, "Have IVdsServiceLoader");
+
+                IVdsService service;
+                loader.LoadService(null, out service);
+                Assert.IsNotNull(service, "Have IVdsService");
+
+                {
+                    var status = service.WaitForServiceReady();
+                    Assert.AreEqual(0u, status, "WaitForServiceReady succeeded");
+                }
+
+                IEnumVdsObject enumProviders;
+                service.QueryProviders(VDS_QUERY_PROVIDER_FLAG.SOFTWARE_PROVIDERS,
+                    out enumProviders);
+                Assert.IsNotNull(enumProviders, "Have enumerator for provider");
+
+                enumProviders.Reset();
+
+                while (true) {
+                    enumProviders.Next(1, out var unknown, out uint cnt);
+                    if (cnt == 0) {
+                        break;
+                    }
+
+                    var provider = unknown as IVdsSwProvider;
+                    Assert.IsNotNull(provider, "Provider is IVdsVdProvider");
+
+                    IEnumVdsObject enumPacks;
+                    provider.QueryPacks(out enumPacks);
+                    Assert.IsNotNull(enumPacks, "Have pack enumerator");
+
+                    while (true) {
+                        enumPacks.Next(1, out unknown, out cnt);
+                        if (cnt == 0) {
+                            break;
+                        }
+
+                        var pack = unknown as IVdsPack;
+                        Assert.IsNotNull(pack, "Got IVdsPack");
+
+                        IEnumVdsObject enumVolumes;
+                        pack.QueryVolumes(out enumVolumes);
+
+                        while (true) {
+                            enumVolumes.Next(1, out unknown, out cnt);
+                            if (cnt == 0) {
+                                break;
+                            }
+
+                            var volume = unknown as IVdsVolume;
+                            Assert.IsNotNull(volume, "Got IVdsVolume");
+
+                            volume.GetProperties(out var volumeProp);
+                            Assert.IsNotNull(volumeProp.Name);
+
+                            var volume2 = unknown as IVdsVolume2;
+                            Assert.IsNotNull(volume2);
+
+                            volume2.GetProperties2(out var volumeProp2);
+                            Assert.AreEqual(volumeProp.Name, volumeProp2.Name);
+                            Assert.AreEqual(volumeProp.ID, volumeProp2.ID);
+
+                            var volumeMF = unknown as IVdsVolumeMF;
+                            Assert.IsNotNull(volumeMF, "Got IVdsVolumeMF");
+
+                            volumeMF.GetFileSystemProperties(out var fsProp);
+                            Assert.IsNotNull(fsProp.Label);
+
+                            volumeMF.QueryAccessPaths(out var paths, out int cntPaths);
+                            Assert.IsNotNull(paths);
+                            Assert.AreEqual(cntPaths, paths.Length);
+
+                            var reparsePoints = volumeMF.QueryReparsePoints();
+                            Assert.IsNotNull(reparsePoints);
+                        }
+                    }
+                }
             }
         }
 

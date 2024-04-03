@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System;
 using System.Runtime.InteropServices;
 
 
@@ -79,25 +80,44 @@ namespace Visus.DeploymentToolkit.Vds {
             [MarshalAs(UnmanagedType.IUnknown)] out object unknown);
 
         /// <summary>
-        /// Returns property details for a set of drive letters.
+        /// Enumerates the drive letters of the server.
         /// </summary>
-        [Obsolete("This method is not correctly mapped, because we did not yet "
-            + "need it. However, the method still needs to be there fore the "
-            + "interface to work. Callers must fix the sigature before using "
-            + "this method or the call will most likely crash the application.")]
-        void QueryDriveLetters(/*
-            [in]  WCHAR                 wcFirstLetter,
-            [in]  DWORD                 count,
-            [out] VDS_DRIVE_LETTER_PROP *pDriveLetterPropArray
-                                */);
+        /// <param name="firstLetter">The first drive letter to query as a
+        /// single uppercase or lowercase alphabetical (A-Z) Unicode character.
+        /// </param>
+        /// <param name="count">The total number of drive letters to retrieve,
+        /// beginning with the letter that <paramref name="firstLetter">
+        /// specifies. This <i>must</i> also be the number of elements in the
+        /// <paramref name="driveLetterPropArray"/>. It <i>must not</i> exceed
+        /// the total number of drive letters between the letter in
+        /// <paramref name="firstLetter"/> and the last possible drive letter
+        /// (Z), inclusive.</param>
+        /// <param name="driveLetterPropArray">An array of
+        /// <see cref="VDS_DRIVE_LETTER_PROP "/> structures that, if the
+        /// operation is successfully completed, receives the array of drive
+        /// letter properties.</param>
+        [Obsolete("This mapping works, but always returns "
+            + "VDS_E_INVALID_DRIVE_LETTER...")]
+        void QueryDriveLetters(char firstLetter,
+            int count,
+            [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)]
+            VDS_DRIVE_LETTER_PROP[] driveLetterPropArray);
 
         /// <summary>
         /// Returns property details for all file systems known to VDS.
         /// </summary>
-        /// <param name="fileSystemTypeProps"></param>
-        /// <param name="numberOfFileSystems"></param>
-        void QueryFileSystemTypes(out IntPtr fileSystemTypeProps,   //VDS_FILE_SYSTEM_TYPE_PROP **
-            out uint numberOfFileSystems);
+        /// <param name="fileSystemTypeProps">A pointer to an array of 
+        /// <see cref="VDS_FILE_SYSTEM_TYPE_PROP "/> structures that, if the
+        /// operation is successfully completed, receives the array of file
+        /// system type properties.</param>
+        /// <param name="numberOfFileSystems">A pointer to a variable that, if
+        /// the operation is successfully completed, receives the total number
+        /// of elements returned in <paramref name="fileSystemTypeProps" />.
+        /// </param>
+        void QueryFileSystemTypes(out IntPtr fileSystemTypeProps,
+            //[MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)]
+            //out VDS_FILE_SYSTEM_TYPE_PROP[] fileSystemTypeProps,
+            out int numberOfFileSystems);
 
         /// <summary>
         /// Discovers newly added and newly removed disks.

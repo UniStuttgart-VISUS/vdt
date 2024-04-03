@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System;
 using System.Runtime.InteropServices;
 
 
@@ -24,7 +25,7 @@ namespace Visus.DeploymentToolkit.Vds {
         /// <summary>
         /// The GUID of the volume object containing the file system.
         /// </summary>
-        public Guid VolumeId;
+        public Guid VolumeID;
 
         /// <summary>
         /// The file-system flags enumerated by
