@@ -5,10 +5,9 @@
 // <author>Christoph Müller</author>
 
 using System;
-using Visus.DeploymentToolkit.DiskManagement;
 
 
-namespace Visus.DeploymentToolkit.Services {
+namespace Visus.DeploymentToolkit.DiskManagement {
 
     /// <summary>
     /// Generic implementation of <see cref="IPartition"/>, which can be used to

@@ -7,6 +7,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Runtime.InteropServices;
+using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Services;
 
 

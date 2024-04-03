@@ -5,7 +5,7 @@
 // <author>Christoph Müller</author>
 
 
-namespace Visus.DeploymentToolkit.Services {
+namespace Visus.DeploymentToolkit.DiskManagement {
 
     /// <summary>
     /// Possible actions in a <see cref="DiskSelectionStep"/>.

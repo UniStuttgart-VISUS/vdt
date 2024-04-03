@@ -6,11 +6,10 @@
 
 using System;
 using System.Linq;
-using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Vds;
 
 
-namespace Visus.DeploymentToolkit.Services {
+namespace Visus.DeploymentToolkit.DiskManagement {
 
     /// <summary>
     /// Implementation of <see cref="IPartition"/> for the VDS.
@@ -19,36 +18,36 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public properties
         /// <inheritdoc />
-        public uint Index => this._properties.PartitionNumber;
+        public uint Index => _properties.PartitionNumber;
 
         /// <inheritdoc />
-        public bool IsBoot => (this.Style == PartitionStyle.Mbr)
-            ? this._properties.Mbr.BootIndicator
+        public bool IsBoot => Style == PartitionStyle.Mbr
+            ? _properties.Mbr.BootIndicator
             : false;
 
         /// <inheritdoc />
-        public bool IsSystem => (this._properties.Flags & 1u) == 1u;
+        public bool IsSystem => (_properties.Flags & 1u) == 1u;
 
         /// <inheritdoc />
-        public string? Name => (this.Style == PartitionStyle.Gpt)
-            ? this._properties.Gpt.name
+        public string? Name => Style == PartitionStyle.Gpt
+            ? _properties.Gpt.name
             : null;
 
         /// <inheritdoc />
-        public ulong Offset => this._properties.Offset;
+        public ulong Offset => _properties.Offset;
 
         /// <inheritdoc />
-        public ulong Size => this._properties.Size;
+        public ulong Size => _properties.Size;
 
         /// <inheritdoc />
         public PartitionStyle Style
-            => (PartitionStyle) this._properties.PartitionStyle;
+            => (PartitionStyle) _properties.PartitionStyle;
 
         /// <inheritdoc />
         public PartitionType Type {
             get {
-                if (this.Style == PartitionStyle.Gpt) {
-                    var id = this._properties.Gpt.PartitionType;
+                if (Style == PartitionStyle.Gpt) {
+                    var id = _properties.Gpt.PartitionType;
                     var types = PartitionType.FromGpt(id);
                     // If we have NTFS in the list, we also have a lot of legacy
                     // chunk which maps on the same partition type. Therefore,
@@ -59,7 +58,7 @@ namespace Visus.DeploymentToolkit.Services {
                         : types.First();
 
                 } else {
-                    var id = (byte) this._properties.Mbr.PartitionType;
+                    var id = (byte) _properties.Mbr.PartitionType;
                     return PartitionType.FromMbr(id).First();
                 }
             }
@@ -72,7 +71,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// </summary>
         /// <param name="properties"></param>
         internal VdsPartition(VDS_PARTITION_PROP properties) {
-            this._properties = properties;
+            _properties = properties;
         }
         #endregion
 

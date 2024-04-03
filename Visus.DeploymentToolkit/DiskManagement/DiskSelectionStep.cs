@@ -10,11 +10,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Dynamic.Core;
-using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Properties;
+using Visus.DeploymentToolkit.Services;
 
 
-namespace Visus.DeploymentToolkit.Services {
+namespace Visus.DeploymentToolkit.DiskManagement {
 
     /// <summary>
     /// A single step in the sequence of selecting an installation disk.
@@ -73,7 +73,7 @@ namespace Visus.DeploymentToolkit.Services {
                 return retval;
             }
 
-            switch (this.BuiltInCondition) {
+            switch (BuiltInCondition) {
                 case BuiltInCondition.IsLargest:
                     logger.LogInformation(Resources.DiskSelectionLargest);
                     retval = (from d in disks
@@ -90,7 +90,7 @@ namespace Visus.DeploymentToolkit.Services {
 
                 case BuiltInCondition.IsEfiBootDisk:
                     logger.LogInformation(Resources.DiskSelectionEfiBootDisk);
-                    retval = SelectEfiBootDisks(disks, EfiPartitionType.Any);
+                    retval = SelectEfiSystemDisks(disks, EfiPartitionType.Any);
                     break;
 
                 case BuiltInCondition.IsMbrBootDisk:
@@ -103,12 +103,12 @@ namespace Visus.DeploymentToolkit.Services {
                 case BuiltInCondition.None:
                 default:
                     logger.LogInformation(Resources.DiskSelectionCondition,
-                        this.Condition, this.Action);
-                    retval = disks.AsQueryable().Where(this.Condition);
+                        Condition, Action);
+                    retval = disks.AsQueryable().Where(Condition);
                     break;
             }
 
-            switch (this.Action) {
+            switch (Action) {
                 case DiskSelectionAction.Include:
                     logger.LogInformation(Resources.DiskSelectionInclude,
                         retval.Count());
@@ -164,14 +164,15 @@ namespace Visus.DeploymentToolkit.Services {
         #endregion
 
         #region Private methods
-        private static IEnumerable<IDisk> SelectEfiBootDisks(
+        private static IEnumerable<IDisk> SelectEfiSystemDisks(
                 IEnumerable<IDisk> disks, EfiPartitionType type) {
             Debug.Assert(disks != null);
             // First, filter for GPT disks with at least one partition.
             var retval = from d in disks
                          where d.PartitionStyle == PartitionStyle.Gpt
-                         where d.Partitions.Any()
+                         where d.Partitions.Any(p => p.Type == PartitionType.EfiSystem)
                          select d;
+
 
             // TODO: Need to find out the file system
             // TODO: Need to assign a letter if necessary.

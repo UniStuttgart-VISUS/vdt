@@ -6,13 +6,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Vds;
 
 
-namespace Visus.DeploymentToolkit.Services {
+namespace Visus.DeploymentToolkit.DiskManagement {
 
     /// <summary>
     /// A <see cref="IDisk"/> as enumerated by the <see cref="VdsService"/>.
@@ -22,34 +20,34 @@ namespace Visus.DeploymentToolkit.Services {
         #region Public properties
         /// <inheritdoc />
         public StorageBusType BusType
-            => (StorageBusType) this._properties.BusType;
+            => (StorageBusType) _properties.BusType;
 
         /// <inheritdoc />
-        public string FriendlyName => this._properties.FriendlyName;
+        public string FriendlyName => _properties.FriendlyName;
 
         /// <inheritdoc />
-        public Guid ID => this._properties.Id;
+        public Guid ID => _properties.Id;
 
         /// <inheritdoc />
-        public IEnumerable<IPartition> Partitions => this._partitions.Value;
+        public IEnumerable<IPartition> Partitions => _partitions.Value;
 
         /// <inheritdoc />
         public PartitionStyle PartitionStyle
-            => (PartitionStyle) this._properties.PartitionStyle;
+            => (PartitionStyle) _properties.PartitionStyle;
 
         /// <inheritdoc />
-        public ulong Size => this._properties.Size;
+        public ulong Size => _properties.Size;
 
         /// <inheritdoc />
-        public IEnumerable<IVolume> Volumes => this._volumes.Value;
+        public IEnumerable<IVolume> Volumes => _volumes.Value;
         #endregion
 
         #region Internal constructors
         internal VdsDisk(IVdsDisk disk) {
-            this._disk = disk ?? throw new ArgumentNullException(nameof(disk));
-            this._disk.GetProperties(out this._properties);
-            this._partitions = new(() => {
-                if (this._disk is IVdsAdvancedDisk disk) {
+            _disk = disk ?? throw new ArgumentNullException(nameof(disk));
+            _disk.GetProperties(out _properties);
+            _partitions = new(() => {
+                if (_disk is IVdsAdvancedDisk disk) {
                     disk.QueryPartitions(out var props, out var cnt);
                     return from p in props
                            select new VdsPartition(p);
@@ -57,7 +55,7 @@ namespace Visus.DeploymentToolkit.Services {
                     return Enumerable.Empty<IPartition>();
                 }
             });
-            this._volumes = new(() => {
+            _volumes = new(() => {
                 disk.GetPack(out var pack);
                 pack.QueryVolumes(out var enumerator);
                 return enumerator.Enumerate<IVdsVolume>()

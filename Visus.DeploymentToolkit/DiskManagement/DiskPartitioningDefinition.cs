@@ -6,10 +6,9 @@
 
 using System;
 using System.Collections.Generic;
-using Visus.DeploymentToolkit.DiskManagement;
 
 
-namespace Visus.DeploymentToolkit.Services {
+namespace Visus.DeploymentToolkit.DiskManagement {
 
     /// <summary>
     /// Describes the desired partitioning of a disk.
@@ -40,7 +39,7 @@ namespace Visus.DeploymentToolkit.Services {
         public PartitionStyle PartitionStyle { get; set; }
 
         /// <inheritdoc />
-        IEnumerable<IPartition> IDisk.Partitions => this.Partitions;
+        IEnumerable<IPartition> IDisk.Partitions => Partitions;
 
         /// <inheritdoc />
         public ulong Size => 0;
@@ -51,6 +50,6 @@ namespace Visus.DeploymentToolkit.Services {
         public List<IVolume> Volumes { get; set; } = new();
 
         /// <inheritdoc />
-        IEnumerable<IVolume> IDisk.Volumes => this.Volumes;
+        IEnumerable<IVolume> IDisk.Volumes => Volumes;
     }
 }

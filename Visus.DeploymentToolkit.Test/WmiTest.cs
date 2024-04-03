@@ -6,10 +6,12 @@
 
 using Microsoft.Extensions.Logging;
 using System.Security.Principal;
+using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Services;
 
 
-namespace Visus.DeploymentToolkit.Test {
+namespace Visus.DeploymentToolkit.Test
+{
 
     [TestClass]
     public sealed class WmiTest {

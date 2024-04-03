@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 

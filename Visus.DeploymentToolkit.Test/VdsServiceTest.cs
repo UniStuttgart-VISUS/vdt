@@ -6,10 +6,12 @@
 
 using Microsoft.Extensions.Logging;
 using System.Security.Principal;
+using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Services;
 
 
-namespace Visus.DeploymentToolkit.Test {
+namespace Visus.DeploymentToolkit.Test
+{
 
     /// <summary>
     /// Tests for the <see cref="VdsService"/> wrapper class.
@@ -73,6 +75,12 @@ namespace Visus.DeploymentToolkit.Test {
 
                 {
                     selection.BuiltInCondition = BuiltInCondition.IsLargest;
+                    var selected = selection.Apply(disks, logger);
+                    Assert.IsTrue(selected.Any());
+                }
+
+                {
+                    selection.BuiltInCondition = BuiltInCondition.IsEfiBootDisk;
                     var selected = selection.Apply(disks, logger);
                     Assert.IsTrue(selected.Any());
                 }

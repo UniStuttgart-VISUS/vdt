@@ -18,6 +18,11 @@ namespace Visus.DeploymentToolkit.Services {
         public const string DeploymentShare = nameof(IState.DeploymentShare);
 
         /// <summary>
+        /// The disk to which Windows should be installed.
+        /// </summary>
+        public const string InstallationDisk = nameof(IState.InstallationDisk);
+
+        /// <summary>
         /// The current <see cref="Workflow.Phase"/>.
         /// </summary>
         public const string Phase = nameof(IState.Phase);

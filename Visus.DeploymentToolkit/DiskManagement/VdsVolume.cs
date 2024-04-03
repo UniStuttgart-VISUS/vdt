@@ -8,11 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Vds;
 
 
-namespace Visus.DeploymentToolkit.Services {
+namespace Visus.DeploymentToolkit.DiskManagement {
 
     /// <summary>
     /// Implementation of <see cref="IVolume"/> based on the VDS.
@@ -22,19 +21,19 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public properties
         /// <inheritdoc />
-        public FileSystem FileSystem => (FileSystem) this._fileSystem.Type;
+        public FileSystem FileSystem => (FileSystem) _fileSystem.Type;
 
         /// <inheritdoc />
-        public string? Label => this._fileSystem.Label;
+        public string? Label => _fileSystem.Label;
 
         /// <inheritdoc />
-        public IEnumerable<string> Mounts => this._mounts.Value;
+        public IEnumerable<string> Mounts => _mounts.Value;
 
         /// <inheritdoc />
-        public string Name => this._properties.Name;
+        public string Name => _properties.Name;
 
         /// <inheritdoc />
-        public ulong Size => this._properties.Size;
+        public ulong Size => _properties.Size;
         #endregion
 
         #region Internal contructors
@@ -44,15 +43,15 @@ namespace Visus.DeploymentToolkit.Services {
         /// <param name="volume"></param>
         /// <exception cref="ArgumentNullException"></exception>
         internal VdsVolume(IVdsVolume volume) {
-            this._volume = volume
+            _volume = volume
                 ?? throw new ArgumentNullException(nameof(volume));
 
-            if (this._volume is IVdsVolumeMF mf) {
-                mf.GetFileSystemProperties(out this._fileSystem);
+            if (_volume is IVdsVolumeMF mf) {
+                mf.GetFileSystemProperties(out _fileSystem);
             }
 
-            this._mounts = new(() => {
-                if (this._volume is IVdsVolumeMF mf) {
+            _mounts = new(() => {
+                if (_volume is IVdsVolumeMF mf) {
                     mf.QueryAccessPaths(out var retval, out var _);
                     return retval;
                 } else {
@@ -60,7 +59,7 @@ namespace Visus.DeploymentToolkit.Services {
                 }
             });
 
-            this._volume.GetProperties(out this._properties);
+            _volume.GetProperties(out _properties);
         }
         #endregion
 

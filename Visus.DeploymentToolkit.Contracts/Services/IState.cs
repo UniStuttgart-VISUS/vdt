@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Workflow;
 
 
@@ -29,6 +30,11 @@ namespace Visus.DeploymentToolkit.Services {
         /// Gets the location of the deployment share.
         /// </summary>
         string? DeploymentShare { get; }
+
+        /// <summary>
+        /// Gets the disk where Windows will be installed.
+        /// </summary>
+        IDisk? InstallationDisk { get;}
 
         /// <summary>
         /// Gets the phase that we are running.

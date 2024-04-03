@@ -12,12 +12,12 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
-using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Properties;
+using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Vds;
 
 
-namespace Visus.DeploymentToolkit.Services {
+namespace Visus.DeploymentToolkit.DiskManagement {
 
     /// <summary>
     /// Provides access to disk management via the Virtual Disk Service VDS.
@@ -35,15 +35,15 @@ namespace Visus.DeploymentToolkit.Services {
         /// does nto implement <see cref="IVdsServiceLoader"/>, which should
         /// never happen.</exception>
         public VdsService(ILogger<VdsService> logger) {
-            this._logger = logger
+            _logger = logger
                 ?? throw new ArgumentNullException(nameof(logger));
 
             try {
                 var loader = new VdsServiceLoader() as IVdsServiceLoader
                     ?? throw new Exception(Errors.NoVdsServiceLoader);
-                loader.LoadService(null, out this._service);
+                loader.LoadService(null, out _service);
             } catch (Exception ex) {
-                this._logger.LogError(ex.Message, ex);
+                _logger.LogError(ex.Message, ex);
                 throw;
             }
         }
@@ -52,7 +52,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <inheritdoc />
         public async Task<IDisk?> GetDiskAsync(Guid id,
                 CancellationToken cancellationToken) {
-            var disks = await this.GetDisksAsync(cancellationToken);
+            var disks = await GetDisksAsync(cancellationToken);
             return disks.Where(d => d.ID == id).SingleOrDefault();
         }
 
@@ -60,7 +60,7 @@ namespace Visus.DeploymentToolkit.Services {
         public Task<IEnumerable<IDisk>> GetDisksAsync(
                 CancellationToken cancellationToken) {
             return Task<IEnumerable<IDisk>>.Factory.StartNew(
-                () => this.GetDisks(cancellationToken));
+                () => GetDisks(cancellationToken));
         }
         #endregion
 
@@ -90,7 +90,7 @@ namespace Visus.DeploymentToolkit.Services {
                     break;
                 }
 
-                if ((unknown is IVdsDisk disk) && (disk != null)) {
+                if (unknown is IVdsDisk disk && disk != null) {
                     yield return new VdsDisk(disk);
                 }
             }
@@ -113,8 +113,8 @@ namespace Visus.DeploymentToolkit.Services {
 
             // First of all, make sure that the VDS is ready.
             {
-                this._logger.LogInformation(Resources.WaitingVds);
-                var status = this._service.WaitForServiceReady();
+                _logger.LogInformation(Resources.WaitingVds);
+                var status = _service.WaitForServiceReady();
                 if (status != 0) {
                     throw new COMException(Errors.WaitVdsFailed, (int) status);
                 }
@@ -124,7 +124,7 @@ namespace Visus.DeploymentToolkit.Services {
 
             // Enumerate all disk providers.
             IEnumVdsObject enumerator;
-            this._service.QueryProviders(
+            _service.QueryProviders(
                 VDS_QUERY_PROVIDER_FLAG.SOFTWARE_PROVIDERS
                 //| VDS_QUERY_PROVIDER_FLAG.HARDWARE_PROVIDERS
                 | VDS_QUERY_PROVIDER_FLAG.VIRTUALDISK_PROVIDERS,
@@ -139,15 +139,15 @@ namespace Visus.DeploymentToolkit.Services {
                     break;
                 }
 
-                if ((unknown is IVdsSwProvider sw) && (sw != null)) {
+                if (unknown is IVdsSwProvider sw && sw != null) {
                     // This is the default software provider in Windows.
-                    foreach (var d in this.GetDisks(sw, cancellation)) {
+                    foreach (var d in GetDisks(sw, cancellation)) {
                         yield return d;
                     }
 
-                } else if ((unknown is IVdsVdProvider vd) && (vd != null)) {
+                } else if (unknown is IVdsVdProvider vd && vd != null) {
                     // Get virtual disks attached to the system.
-                    foreach (var d in this.GetDisks(vd, cancellation)) {
+                    foreach (var d in GetDisks(vd, cancellation)) {
                         yield return d;
                     }
                 }
@@ -180,7 +180,7 @@ namespace Visus.DeploymentToolkit.Services {
                     break;
                 }
 
-                if ((unknown is IVdsPack pack) && (pack != null)) {
+                if (unknown is IVdsPack pack && pack != null) {
                     foreach (var d in GetDisks(pack, cancellation)) {
                         yield return d;
                     }

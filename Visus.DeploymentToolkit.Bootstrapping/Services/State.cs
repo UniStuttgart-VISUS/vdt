@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Workflow;
@@ -41,6 +42,12 @@ namespace Visus.DeploymentToolkit.Services {
         public string? DeploymentShare {
             get => this.Get(WellKnownStates.DeploymentShare) as string;
             set => this.Set(WellKnownStates.DeploymentShare, value);
+        }
+
+        /// <inheritdoc />
+        public IDisk? InstallationDisk {
+            get => this.Get(WellKnownStates.InstallationDisk) as IDisk;
+            set => this.Set(WellKnownStates.InstallationDisk, value);
         }
 
         /// <inheritdoc />

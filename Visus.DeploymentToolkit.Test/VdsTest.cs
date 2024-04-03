@@ -7,11 +7,12 @@
 using Microsoft.Extensions.Logging;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-using Visus.DeploymentToolkit.Services;
+using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Vds;
 
 
-namespace Visus.DeploymentToolkit.Test {
+namespace Visus.DeploymentToolkit.Test
+{
 
     [TestClass]
     public sealed class VdsTest {

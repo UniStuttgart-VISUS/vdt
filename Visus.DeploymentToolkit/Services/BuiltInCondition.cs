@@ -7,7 +7,8 @@
 using Visus.DeploymentToolkit.DiskManagement;
 
 
-namespace Visus.DeploymentToolkit.Services {
+namespace Visus.DeploymentToolkit.Services
+{
 
     /// <summary>
     /// Provides a set of built-in conditions for
