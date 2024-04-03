@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using Visus.DeploymentToolkit.DiskManagement;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -43,5 +44,13 @@ namespace Visus.DeploymentToolkit.Services {
 
         /// <inheritdoc />
         public ulong Size => 0;
+
+        /// <summary>
+        /// Gets or sets the volumes to be created on the disk.
+        /// </summary>
+        public List<IVolume> Volumes { get; set; } = new();
+
+        /// <inheritdoc />
+        IEnumerable<IVolume> IDisk.Volumes => this.Volumes;
     }
 }

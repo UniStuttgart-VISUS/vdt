@@ -4,6 +4,9 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System;
+using Visus.DeploymentToolkit.DiskManagement;
+
 
 namespace Visus.DeploymentToolkit.Services {
 
@@ -50,5 +53,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// needs to have the same parition style.
         /// </remarks>
         public PartitionStyle Style => PartitionStyle.Unknown;
+
+        public PartitionType Type => throw new NotImplementedException();
     }
 }

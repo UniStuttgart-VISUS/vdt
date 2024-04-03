@@ -6,7 +6,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Vds;
 
 
@@ -37,6 +39,9 @@ namespace Visus.DeploymentToolkit.Services {
 
         /// <inheritdoc />
         public ulong Size => this._properties.Size;
+
+        /// <inheritdoc />
+        public IEnumerable<IVolume> Volumes => this._volumes.Value;
         #endregion
 
         #region Internal constructors
@@ -52,6 +57,12 @@ namespace Visus.DeploymentToolkit.Services {
                     return Enumerable.Empty<IPartition>();
                 }
             });
+            this._volumes = new(() => {
+                disk.GetPack(out var pack);
+                pack.QueryVolumes(out var enumerator);
+                return enumerator.Enumerate<IVdsVolume>()
+                    .Select(v => new VdsVolume(v));
+            });
         }
         #endregion
 
@@ -59,6 +70,7 @@ namespace Visus.DeploymentToolkit.Services {
         private readonly IVdsDisk _disk;
         private readonly Lazy<IEnumerable<IPartition>> _partitions;
         private readonly VDS_DISK_PROP _properties;
+        private readonly Lazy<IEnumerable<IVolume>> _volumes;
         #endregion
     }
 }

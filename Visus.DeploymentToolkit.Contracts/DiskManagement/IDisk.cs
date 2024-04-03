@@ -8,7 +8,8 @@ using System;
 using System.Collections.Generic;
 
 
-namespace Visus.DeploymentToolkit.Services {
+namespace Visus.DeploymentToolkit.DiskManagement
+{
 
     /// <summary>
     /// The interface of a disk that can be used to install the operating system
@@ -49,5 +50,10 @@ namespace Visus.DeploymentToolkit.Services {
         /// Gets the overall size of the disk in bytes.
         /// </summary>
         ulong Size { get; }
+
+        /// <summary>
+        /// Gets the volumes on the disk.
+        /// </summary>
+        IEnumerable<IVolume> Volumes { get; }
     }
 }

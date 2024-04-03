@@ -17,6 +17,27 @@ namespace Visus.DeploymentToolkit.Vds {
     /// </summary>
     public static class Extensions {
 
+        /// <summary>
+        /// Enumerate the objects of an <see cref="IEnumVdsObject"/>.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="that"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static IEnumerable<TValue> Enumerate<TValue>(
+                this IEnumVdsObject that) {
+            _ = that ?? throw new ArgumentNullException(nameof(that));
+
+            while (true) {
+                that.Next(1, out var unknown, out uint cnt);
+                if (cnt == 0) {
+                    yield break;
+                }
+
+                yield return (TValue) unknown;
+            }
+        }
+
         public static IEnumerable<VDS_FILE_SYSTEM_TYPE_PROP> QueryFileSystemTypes(
                 this IVdsService that) {
             _ = that ?? throw new ArgumentNullException(nameof(that));

@@ -5,7 +5,7 @@
 // <author>Christoph Müller</author>
 
 
-namespace Visus.DeploymentToolkit.Services {
+namespace Visus.DeploymentToolkit.DiskManagement {
 
     /// <summary>
     /// Defines the partition styles supported by <see cref="IPartition"/>.

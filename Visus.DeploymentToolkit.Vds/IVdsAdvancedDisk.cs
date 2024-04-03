@@ -73,14 +73,11 @@ namespace Visus.DeploymentToolkit.Vds {
             /* [in] ULONGLONG ullOffset,
             /* [in]  __RPC__in CHANGE_ATTRIBUTES_PARAMETERS *para*/);
 
-        void AssignDriveLetter(ulong offset,
-            [MarshalAs(UnmanagedType.LPWStr, SizeConst = 1)] char letter);
+        void AssignDriveLetter(ulong offset, char letter);
 
-        void DeleteDriveLetter(ulong offset,
-            [MarshalAs(UnmanagedType.LPWStr, SizeConst = 1)] char letter);
+        void DeleteDriveLetter(ulong offset, char letter);
 
-        void GetDriveLetter(ulong offset,
-            [MarshalAs(UnmanagedType.LPWStr, SizeConst = 1)] out char letter);
+        void GetDriveLetter(ulong offset, out char letter);
 
         /// <summary>
         /// Defines the set of valid types for a file system.

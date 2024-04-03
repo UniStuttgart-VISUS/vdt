@@ -16,6 +16,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 using Visus.DeploymentToolkit.Properties;
+using Visus.DeploymentToolkit.SystemInformation;
 
 
 namespace Visus.DeploymentToolkit.Services {

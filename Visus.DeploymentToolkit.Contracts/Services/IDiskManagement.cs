@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.DiskManagement;
 
 
 namespace Visus.DeploymentToolkit.Services {

@@ -4,6 +4,9 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System;
+using System.Linq;
+using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Vds;
 
 
@@ -40,6 +43,27 @@ namespace Visus.DeploymentToolkit.Services {
         /// <inheritdoc />
         public PartitionStyle Style
             => (PartitionStyle) this._properties.PartitionStyle;
+
+        /// <inheritdoc />
+        public PartitionType Type {
+            get {
+                if (this.Style == PartitionStyle.Gpt) {
+                    var id = this._properties.Gpt.PartitionType;
+                    var types = PartitionType.FromGpt(id);
+                    // If we have NTFS in the list, we also have a lot of legacy
+                    // chunk which maps on the same partition type. Therefore,
+                    // we force this to NTFS. Ideally, we would check the volume
+                    // instead, but we do not have access to this from here.
+                    return types.Contains(PartitionType.Ntfs)
+                        ? PartitionType.Ntfs
+                        : types.First();
+
+                } else {
+                    var id = (byte) this._properties.Mbr.PartitionType;
+                    return PartitionType.FromMbr(id).First();
+                }
+            }
+        }
         #endregion
 
         #region Internal constructors

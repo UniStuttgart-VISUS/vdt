@@ -30,6 +30,7 @@ namespace Visus.DeploymentToolkit.Test {
 
                 foreach (var disk in disks) {
                     Assert.IsTrue(disk.Partitions.Any());
+                    Assert.IsNotNull(disk.Volumes);
                 }
             }
         }
@@ -52,14 +53,14 @@ namespace Visus.DeploymentToolkit.Test {
 
                 {
                     selection.BuiltInCondition = BuiltInCondition.None;
-                    selection.Condition = "BusType == Visus.DeploymentToolkit.Services.StorageBusType.Nvme";
+                    selection.Condition = "BusType == Visus.DeploymentToolkit.DiskManagement.StorageBusType.Nvme";
                     var selected = selection.Apply(disks, logger);
                     Assert.IsTrue(selected.Any());
                 }
 
                 {
                     selection.BuiltInCondition = BuiltInCondition.None;
-                    selection.Condition = "BusType == Visus.DeploymentToolkit.Services.StorageBusType.SD";
+                    selection.Condition = "BusType == Visus.DeploymentToolkit.DiskManagement.StorageBusType.SD";
                     var selected = selection.Apply(disks, logger);
                     Assert.IsTrue(selected.Any());
                 }
@@ -78,7 +79,7 @@ namespace Visus.DeploymentToolkit.Test {
 
                 {
                     selection.BuiltInCondition = BuiltInCondition.None;
-                    selection.Condition = "PartitionStyle == Visus.DeploymentToolkit.Services.PartitionStyle.Gpt";
+                    selection.Condition = "PartitionStyle == Visus.DeploymentToolkit.DiskManagement.PartitionStyle.Gpt";
                     var selected = selection.Apply(disks, logger);
                     Assert.IsTrue(selected.Any());
                 }

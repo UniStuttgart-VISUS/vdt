@@ -4,8 +4,8 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-
-namespace Visus.DeploymentToolkit.Services {
+namespace Visus.DeploymentToolkit.DiskManagement
+{
 
     /// <summary>
     /// The interface of a disk partition.
@@ -59,5 +59,10 @@ namespace Visus.DeploymentToolkit.Services {
         /// as well for convenience.
         /// </remarks>
         PartitionStyle Style { get; }
+
+        /// <summary>
+        /// Gets the type of the partition.
+        /// </summary>
+        PartitionType Type { get; }
     }
 }

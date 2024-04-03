@@ -4,8 +4,8 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-
-namespace Visus.DeploymentToolkit.Services {
+namespace Visus.DeploymentToolkit.SystemInformation
+{
 
     /// <summary>
     /// Potential chassis types used by WMI.
@@ -13,7 +13,8 @@ namespace Visus.DeploymentToolkit.Services {
     /// <remarks>
     /// Cf. https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-systemenclosure
     /// </remarks>
-    public enum ChassisType : ushort {
+    public enum ChassisType : ushort
+    {
 
         Undefined = 0,
 
