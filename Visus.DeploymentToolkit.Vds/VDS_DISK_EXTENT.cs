@@ -46,12 +46,12 @@ namespace Visus.DeploymentToolkit.Vds {
         /// If the extent is from a volume, this member is the GUID of the
         /// plex to which the extent belongs.
         /// </summary>
-        public Guid PlexId;
+        public Guid PlexID;
 
         /// <summary>
         /// If the extent is from a volume plex, this member is the zero-based
         /// index of the plex member to which the extent belongs.
         /// </summary>
-        public uint MemberIdx;
+        public uint MemberIndex;
     }
 }
