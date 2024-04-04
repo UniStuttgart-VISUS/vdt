@@ -19,7 +19,7 @@ namespace Visus.DeploymentToolkit.Vds {
         /// <summary>
         /// The GUID of the disk.
         /// </summary>
-        public Guid DiskId;
+        public Guid DiskID;
 
         /// <summary>
         /// A <see cref="VDS_DISK_EXTENT_TYPE"/> enumeration value that
@@ -40,7 +40,7 @@ namespace Visus.DeploymentToolkit.Vds {
         /// <summary>
         /// The GUID of the volume to which the extent belongs.
         /// </summary>
-        public Guid VolumeId;
+        public Guid VolumeID;
 
         /// <summary>
         /// If the extent is from a volume, this member is the GUID of the

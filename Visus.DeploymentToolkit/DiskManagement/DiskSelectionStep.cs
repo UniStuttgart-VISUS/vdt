@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Threading;
+using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 
@@ -62,15 +64,22 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// empty itself.
         /// </remarks>
         /// <param name="disks"></param>
+        /// <param name="diskManagement"></param>
         /// <param name="logger"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public IEnumerable<IDisk> Apply(IEnumerable<IDisk>? disks,
-                ILogger logger) {
-            _ = logger ?? throw new ArgumentNullException(nameof(logger));
+        public Task<IEnumerable<IDisk>> ApplyAsync(IEnumerable<IDisk>? disks,
+                IDiskManagement diskManagement,
+                ILogger logger,
+                CancellationToken cancellationToken) {
+            _ = diskManagement
+                ?? throw new ArgumentNullException(nameof(diskManagement));
+            _ = logger
+                ?? throw new ArgumentNullException(nameof(logger));
 
             var retval = Enumerable.Empty<IDisk>();
             if (disks == null) {
-                return retval;
+                return Task.FromResult(retval);
             }
 
             switch (BuiltInCondition) {
@@ -134,14 +143,28 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                     break;
             }
 
-            return retval;
+            return Task.FromResult(retval);
         }
+
+        /// <summary>
+        /// Applies the selection step on <paramref name="disks"/>, returning
+        /// only the disks selected by this step.
+        /// </summary>
+        /// <param name="disks"></param>
+        /// <param name="diskManagement"></param>
+        /// <param name="logger"></param>
+        /// <returns></returns>
+        public Task<IEnumerable<IDisk>> ApplyAsync(IEnumerable<IDisk>? disks,
+                IDiskManagement diskManagement,
+                ILogger logger)
+            => this.ApplyAsync(disks, diskManagement, logger,
+                CancellationToken.None);
         #endregion
 
-        #region Nested enum
-        /// <summary>
-        /// Allows for selecting specific types of EFI boot partitions.
-        /// </summary>
+            #region Nested enum
+            /// <summary>
+            /// Allows for selecting specific types of EFI boot partitions.
+            /// </summary>
         private enum EfiPartitionType {
             /// <summary>
             /// Get any EFI boot partition, which means that the partition must
@@ -173,6 +196,12 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                          where d.Partitions.Any(p => p.Type == PartitionType.EfiSystem)
                          select d;
 
+            var partitions = from p in disks.SelectMany(d => d.Partitions)
+                             where p.Type == PartitionType.EfiSystem
+                             select p;
+
+            foreach (var p in partitions) {
+            }
 
             // TODO: Need to find out the file system
             // TODO: Need to assign a letter if necessary.

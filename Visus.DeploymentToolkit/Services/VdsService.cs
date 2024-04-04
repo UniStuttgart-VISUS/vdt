@@ -12,12 +12,12 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Properties;
-using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Vds;
 
 
-namespace Visus.DeploymentToolkit.DiskManagement {
+namespace Visus.DeploymentToolkit.Services {
 
     /// <summary>
     /// Provides access to disk management via the Virtual Disk Service VDS.
@@ -79,20 +79,9 @@ namespace Visus.DeploymentToolkit.DiskManagement {
             _ = pack ?? throw new ArgumentNullException(nameof(pack));
             cancellation.ThrowIfCancellationRequested();
 
-            IEnumVdsObject enumerator;
-            pack.QueryDisks(out enumerator);
-
-            while (true) {
+            foreach (var d in pack.QueryDisks()) {
                 cancellation.ThrowIfCancellationRequested();
-
-                enumerator.Next(1, out var unknown, out var cnt);
-                if (cnt == 0) {
-                    break;
-                }
-
-                if (unknown is IVdsDisk disk && disk != null) {
-                    yield return new VdsDisk(disk);
-                }
+                yield return new VdsDisk(d);
             }
         }
 
@@ -123,21 +112,12 @@ namespace Visus.DeploymentToolkit.DiskManagement {
             cancellation.ThrowIfCancellationRequested();
 
             // Enumerate all disk providers.
-            IEnumVdsObject enumerator;
-            _service.QueryProviders(
-                VDS_QUERY_PROVIDER_FLAG.SOFTWARE_PROVIDERS
+            var types = VDS_QUERY_PROVIDER_FLAG.SOFTWARE_PROVIDERS
                 //| VDS_QUERY_PROVIDER_FLAG.HARDWARE_PROVIDERS
-                | VDS_QUERY_PROVIDER_FLAG.VIRTUALDISK_PROVIDERS,
-                out enumerator);
-            enumerator.Reset();
+                | VDS_QUERY_PROVIDER_FLAG.VIRTUALDISK_PROVIDERS;
 
-            while (true) {
+            foreach (var unknown in this._service.QueryProviders(types)) {
                 cancellation.ThrowIfCancellationRequested();
-
-                enumerator.Next(1, out var unknown, out uint cnt);
-                if (cnt == 0) {
-                    break;
-                }
 
                 if (unknown is IVdsSwProvider sw && sw != null) {
                     // This is the default software provider in Windows.
@@ -169,21 +149,12 @@ namespace Visus.DeploymentToolkit.DiskManagement {
             _ = provider ?? throw new ArgumentNullException(nameof(provider));
             cancellation.ThrowIfCancellationRequested();
 
-            IEnumVdsObject enumerator;
-            provider.QueryPacks(out enumerator);
-
-            while (true) {
+            foreach (var pack in provider.QueryPacks()) {
                 cancellation.ThrowIfCancellationRequested();
 
-                enumerator.Next(1, out var unknown, out var cnt);
-                if (cnt == 0) {
-                    break;
-                }
-
-                if (unknown is IVdsPack pack && pack != null) {
-                    foreach (var d in GetDisks(pack, cancellation)) {
-                        yield return d;
-                    }
+                foreach (var d in GetDisks(pack, cancellation)) {
+                    cancellation.ThrowIfCancellationRequested();
+                    yield return d;
                 }
             }
         }
@@ -193,7 +164,10 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                 CancellationToken cancellation) {
             _ = provider ?? throw new ArgumentNullException(nameof(provider));
             cancellation.ThrowIfCancellationRequested();
-            yield break;
+            foreach (var d in  provider.QueryVDisks()) {
+                cancellation.ThrowIfCancellationRequested();
+                yield return new VdsDisk(d);
+            }
         }
         #endregion
 

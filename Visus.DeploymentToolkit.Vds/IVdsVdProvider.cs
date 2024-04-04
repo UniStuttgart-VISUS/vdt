@@ -17,7 +17,13 @@ namespace Visus.DeploymentToolkit.Vds {
     [Guid("b481498c-8354-45f9-84a0-0bdd2832a91f")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVdsVdProvider {
-        void QueryVDisks(out IEnumVdsObject ppEnum);
+
+        /// <summary>
+        /// Returns a list of all virtual disks that are managed by the provider.
+        /// </summary>
+        /// <param name="enumerator">Receives the enumerator for the virtual
+        /// disks.</param>
+        void QueryVDisks(out IEnumVdsObject enumerator);
 
         [Obsolete("This method is not correctly mapped, because we did not yet "
             + "need it. However, the method still needs to be there fore the "

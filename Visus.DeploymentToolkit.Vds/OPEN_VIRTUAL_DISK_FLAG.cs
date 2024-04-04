@@ -9,6 +9,10 @@ using System;
 
 namespace Visus.DeploymentToolkit.Vds {
 
+    /// <summary>
+    /// Contains virtual hard disk (VHD) or CD or DVD image file (ISO) open
+    /// request flags.
+    /// </summary>
     [Flags]
     public enum OPEN_VIRTUAL_DISK_FLAG : uint {
         NONE = 0x00000000,

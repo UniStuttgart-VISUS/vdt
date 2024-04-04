@@ -7,7 +7,7 @@
 using Microsoft.Extensions.Logging;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-using Visus.DeploymentToolkit.DiskManagement;
+using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Vds;
 
 
@@ -115,6 +115,41 @@ namespace Visus.DeploymentToolkit.Test
 
                         advDisk.GetPartitionProperties(partitionProps[0].Offset, out var partitionProp);
                         Assert.AreEqual(partitionProps[0].PartitionNumber, partitionProp.PartitionNumber, "PartitionNumber matches");
+                    }
+                }
+            }
+        }
+
+
+        [TestMethod]
+        public void EnumerateExtents() {
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                var loader = new VdsServiceLoader() as IVdsServiceLoader;
+                Assert.IsNotNull(loader, "Have IVdsServiceLoader");
+
+                IVdsService service;
+                loader.LoadService(null, out service);
+                Assert.IsNotNull(service, "Have IVdsService");
+
+                {
+                    var status = service.WaitForServiceReady();
+                    Assert.AreEqual(0u, status, "WaitForServiceReady succeeded");
+                }
+
+                foreach (var provider in service.QuerySoftwareProviders()) {
+                    foreach (var pack in provider.QueryPacks()) {
+                        VDS_PACK_PROP packProp;
+                        pack.GetProperties(out packProp);
+
+                        if (packProp.Status != VDS_PACK_STATUS.ONLINE) {
+                            continue;
+                        }
+
+                        foreach (var d in pack.QueryDisks()) {
+                            d.QueryExtents(out var extents, out var _);
+                            Assert.IsNotNull(extents);
+                            Assert.IsTrue(extents.Any());
+                        }
                     }
                 }
             }

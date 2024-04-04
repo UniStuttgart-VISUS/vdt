@@ -7,10 +7,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Vds;
 
 
-namespace Visus.DeploymentToolkit.DiskManagement {
+namespace Visus.DeploymentToolkit.DiskManagement
+{
 
     /// <summary>
     /// A <see cref="IDisk"/> as enumerated by the <see cref="VdsService"/>.

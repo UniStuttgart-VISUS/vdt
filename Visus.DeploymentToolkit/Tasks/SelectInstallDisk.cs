@@ -69,7 +69,10 @@ namespace Visus.DeploymentToolkit.Tasks {
                 .ConfigureAwait(false);
 
             foreach (var s in this.Steps) {
-                disks = s.Apply(disks, this._logger);
+                disks = await s.ApplyAsync(disks,
+                    this._diskManagement,
+                    this._logger,
+                    cancellationToken);
             }
 
             if (!disks.Any()) {

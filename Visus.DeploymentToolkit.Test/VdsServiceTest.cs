@@ -38,7 +38,7 @@ namespace Visus.DeploymentToolkit.Test
         }
 
         [TestMethod]
-        public void SelectDisks() {
+        public async Task SelectDisks() {
             if (WindowsIdentity.GetCurrent().IsAdministrator()) {
                 var logger = this._loggerFactory.CreateLogger<VdsService>();
                 var service = new VdsService(logger);
@@ -56,39 +56,39 @@ namespace Visus.DeploymentToolkit.Test
                 {
                     selection.BuiltInCondition = BuiltInCondition.None;
                     selection.Condition = "BusType == Visus.DeploymentToolkit.DiskManagement.StorageBusType.Nvme";
-                    var selected = selection.Apply(disks, logger);
+                    var selected = await selection.ApplyAsync(disks, service, logger);
                     Assert.IsTrue(selected.Any());
                 }
 
                 {
                     selection.BuiltInCondition = BuiltInCondition.None;
                     selection.Condition = "BusType == Visus.DeploymentToolkit.DiskManagement.StorageBusType.SD";
-                    var selected = selection.Apply(disks, logger);
+                    var selected = await selection.ApplyAsync(disks, service, logger);
                     Assert.IsTrue(selected.Any());
                 }
 
                 {
                     selection.BuiltInCondition = BuiltInCondition.IsSmallest;
-                    var selected = selection.Apply(disks, logger);
+                    var selected = await selection.ApplyAsync(disks, service, logger);
                     Assert.IsTrue(selected.Any());
                 }
 
                 {
                     selection.BuiltInCondition = BuiltInCondition.IsLargest;
-                    var selected = selection.Apply(disks, logger);
+                    var selected = await selection.ApplyAsync(disks, service, logger);
                     Assert.IsTrue(selected.Any());
                 }
 
                 {
                     selection.BuiltInCondition = BuiltInCondition.IsEfiBootDisk;
-                    var selected = selection.Apply(disks, logger);
+                    var selected = await selection.ApplyAsync(disks, service, logger);
                     Assert.IsTrue(selected.Any());
                 }
 
                 {
                     selection.BuiltInCondition = BuiltInCondition.None;
                     selection.Condition = "PartitionStyle == Visus.DeploymentToolkit.DiskManagement.PartitionStyle.Gpt";
-                    var selected = selection.Apply(disks, logger);
+                    var selected = await selection.ApplyAsync(disks, service, logger);
                     Assert.IsTrue(selected.Any());
                 }
             }

@@ -6,7 +6,6 @@
 
 using Microsoft.Extensions.Logging;
 using System.Security.Principal;
-using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Services;
 
 
