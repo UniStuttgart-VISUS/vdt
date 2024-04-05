@@ -10,8 +10,7 @@ using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Services;
 
 
-namespace Visus.DeploymentToolkit.Test
-{
+namespace Visus.DeploymentToolkit.Test {
 
     /// <summary>
     /// Tests for the <see cref="VdsService"/> wrapper class.

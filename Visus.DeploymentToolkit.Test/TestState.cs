@@ -6,7 +6,6 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Resources;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Workflow;

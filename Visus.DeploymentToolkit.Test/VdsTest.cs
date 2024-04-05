@@ -11,8 +11,7 @@ using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Vds;
 
 
-namespace Visus.DeploymentToolkit.Test
-{
+namespace Visus.DeploymentToolkit.Test {
 
     [TestClass]
     public sealed class VdsTest {

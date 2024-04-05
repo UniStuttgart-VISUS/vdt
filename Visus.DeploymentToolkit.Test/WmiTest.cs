@@ -9,8 +9,7 @@ using System.Security.Principal;
 using Visus.DeploymentToolkit.Services;
 
 
-namespace Visus.DeploymentToolkit.Test
-{
+namespace Visus.DeploymentToolkit.Test {
 
     [TestClass]
     public sealed class WmiTest {
