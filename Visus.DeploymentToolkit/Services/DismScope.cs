@@ -26,16 +26,16 @@ namespace Visus.DeploymentToolkit.Services {
         /// <param name="options"></param>
         public DismScope(IOptions<DismOptions> options,
                 ILogger<DismScope> logger) {
-            this._logger = logger
+            _logger = logger
                 ?? throw new ArgumentNullException(nameof(logger));
-            this.Options = options?.Value ?? new();
+            Options = options?.Value ?? new();
 
-            this._logger.LogTrace(Resources.DismInitialise,
-                this.Options.LogFile,
-                this.Options.ScratchDirectory);
+            _logger.LogTrace(Resources.DismInitialise,
+                Options.LogFile,
+                Options.ScratchDirectory);
             DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo,
-                this.Options.LogFile,
-                this.Options.ScratchDirectory);
+                Options.LogFile,
+                Options.ScratchDirectory);
         }
         #endregion
 
@@ -44,7 +44,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// Finalises the instance.
         /// </summary>
         ~DismScope() {
-            this.Dispose(false);
+            Dispose(false);
         }
         #endregion
 
@@ -63,18 +63,18 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Private methods
         private void Dispose(bool disposing) {
-            if (!this._disposed) {
+            if (!_disposed) {
                 if (disposing) {
-                    this._logger.LogTrace(Resources.DismShutdown);
+                    _logger.LogTrace(Resources.DismShutdown);
                     DismApi.Shutdown();
                 }
 
                 // No unmanaged resources to free here.
 
-                this._disposed = true;
+                _disposed = true;
             }
 
-            Debug.Assert(this._disposed);
+            Debug.Assert(_disposed);
         }
         #endregion
 

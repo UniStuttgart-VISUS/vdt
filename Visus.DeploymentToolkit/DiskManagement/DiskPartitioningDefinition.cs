@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 
 namespace Visus.DeploymentToolkit.DiskManagement {
@@ -15,6 +16,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
     /// </summary>
     public sealed class DiskPartitioningDefinition : IDisk {
 
+        #region Public properties
         /// <inheritdoc />
         public StorageBusType BusType => StorageBusType.Unknown;
 
@@ -51,5 +53,18 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
         /// <inheritdoc />
         IEnumerable<IVolume> IDisk.Volumes => Volumes;
+        #endregion
+
+        #region Public methods
+        /// <summary>
+        /// Fails unconditionally.
+        /// </summary>
+        /// <param name="style"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public Task ConvertAsync(PartitionStyle style) {
+            throw new InvalidOperationException();
+        }
+        #endregion
     }
 }

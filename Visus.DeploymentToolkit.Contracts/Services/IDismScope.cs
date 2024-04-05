@@ -10,6 +10,10 @@ namespace Visus.DeploymentToolkit.Services {
     /// <summary>
     /// Allows callers to have DISM being initialised for the calling process.
     /// </summary>
+    /// <remarks>
+    /// The DISM scope should be a singleton in the dependency injection
+    /// container and remain active until the 
+    /// </remarks>
     public interface IDismScope {
 
         /// <summary>

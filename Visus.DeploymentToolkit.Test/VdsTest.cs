@@ -146,8 +146,10 @@ namespace Visus.DeploymentToolkit.Test {
 
                         foreach (var d in pack.QueryDisks()) {
                             d.QueryExtents(out var extents, out var _);
+                            ((IVdsAdvancedDisk) d).QueryPartitions(out var parts, out var _);
                             Assert.IsNotNull(extents);
                             Assert.IsTrue(extents.Any());
+                            Assert.IsTrue(extents.Length >= parts.Length);
                         }
                     }
                 }

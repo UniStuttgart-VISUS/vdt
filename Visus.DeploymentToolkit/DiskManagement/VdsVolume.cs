@@ -43,15 +43,15 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// <param name="volume"></param>
         /// <exception cref="ArgumentNullException"></exception>
         internal VdsVolume(IVdsVolume volume) {
-            _volume = volume
+            this._volume = volume
                 ?? throw new ArgumentNullException(nameof(volume));
 
-            if (_volume is IVdsVolumeMF mf) {
+            if (this._volume is IVdsVolumeMF mf) {
                 mf.GetFileSystemProperties(out _fileSystem);
             }
 
-            _mounts = new(() => {
-                if (_volume is IVdsVolumeMF mf) {
+            this._mounts = new(() => {
+                if (this._volume is IVdsVolumeMF mf) {
                     mf.QueryAccessPaths(out var retval, out var _);
                     return retval;
                 } else {
@@ -59,7 +59,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                 }
             });
 
-            _volume.GetProperties(out _properties);
+            this._volume.GetProperties(out _properties);
         }
         #endregion
 

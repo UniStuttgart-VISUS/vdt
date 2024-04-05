@@ -183,7 +183,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// <param name="name">The human readable name of the partition type. If
         /// this is <c>null</c>, the constructor will look up the name from the
         /// well-known partition types or use the GUID as final fallback.</param>
-        public PartitionType(Guid guid, string? name) {
+        public PartitionType(Guid guid, string? name = null) {
             this.Gpt = guid;
             this.Name = name
                 ?? FromGpt(guid).FirstOrDefault()?.Name
@@ -198,7 +198,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// this is <c>null</c>, the constructor will look up the name from the
         /// well-known partition types or use the partition ID as final
         /// fallback.</param>
-        public PartitionType(byte id, string? name) {
+        public PartitionType(byte id, string? name = null) {
             this.Mbr = id;
             this.Name = name
                 ?? FromMbr(id).FirstOrDefault()?.Name

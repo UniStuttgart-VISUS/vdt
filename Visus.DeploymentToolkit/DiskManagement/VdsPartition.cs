@@ -4,8 +4,6 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using System;
-using System.Linq;
 using Visus.DeploymentToolkit.Vds;
 
 
@@ -18,11 +16,11 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
         #region Public properties
         /// <inheritdoc />
-        public uint Index => _properties.PartitionNumber;
+        public uint Index => this._properties.PartitionNumber;
 
         /// <inheritdoc />
         public bool IsBoot => Style == PartitionStyle.Mbr
-            ? _properties.Mbr.BootIndicator
+            ? this._properties.Mbr.BootIndicator
             : false;
 
         /// <inheritdoc />
@@ -30,36 +28,29 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
         /// <inheritdoc />
         public string? Name => Style == PartitionStyle.Gpt
-            ? _properties.Gpt.name
+            ? this._properties.Gpt.name
             : null;
 
         /// <inheritdoc />
-        public ulong Offset => _properties.Offset;
+        public ulong Offset => this._properties.Offset;
 
         /// <inheritdoc />
-        public ulong Size => _properties.Size;
+        public ulong Size => this._properties.Size;
 
         /// <inheritdoc />
         public PartitionStyle Style
-            => (PartitionStyle) _properties.PartitionStyle;
+            => (PartitionStyle) this._properties.PartitionStyle;
 
         /// <inheritdoc />
         public PartitionType Type {
             get {
                 if (Style == PartitionStyle.Gpt) {
                     var id = _properties.Gpt.PartitionType;
-                    var types = PartitionType.FromGpt(id);
-                    // If we have NTFS in the list, we also have a lot of legacy
-                    // chunk which maps on the same partition type. Therefore,
-                    // we force this to NTFS. Ideally, we would check the volume
-                    // instead, but we do not have access to this from here.
-                    return types.Contains(PartitionType.Ntfs)
-                        ? PartitionType.Ntfs
-                        : types.First();
+                    return new PartitionType(id);
 
                 } else {
                     var id = (byte) _properties.Mbr.PartitionType;
-                    return PartitionType.FromMbr(id).First();
+                    return new PartitionType(id);
                 }
             }
         }
@@ -71,7 +62,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// </summary>
         /// <param name="properties"></param>
         internal VdsPartition(VDS_PARTITION_PROP properties) {
-            _properties = properties;
+            this._properties = properties;
         }
         #endregion
 

@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 
 namespace Visus.DeploymentToolkit.DiskManagement
@@ -17,6 +18,7 @@ namespace Visus.DeploymentToolkit.DiskManagement
     /// </summary>
     public interface IDisk {
 
+        #region Public properties
         /// <summary>
         /// Gets the storage bus used by the disk.
         /// </summary>
@@ -55,5 +57,15 @@ namespace Visus.DeploymentToolkit.DiskManagement
         /// Gets the volumes on the disk.
         /// </summary>
         IEnumerable<IVolume> Volumes { get; }
+        #endregion
+
+        #region Public methods
+        /// <summary>
+        /// Converts the partition style of the disk to the specified value.
+        /// </summary>
+        /// <param name="style">The new partition style of the disk.</param>
+        /// <returns>A task to wait for the operation to complete.</returns>
+        Task ConvertAsync(PartitionStyle style);
+        #endregion
     }
 }

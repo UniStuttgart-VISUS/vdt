@@ -47,7 +47,7 @@ namespace Visus.DeploymentToolkit.Vds {
         /// IVdsCreatePartitionEx::CreatePartitionEx method supersedes this method.
         /// </summary>
         void CreatePartition(ulong offset, ulong size,
-            ref CREATE_PARTITION_PARAMETERS para,
+            ref CREATE_PARTITION_PARAMETERS parameters,
             out IVdsAsync vdsAsync);
 
         /// <summary>
