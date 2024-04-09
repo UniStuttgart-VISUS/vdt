@@ -14,6 +14,7 @@ using System.Linq;
 using System.Management;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.SystemInformation;
@@ -37,6 +38,11 @@ namespace Visus.DeploymentToolkit.Services {
             _ = registry ?? throw new ArgumentNullException(nameof(registry));
 
             this._bios = new(() => this.GetWmi("Win32_BIOS"));
+            {
+                typeof(object).Module.GetPEKind(out var kind, out var machine);
+                this.ClrExecutableKind = kind;
+                this.ClrMachine = machine;
+            }
             this._computer = new(() => this.GetWmi("Win32_ComputerSystem"));
             this._computerProduct = new(() => this.GetWmi("Win32_ComputerSystemProduct"));
             this._enclosure = new(() => this.GetWmi("Win32_SystemEnclosure"));
@@ -60,6 +66,12 @@ namespace Visus.DeploymentToolkit.Services {
                     ?? Enumerable.Empty<ChassisType>();
             }
         }
+
+        /// <inheritdoc />
+        public PortableExecutableKinds ClrExecutableKind { get; }
+
+        /// <inheritdoc />
+        public ImageFileMachine ClrMachine { get; }
 
         /// <inheritdoc />
         public string? Hal => this._hal.Value;

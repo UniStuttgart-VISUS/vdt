@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using Visus.DeploymentToolkit.SystemInformation;
 
 
@@ -27,6 +28,18 @@ namespace Visus.DeploymentToolkit.Services {
         /// Gets the chassis or form factor of the system.
         /// </summary>
         IEnumerable<ChassisType> Chassis { get; }
+
+        /// <summary>
+        /// Gets the <see cref="PortableExecutableKinds"/> of the currently
+        /// executing CLR.
+        /// </summary>
+        PortableExecutableKinds ClrExecutableKind { get; }
+
+        /// <summary>
+        /// Gets the <see cref="ImageFileMachine"/> of the currently executing
+        /// CLR.
+        /// </summary>
+        ImageFileMachine ClrMachine { get; }
 
         /// <summary>
         /// Gets the HAL.
