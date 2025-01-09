@@ -61,24 +61,6 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The command &quot;{0}&quot; failed with exit code {1}..
-        /// </summary>
-        internal static string CommandFailed {
-            get {
-                return ResourceManager.GetString("CommandFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The command &quot;{0}&quot; did not run..
-        /// </summary>
-        internal static string CommandNotRun {
-            get {
-                return ResourceManager.GetString("CommandNotRun", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Partition and format disk.
         /// </summary>
         internal static string PartitionFormatDisk {
@@ -97,20 +79,11 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Task sequence {SequencName}.
+        ///   Looks up a localized string similar to Task sequence {0}.
         /// </summary>
         internal static string TaskSequenceName {
             get {
                 return ResourceManager.GetString("TaskSequenceName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Waiting for the Virtual Disk Service to become ready..
-        /// </summary>
-        internal static string WaitingVds {
-            get {
-                return ResourceManager.GetString("WaitingVds", resourceCulture);
             }
         }
     }

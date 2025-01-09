@@ -117,12 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CommandFailed" xml:space="preserve">
-    <value>The command "{0}" failed with exit code {1}.</value>
-  </data>
-  <data name="CommandNotRun" xml:space="preserve">
-    <value>The command "{0}" did not run.</value>
-  </data>
   <data name="PartitionFormatDisk" xml:space="preserve">
     <value>Partition and format disk</value>
   </data>
@@ -130,9 +124,6 @@
     <value>Select installation disk</value>
   </data>
   <data name="TaskSequenceName" xml:space="preserve">
-    <value>Task sequence {SequencName}</value>
-  </data>
-  <data name="WaitingVds" xml:space="preserve">
-    <value>Waiting for the Virtual Disk Service to become ready.</value>
+    <value>Task sequence {0}</value>
   </data>
 </root>

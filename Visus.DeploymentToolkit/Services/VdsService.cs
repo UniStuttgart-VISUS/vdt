@@ -102,7 +102,8 @@ namespace Visus.DeploymentToolkit.Services {
 
             // First of all, make sure that the VDS is ready.
             {
-                this._logger.LogInformation(Resources.WaitingVds);
+                this._logger.LogInformation("Waiting for the Virtual Disk "
+                    + "Service to become ready.");
                 var status = _service.WaitForServiceReady();
                 if (status != 0) {
                     throw new COMException(Errors.WaitVdsFailed, (int) status);
