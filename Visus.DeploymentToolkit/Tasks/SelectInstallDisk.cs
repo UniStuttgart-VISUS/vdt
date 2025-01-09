@@ -1,5 +1,5 @@
 ﻿// <copyright file="SelectInstallDisk.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
@@ -76,7 +76,8 @@ namespace Visus.DeploymentToolkit.Tasks {
             }
 
             if (!disks.Any()) {
-                this._logger.LogCritical(Errors.NoInstallationDisks);
+                this._logger.LogCritical("No suitable installation disks have "
+                    + "been found.");
             }
 
             // Note: First() will throw if there was no disk left.

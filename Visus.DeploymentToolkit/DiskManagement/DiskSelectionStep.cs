@@ -84,26 +84,27 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
             switch (BuiltInCondition) {
                 case BuiltInCondition.IsLargest:
-                    logger.LogInformation(Resources.DiskSelectionLargest);
+                    logger.LogInformation("Selecting the largest disk.");
                     retval = (from d in disks
                               orderby d.Size descending
                               select d).Take(1);
                     break;
 
                 case BuiltInCondition.IsSmallest:
-                    logger.LogInformation(Resources.DiskSelectionSmallest);
+                    logger.LogInformation("Selecting the smallest disk.");
                     retval = (from d in disks
                               orderby d.Size ascending
                               select d).Take(1);
                     break;
 
                 case BuiltInCondition.IsEfiBootDisk:
-                    logger.LogInformation(Resources.DiskSelectionEfiBootDisk);
+                    logger.LogInformation("Selecting a disk with an EFI system "
+                        + "partition on it.");
                     retval = SelectEfiSystemDisks(disks, EfiPartitionType.Any);
                     break;
 
                 case BuiltInCondition.IsMbrBootDisk:
-                    logger.LogInformation(Resources.DiskSelectionMbrBootDisk);
+                    logger.LogInformation("Selecting a disk with a MBR on it.");
                     retval = from d in disks
                              where d.Partitions.Any(p => p.IsBoot)
                              select d;
@@ -111,34 +112,38 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
                 case BuiltInCondition.None:
                 default:
-                    logger.LogInformation(Resources.DiskSelectionCondition,
-                        Condition, Action);
+                    logger.LogInformation("Selecting a disk that fulfills the "
+                        + "condition \"{Condition}\".",
+                        Condition);
                     retval = disks.AsQueryable().Where(Condition);
                     break;
             }
 
             switch (Action) {
                 case DiskSelectionAction.Include:
-                    logger.LogInformation(Resources.DiskSelectionInclude,
-                        retval.Count());
+                    logger.LogInformation("The selection includes {Included} "
+                        + "disk(s).", retval.Count());
                     if (!retval.Any()) {
-                        logger.LogWarning(Resources.DiskSelectionEmpty);
+                        logger.LogWarning("The disk selection step resulted in "
+                            + "an empty set of disks to include.");
                         retval = disks;
                     }
                     break;
 
                 case DiskSelectionAction.Exclude:
-                    logger.LogInformation(Resources.DiskSelectionExclude,
-                        retval.Count());
+                    logger.LogInformation("The selection excludes {Excluded} "
+                        + "disk(s).", retval.Count());
                     retval = disks.AsQueryable().Except(retval);
                     if (!retval.Any()) {
-                        logger.LogWarning(Resources.DiskSelectionEmpty);
+                        logger.LogWarning("The disk selection step resulted in "
+                            + "an empty set of disks to exclude.");
                         retval = disks;
                     }
                     break;
 
                 case DiskSelectionAction.None:
-                    logger.LogInformation(Resources.DiskSelectionNone);
+                    logger.LogInformation("The disk selection remains "
+                        + "unchanged.");
                     retval = disks;
                     break;
             }
@@ -203,6 +208,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
             foreach (var p in partitions) {
             }
 
+            throw new NotImplementedException("We need to find out some stuff I don't know how to get...");
             // TODO: Need to find out the file system
             // TODO: Need to assign a letter if necessary.
 

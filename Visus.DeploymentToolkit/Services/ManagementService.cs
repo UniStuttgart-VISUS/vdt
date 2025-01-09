@@ -59,7 +59,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <inheritdoc />
         public IEnumerable<ManagementObject> Query(string query,
                 ManagementScope? scope) {
-            this._logger.LogTrace(Resources.IssuingWmiQuery, query);
+            this._logger.LogTrace("Issuing WMI query \"{Query}\".", query);
             var search = new ManagementObjectSearcher(
                 scope ?? this.DefaultScope,
                  new ObjectQuery(query));

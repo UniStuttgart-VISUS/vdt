@@ -1,5 +1,5 @@
 ﻿// <copyright file="DismScope.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2024  - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Diagnostics;
-using Visus.DeploymentToolkit.Properties;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -30,9 +29,9 @@ namespace Visus.DeploymentToolkit.Services {
                 ?? throw new ArgumentNullException(nameof(logger));
             Options = options?.Value ?? new();
 
-            _logger.LogTrace(Resources.DismInitialise,
-                Options.LogFile,
-                Options.ScratchDirectory);
+            _logger.LogTrace("Initialising DISM with \"{LogFile}\" as log file "
+                + "and \"{ScratchDirectory}\" as scratch directory.",
+                Options.LogFile, Options.ScratchDirectory);
             DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo,
                 Options.LogFile,
                 Options.ScratchDirectory);
@@ -70,7 +69,7 @@ namespace Visus.DeploymentToolkit.Services {
         private void Dispose(bool disposing) {
             if (!this._disposed) {
                 if (disposing) {
-                    this._logger.LogTrace(Resources.DismShutdown);
+                    this._logger.LogTrace("Shutting down DISM.");
                     DismApi.Shutdown();
                 }
 

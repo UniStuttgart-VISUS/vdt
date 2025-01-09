@@ -79,24 +79,6 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A DISM image needs to be opened before this operation can be performed..
-        /// </summary>
-        internal static string NoDismSession {
-            get {
-                return ResourceManager.GetString("NoDismSession", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No suitable installation disks have been found..
-        /// </summary>
-        internal static string NoInstallationDisks {
-            get {
-                return ResourceManager.GetString("NoInstallationDisks", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &quot;{0}&quot; does not designate or does not begin with a valid registry hive..
         /// </summary>
         internal static string NoRegistryHive {

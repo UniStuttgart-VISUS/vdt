@@ -7,7 +7,6 @@
 using Microsoft.Dism;
 using Microsoft.Extensions.Logging;
 using System;
-using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 
 
@@ -31,11 +30,11 @@ namespace Visus.DeploymentToolkit.Imaging {
         #region Public methods
         /// <inheritdoc />
         public void Commit() {
-            _ = this._session
-                ?? throw new InvalidOperationException(Errors.NoDismSession);
+            _ = this._session ?? throw new InvalidOperationException(
+                "A DISM image needs to be opened before this operation can be "
+                + "performed.");
             DismApi.CommitImage(this._session, false);
         }
-
 
         /// <inheritdoc />
         public void Dispose() {
@@ -49,8 +48,9 @@ namespace Visus.DeploymentToolkit.Imaging {
         public void InjectDrivers(string folder,
                 bool recursive = false,
                 bool forceUnsigned = false) {
-            _ = this._session
-                ?? throw new InvalidOperationException(Errors.NoDismSession);
+            _ = this._session ?? throw new InvalidOperationException(
+                "A DISM image needs to be opened before this operation can be "
+                + "performed.");
             DismApi.AddDriversEx(this._session,
                 folder,
                 forceUnsigned,
@@ -60,15 +60,17 @@ namespace Visus.DeploymentToolkit.Imaging {
         /// <inheritdoc />
         public void Open(string path) {
             _ = path ?? throw new ArgumentNullException(nameof(path));
-            this._logger.LogInformation(Resources.DismOpenOffline, path);
+            this._logger.LogInformation("Opening an offline servicing session "
+                + "for \"{Path}\".", path);
             this._session = DismApi.OpenOfflineSessionEx(path);
 
         }
 
         /// <inheritdoc />
         public void RollBack() {
-            _ = this._session
-                ?? throw new InvalidOperationException(Errors.NoDismSession);
+            _ = this._session ?? throw new InvalidOperationException(
+                "A DISM image needs to be opened before this operation can be "
+                + "performed.");
             DismApi.CommitImage(this._session, true);
         }
         #endregion

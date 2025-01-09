@@ -1,15 +1,15 @@
 ﻿// <copyright file="ApplyUnattend.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
 
 using Microsoft.Dism;
 using Microsoft.Extensions.Logging;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
-using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Workflow;
 
@@ -30,7 +30,10 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <param name="logger">The logger used to report results of the
         /// operation.</param>
         public ApplyUnattend(IDismScope dism,
-            ILogger<ApplyUnattend> logger) : base(logger) { }
+                ILogger<ApplyUnattend> logger)
+                : base(logger) {
+            this._dism = dism ?? throw new ArgumentNullException(nameof(dism));
+        }
         #endregion
 
         #region Public properties
@@ -38,33 +41,41 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// Gets or sets the path to the Windows installation being modified.
         /// </summary>
         [Required]
-        public string InstallationPath { get; set; }
+        public string InstallationPath { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets the path to the unattend file to apply.
         /// </summary>
         [Required]
-        public string UnattendFile { get; set; }
+        public string UnattendFile { get; set; } = null!;
         #endregion
 
         #region Public methods
         /// <inheritdoc />
         public override Task ExecuteAsync(IState state,
                 CancellationToken cancellationToken) {
-            this._logger.LogTrace(Resources.DismOpenOffline,
+            this._logger.LogInformation("Opening an offline servicing session "
+                + "for \"{Path}\" to apply unattend settings.",
                 this.InstallationPath);
-            var session = DismApi.OpenOfflineSession(this.InstallationPath);
+            using var session = DismApi.OpenOfflineSession(
+                this.InstallationPath);
 
-            this._logger.LogInformation(Resources.DismApplyUnattend,
+            this._logger.LogInformation("Applying unattend file "
+                + "\"{UnattendFile}\" to \"{Path}\".",
                 this.UnattendFile, this.InstallationPath);
             DismApi.ApplyUnattend(session, this.UnattendFile, true);
 
-            this._logger.LogTrace(Resources.DismCommit);
+            this._logger.LogTrace("Committing changes to \"{Path}\".",
+                this.InstallationPath);
             DismApi.CommitImage(session, false);
             DismApi.CloseSession(session);
 
             return Task.CompletedTask;
         }
+        #endregion
+
+        #region Private fields
+        private readonly IDismScope _dism;
         #endregion
     }
 }
