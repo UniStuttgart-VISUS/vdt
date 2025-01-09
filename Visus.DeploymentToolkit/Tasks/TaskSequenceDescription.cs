@@ -7,6 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Workflow;
 
@@ -17,6 +20,20 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// Represents the JSON description of a task sequence.
     /// </summary>
     internal sealed class TaskSequenceDescription {
+
+        #region Factory methods
+        /// <summary>
+        /// Parse a task sequence description from the given JSON file.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static ValueTask<TaskSequenceDescription?> ParseAsync(
+                string path) {
+            using var file = File.OpenRead(path);
+            return JsonSerializer.DeserializeAsync<TaskSequenceDescription>(
+                file);
+        }
+        #endregion
 
         #region Public constructors
         /// <summary>
@@ -37,13 +54,13 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Gets or sets the unique ID of the task sequence.
         /// </summary>
-        public string ID { get; set; }
+        public string ID { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets the name of the task sequence.
         /// </summary>
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets the steps in the task sequence.
