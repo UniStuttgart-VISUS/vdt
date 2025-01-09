@@ -79,38 +79,11 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Registry hive is &quot;{0}&quot;..
-        /// </summary>
-        internal static string ParsingAsRegistryHive {
-            get {
-                return ResourceManager.GetString("ParsingAsRegistryHive", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Parsing the registry hive from &quot;{0}&quot;..
-        /// </summary>
-        internal static string ParsingRegistryHive {
-            get {
-                return ResourceManager.GetString("ParsingRegistryHive", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Partition and format disk.
         /// </summary>
         internal static string PartitionFormatDisk {
             get {
                 return ResourceManager.GetString("PartitionFormatDisk", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The remaining registry path is &quot;{0}&quot;..
-        /// </summary>
-        internal static string RegistryPathRemaining {
-            get {
-                return ResourceManager.GetString("RegistryPathRemaining", resourceCulture);
             }
         }
         

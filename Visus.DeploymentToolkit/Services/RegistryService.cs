@@ -1,5 +1,5 @@
 ﻿// <copyright file="RegistryService.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
@@ -62,7 +62,8 @@ namespace Visus.DeploymentToolkit.Services {
         private RegistryKey OpenHive(string key, out string path) {
             _ = key ?? throw new ArgumentNullException(nameof(key));
 
-            this._logger.LogTrace(Resources.ParsingRegistryHive, key);
+            this._logger.LogTrace("Parsing the registry hive from the given "
+                + "\"path {RegistryPath}\".", key);
 
             // Out first assumption is that 'key' is the hive itself.
             var hive = key;
@@ -77,8 +78,9 @@ namespace Visus.DeploymentToolkit.Services {
             }
             hive = hive.ToUpperInvariant();
 
-            this._logger.LogTrace(Resources.RegistryPathRemaining, path);
-            this._logger.LogTrace(Resources.ParsingAsRegistryHive, hive);
+            this._logger.LogTrace("Registry hive is \"{Hive}\".", hive);
+            this._logger.LogTrace("The remaining registry path is "
+                + "\"{RegistryPath}\".", path);
 
             return hive switch {
                 "HKEY_CLASSES_ROOT" => Registry.ClassesRoot,

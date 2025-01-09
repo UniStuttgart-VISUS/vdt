@@ -1,5 +1,5 @@
 ﻿// <copyright file="SystemInformationService.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
@@ -202,7 +202,8 @@ namespace Visus.DeploymentToolkit.Services {
                     _ => false,
                 };
             } catch (Exception ex) {
-                this._logger.LogError(ex, Errors.CouldNotGetProductType);
+                this._logger.LogError(ex, "Failed to retrieve the product type "
+                    + "from the registry.");
                 return false;
             }
         }

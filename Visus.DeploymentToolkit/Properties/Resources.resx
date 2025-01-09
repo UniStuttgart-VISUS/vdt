@@ -123,17 +123,8 @@
   <data name="CommandNotRun" xml:space="preserve">
     <value>The command "{0}" did not run.</value>
   </data>
-  <data name="ParsingAsRegistryHive" xml:space="preserve">
-    <value>Registry hive is "{0}".</value>
-  </data>
-  <data name="ParsingRegistryHive" xml:space="preserve">
-    <value>Parsing the registry hive from "{0}".</value>
-  </data>
   <data name="PartitionFormatDisk" xml:space="preserve">
     <value>Partition and format disk</value>
-  </data>
-  <data name="RegistryPathRemaining" xml:space="preserve">
-    <value>The remaining registry path is "{0}".</value>
   </data>
   <data name="SelectInstallDisk" xml:space="preserve">
     <value>Select installation disk</value>

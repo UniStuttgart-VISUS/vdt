@@ -61,15 +61,6 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to retrieve the product type from the registry..
-        /// </summary>
-        internal static string CouldNotGetProductType {
-            get {
-                return ResourceManager.GetString("CouldNotGetProductType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The system could not determine the type of the HAL..
         /// </summary>
         internal static string HalNotFound {
