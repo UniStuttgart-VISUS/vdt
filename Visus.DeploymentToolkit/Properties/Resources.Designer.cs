@@ -187,7 +187,7 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Opening offline servicing session for &quot;{0}&quot;..
+        ///   Looks up a localized string similar to Opening offline servicing session for &quot;{path}&quot;..
         /// </summary>
         internal static string DismOpenOffline {
             get {
@@ -205,7 +205,7 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Issuing WMI query &quot;{0}&quot;..
+        ///   Looks up a localized string similar to Issuing WMI query &quot;{query}&quot;..
         /// </summary>
         internal static string IssuingWmiQuery {
             get {

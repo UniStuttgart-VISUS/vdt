@@ -161,10 +161,10 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                 CancellationToken.None);
         #endregion
 
-            #region Nested enum
-            /// <summary>
-            /// Allows for selecting specific types of EFI boot partitions.
-            /// </summary>
+        #region Nested enum
+        /// <summary>
+        /// Allows for selecting specific types of EFI boot partitions.
+        /// </summary>
         private enum EfiPartitionType {
             /// <summary>
             /// Get any EFI boot partition, which means that the partition must

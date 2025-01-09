@@ -4,8 +4,8 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-namespace Visus.DeploymentToolkit.DiskManagement
-{
+
+namespace Visus.DeploymentToolkit.DiskManagement {
 
     /// <summary>
     /// The interface of a disk partition.

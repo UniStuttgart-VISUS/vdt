@@ -1,5 +1,5 @@
 ﻿// <copyright file="ICommandBuilder.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
@@ -14,6 +14,10 @@ namespace Visus.DeploymentToolkit.Services {
     /// <summary>
     /// A builder for <see cref="ICommand"/>s.
     /// </summary>
+    /// <remarks>
+    /// Inject a <see cref="ICommandBuilderFactory"/> to create instances of
+    /// this type.
+    /// </remarks>
     public interface ICommandBuilder {
 
         #region Public methods
@@ -92,6 +96,5 @@ namespace Visus.DeploymentToolkit.Services {
         /// <returns></returns>
         ICommandBuilder WithArguments(string? arguments);
         #endregion
-
     }
 }

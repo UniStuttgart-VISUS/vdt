@@ -51,6 +51,5 @@ namespace Visus.DeploymentToolkit.Services {
         IEnumerable<ManagementObject> Query(string query,
             ManagementScope? scope = null);
         #endregion
-
     }
 }

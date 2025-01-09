@@ -102,7 +102,7 @@ namespace Visus.DeploymentToolkit.Services {
 
             // First of all, make sure that the VDS is ready.
             {
-                _logger.LogInformation(Resources.WaitingVds);
+                this._logger.LogInformation(Resources.WaitingVds);
                 var status = _service.WaitForServiceReady();
                 if (status != 0) {
                     throw new COMException(Errors.WaitVdsFailed, (int) status);

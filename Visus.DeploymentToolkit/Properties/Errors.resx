@@ -123,6 +123,9 @@
   <data name="HalNotFound" xml:space="preserve">
     <value>The system could not determine the type of the HAL.</value>
   </data>
+  <data name="NoDismSession" xml:space="preserve">
+    <value>A DISM image needs to be opened before this operation can be performed.</value>
+  </data>
   <data name="NoInstallationDisks" xml:space="preserve">
     <value>No suitable installation disks have been found.</value>
   </data>

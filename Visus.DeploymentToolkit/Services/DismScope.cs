@@ -44,7 +44,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// Finalises the instance.
         /// </summary>
         ~DismScope() {
-            Dispose(false);
+            this.Dispose(false);
         }
         #endregion
 
@@ -56,25 +56,30 @@ namespace Visus.DeploymentToolkit.Services {
         #region Public methods
         /// <inheritdoc />
         public void Dispose() {
-            Dispose(true);
+            this.Dispose(true);
             GC.SuppressFinalize(this);
         }
         #endregion
 
         #region Private methods
+        /// <summary>
+        /// Performs a shutdown of the DISM API if <paramref name="disposing"/>
+        /// is <c>true</c> and <see cref="_disposed"/> is <c>false</c>.
+        /// </summary>
+        /// <param name="disposing"></param>
         private void Dispose(bool disposing) {
-            if (!_disposed) {
+            if (!this._disposed) {
                 if (disposing) {
-                    _logger.LogTrace(Resources.DismShutdown);
+                    this._logger.LogTrace(Resources.DismShutdown);
                     DismApi.Shutdown();
                 }
 
                 // No unmanaged resources to free here.
 
-                _disposed = true;
+                this._disposed = true;
             }
 
-            Debug.Assert(_disposed);
+            Debug.Assert(this._disposed);
         }
         #endregion
 

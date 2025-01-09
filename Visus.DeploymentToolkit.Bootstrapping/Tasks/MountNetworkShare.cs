@@ -51,7 +51,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Gets or sets the path to the share.
         /// </summary>
-        public string Path { get; set; }
+        public string Path { get; set; } = null!;
         #endregion
 
         #region Public methods

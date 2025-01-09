@@ -9,8 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 
-namespace Visus.DeploymentToolkit.DiskManagement
-{
+namespace Visus.DeploymentToolkit.DiskManagement {
 
     /// <summary>
     /// The interface of a disk that can be used to install the operating system

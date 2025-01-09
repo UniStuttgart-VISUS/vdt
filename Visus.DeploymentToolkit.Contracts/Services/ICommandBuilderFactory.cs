@@ -22,6 +22,5 @@ namespace Visus.DeploymentToolkit.Services {
         /// <returns>A builder for the given command.</returns>
         ICommandBuilder Run(string processImage);
         #endregion
-
     }
 }

@@ -59,7 +59,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// Gets or sets the path to the executable to be run.
         /// </summary>
         [Required]
-        public string Path { get; set; }
+        public string Path { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets the working directory for the command.

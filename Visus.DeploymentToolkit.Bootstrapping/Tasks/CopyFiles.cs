@@ -41,7 +41,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// The destination must be a folder unless the <see cref="Source"/>
         /// designates a single file.
         /// </remarks>
-        public string Destination { get; set; }
+        public string Destination { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets whether existing data should be overwritten.
@@ -61,7 +61,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// If the source is a directory, all of its contents will be copied to
         /// the destination.
         /// </remarks>
-        public string Source { get; set; }
+        public string Source { get; set; } = null!;
         #endregion
 
         #region Public methods
