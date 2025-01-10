@@ -125,5 +125,6 @@
   </data>
   <data name="TaskSequenceName" xml:space="preserve">
     <value>Task sequence {0}</value>
+    <comment>The template for the name of a newly created task sequence.</comment>
   </data>
 </root>

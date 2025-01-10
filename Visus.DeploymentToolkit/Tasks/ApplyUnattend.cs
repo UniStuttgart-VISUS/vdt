@@ -40,8 +40,11 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Gets or sets the path to the Windows installation being modified.
         /// </summary>
-        [Required]
-        public string InstallationPath { get; set; } = null!;
+        /// <remarks>
+        /// If this path is <c>null</c>, an online servicing session for the
+        /// current Windows installation is opened.
+        /// </remarks>
+        public string? InstallationPath { get; set; }
 
         /// <summary>
         /// Gets or sets the path to the unattend file to apply.
@@ -54,11 +57,12 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <inheritdoc />
         public override Task ExecuteAsync(IState state,
                 CancellationToken cancellationToken) {
-            this._logger.LogInformation("Opening an offline servicing session "
+            this._logger.LogInformation("Opening a DISM servicing session "
                 + "for \"{Path}\" to apply unattend settings.",
                 this.InstallationPath);
-            using var session = DismApi.OpenOfflineSession(
-                this.InstallationPath);
+            using var session = (this.InstallationPath is null)
+                ? DismApi.OpenOnlineSession()
+                : DismApi.OpenOfflineSession(this.InstallationPath);
 
             this._logger.LogInformation("Applying unattend file "
                 + "\"{UnattendFile}\" to \"{Path}\".",

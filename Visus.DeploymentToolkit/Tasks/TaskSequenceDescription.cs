@@ -1,5 +1,5 @@
 ﻿// <copyright file="TaskSequenceDescription.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
@@ -47,22 +47,19 @@ namespace Visus.DeploymentToolkit.Tasks {
         #endregion
 
         #region Public properties
-        /// <summary>
-        /// Gets or sets a description of the task sequence.
-        /// </summary>
+        /// <inheritdoc />
         public string? Description { get; set; }
 
-        /// <summary>
-        /// Gets or sets the unique ID of the task sequence.
-        /// </summary>
+        /// <inheritdoc />
         [Required]
-        public string ID { get; set; } = null!;
+        public string ID { get; set; }
 
-        /// <summary>
-        /// Gets or sets the name of the task sequence.
-        /// </summary>
+        /// <inheritdoc />
         [Required]
-        public string Name { get; set; } = null!;
+        public string Name { get; set; }
+
+        /// <inheritdoc />
+        public Phase Phase { get; set; } = Phase.Installation;
 
         /// <summary>
         /// Gets or sets the steps in the task sequence.
