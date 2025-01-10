@@ -1,10 +1,11 @@
-﻿// <copyright file="TaskSequenceDescription.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+﻿// <copyright file="TaskDescription.cs" company="Visualisierungsinstitut der Universität Stuttgart">
+// Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
 
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
@@ -21,9 +22,12 @@ namespace Visus.DeploymentToolkit.Tasks {
         public Dictionary<string, object> Properties { get; set; } = new();
 
         /// <summary>
-        /// Gets or sets the type name of the task.
+        /// Gets or sets the fully qualified type name of the task.
         /// </summary>
-        public string Type { get; set; }
+        [Required]
+        public string Type { get; set; } = null!;
         #endregion
+
+        // TODO: How do we instantiate the task while resolving its dependencies?
     }
 }

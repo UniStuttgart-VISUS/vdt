@@ -59,14 +59,5 @@ namespace Visus.DeploymentToolkit.Agent.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The VISUS Deployment Toolkit agent started..
-        /// </summary>
-        internal static string AgentStart {
-            get {
-                return ResourceManager.GetString("AgentStart", resourceCulture);
-            }
-        }
     }
 }

@@ -117,16 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="MountDeploymentShare" xml:space="preserve">
-    <value>Failed to mount the deployment share.</value>
-  </data>
-  <data name="PersistState" xml:space="preserve">
-    <value>Failed to persist the deployment state for the agent.</value>
-  </data>
-  <data name="SetBoostrappingState" xml:space="preserve">
-    <value>Failed to set bootstrapping as the current state.</value>
-  </data>
-  <data name="StartAgent" xml:space="preserve">
-    <value>Failed to start the deployment agent.</value>
-  </data>
 </root>

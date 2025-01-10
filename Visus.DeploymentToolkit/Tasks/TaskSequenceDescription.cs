@@ -17,9 +17,10 @@ using Visus.DeploymentToolkit.Workflow;
 namespace Visus.DeploymentToolkit.Tasks {
 
     /// <summary>
-    /// Represents the JSON description of a task sequence.
+    /// Represents the JSON description of a task sequence, which is the stuff
+    /// that a user would author to configure the installation process.
     /// </summary>
-    internal sealed class TaskSequenceDescription {
+    internal sealed class TaskSequenceDescription : ITaskSequenceDescription {
 
         #region Factory methods
         /// <summary>
@@ -54,6 +55,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Gets or sets the unique ID of the task sequence.
         /// </summary>
+        [Required]
         public string ID { get; set; } = null!;
 
         /// <summary>
@@ -66,6 +68,22 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// Gets or sets the steps in the task sequence.
         /// </summary>
         public Dictionary<Phase, TaskDescription[]> Steps { get; set; } = new();
+        #endregion
+
+        #region Public methods
+        /// <summary>
+        /// Saves the description to the file at the given location.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public Task SaveAsync(string path) {
+            using var file = File.OpenWrite(path);
+            return JsonSerializer.SerializeAsync(file, this,
+                new JsonSerializerOptions() {
+                    AllowTrailingCommas = false,
+                    WriteIndented = true
+                });
+        }
         #endregion
     }
 }

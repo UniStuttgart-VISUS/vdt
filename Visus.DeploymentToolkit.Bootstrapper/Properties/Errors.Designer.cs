@@ -59,41 +59,5 @@ namespace Visus.DeploymentToolkit.Bootstrapper.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to mount the deployment share..
-        /// </summary>
-        internal static string MountDeploymentShare {
-            get {
-                return ResourceManager.GetString("MountDeploymentShare", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to persist the deployment state for the agent..
-        /// </summary>
-        internal static string PersistState {
-            get {
-                return ResourceManager.GetString("PersistState", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to set bootstrapping as the current state..
-        /// </summary>
-        internal static string SetBoostrappingState {
-            get {
-                return ResourceManager.GetString("SetBoostrappingState", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to start the deployment agent..
-        /// </summary>
-        internal static string StartAgent {
-            get {
-                return ResourceManager.GetString("StartAgent", resourceCulture);
-            }
-        }
     }
 }

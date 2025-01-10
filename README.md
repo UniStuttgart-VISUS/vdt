@@ -1,1 +1,2 @@
 # Project Deimos
+Project Deimos aims to provide a partial replacement of the [Microsoft Deployment Toolkit (MDT)](https://learn.microsoft.com/de-de/mem/configmgr/mdt/) for internal use at VISUS. The main motivation for this project are that (i) MDT seems to be abandoned by Microsft and (ii) is based on VBS which is a deprecated feature in Windows 11. Project Deimos does not provide a full replacement for MDT, but only for the deployment tasks performed at VISUS.

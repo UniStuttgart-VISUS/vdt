@@ -50,7 +50,7 @@ var services = new ServiceCollection()
 
 // Prepare the global application log.
 var log = services.GetRequiredService<ILogger<Program>>();
-log.LogInformation(Resources.BootstrapperStart);
+log.LogInformation("Project Deimos is bootstrapping.");
 
 
 // Perform bootstrapping.
@@ -58,7 +58,7 @@ try {
     var state = services.GetRequiredService<IState>();
     state.Set(WellKnownStates.Phase, Phase.Bootstrapping);
 } catch (Exception ex) {
-    log.LogError(ex, Errors.SetBoostrappingState);
+    log.LogError(ex, "Failed to set bootstrapping as the current state.");
 }
 
 try {
@@ -84,8 +84,29 @@ try {
 
     state.Set(WellKnownStates.DeploymentShare, task.MountPoint);
 } catch (Exception ex) {
-    log.LogCritical(ex, Errors.MountDeploymentShare);
+    log.LogCritical(ex, "Failed to mount the deployment share.");
 }
+
+//try {
+//    var state = services.GetRequiredService<IState>();
+//    var path = Path.Combine(state.DeploymentShare!,
+//        options.TaskSequenceFolder);
+
+//    log.LogInformation("Loading task sequences from "
+//        + "\"{TaskSequenceFolder}\".", path);
+
+//    Directory.GetFiles(path, "*.json")
+//        .Select(TaskSequenceDescription.ParseAsync)
+//        .Select(async taskSequence => {
+//            var sequence = await taskSequence;
+//            if (sequence is not null) {
+//                state.Set(sequence.ID, sequence);
+//            }
+//        });
+//} catch (Exception ex) {
+//    log.LogCritical(ex, "Failed to select a task sequence to run.");
+//}
+
 
 // Persist the state for the agent to run next.
 try {
@@ -94,7 +115,7 @@ try {
     log.LogInformation(Resources.PersistState, options.StateFile);
     await state.SaveAsync(options.StateFile);
 } catch (Exception ex) {
-    log.LogError(ex, Errors.PersistState);
+    log.LogError(ex, "Failed to persist the deployment state for the agent.");
 }
 
 // Start the agent.
@@ -111,7 +132,7 @@ try {
     log.LogInformation(Resources.StartAgent, command);
     await command.ExecuteAsync();
 } catch (Exception ex) {
-    log.LogCritical(ex, Errors.StartAgent);
+    log.LogCritical(ex, "Failed to start the deployment agent.");
 }
 
-log.LogInformation(Resources.BootstrapperExit);
+log.LogInformation("The boostrapper is exiting.");

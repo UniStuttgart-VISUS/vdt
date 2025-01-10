@@ -1,5 +1,5 @@
 ﻿// <copyright file="Programme.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Visus.DeploymentToolkit.Agent;
-using Visus.DeploymentToolkit.Agent.Properties;
 using Visus.DeploymentToolkit.Extensions;
 
 
@@ -32,4 +31,4 @@ var services = new ServiceCollection()
 
 // Prepare the global application log.
 var log = services.GetRequiredService<ILogger<Program>>();
-log.LogInformation(Resources.AgentStart);
+log.LogInformation("Project Deimos agent is starting.");

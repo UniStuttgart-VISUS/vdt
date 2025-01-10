@@ -61,24 +61,6 @@ namespace Visus.DeploymentToolkit.Bootstrapper.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The boostrapper is exiting..
-        /// </summary>
-        internal static string BootstrapperExit {
-            get {
-                return ResourceManager.GetString("BootstrapperExit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The bootstrapper is starting..
-        /// </summary>
-        internal static string BootstrapperStart {
-            get {
-                return ResourceManager.GetString("BootstrapperStart", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Mounting deployment share &quot;{0}&quot; to &quot;{1}&quot;..
         /// </summary>
         internal static string MountDeploymentShare {

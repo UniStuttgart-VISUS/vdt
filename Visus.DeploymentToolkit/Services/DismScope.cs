@@ -25,12 +25,12 @@ namespace Visus.DeploymentToolkit.Services {
         /// <param name="options"></param>
         public DismScope(IOptions<DismOptions> options,
                 ILogger<DismScope> logger) {
-            _logger = logger
+            this._logger = logger
                 ?? throw new ArgumentNullException(nameof(logger));
             Options = options?.Value ?? new();
 
-            _logger.LogTrace("Initialising DISM with \"{LogFile}\" as log file "
-                + "and \"{ScratchDirectory}\" as scratch directory.",
+            this._logger.LogTrace("Initialising DISM with \"{LogFile}\" as "
+                + "log file and \"{ScratchDirectory}\" as scratch directory.",
                 Options.LogFile, Options.ScratchDirectory);
             DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo,
                 Options.LogFile,
