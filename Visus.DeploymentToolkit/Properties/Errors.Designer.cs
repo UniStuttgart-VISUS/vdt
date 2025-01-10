@@ -97,6 +97,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The task sequence store at &quot;{0}&quot; could not be found..
+        /// </summary>
+        internal static string TsStoreNotFound {
+            get {
+                return ResourceManager.GetString("TsStoreNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed waiting for Virtual Disk Service to become ready..
         /// </summary>
         internal static string WaitVdsFailed {

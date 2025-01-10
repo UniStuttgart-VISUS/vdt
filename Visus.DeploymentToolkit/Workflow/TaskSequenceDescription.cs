@@ -11,10 +11,9 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Properties;
-using Visus.DeploymentToolkit.Workflow;
 
 
-namespace Visus.DeploymentToolkit.Tasks {
+namespace Visus.DeploymentToolkit.Workflow {
 
     /// <summary>
     /// Represents the JSON description of a task sequence, which is the stuff
@@ -41,8 +40,8 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// Initialises a new instance.
         /// </summary>
         public TaskSequenceDescription() {
-            this.ID = Guid.NewGuid().ToString("N");
-            this.Name = string.Format(Resources.TaskSequenceName, this.ID);
+            ID = Guid.NewGuid().ToString("N");
+            Name = string.Format(Resources.TaskSequenceName, ID);
         }
         #endregion
 

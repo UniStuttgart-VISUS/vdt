@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 
 namespace Visus.DeploymentToolkit.Workflow {
@@ -21,12 +22,13 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <param name="taskSequence"></param>
         /// <returns>A description for the specified task sequence,
         /// or <c>null</c> if no matching one was found.</returns>
-        ITaskSequenceDescription? GetTaskSequence(string taskSequence);
+        Task<ITaskSequenceDescription?> GetTaskSequenceAsync(
+            string taskSequence);
 
         /// <summary>
         /// Retrieves all task sequences from the store.
         /// </summary>
         /// <returns>The task sequences in the store.</returns>
-        IEnumerable<ITaskSequenceDescription> GetTaskSequences();
+        Task<IEnumerable<ITaskSequenceDescription>> GetTaskSequencesAsync();
     }
 }

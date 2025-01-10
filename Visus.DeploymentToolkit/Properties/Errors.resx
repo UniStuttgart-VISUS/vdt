@@ -129,6 +129,9 @@
   <data name="OpenRegistryFailed" xml:space="preserve">
     <value>Failed to open the registry path "{0}".</value>
   </data>
+  <data name="TsStoreNotFound" xml:space="preserve">
+    <value>The task sequence store at "{0}" could not be found.</value>
+  </data>
   <data name="WaitVdsFailed" xml:space="preserve">
     <value>Failed waiting for Virtual Disk Service to become ready.</value>
   </data>
