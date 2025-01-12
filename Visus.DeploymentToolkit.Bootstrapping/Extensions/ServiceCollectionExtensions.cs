@@ -36,6 +36,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             services.AddCommands();
             services.AddConsoleInput();
             services.AddCopyService();
+            services.AddDirectoryService();
             services.AddDriveInfo();
             services.AddEnvironment();
             return services;
@@ -54,6 +55,8 @@ namespace Visus.DeploymentToolkit.Extensions {
                 string file) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             _ = file ?? throw new ArgumentNullException(nameof(file));
+
+            services.ConfigureOptions<LoggerFilterOptions>();
 
             services.AddLogging(o => {
 #if DEBUG
@@ -77,6 +80,12 @@ namespace Visus.DeploymentToolkit.Extensions {
             return services;
         }
 
+        /// <summary>
+        /// Adds logging using the file provided by the given function.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="file"></param>
+        /// <returns></returns>
         public static IServiceCollection AddLogging(
                 this IServiceCollection services,
                 Func<string> file)
@@ -137,6 +146,7 @@ namespace Visus.DeploymentToolkit.Extensions {
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             services.AddTransient<CopyFiles>();
+            services.AddTransient<CreateWorkingDirectory>();
             services.AddTransient<MountNetworkShare>();
             services.AddTransient<RunCommand>();
             return services;
@@ -182,6 +192,19 @@ namespace Visus.DeploymentToolkit.Extensions {
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             services.AddSingleton<ICopy, CopyService>();
+            return services;
+        }
+
+        /// <summary>
+        /// Adds the <see cref="IDirectory"/> service to the service collection.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        internal static IServiceCollection AddDirectoryService(
+                this IServiceCollection services) {
+            _ = services ?? throw new ArgumentNullException(nameof(services));
+            services.AddSingleton<IDirectory, DirectoryService>();
             return services;
         }
 

@@ -73,9 +73,8 @@ namespace Visus.DeploymentToolkit.Services {
                     EnvironmentVariableTarget.User);
                 }
 
-                this._logger.LogInformation(Resources.ChangeEnvironment,
-                    name,
-                    value);
+                this._logger.LogInformation("Changing environment variable "
+                    + "\"{EnvironmentVariable}\" to \"{Value}\".", name, value);
             }
         }
         #endregion

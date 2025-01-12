@@ -58,7 +58,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                 .GetDisksAsync(cancellationToken)
                 .ConfigureAwait(false);
 
-            throw new NotImplementedException();
+            throw new NotImplementedException("TODO: implement disk selection steps");
         }
         #endregion
 

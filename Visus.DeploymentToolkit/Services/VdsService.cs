@@ -52,7 +52,8 @@ namespace Visus.DeploymentToolkit.Services {
         /// <inheritdoc />
         public async Task<IDisk?> GetDiskAsync(Guid id,
                 CancellationToken cancellationToken) {
-            var disks = await GetDisksAsync(cancellationToken);
+            var disks = await GetDisksAsync(cancellationToken)
+                .ConfigureAwait(false);
             return disks.Where(d => d.ID == id).SingleOrDefault();
         }
 

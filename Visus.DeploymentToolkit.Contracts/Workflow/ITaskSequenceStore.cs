@@ -19,9 +19,12 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// Gets a task sequence from a specific file or looks it up in the store
         /// by its ID.
         /// </summary>
-        /// <param name="taskSequence"></param>
+        /// <param name="taskSequence">The path to a task sequence file or the
+        /// ID of a task sequence in teh store.</param>
         /// <returns>A description for the specified task sequence,
         /// or <c>null</c> if no matching one was found.</returns>
+        /// <exception cref="System.ArgumentNullException">If
+        /// <paramref name="taskSequence"/> is <c>null</c>.</exception>
         Task<ITaskSequenceDescription?> GetTaskSequenceAsync(
             string taskSequence);
 

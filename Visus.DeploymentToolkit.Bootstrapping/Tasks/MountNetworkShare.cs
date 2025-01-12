@@ -1,5 +1,5 @@
 ﻿// <copyright file="MountNetworkShare.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
@@ -34,6 +34,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                 : base(logger) {
             this._driveInfo = driveInfo
                 ?? throw new ArgumentNullException(nameof(driveInfo));
+            this.Name = Resources.MountNetworkShare;
         }
         #endregion
 
@@ -65,7 +66,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                 this.MountPoint = this._driveInfo.GetFreeDrives().First();
             }
 
-            this._logger.LogTrace(Resources.MountingShare,
+            this._logger.LogInformation("Mapping \"{NetworkPath}\" to "
+                + "\"{MountPoint}\" as {User}.",
                 this.Path,
                 this.MountPoint,
                 this.Credential?.UserName ?? Resources.CurrentUser);

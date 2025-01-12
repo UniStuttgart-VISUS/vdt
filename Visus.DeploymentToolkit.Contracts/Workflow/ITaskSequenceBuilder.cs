@@ -16,13 +16,19 @@ namespace Visus.DeploymentToolkit.Workflow {
     public interface ITaskSequenceBuilder {
 
         /// <summary>
-        /// Appends the given <paramref name="task"/> to the list of tasks for
-        /// the given <paramref name="phase"/>.
+        /// Appends the given <paramref name="task"/> to the list of tasks in
+        /// the sequence.
         /// </summary>
-        /// <param name="phase"></param>
         /// <param name="task"></param>
         /// <returns></returns>
-        ITaskSequenceBuilder Add(Phase phase, ITask task);
+        ITaskSequenceBuilder Add(ITask task);
+
+        /// <summary>
+        /// Sets the phase the task sequence can run in.
+        /// </summary>
+        /// <param name="phase">The phase the task sequence can run in.</param>
+        /// <returns><c>this</c>.</returns>
+        ITaskSequenceBuilder ForPhase(Phase phase);
 
         /// <summary>
         /// Builds the task sequence from the current state of the builder.
@@ -32,12 +38,11 @@ namespace Visus.DeploymentToolkit.Workflow {
 
         /// <summary>
         /// Insert the given <paramref name="task"/> at the given position in
-        /// the workflow of the specified <paramref name="phase"/>.
+        /// the workflow.
         /// </summary>
-        /// <param name="phase"></param>
         /// <param name="index"></param>
         /// <param name="task"></param>
         /// <returns></returns>
-        ITaskSequenceBuilder Insert(Phase phase, int index, ITask task);
+        ITaskSequenceBuilder Insert(int index, ITask task);
     }
 }

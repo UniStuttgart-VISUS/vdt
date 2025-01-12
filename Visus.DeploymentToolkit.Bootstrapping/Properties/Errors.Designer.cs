@@ -88,11 +88,38 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The task sequence is being aborted as the failed task {0} was marked critical for the sequence..
+        ///   Looks up a localized string similar to Another DISM session is already open. Only one image or installation can be processed at a time..
         /// </summary>
-        internal static string CriticalTaskFailed {
+        internal static string DuplicateDismScope {
             get {
-                return ResourceManager.GetString("CriticalTaskFailed", resourceCulture);
+                return ResourceManager.GetString("DuplicateDismScope", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The path to the working directory must be set..
+        /// </summary>
+        internal static string InvalidWorkingDirectory {
+            get {
+                return ResourceManager.GetString("InvalidWorkingDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The phase has already been set to {0}..
+        /// </summary>
+        internal static string PhaseAlreadySet {
+            get {
+                return ResourceManager.GetString("PhaseAlreadySet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No phase has been assigned yet..
+        /// </summary>
+        internal static string PhaseNotSet {
+            get {
+                return ResourceManager.GetString("PhaseNotSet", resourceCulture);
             }
         }
         
@@ -102,15 +129,6 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string TaskCannotExecute {
             get {
                 return ResourceManager.GetString("TaskCannotExecute", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The task {0} failed in phase {1}..
-        /// </summary>
-        internal static string TaskFailed {
-            get {
-                return ResourceManager.GetString("TaskFailed", resourceCulture);
             }
         }
     }

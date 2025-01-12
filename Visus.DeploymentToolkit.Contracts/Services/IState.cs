@@ -32,6 +32,12 @@ namespace Visus.DeploymentToolkit.Services {
         string? DeploymentShare { get; }
 
         /// <summary>
+        /// Gets a potentially open DISM session, which can be used to modfiy an
+        /// image or Windows installation.
+        /// </summary>
+        IDismScope? DismScope { get; }
+
+        /// <summary>
         /// Gets the disk where Windows will be installed.
         /// </summary>
         IDisk? InstallationDisk { get;}
@@ -40,6 +46,17 @@ namespace Visus.DeploymentToolkit.Services {
         /// Gets the phase that we are running.
         /// </summary>
         Phase Phase { get; }
+
+        /// <summary>
+        /// Gets the zero-based index of the current task.
+        /// </summary>
+        int Progress { get; }
+
+        /// <summary>
+        /// Gets or sets the path to the working directory on the local machine
+        /// that the agent will use.
+        /// </summary>
+        string? WorkingDirectory { get; set; }
         #endregion
 
         #region Public methods

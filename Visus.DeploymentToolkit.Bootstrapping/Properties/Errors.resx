@@ -126,13 +126,19 @@
   <data name="CopyDirectoryToFile" xml:space="preserve">
     <value>The source "{0}" is a directory, but the specified destination "{1}" is a file.</value>
   </data>
-  <data name="CriticalTaskFailed" xml:space="preserve">
-    <value>The task sequence is being aborted as the failed task {0} was marked critical for the sequence.</value>
+  <data name="DuplicateDismScope" xml:space="preserve">
+    <value>Another DISM session is already open. Only one image or installation can be processed at a time.</value>
+  </data>
+  <data name="InvalidWorkingDirectory" xml:space="preserve">
+    <value>The path to the working directory must be set.</value>
+  </data>
+  <data name="PhaseAlreadySet" xml:space="preserve">
+    <value>The phase has already been set to {0}.</value>
+  </data>
+  <data name="PhaseNotSet" xml:space="preserve">
+    <value>No phase has been assigned yet.</value>
   </data>
   <data name="TaskCannotExecute" xml:space="preserve">
     <value>The given task cannot execute in phase {0}.</value>
-  </data>
-  <data name="TaskFailed" xml:space="preserve">
-    <value>The task {0} failed in phase {1}.</value>
   </data>
 </root>

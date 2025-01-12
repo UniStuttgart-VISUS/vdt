@@ -61,15 +61,6 @@ namespace Visus.DeploymentToolkit.Bootstrapper.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mounting deployment share &quot;{0}&quot; to &quot;{1}&quot;..
-        /// </summary>
-        internal static string MountDeploymentShare {
-            get {
-                return ResourceManager.GetString("MountDeploymentShare", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Persisting the state for the deployment agent to &quot;{0}&quot;. .
         /// </summary>
         internal static string PersistState {

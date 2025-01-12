@@ -23,9 +23,13 @@ namespace Visus.DeploymentToolkit.Services {
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
+        /// <param name="directory"></param>
         /// <param name="logger"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public CopyService(ILogger<CopyService> logger) {
+        public CopyService(IDirectory directory,
+                ILogger<CopyService> logger) {
+            this._directory = directory
+                ?? throw new ArgumentNullException(nameof(directory));
             this._logger = logger
                 ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -33,7 +37,9 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public methods
         /// <inheritdoc />
-        public Task CopyAsync(string source, string dest, CopyFlags flags) {
+        public Task CopyAsync(string source,
+                string dest,
+                CopyFlags flags) {
             _ = source ?? throw new ArgumentNullException(nameof(source));
             _ = dest ?? throw new ArgumentNullException(nameof(dest));
             var destDir = Directory.Exists(dest);
@@ -46,28 +52,28 @@ namespace Visus.DeploymentToolkit.Services {
                     dest));
             }
 
-            return Task.Factory.StartNew(() => {
+            return Task.Factory.StartNew(async () => {
                 // Make sure that the destination directory exists.
                 {
                     var dir = sourceDir ? dest : Path.GetDirectoryName(dest);
                     if ((dir != null) && !Directory.Exists(dir)) {
-                        this._logger.LogTrace(
-                            Resources.CreatingDestinationFolder,
+                        this._logger.LogTrace("Ensuring that the destination "
+                            + "directory \"{Destination}\" exists.",
                             dir);
-                        Directory.CreateDirectory(dir);
+                        await this._directory.CreateAsync(dir);
                     }
                 }
 
                 if (sourceDir) {
                     var recursive = ((flags & CopyFlags.Recursive) != 0);
-                    var fmt = recursive
-                        ? Resources.CopyRecursively
-                        : Resources.CopyFiles;
                     var opt = recursive
                         ? SearchOption.AllDirectories
                         : SearchOption.TopDirectoryOnly;
 
-                    this._logger.LogTrace(fmt, source, dest);
+                    this._logger.LogTrace("Copying files {Recursively} from "
+                        + "\"{Source}\" to \"{Destination}\".",
+                        recursive ? "recursively" : "non-recursively",
+                        source, dest);
 
                     foreach (var f in Directory.GetFiles(source, "*", opt)) {
                         var d = RemovePrefix(f, source).TrimStart(Separators);
@@ -75,7 +81,7 @@ namespace Visus.DeploymentToolkit.Services {
 
                         var dd = Path.GetDirectoryName(d);
                         if (dd != null) {
-                            Directory.CreateDirectory(dd);
+                            await this._directory.CreateAsync(dd);
                         }
 
                         File.Copy(f, d, (flags & CopyFlags.Overwrite) != 0);
@@ -109,6 +115,7 @@ namespace Visus.DeploymentToolkit.Services {
         #endregion
 
         #region Private fields
+        private readonly IDirectory _directory;
         private readonly ILogger _logger;
         #endregion
     }

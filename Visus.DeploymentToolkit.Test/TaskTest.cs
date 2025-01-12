@@ -20,7 +20,8 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public async Task TestCopyFilesFlat() {
-            var copy = new CopyService(this._loggerFactory.CreateLogger<CopyService>());
+            var dir = new DirectoryService(this._loggerFactory.CreateLogger<DirectoryService>());
+            var copy = new CopyService(dir, this._loggerFactory.CreateLogger<CopyService>());
             var task = new CopyFiles(copy, this._loggerFactory.CreateLogger<CopyFiles>());
             task.Source = ".";
             task.Destination = Path.Combine(Path.GetTempPath(), "DeimosTest2");
@@ -32,7 +33,8 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public async Task TestCopyFilesRecursive() {
-            var copy = new CopyService(this._loggerFactory.CreateLogger<CopyService>());
+            var dir = new DirectoryService(this._loggerFactory.CreateLogger<DirectoryService>());
+            var copy = new CopyService(dir,this._loggerFactory.CreateLogger<CopyService>());
             var task = new CopyFiles(copy, this._loggerFactory.CreateLogger<CopyFiles>());
             task.Source = ".";
             task.Destination = Path.Combine(Path.GetTempPath(), "DeimosTest");

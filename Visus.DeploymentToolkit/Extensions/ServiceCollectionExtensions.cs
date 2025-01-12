@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Runtime.InteropServices;
 using Visus.DeploymentToolkit.Services;
+using Visus.DeploymentToolkit.Workflow;
 
 
 namespace Visus.DeploymentToolkit.Extensions {
@@ -32,6 +33,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             services.AddDiskManagement();
             services.AddRegistry();
             services.AddSystemInformation();
+            services.AddTaskSequenceStore();
             services.AddWmi();
             return services;
         }
@@ -85,6 +87,28 @@ namespace Visus.DeploymentToolkit.Extensions {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             services.AddSingleton<ISystemInformation,
                 SystemInformationService>();
+            return services;
+        }
+
+        /// <summary>
+        /// Adds the JSON-based <see cref="TaskSequenceStore"/> to
+        /// <paramref name="services"/>.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        internal static IServiceCollection AddTaskSequenceStore(
+                this IServiceCollection services,
+                Action<TaskSequenceStoreOptions>? options = null) {
+            _ = services ?? throw new ArgumentNullException(nameof(services));
+
+            if (options == null) {
+                options = o => { };
+            }
+
+            services.Configure(options)
+                .AddSingleton<ITaskSequenceStore, TaskSequenceStore>();
             return services;
         }
 

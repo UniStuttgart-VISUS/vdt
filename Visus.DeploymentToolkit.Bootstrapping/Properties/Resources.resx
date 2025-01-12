@@ -117,44 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AddTask" xml:space="preserve">
-    <value>Adding task {0} to the list of tasks for phase {1}.</value>
-  </data>
-  <data name="ChangeEnvironment" xml:space="preserve">
-    <value>Changing environment variable "{0}" for the current user to "{1}".</value>
-  </data>
-  <data name="ChangeState" xml:space="preserve">
-    <value>Changing state "{0}" from "{1}" to "{2}".</value>
-  </data>
-  <data name="CommandExecuted" xml:space="preserve">
-    <value>Command {0} finished with exit code {1}.</value>
-  </data>
-  <data name="CommandExecuting" xml:space="preserve">
-    <value>Executing command {0}.</value>
-  </data>
-  <data name="CopyFile" xml:space="preserve">
-    <value>Copying "{0}" to "{1}".</value>
-  </data>
-  <data name="CopyFiles" xml:space="preserve">
-    <value>Copying all files from "{0}" to "{1}".</value>
-  </data>
-  <data name="CopyRecursively" xml:space="preserve">
-    <value>Copying recursively from "{0}" to "{1}".</value>
-  </data>
-  <data name="CreatingDestinationFolder" xml:space="preserve">
-    <value>Ensuring that the destination folder "{0}" exists.</value>
-  </data>
-  <data name="CreatingTaskListForPhase" xml:space="preserve">
-    <value>Creating a task list for phase {0}.</value>
+  <data name="CreateWorkingDirectory" xml:space="preserve">
+    <value>Create working directory</value>
   </data>
   <data name="CurrentUser" xml:space="preserve">
     <value>current user</value>
-  </data>
-  <data name="InsertTask" xml:space="preserve">
-    <value>Inserting task {0} at position {2}  in phase {1}.</value>
-  </data>
-  <data name="MountingShare" xml:space="preserve">
-    <value>Mapping "{0}" to "{1}" as {2}.</value>
   </data>
   <data name="MountNetworkShare" xml:space="preserve">
     <value>Mount network drive</value>
@@ -164,14 +131,5 @@
   </data>
   <data name="RunCommand" xml:space="preserve">
     <value>Run command</value>
-  </data>
-  <data name="SavingState" xml:space="preserve">
-    <value>Persisting the deployment state to "{0}".</value>
-  </data>
-  <data name="TaskFinished" xml:space="preserve">
-    <value>Task {0} finished in phase {1}.</value>
-  </data>
-  <data name="TaskStarting" xml:space="preserve">
-    <value>Task {0} is starting in phase {1}.</value>
   </data>
 </root>

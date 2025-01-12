@@ -16,7 +16,7 @@ namespace Visus.DeploymentToolkit.Services {
     /// <summary>
     /// Initialises the DISM library and clears it when being finalised.
     /// </summary>
-    internal sealed class DismScope : IDismScope, IDisposable {
+    internal sealed class DismScope : IDismScope {
 
         #region Public constructors
         /// <summary>

@@ -89,9 +89,12 @@ namespace Visus.DeploymentToolkit.Tasks {
                 .InWorkingDirectory(this.WorkingDirectory)
                 .Build();
 
-            this._logger.LogTrace(Resources.CommandExecuting, cmd);
+            this._logger.LogInformation("Running command \"{Command}\".", cmd);
+
             var exitCode = await cmd.ExecuteAsync();
-            this._logger.LogTrace(Resources.CommandExecuted, cmd, exitCode);
+
+            this._logger.LogTrace("Command \"{Command}\" exited with return "
+                + "value {ExitCode}.", cmd, exitCode);
 
             if (exitCode == null) {
                 // For some reasons, the process did not start at all.
@@ -103,6 +106,9 @@ namespace Visus.DeploymentToolkit.Tasks {
                 // takes precedence and we fail if any other exit code was
                 // returned.
                 if (!this.SucccessExitCodes.Contains(exitCode.Value)) {
+                    this._logger.LogError("Command \"{Command}\" returned the "
+                        + "exit code {ExitCode}, which does not indicate "
+                        + "success.", cmd.ToString(), exitCode.Value);
                     throw new CommandFailedException(cmd.ToString()!,
                         exitCode.Value);
                 }
@@ -111,6 +117,9 @@ namespace Visus.DeploymentToolkit.Tasks {
                 // If the user indicated which error codes are a failure, we
                 // fail if we encounter any of these exit codes.
                 if (this.FailureExitCodes.Contains(exitCode.Value)) {
+                    this._logger.LogError("Command \"{Command}\" returned the "
+                        + "exit code {ExitCode}, which indicates failure.",
+                        cmd.ToString(), exitCode.Value);
                     throw new CommandFailedException(cmd.ToString()!,
                         exitCode.Value);
                 }

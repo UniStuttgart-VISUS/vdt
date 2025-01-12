@@ -1,5 +1,5 @@
 ﻿// <copyright file="Programme.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
@@ -7,11 +7,10 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.IO;
 using System.Linq;
-using Visus.DeploymentToolkit.Bootstrapper;
+using Visus.DeploymentToolkit;
 using Visus.DeploymentToolkit.Bootstrapper.Properties;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Services;
@@ -41,9 +40,9 @@ configuration.Bind(options);
 
 // Collect all the services we need for bootstrapping.
 var services = new ServiceCollection()
+    .Configure<BootstrappingOptions>(configuration.Bind)
     .AddBootstrappingServices()
     .AddState()
-    .Configure<BootstrappingOptions>(configuration.Bind)
     .AddLogging(options.LogFile)
     .BuildServiceProvider();
 
@@ -77,15 +76,42 @@ try {
     var password = input.ReadPassword(Resources.PromptPassword);
     task.Credential = new(user, password, domain);
 
-    log.LogInformation(Resources.MountDeploymentShare,
-        task.Path,
-        task.MountPoint);
     await task.ExecuteAsync(state);
 
     state.Set(WellKnownStates.DeploymentShare, task.MountPoint);
 } catch (Exception ex) {
     log.LogCritical(ex, "Failed to mount the deployment share.");
 }
+
+try {
+    var state = services.GetRequiredService<IState>();
+    var task = services.GetRequiredService<CreateWorkingDirectory>();
+    task.Path = options.WorkingDirectory;
+    await task.ExecuteAsync(state);
+} catch (Exception ex) {
+    log.LogCritical(ex, "Failed to prepare the working directory "
+        + "\"{WorkingDirectory}\".", options.WorkingDirectory);
+}
+
+// TODO: That does not make sense. Only once the destintation disk has been prepared, a copy should be created by the agent.
+//try {
+//    var state = services.GetRequiredService<IState>();
+//    var task = services.GetRequiredService<CopyFiles>();
+
+//    task.Source = Path.Combine(state.DeploymentShare!, options.BinaryPath);
+//    task.Destination = options.WorkingDirectory;
+//    task.IsOverwrite = true;
+//    task.IsRecursive = true;
+
+//    log.LogInformation("Copying deployment agent binaries from "
+//        + "\"{DeploymentShare}\" to \"{WorkingDirectory}\".",
+//        task.Source,
+//        task.Destination);
+//    await task.ExecuteAsync(state);
+
+//} catch (Exception ex) {
+//    log.LogCritical(ex, "Failed to copy binaries from the deployment share.");
+//}
 
 //try {
 //    var state = services.GetRequiredService<IState>();
@@ -122,7 +148,9 @@ try {
 try {
     var factory = services.GetRequiredService<ICommandBuilderFactory>();
     var state = services.GetRequiredService<IState>();
-    var agent = Path.Combine(state.DeploymentShare!, options.AgentPath);
+    var agent = Path.Combine(options.DeploymentShare,
+        options.BinaryPath,
+        options.AgentPath);
     var command = factory.Run(agent)
         .WithArgumentList($"--DeploymentShare={state.DeploymentShare}",
             $"--StateFile={options.StateFile}",

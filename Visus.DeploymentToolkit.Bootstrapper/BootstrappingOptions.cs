@@ -1,25 +1,36 @@
 ﻿// <copyright file="BootstrappingOptions.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
 
 
-namespace Visus.DeploymentToolkit.Bootstrapper {
+namespace Visus.DeploymentToolkit {
 
     /// <summary>
-    /// Structured representation of the bootstrapping options.
+    /// Structured representation of the options used for bootstrapping the
+    /// installation.
     /// </summary>
-    internal sealed class BootstrappingOptions {
+    public sealed class BootstrappingOptions {
 
         /// <summary>
-        /// Gets or sets the path to the deployment agent relative to the
-        /// location of the <see cref="DeploymentShare"/>.
+        /// Gets or sets the path to the agent in the
+        /// <see cref="WorkingDirectory"/>.
         /// </summary>
+        /// <remarks>
+        /// Note that the agent binary is copied to the working directory from
+        /// the <see cref="DeploymentShare"/> as part of the bootstrapping.
+        /// </remarks>
         public string AgentPath {
             get;
             set;
-        } = @"bin\Visus.DeploymentToolkit.Agent.exe";
+        } = "Visus.DeploymentToolkit.Agent.exe";
+
+        /// <summary>
+        /// Gets or sets the path where the binaries are located relative to
+        /// the lcoation of the <see cref="DeploymentShare"/>.
+        /// </summary>
+        public string BinaryPath { get; set; } = "bin";
 
         /// <summary>
         /// Gets or sets the drive where the deployment share should be mapped.
@@ -58,5 +69,11 @@ namespace Visus.DeploymentToolkit.Bootstrapper {
         /// share.
         /// </summary>
         public string? User { get; set; }
+
+        /// <summary>
+        /// Gets or sets the path to the local working directory where the agent
+        /// and the task sequence are copied to.
+        /// </summary>
+        public string WorkingDirectory { get; set; } = @"\DEIMOS";
     }
 }

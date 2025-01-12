@@ -61,92 +61,11 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Adding task {0} to the list of tasks for phase {1}..
+        ///   Looks up a localized string similar to Create working directory.
         /// </summary>
-        internal static string AddTask {
+        internal static string CreateWorkingDirectory {
             get {
-                return ResourceManager.GetString("AddTask", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Changing environment variable &quot;{0}&quot; for the current user to &quot;{1}&quot;..
-        /// </summary>
-        internal static string ChangeEnvironment {
-            get {
-                return ResourceManager.GetString("ChangeEnvironment", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Changing state &quot;{0}&quot; from &quot;{1}&quot; to &quot;{2}&quot;..
-        /// </summary>
-        internal static string ChangeState {
-            get {
-                return ResourceManager.GetString("ChangeState", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Command {0} finished with exit code {1}..
-        /// </summary>
-        internal static string CommandExecuted {
-            get {
-                return ResourceManager.GetString("CommandExecuted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Executing command {0}..
-        /// </summary>
-        internal static string CommandExecuting {
-            get {
-                return ResourceManager.GetString("CommandExecuting", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Copying &quot;{0}&quot; to &quot;{1}&quot;..
-        /// </summary>
-        internal static string CopyFile {
-            get {
-                return ResourceManager.GetString("CopyFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Copying all files from &quot;{0}&quot; to &quot;{1}&quot;..
-        /// </summary>
-        internal static string CopyFiles {
-            get {
-                return ResourceManager.GetString("CopyFiles", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Copying recursively from &quot;{0}&quot; to &quot;{1}&quot;..
-        /// </summary>
-        internal static string CopyRecursively {
-            get {
-                return ResourceManager.GetString("CopyRecursively", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ensuring that the destination folder &quot;{0}&quot; exists..
-        /// </summary>
-        internal static string CreatingDestinationFolder {
-            get {
-                return ResourceManager.GetString("CreatingDestinationFolder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Creating a task list for phase {0}..
-        /// </summary>
-        internal static string CreatingTaskListForPhase {
-            get {
-                return ResourceManager.GetString("CreatingTaskListForPhase", resourceCulture);
+                return ResourceManager.GetString("CreateWorkingDirectory", resourceCulture);
             }
         }
         
@@ -156,24 +75,6 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string CurrentUser {
             get {
                 return ResourceManager.GetString("CurrentUser", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Inserting task {0} at position {2}  in phase {1}..
-        /// </summary>
-        internal static string InsertTask {
-            get {
-                return ResourceManager.GetString("InsertTask", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Mapping &quot;{0}&quot; to &quot;{1}&quot; as {2}..
-        /// </summary>
-        internal static string MountingShare {
-            get {
-                return ResourceManager.GetString("MountingShare", resourceCulture);
             }
         }
         
@@ -201,33 +102,6 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string RunCommand {
             get {
                 return ResourceManager.GetString("RunCommand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Persisting the deployment state to &quot;{0}&quot;..
-        /// </summary>
-        internal static string SavingState {
-            get {
-                return ResourceManager.GetString("SavingState", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Task {0} finished in phase {1}..
-        /// </summary>
-        internal static string TaskFinished {
-            get {
-                return ResourceManager.GetString("TaskFinished", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Task {0} is starting in phase {1}..
-        /// </summary>
-        internal static string TaskStarting {
-            get {
-                return ResourceManager.GetString("TaskStarting", resourceCulture);
             }
         }
     }

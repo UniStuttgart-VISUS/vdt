@@ -4,8 +4,8 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
 
 
@@ -17,21 +17,21 @@ namespace Visus.DeploymentToolkit.Workflow {
     /// </summary>
     public interface ITaskSequence {
 
+        #region Public properties
+        /// <summary>
+        /// Gets the number of tasks in the sequence.
+        /// </summary>
+        int Length { get; }
+        #endregion
+
+        #region Public methods
         /// <summary>
         /// Runs the <see cref="ITask"/>s for the given phase.
         /// </summary>
-        /// <param name="phase">The phase to run.</param>
-        /// <returns>A <see cref="Task"/> to wait for the tasks in the phase to
-        /// complete.</returns>
-        Task ExecuteAsync(Phase phase);
-
-        /// <summary>
-        /// Gets the <see cref="ITask"/>s to be performed in the given phase.
-        /// </summary>
-        /// <param name="phase">The phase to retrieve the tasks for.</param>
-        /// <returns>The list of tasks for the requested phase.</returns>
-        IEnumerable<ITask> this[Phase phase] {
-            get;
-        }
+        /// <param name="state">The state that allows the task sequence to obtain
+        /// critical information, most importantly its own progress.</param>
+        /// <returns>A task to wait for the sequence to complete.</returns>
+        Task ExecuteAsync(IState state);
+        #endregion
     }
 }
