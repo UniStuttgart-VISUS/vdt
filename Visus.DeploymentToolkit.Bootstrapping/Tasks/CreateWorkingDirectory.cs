@@ -29,12 +29,14 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
+        /// <param name="state"></param>
         /// <param name="directoryService"></param>
         /// <param name="logger"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public CreateWorkingDirectory(IDirectory directoryService,
+        public CreateWorkingDirectory(IState state,
+                IDirectory directoryService,
                 ILogger<CreateWorkingDirectory> logger)
-                : base(logger) {
+                : base(state, logger) {
             this._directoryService = directoryService
                 ?? throw new ArgumentNullException(nameof(directoryService));
             this.Name = Resources.CreateWorkingDirectory;
@@ -45,19 +47,26 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Gets or sets the path of the working directory to be created.
         /// </summary>
-        [Required]
-        public string Path { get; set; } = null!;
+        /// <remarks>
+        /// If not valid path was specified, the task will take the working
+        /// directory from the current <see cref="IState"/>.
+        /// </remarks>
+        public string? Path { get; set; }
         #endregion
 
         #region Public methods
         /// <inheritdoc />
-        public override async Task ExecuteAsync(IState state,
+        public override async Task ExecuteAsync(
                 CancellationToken cancellationToken) {
-            _ = state ?? throw new ArgumentNullException(nameof(state));
+            if (string.IsNullOrWhiteSpace(this.Path)) {
+                this.Path = this._state.WorkingDirectory;
+                this._logger.LogTrace("Using working directory "
+                    + "\"{WorkingDirectory}\" from the state.", this.Path);
+            }
 
             if (string.IsNullOrWhiteSpace(this.Path)) {
-               throw new InvalidOperationException
-                    (Errors.InvalidWorkingDirectory);
+                throw new InvalidOperationException(
+                    Errors.InvalidWorkingDirectory);
             }
 
             this._logger.LogInformation("Creating working directory at "
@@ -70,7 +79,7 @@ namespace Visus.DeploymentToolkit.Tasks {
             await this._directoryService.CleanAsync(dir.FullName)
                 .ConfigureAwait(false);
 
-            state.Set(WellKnownStates.WorkingDirectory, dir.FullName);
+            this._state.WorkingDirectory = dir.FullName;
         }
         #endregion
 

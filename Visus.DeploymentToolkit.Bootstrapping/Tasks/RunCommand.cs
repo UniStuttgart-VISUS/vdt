@@ -25,11 +25,14 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
+        /// <param name="state"></param>
         /// <param name="factory"></param>
         /// <param name="logger"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public RunCommand(ICommandBuilderFactory factory,
-                ILogger<RunCommand> logger) : base(logger) {
+        public RunCommand(IState state,
+                ICommandBuilderFactory factory,
+                ILogger<RunCommand> logger)
+                : base(state,logger) {
             this._factory = factory
                 ?? throw new ArgumentNullException(nameof(factory));
             this.Name = Resources.RunCommand;
@@ -81,9 +84,8 @@ namespace Visus.DeploymentToolkit.Tasks {
         public int[]? SucccessExitCodes { get; set; }
 
         /// <inheritdoc />
-        public override async Task ExecuteAsync(IState state,
+        public override async Task ExecuteAsync(
                 CancellationToken cancellationToken) {
-            _ = state ?? throw new ArgumentNullException(nameof(state));
             var cmd = this._factory.Run(this.Path)
                 .WithArguments(this.Arguments)
                 .InWorkingDirectory(this.WorkingDirectory)

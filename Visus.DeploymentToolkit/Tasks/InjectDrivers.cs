@@ -15,10 +15,12 @@ namespace Visus.DeploymentToolkit.Tasks {
 
     public sealed class InjectDrivers : TaskBase {
 
-        public InjectDrivers(ILogger<InjectDrivers> logger) : base(logger) { }
+        public InjectDrivers(IState state,
+                IDismScope dism,
+                ILogger<InjectDrivers> logger)
+                : base(state, logger) { }
 
-        public override Task ExecuteAsync(IState state,
-                CancellationToken cancellationToken) {
+        public override Task ExecuteAsync(CancellationToken cancellationToken) {
 
             //DismApi.MountImage()
             throw new NotImplementedException();

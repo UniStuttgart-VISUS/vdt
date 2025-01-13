@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
-using System.Linq;
 using Visus.DeploymentToolkit;
 using Visus.DeploymentToolkit.Bootstrapper.Properties;
 using Visus.DeploymentToolkit.Extensions;
@@ -52,97 +51,31 @@ var log = services.GetRequiredService<ILogger<Program>>();
 log.LogInformation("Project Deimos is bootstrapping.");
 
 
-// Perform bootstrapping.
+// Perform bootstrapping by building and executing the bootstrapping task
+// sequence.
 try {
     var state = services.GetRequiredService<IState>();
-    state.Set(WellKnownStates.Phase, Phase.Bootstrapping);
+    state.Phase = Phase.Bootstrapping;
+    state.WorkingDirectory = options.WorkingDirectory;
 } catch (Exception ex) {
     log.LogError(ex, "Failed to set bootstrapping as the current state.");
 }
 
-try {
-    var drives = services.GetRequiredService<IDriveInfo>();
-    var input = services.GetRequiredService<IConsoleInput>();
-    var task = services.GetRequiredService<MountNetworkShare>();
+log.LogInformation("Preparing bootstrapping task sequence.");
+var taskSequenceBuilder = services.GetRequiredService<ITaskSequenceBuilder>()
+    .ForPhase(Phase.Bootstrapping)
+    .Add<MountDeploymentShare>(services, t => options.CopyTo(t.Options))
+    .Add<CreateWorkingDirectory>(services)
+    .Add<PersistState>(services, t => t.Path = options.StatePath);
+var taskSequence = taskSequenceBuilder.Build();
+
+
+log.LogInformation("Running bootstrapping task sequence.");
+{
     var state = services.GetRequiredService<IState>();
-
-    task.Path = input.ReadInput(Resources.PromptDeploymentShare,
-        options.DeploymentShare)!;
-    task.MountPoint = input.ReadInput(Resources.PromptMountPoint,
-        options.DeploymentDrive ?? drives.GetFreeDrives().Last());
-
-    var domain = input.ReadInput(Resources.PromptDomain, options.Domain);
-    var user = input.ReadInput(Resources.PromptUser, options.User);
-    var password = input.ReadPassword(Resources.PromptPassword);
-    task.Credential = new(user, password, domain);
-
-    await task.ExecuteAsync(state);
-
-    state.Set(WellKnownStates.DeploymentShare, task.MountPoint);
-} catch (Exception ex) {
-    log.LogCritical(ex, "Failed to mount the deployment share.");
+    await taskSequence.ExecuteAsync(state);
 }
 
-try {
-    var state = services.GetRequiredService<IState>();
-    var task = services.GetRequiredService<CreateWorkingDirectory>();
-    task.Path = options.WorkingDirectory;
-    await task.ExecuteAsync(state);
-} catch (Exception ex) {
-    log.LogCritical(ex, "Failed to prepare the working directory "
-        + "\"{WorkingDirectory}\".", options.WorkingDirectory);
-}
-
-// TODO: That does not make sense. Only once the destintation disk has been prepared, a copy should be created by the agent.
-//try {
-//    var state = services.GetRequiredService<IState>();
-//    var task = services.GetRequiredService<CopyFiles>();
-
-//    task.Source = Path.Combine(state.DeploymentShare!, options.BinaryPath);
-//    task.Destination = options.WorkingDirectory;
-//    task.IsOverwrite = true;
-//    task.IsRecursive = true;
-
-//    log.LogInformation("Copying deployment agent binaries from "
-//        + "\"{DeploymentShare}\" to \"{WorkingDirectory}\".",
-//        task.Source,
-//        task.Destination);
-//    await task.ExecuteAsync(state);
-
-//} catch (Exception ex) {
-//    log.LogCritical(ex, "Failed to copy binaries from the deployment share.");
-//}
-
-//try {
-//    var state = services.GetRequiredService<IState>();
-//    var path = Path.Combine(state.DeploymentShare!,
-//        options.TaskSequenceFolder);
-
-//    log.LogInformation("Loading task sequences from "
-//        + "\"{TaskSequenceFolder}\".", path);
-
-//    Directory.GetFiles(path, "*.json")
-//        .Select(TaskSequenceDescription.ParseAsync)
-//        .Select(async taskSequence => {
-//            var sequence = await taskSequence;
-//            if (sequence is not null) {
-//                state.Set(sequence.ID, sequence);
-//            }
-//        });
-//} catch (Exception ex) {
-//    log.LogCritical(ex, "Failed to select a task sequence to run.");
-//}
-
-
-// Persist the state for the agent to run next.
-try {
-    var state = services.GetRequiredService<IState>();
-    state.Set(WellKnownStates.Phase, Phase.Installation);
-    log.LogInformation(Resources.PersistState, options.StateFile);
-    await state.SaveAsync(options.StateFile);
-} catch (Exception ex) {
-    log.LogError(ex, "Failed to persist the deployment state for the agent.");
-}
 
 // Start the agent.
 try {

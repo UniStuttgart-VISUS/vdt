@@ -24,11 +24,14 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
+        /// <param name="state"></param>
         /// <param name="copy"></param>
         /// <param name="logger"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public CopyFiles(ICopy copy, ILogger<CopyFiles> logger)
-                : base(logger) {
+        public CopyFiles(IState state,
+                ICopy copy,
+                ILogger<CopyFiles> logger)
+                : base(state, logger) {
             this._copy = copy ?? throw new ArgumentNullException(nameof(copy));
         }
         #endregion
@@ -66,8 +69,7 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         #region Public methods
         /// <inheritdoc />
-        public override Task ExecuteAsync(IState state,
-                CancellationToken cancellationToken) {
+        public override Task ExecuteAsync(CancellationToken cancellationToken) {
             var flags = CopyFlags.None;
             if (this.IsRecursive) {
                 flags |= CopyFlags.Recursive;

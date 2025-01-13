@@ -25,6 +25,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
+        /// <param name="state"></param>
         /// <param name="diskManagement">The disk management abstraction that
         /// allows the task to access and modify partitions.</param>
         /// <param name="logger">A logger to report progress and problems.
@@ -32,9 +33,10 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <exception cref="ArgumentNullException">If
         /// <paramref name="diskManagement"/> is <c>null</c>, or if
         /// <paramref name="logger"/> is <c>null</c>.</exception>
-        public PartitionFormatDisk(IDiskManagement diskManagement,
+        public PartitionFormatDisk(IState state,
+                IDiskManagement diskManagement,
                 ILogger<PartitionFormatDisk> logger)
-                : base(logger) {
+                : base(state, logger) {
             this._diskManagement = diskManagement
                 ?? throw new ArgumentNullException(nameof(diskManagement));
             this.Disks = Enumerable.Empty<DiskPartitioningDefinition>();
@@ -50,10 +52,8 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         #region Public methods
         /// <inheritdoc />
-        public override async Task ExecuteAsync(IState state,
+        public override async Task ExecuteAsync(
                 CancellationToken cancellationToken) {
-            _ = state ?? throw new ArgumentNullException(nameof(state));
-
             var disks = await this._diskManagement
                 .GetDisksAsync(cancellationToken)
                 .ConfigureAwait(false);

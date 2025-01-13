@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using System.Collections.Generic;
+using System.Linq;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -15,15 +16,21 @@ namespace Visus.DeploymentToolkit.Services {
     public interface IDriveInfo {
 
         /// <summary>
+        /// Gets the first free drive letter.
+        /// </summary>
+        /// <returns>The first free drive letter.</returns>
+        string GetFreeDrive() => this.GetLogicalDrives().First();
+
+        /// <summary>
         /// Gets all free drive letters.
         /// </summary>
         /// <returns>The free drive letters on the system.</returns>
-        public IEnumerable<string> GetFreeDrives();
+        IEnumerable<string> GetFreeDrives();
 
         /// <summary>
         /// Gets the logical drives on the system.
         /// </summary>
         /// <returns>The logical drives on the system.</returns>
-        public IEnumerable<string> GetLogicalDrives();
+        IEnumerable<string> GetLogicalDrives();
     }
 }

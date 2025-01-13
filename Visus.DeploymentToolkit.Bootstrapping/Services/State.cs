@@ -42,60 +42,57 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public properties
         /// <inheritdoc />
+        public string? DeploymentDirectory {
+            get => this[WellKnownStates.DeploymentDirectory] as string;
+            set => this[WellKnownStates.DeploymentDirectory] = value;
+        }
+
+        /// <inheritdoc />
         public string? DeploymentShare {
-            get => this.Get(WellKnownStates.DeploymentShare) as string;
-            set => this.Set(WellKnownStates.DeploymentShare, value);
+            get => this[WellKnownStates.DeploymentShare] as string;
+            set => this[WellKnownStates.DeploymentShare] = value;
         }
 
         /// <inheritdoc />
         [JsonIgnore]
         public IDismScope? DismScope {
-            get => this.Get(WellKnownStates.DismScope) as IDismScope;
+            get => this[WellKnownStates.DismScope] as IDismScope;
             set {
                 if ((this.DismScope != null) && (value != null)) {
                     throw new InvalidOperationException(
                         Errors.DuplicateDismScope);
                 }
 
-                this.Set(WellKnownStates.DismScope, value);
+                this[WellKnownStates.DismScope] = value;
             }
         }
 
         /// <inheritdoc />
         public IDisk? InstallationDisk {
-            get => this.Get(WellKnownStates.InstallationDisk) as IDisk;
-            set => this.Set(WellKnownStates.InstallationDisk, value);
+            get => this[WellKnownStates.InstallationDisk] as IDisk;
+            set => this[WellKnownStates.InstallationDisk] = value;
         }
 
         /// <inheritdoc />
         public Phase Phase {
-            get => this.Get(WellKnownStates.Phase) as Phase? ?? Phase.Unknown;
-            set => this.Set(WellKnownStates.Phase, value);
+            get => this[WellKnownStates.Phase] as Phase? ?? Phase.Unknown;
+            set => this[WellKnownStates.Phase] = value;
         }
 
         /// <inheritdoc />
         public int Progress {
-            get => this.Get(WellKnownStates.Progress) as int? ?? 0;
-            set => this.Set(WellKnownStates.Progress, value);
+            get => this[WellKnownStates.Progress] as int? ?? 0;
+            set => this[WellKnownStates.Progress] = value;
         }
 
         /// <inheritdoc />
         public string? WorkingDirectory {
-            get => this.Get(WellKnownStates.WorkingDirectory) as string;
-            set => this.Set(WellKnownStates.WorkingDirectory, value);
+            get => this[WellKnownStates.WorkingDirectory] as string;
+            set => this[WellKnownStates.WorkingDirectory] = value;
         }
         #endregion
 
         #region Public methods
-        /// <inheritdoc />
-        public object? Get(string key) {
-            lock (this._lock) {
-                return this._values.TryGetValue(key, out var value)
-                    ? value
-                    : null;
-            }
-        }
-
         /// <inheritdoc />
         public async Task SaveAsync(string path) {
             this._logger.LogTrace("Persisting the deployment state to "
@@ -109,16 +106,26 @@ namespace Visus.DeploymentToolkit.Services {
             await JsonSerializer.SerializeAsync(file, this._values, opts)
                 .ConfigureAwait(false);
         }
+        #endregion
 
+        #region Public indexers
         /// <inheritdoc />
-        public object? Set(string key, object? value) {
-            lock (this._lock) {
-                this._values.TryGetValue(key, out var retval);
-                this._values[key] = value;
-                this._logger.LogInformation("Changing state \"{State}\" "
-                    + "from \"{OldValue}\" to \"{NewValue}\".",
-                    key, retval, value);
-                return retval;
+        public object? this[string key] {
+            get {
+                lock (this._lock) {
+                    return this._values.TryGetValue(key, out var value)
+                        ? value
+                        : null;
+                }
+            }
+            set {
+                lock (this._lock) {
+                    this._values.TryGetValue(key, out var retval);
+                    this._values[key] = value;
+                    this._logger.LogInformation("Changing state \"{State}\" "
+                        + "from \"{OldValue}\" to \"{NewValue}\".",
+                        key, retval, value);
+                }
             }
         }
         #endregion

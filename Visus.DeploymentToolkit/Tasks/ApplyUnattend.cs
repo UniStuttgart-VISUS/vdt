@@ -26,12 +26,14 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
+        /// <param name="state"></param>
         /// <param name="dism"></param>
         /// <param name="logger">The logger used to report results of the
         /// operation.</param>
-        public ApplyUnattend(IDismScope dism,
+        public ApplyUnattend(IState state,
+                IDismScope dism,
                 ILogger<ApplyUnattend> logger)
-                : base(logger) {
+                : base(state,logger) {
             this._dism = dism ?? throw new ArgumentNullException(nameof(dism));
         }
         #endregion
@@ -55,8 +57,7 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         #region Public methods
         /// <inheritdoc />
-        public override Task ExecuteAsync(IState state,
-                CancellationToken cancellationToken) {
+        public override Task ExecuteAsync(CancellationToken cancellationToken) {
             this._logger.LogInformation("Opening a DISM servicing session "
                 + "for \"{Path}\" to apply unattend settings.",
                 this.InstallationPath);

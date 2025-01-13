@@ -27,30 +27,36 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public properties
         /// <summary>
+        /// Gets or sets the path to the mount point where the
+        /// <see cref="DeploymentShare"/> is mounted.
+        /// </summary>
+        string? DeploymentDirectory { get; set; }
+
+        /// <summary>
         /// Gets the location of the deployment share.
         /// </summary>
-        string? DeploymentShare { get; }
+        string? DeploymentShare { get; set; }
 
         /// <summary>
         /// Gets a potentially open DISM session, which can be used to modfiy an
         /// image or Windows installation.
         /// </summary>
-        IDismScope? DismScope { get; }
+        IDismScope? DismScope { get; set; }
 
         /// <summary>
         /// Gets the disk where Windows will be installed.
         /// </summary>
-        IDisk? InstallationDisk { get;}
+        IDisk? InstallationDisk { get; set; }
 
         /// <summary>
         /// Gets the phase that we are running.
         /// </summary>
-        Phase Phase { get; }
+        Phase Phase { get; set; }
 
         /// <summary>
         /// Gets the zero-based index of the current task.
         /// </summary>
-        int Progress { get; }
+        int Progress { get; set; }
 
         /// <summary>
         /// Gets or sets the path to the working directory on the local machine
@@ -61,28 +67,20 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public methods
         /// <summary>
-        /// Gets the specified state.
-        /// </summary>
-        /// <param name="key">The key identifying the state.</param>
-        /// <returns>The value of the state or <c>null</c> if the specified
-        /// key is not part of the state.</returns>
-        object? Get(string key);
-
-        /// <summary>
         /// Persists the state to a JSON file at the specified location.
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
         Task SaveAsync(string path);
+        #endregion
 
+        #region Public indexers
         /// <summary>
-        /// Set the given state to the specified value.
+        /// Gets or sets the specified state.
         /// </summary>
         /// <param name="key">The key of the state object.</param>
-        /// <param name="value">The value of the specified key.</param>
-        /// <returns>The previous value of the key or <c>null</c> if the key
-        /// was not present in the state before.</returns>
-        object? Set(string key, object? value);
+        /// <returns>The value of the key.</returns>
+        object? this[string key] { get; set; }
         #endregion
     }
 }

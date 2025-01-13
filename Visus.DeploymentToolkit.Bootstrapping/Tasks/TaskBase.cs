@@ -35,8 +35,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         }
 
         /// <inheritdoc />
-        public abstract Task ExecuteAsync(IState state,
-            CancellationToken cancellationToken);
+        public abstract Task ExecuteAsync(CancellationToken cancellationToken);
         #endregion
 
         #region Protected constructors
@@ -46,10 +45,13 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <param name="logger">The logger for writing progress and
         /// error notes.</param>
         /// <exception cref="ArgumentNullException">If <paramref name="logger"/>
-        /// is <c>null</c>.</exception>
-        protected TaskBase(ILogger logger) {
+        /// is <c>null</c>, or if <paramref name="state"/> is <c>null</c>.
+        /// </exception>
+        protected TaskBase(IState state, ILogger logger) {
             this._logger = logger
                 ?? throw new ArgumentNullException(nameof(logger));
+            this._state = state
+                ?? throw new ArgumentNullException(nameof(state));
             this.Name = $"{this.GetType().Name} {Guid.NewGuid().ToString("N")}";
         }
         #endregion
@@ -59,6 +61,11 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// A logger for writing progress and error notes.
         /// </summary>
         protected readonly ILogger _logger;
+
+        /// <summary>
+        /// The global application state tracking progress through the workflow.
+        /// </summary>
+        protected readonly IState _state;
         #endregion
     }
 }

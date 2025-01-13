@@ -88,6 +88,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The path to the deployment share is required, but was not set..
+        /// </summary>
+        internal static string DeploymentSharePathNotSet {
+            get {
+                return ResourceManager.GetString("DeploymentSharePathNotSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Another DISM session is already open. Only one image or installation can be processed at a time..
         /// </summary>
         internal static string DuplicateDismScope {
@@ -97,7 +106,7 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The path to the working directory must be set..
+        ///   Looks up a localized string similar to The path to the working directory must be set. Make sure that the task is configured accordinly or that the working directory has been configured in the state passed to the task..
         /// </summary>
         internal static string InvalidWorkingDirectory {
             get {

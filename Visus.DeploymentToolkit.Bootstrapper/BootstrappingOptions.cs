@@ -4,6 +4,9 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System.IO;
+using Visus.DeploymentToolkit.Tasks;
+
 
 namespace Visus.DeploymentToolkit {
 
@@ -13,6 +16,7 @@ namespace Visus.DeploymentToolkit {
     /// </summary>
     public sealed class BootstrappingOptions {
 
+        #region Public properties
         /// <summary>
         /// Gets or sets the path to the agent in the
         /// <see cref="WorkingDirectory"/>.
@@ -62,7 +66,15 @@ namespace Visus.DeploymentToolkit {
         /// persists the current <see cref="Services.IState"/> before calling
         /// into the agent.
         /// </summary>
-        public string StateFile { get; set; } = "deimosstate.json";
+        public string StateFile { get; set; } = PersistState.DefaultPath;
+
+        /// <summary>
+        /// Gets the path to the <see cref="StateFile"/> in the
+        /// <see cref="WorkingDirectory"/>.
+        /// </summary>
+        public string StatePath {
+            get => Path.Combine(this.WorkingDirectory, this.StateFile);
+        }
 
         /// <summary>
         /// Gets or sets the name of the user to connect to the deployment
@@ -75,5 +87,19 @@ namespace Visus.DeploymentToolkit {
         /// and the task sequence are copied to.
         /// </summary>
         public string WorkingDirectory { get; set; } = @"\DEIMOS";
+        #endregion
+
+        #region Public methods
+        /// <summary>
+        /// Copy boostrapping options to <see cref="options"/> as a suggestion
+        /// for the user what to use as deployment share.
+        /// </summary>
+        /// <param name="options"></param>
+        public void CopyTo(DeploymentShareOptions options) {
+            options.Domain = this.Domain;
+            options.Path = this.DeploymentShare;
+            options.User = this.User;
+        }
+        #endregion
     }
 }

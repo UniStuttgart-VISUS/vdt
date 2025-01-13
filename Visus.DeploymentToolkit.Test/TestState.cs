@@ -37,10 +37,10 @@ namespace Visus.DeploymentToolkit.Test {
                 .BuildServiceProvider()
                 .GetRequiredService<IState>();
 
-            state.Set(WellKnownStates.DeploymentShare, "x:\\");
+            state[WellKnownStates.DeploymentShare] = "x:\\";
             Assert.AreEqual("x:\\", state.DeploymentShare);
 
-            state.Set(WellKnownStates.Phase, Phase.Installation);
+            state.Phase = Phase.Installation;
             Assert.AreEqual(Phase.Installation, state.Phase);
 
             await state.SaveAsync("state.json");

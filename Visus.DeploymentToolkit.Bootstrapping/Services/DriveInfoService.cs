@@ -22,7 +22,7 @@ namespace Visus.DeploymentToolkit.Services {
         public IEnumerable<string> GetFreeDrives() {
             var allDrives = from d in Enumerable.Range('a', 'z' - 'a')
                             select $@"{(char) d}:\";
-            var usedDrives = this.GetLogicalDrives();
+            var usedDrives = this.GetLogicalDrives().Select(d => d.ToLower());
             return allDrives.Except(usedDrives);
         }
 

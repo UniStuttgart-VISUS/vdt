@@ -35,14 +35,12 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <exception cref="ArgumentNullException">If
         /// <paramref name="diskManagement"/> is <c>null</c>, or if
         /// <paramref name="state"/> is <c>null</c>.</exception>
-        public SelectInstallDisk(IDiskManagement diskManagement,
-                IState state,
+        public SelectInstallDisk(IState state,
+                IDiskManagement diskManagement,
                 ILogger<SelectInstallDisk> logger)
-                : base(logger) {
+                : base(state, logger) {
             this._diskManagement = diskManagement
                 ?? throw new ArgumentNullException(nameof(diskManagement));
-            this._state = state
-                ?? throw new ArgumentNullException(nameof(state));
             this.Name = Resources.SelectInstallDisk;
         }
         #endregion
@@ -60,10 +58,8 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         #region Public methods
         /// <inheritdoc />
-        public override async Task ExecuteAsync(IState state,
+        public override async Task ExecuteAsync(
                 CancellationToken cancellationToken) {
-            _ = state ?? throw new ArgumentNullException(nameof(state));
-
             var disks = await this._diskManagement
                 .GetDisksAsync(cancellationToken)
                 .ConfigureAwait(false);
@@ -81,13 +77,12 @@ namespace Visus.DeploymentToolkit.Tasks {
             }
 
             // Note: First() will throw if there was no disk left.
-            this._state.Set(WellKnownStates.InstallationDisk, disks.First());
+            this._state.InstallationDisk = disks.First();
         }
         #endregion
 
         #region Private fields
         private readonly IDiskManagement _diskManagement;
-        private readonly IState _state;
         #endregion
     }
 }

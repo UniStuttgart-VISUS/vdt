@@ -26,14 +26,12 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
-        /// <param name="driveInfo"></param>
+        /// <param name="state"></param>
         /// <param name="logger"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public MountNetworkShare(IDriveInfo driveInfo,
+        public MountNetworkShare(IState state,
                 ILogger<MountNetworkShare> logger)
-                : base(logger) {
-            this._driveInfo = driveInfo
-                ?? throw new ArgumentNullException(nameof(driveInfo));
+                : base(state, logger) {
             this.Name = Resources.MountNetworkShare;
         }
         #endregion
@@ -47,7 +45,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Gets or sets the mount point for the share, i.e. the drive letter.
         /// </summary>
-        public string? MountPoint { get; set; }
+        public string MountPoint { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets the path to the share.
@@ -58,14 +56,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         #region Public methods
         /// <inheritdoc />
         [SupportedOSPlatform("windows")]
-        public override Task ExecuteAsync(IState state,
-                CancellationToken cancellationToken) {
-            _ = state ?? throw new ArgumentNullException(nameof(state));
-
-            if (this.MountPoint == null) {
-                this.MountPoint = this._driveInfo.GetFreeDrives().First();
-            }
-
+        public override Task ExecuteAsync(CancellationToken cancellationToken) {
             this._logger.LogInformation("Mapping \"{NetworkPath}\" to "
                 + "\"{MountPoint}\" as {User}.",
                 this.Path,
@@ -73,13 +64,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                 this.Credential?.UserName ?? Resources.CurrentUser);
             MprApi.Connect(this.MountPoint, this.Path, this.Credential,
                 MprApi.ConnectionFlags.Temporary);
-
             return Task.CompletedTask;
         }
-        #endregion
-
-        #region Private fields
-        private readonly IDriveInfo _driveInfo;
         #endregion
     }
 }

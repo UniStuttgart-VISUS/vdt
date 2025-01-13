@@ -49,16 +49,10 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Asynchronously executes a task.
         /// </summary>
-        /// <param name="state">The global application state, which can be used
-        /// to retrieve data from a previous <see cref="ITask"/> or leave data
-        /// for a subsequent one. It can be assumet that the built-in task
-        /// sequence will always provide a non-<c>null</c> global state.</param>
         /// <param name="cancellationToken">A cancellation token for aborting
         /// the task.</param>
         /// <returns>A <see cref="Task"/> to wait for completion.</returns>
-        /// <exception cref="System.ArgumentNullException">If
-        /// <paramref name="state"/> is <c>null</c>.</exception>
-        Task ExecuteAsync(IState state, CancellationToken cancellationToken);
+        Task ExecuteAsync(CancellationToken cancellationToken);
         #endregion
     }
 }

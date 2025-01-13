@@ -13,6 +13,12 @@ namespace Visus.DeploymentToolkit.Services {
     public static class WellKnownStates {
 
         /// <summary>
+        /// The directory where the deployment share is mounted.
+        /// </summary>
+        public const string DeploymentDirectory
+            = nameof(IState.DeploymentDirectory);
+
+        /// <summary>
         /// The location of the deployment share.
         /// </summary>
         public const string DeploymentShare = nameof(IState.DeploymentShare);

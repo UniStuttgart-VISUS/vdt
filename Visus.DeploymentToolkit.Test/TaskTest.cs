@@ -20,35 +20,38 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public async Task TestCopyFilesFlat() {
+            var state = new State(this._loggerFactory.CreateLogger<State>());
             var dir = new DirectoryService(this._loggerFactory.CreateLogger<DirectoryService>());
             var copy = new CopyService(dir, this._loggerFactory.CreateLogger<CopyService>());
-            var task = new CopyFiles(copy, this._loggerFactory.CreateLogger<CopyFiles>());
+            var task = new CopyFiles(state, copy, this._loggerFactory.CreateLogger<CopyFiles>());
             task.Source = ".";
             task.Destination = Path.Combine(Path.GetTempPath(), "DeimosTest2");
             task.IsRecursive = false;
             task.IsOverwrite = true;
-            await task.ExecuteAsync(Mock.Of<IState>());
+            await task.ExecuteAsync();
             Assert.IsFalse(Directory.GetDirectories(task.Destination).Any());
         }
 
         [TestMethod]
         public async Task TestCopyFilesRecursive() {
+            var state = new State(this._loggerFactory.CreateLogger<State>());
             var dir = new DirectoryService(this._loggerFactory.CreateLogger<DirectoryService>());
             var copy = new CopyService(dir,this._loggerFactory.CreateLogger<CopyService>());
-            var task = new CopyFiles(copy, this._loggerFactory.CreateLogger<CopyFiles>());
+            var task = new CopyFiles(state, copy, this._loggerFactory.CreateLogger<CopyFiles>());
             task.Source = ".";
             task.Destination = Path.Combine(Path.GetTempPath(), "DeimosTest");
             task.IsOverwrite = true;
-            await task.ExecuteAsync(Mock.Of<IState>());
+            await task.ExecuteAsync();
         }
 
         [TestMethod]
         public async Task TestRunCommand() {
-            var task = new RunCommand(new CommandBuilderFactory(), this._loggerFactory.CreateLogger<RunCommand>());
+            var state = new State(this._loggerFactory.CreateLogger<State>());
+            var task = new RunCommand(state, new CommandBuilderFactory(), this._loggerFactory.CreateLogger<RunCommand>());
             task.Path = @"c:\Windows\System32\cmd.exe";
             task.Arguments = "/c @(call)";
-            task.SucccessExitCodes = new[] { 1 };
-            await task.ExecuteAsync(Mock.Of<IState>());
+            task.SucccessExitCodes = [ 1 ];
+            await task.ExecuteAsync();
         }
 
         private readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(l => l.AddDebug());

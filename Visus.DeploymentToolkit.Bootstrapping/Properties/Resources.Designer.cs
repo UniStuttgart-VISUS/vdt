@@ -79,11 +79,74 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mount deployment share.
+        /// </summary>
+        internal static string MountDeploymentShare {
+            get {
+                return ResourceManager.GetString("MountDeploymentShare", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mount network drive.
         /// </summary>
         internal static string MountNetworkShare {
             get {
                 return ResourceManager.GetString("MountNetworkShare", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Persist task sequence state.
+        /// </summary>
+        internal static string PersistState {
+            get {
+                return ResourceManager.GetString("PersistState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Path to deployment share.
+        /// </summary>
+        internal static string PromptDeploymentShare {
+            get {
+                return ResourceManager.GetString("PromptDeploymentShare", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Domain.
+        /// </summary>
+        internal static string PromptDomain {
+            get {
+                return ResourceManager.GetString("PromptDomain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deployment mount point.
+        /// </summary>
+        internal static string PromptMountPoint {
+            get {
+                return ResourceManager.GetString("PromptMountPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password.
+        /// </summary>
+        internal static string PromptPassword {
+            get {
+                return ResourceManager.GetString("PromptPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User name.
+        /// </summary>
+        internal static string PromptUser {
+            get {
+                return ResourceManager.GetString("PromptUser", resourceCulture);
             }
         }
         

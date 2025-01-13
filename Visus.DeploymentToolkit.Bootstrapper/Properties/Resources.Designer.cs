@@ -70,51 +70,6 @@ namespace Visus.DeploymentToolkit.Bootstrapper.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Path to deployment share.
-        /// </summary>
-        internal static string PromptDeploymentShare {
-            get {
-                return ResourceManager.GetString("PromptDeploymentShare", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Domain.
-        /// </summary>
-        internal static string PromptDomain {
-            get {
-                return ResourceManager.GetString("PromptDomain", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Deployment mount point.
-        /// </summary>
-        internal static string PromptMountPoint {
-            get {
-                return ResourceManager.GetString("PromptMountPoint", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Password.
-        /// </summary>
-        internal static string PromptPassword {
-            get {
-                return ResourceManager.GetString("PromptPassword", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to User name.
-        /// </summary>
-        internal static string PromptUser {
-            get {
-                return ResourceManager.GetString("PromptUser", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Starting the deployment agent as {0}..
         /// </summary>
         internal static string StartAgent {

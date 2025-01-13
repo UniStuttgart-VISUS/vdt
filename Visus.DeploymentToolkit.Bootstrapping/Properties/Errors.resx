@@ -126,11 +126,14 @@
   <data name="CopyDirectoryToFile" xml:space="preserve">
     <value>The source "{0}" is a directory, but the specified destination "{1}" is a file.</value>
   </data>
+  <data name="DeploymentSharePathNotSet" xml:space="preserve">
+    <value>The path to the deployment share is required, but was not set.</value>
+  </data>
   <data name="DuplicateDismScope" xml:space="preserve">
     <value>Another DISM session is already open. Only one image or installation can be processed at a time.</value>
   </data>
   <data name="InvalidWorkingDirectory" xml:space="preserve">
-    <value>The path to the working directory must be set.</value>
+    <value>The path to the working directory must be set. Make sure that the task is configured accordinly or that the working directory has been configured in the state passed to the task.</value>
   </data>
   <data name="PhaseAlreadySet" xml:space="preserve">
     <value>The phase has already been set to {0}.</value>

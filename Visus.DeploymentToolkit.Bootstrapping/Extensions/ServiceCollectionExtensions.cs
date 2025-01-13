@@ -12,6 +12,7 @@ using System;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
+using Visus.DeploymentToolkit.Workflow;
 
 
 namespace Visus.DeploymentToolkit.Extensions {
@@ -39,6 +40,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             services.AddDirectoryService();
             services.AddDriveInfo();
             services.AddEnvironment();
+            services.AddTaskSequenceBuilder();
             return services;
         }
 
@@ -55,8 +57,6 @@ namespace Visus.DeploymentToolkit.Extensions {
                 string file) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             _ = file ?? throw new ArgumentNullException(nameof(file));
-
-            services.ConfigureOptions<LoggerFilterOptions>();
 
             services.AddLogging(o => {
 #if DEBUG
@@ -147,7 +147,9 @@ namespace Visus.DeploymentToolkit.Extensions {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             services.AddTransient<CopyFiles>();
             services.AddTransient<CreateWorkingDirectory>();
+            services.AddTransient<MountDeploymentShare>();
             services.AddTransient<MountNetworkShare>();
+            services.AddTransient<PersistState>();
             services.AddTransient<RunCommand>();
             return services;
         }
@@ -232,6 +234,20 @@ namespace Visus.DeploymentToolkit.Extensions {
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             services.AddSingleton<IEnvironment, EnvironmentService>();
+            return services;
+        }
+
+        /// <summary>
+        /// Adds the <see cref="ITaskSequenceBuilder"/> for creating task
+        /// sequences from code.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        internal static IServiceCollection AddTaskSequenceBuilder(
+                this IServiceCollection services) {
+            _ = services ?? throw new ArgumentNullException(nameof(services));
+            services.AddSingleton<ITaskSequenceBuilder, TaskSequenceBuilder>();
             return services;
         }
         #endregion

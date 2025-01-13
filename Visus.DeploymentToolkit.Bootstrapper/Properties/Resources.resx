@@ -120,21 +120,6 @@
   <data name="PersistState" xml:space="preserve">
     <value>Persisting the state for the deployment agent to "{0}". </value>
   </data>
-  <data name="PromptDeploymentShare" xml:space="preserve">
-    <value>Path to deployment share</value>
-  </data>
-  <data name="PromptDomain" xml:space="preserve">
-    <value>Domain</value>
-  </data>
-  <data name="PromptMountPoint" xml:space="preserve">
-    <value>Deployment mount point</value>
-  </data>
-  <data name="PromptPassword" xml:space="preserve">
-    <value>Password</value>
-  </data>
-  <data name="PromptUser" xml:space="preserve">
-    <value>User name</value>
-  </data>
   <data name="StartAgent" xml:space="preserve">
     <value>Starting the deployment agent as {0}.</value>
   </data>
