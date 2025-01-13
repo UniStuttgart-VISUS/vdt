@@ -8,4 +8,11 @@ The project constists of serveral components that limit the number of times the 
 This is a minimal application that mainly mounts the deployment share into WinPE and starts the agent from the share. The boostrapper depends on `Visus.DeploymentToolkit.Bootstrapping`, which contains tasks that need to be performed by the boostrapper, but might also be used by the agent itself. Generally, as few tasks as possible should be placed here, because changes in the bootstrapper and its library require the PXE image to be rebuilt.
 
 ### Visus.DeploymentToolkit.Agent
-The agent performs the installation from WinPE and finalises it when booting into the installed operating system from disk.
+The agent performs the installation from WinPE and finalises it when booting into the installed operating system from disk. The agent can use the tasks from `Visus.DeploymentToolkit.Bootstrapping` as well as the main deployment tasks defined in `Visus.DeploymentToolkit`. The steps performed by the agent include:
+
+1. Partitioning the disk using the VDS.
+1. Formatting the partitions using the VDS.
+1. Applying the image to the disk using DISM.
+1. Configuring the boot manager using BCDEdit.
+1. Rebooting into the installed operating system.
+1. Applying the unattend.xml file to the installed operating system.
