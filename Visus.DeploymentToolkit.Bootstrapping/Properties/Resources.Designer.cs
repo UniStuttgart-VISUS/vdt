@@ -160,6 +160,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Runt deployment agent.
+        /// </summary>
+        internal static string RunAgent {
+            get {
+                return ResourceManager.GetString("RunAgent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Run command.
         /// </summary>
         internal static string RunCommand {

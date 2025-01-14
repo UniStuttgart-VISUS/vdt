@@ -5,6 +5,8 @@
 // <author>Christoph Müller</author>
 
 using System.IO;
+using Visus.DeploymentToolkit.Extensions;
+using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
 
 
@@ -25,6 +27,7 @@ namespace Visus.DeploymentToolkit {
         /// Note that the agent binary is copied to the working directory from
         /// the <see cref="DeploymentShare"/> as part of the bootstrapping.
         /// </remarks>
+        [State]
         public string AgentPath {
             get;
             set;
@@ -32,7 +35,7 @@ namespace Visus.DeploymentToolkit {
 
         /// <summary>
         /// Gets or sets the path where the binaries are located relative to
-        /// the lcoation of the <see cref="DeploymentShare"/>.
+        /// the location of the <see cref="DeploymentShare"/>.
         /// </summary>
         public string BinaryPath { get; set; } = "bin";
 
@@ -43,11 +46,13 @@ namespace Visus.DeploymentToolkit {
         /// This property can be <c>null</c>, in which case the programme will
         /// choose a free drive on its own.
         /// </remarks>
+        [State(WellKnownStates.DeploymentDirectory)]
         public string? DeploymentDrive { get; set; }
 
         /// <summary>
         /// Gets or sets the UNC path of the deployment share.
         /// </summary>
+        [State(WellKnownStates.DeploymentShare)]
         public string DeploymentShare { get; set; } = string.Empty;
 
         /// <summary>
@@ -72,6 +77,7 @@ namespace Visus.DeploymentToolkit {
         /// Gets the path to the <see cref="StateFile"/> in the
         /// <see cref="WorkingDirectory"/>.
         /// </summary>
+        [State(WellKnownStates.StateFile)]
         public string StatePath {
             get => Path.Combine(this.WorkingDirectory, this.StateFile);
         }
@@ -86,6 +92,7 @@ namespace Visus.DeploymentToolkit {
         /// Gets or sets the path to the local working directory where the agent
         /// and the task sequence are copied to.
         /// </summary>
+        [State(WellKnownStates.WorkingDirectory)]
         public string WorkingDirectory { get; set; } = @"\DEIMOS";
         #endregion
 

@@ -150,6 +150,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             services.AddTransient<MountDeploymentShare>();
             services.AddTransient<MountNetworkShare>();
             services.AddTransient<PersistState>();
+            services.AddTransient<RunAgent>();
             services.AddTransient<RunCommand>();
             return services;
         }

@@ -14,21 +14,21 @@ namespace Visus.DeploymentToolkit.Services {
     /// A service that can be used to secure sensitive data on a per-workflow
     /// basis.
     /// </summary>
-    public interface ISessionSecurity {
+    public interface ISessionSecurity : IDisposable {
 
         /// <summary>
         /// Decrypts the given data with the configures session key.
         /// </summary>
         /// <param name="data">The base64-encoded encrypted data.</param>
         /// <returns>The decrypted data.</returns>
-        byte[] Decrypt(ReadOnlySpan<char> data);
+        byte[] Decrypt(string data);
 
         /// <summary>
         /// Decrypts the given string data with the configures session key.
         /// </summary>
         /// <param name="data">The base64-encoded encrypted data.</param>
         /// <returns>The decrypted string.</returns>
-        string DecryptString(ReadOnlySpan<char> data) {
+        string DecryptString(string data) {
             return Encoding.Unicode.GetString(this.Decrypt(data));
         }
 

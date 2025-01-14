@@ -59,6 +59,17 @@ namespace Visus.DeploymentToolkit.Services {
         int Progress { get; set; }
 
         /// <summary>
+        /// Gets or sets the location of the file where the state is persisted.
+        /// </summary>
+        string? StateFile { get; set; }
+
+        /// <summary>
+        /// Gets or sets the key used for encrypting sensitive data in this
+        /// session.
+        /// </summary>
+        string? SessionKey { get; set; }
+
+        /// <summary>
         /// Gets or sets the path to the working directory on the local machine
         /// that the agent will use.
         /// </summary>
@@ -69,9 +80,15 @@ namespace Visus.DeploymentToolkit.Services {
         /// <summary>
         /// Persists the state to a JSON file at the specified location.
         /// </summary>
+        /// <remarks>
+        /// The method will update the <see cref="StateFile"/> variable to the
+        /// given <paramref name="path"/> if this string is non-<c>null</c>.
+        /// Otherwise, an existing <see cref="StateFile"/> will be used. If
+        /// either are <c>null</c>, the operation will fail.
+        /// </remarks>
         /// <param name="path"></param>
         /// <returns></returns>
-        Task SaveAsync(string path);
+        Task SaveAsync(string? path);
         #endregion
 
         #region Public indexers

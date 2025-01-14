@@ -150,6 +150,9 @@
   <data name="RestoringState" xml:space="preserve">
     <value>Restoring the deployment state from "{0}".</value>
   </data>
+  <data name="RunAgent" xml:space="preserve">
+    <value>Runt deployment agent</value>
+  </data>
   <data name="RunCommand" xml:space="preserve">
     <value>Run command</value>
   </data>

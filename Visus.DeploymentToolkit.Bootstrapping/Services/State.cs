@@ -86,6 +86,18 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         /// <inheritdoc />
+        public string? SessionKey {
+            get => this[WellKnownStates.SessionKey] as string;
+            set => this[WellKnownStates.SessionKey] = value;
+        }
+
+        /// <inheritdoc />
+        public string? StateFile {
+            get => this[WellKnownStates.StateFile] as string;
+            set => this[WellKnownStates.StateFile] = value;
+        }
+
+        /// <inheritdoc />
         public string? WorkingDirectory {
             get => this[WellKnownStates.WorkingDirectory] as string;
             set => this[WellKnownStates.WorkingDirectory] = value;
@@ -94,9 +106,22 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public methods
         /// <inheritdoc />
-        public async Task SaveAsync(string path) {
+        public async Task SaveAsync(string? path) {
+            // If we have no user-defined path, use the state file. If that is
+            // also not set, it is a critical error.
+            if (string.IsNullOrEmpty(path)) {
+                path = this.StateFile;
+            }
+            if (string.IsNullOrEmpty(path)) {
+                throw new ArgumentNullException(nameof(path));
+            }
+
+            // Update the location of the state file before writing it such that
+            // anyone reading it will use the same path.
+            this.StateFile = path;
+
             this._logger.LogTrace("Persisting the deployment state to "
-                + "\"{StateFile}\".\t\r\n", path);
+                + "\"{StateFile}\".", path);
             using var file = File.Open(path, FileMode.Create,
                 FileAccess.ReadWrite);
             var opts = new JsonSerializerOptions() {

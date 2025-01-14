@@ -44,6 +44,22 @@ namespace Visus.DeploymentToolkit.Services {
         public const string Progress = nameof(IState.Progress);
 
         /// <summary>
+        /// The password for the current session, which is used to derive
+        /// encryption keys.
+        /// </summary>
+        public const string SessionKey = nameof(IState.SessionKey);
+
+        /// <summary>
+        /// The path to the state file.
+        /// </summary>
+        public const string StateFile = nameof(IState.StateFile);
+
+        /// <summary>
+        /// The name of the user connecting to the deployment share.
+        /// </summary>
+        //public const string User = nameof(IState.User);
+
+        /// <summary>
         /// The working directory where the agent will store temporary files.
         /// </summary>
         public const string WorkingDirectory = nameof(IState.WorkingDirectory);

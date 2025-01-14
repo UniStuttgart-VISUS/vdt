@@ -14,7 +14,7 @@ using Visus.DeploymentToolkit.Workflow;
 namespace Visus.DeploymentToolkit.Test {
 
     [TestClass]
-    public sealed class TestState {
+    public sealed class StateTest {
 
         [TestMethod]
         public void Properties() {
@@ -54,7 +54,6 @@ namespace Visus.DeploymentToolkit.Test {
             Assert.AreEqual(state.DeploymentShare, restored.DeploymentShare);
             Assert.AreEqual(state.Phase, restored.Phase);
         }
-
 
         private readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(l => l.AddDebug());
 

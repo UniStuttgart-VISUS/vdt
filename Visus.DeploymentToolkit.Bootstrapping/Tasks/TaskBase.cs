@@ -8,11 +8,13 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Workflow;
 
 
-namespace Visus.DeploymentToolkit.Tasks {
+namespace Visus.DeploymentToolkit.Tasks
+{
 
     /// <summary>
     /// A basic implementation of <see cref="ITask"/> that uses attributes to

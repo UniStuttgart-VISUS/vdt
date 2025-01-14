@@ -8,9 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using System.IO;
 using Visus.DeploymentToolkit;
-using Visus.DeploymentToolkit.Bootstrapper.Properties;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
@@ -55,8 +53,8 @@ log.LogInformation("Project Deimos is bootstrapping.");
 // sequence.
 try {
     var state = services.GetRequiredService<IState>();
+    options.CopyTo(state);
     state.Phase = Phase.Bootstrapping;
-    state.WorkingDirectory = options.WorkingDirectory;
 } catch (Exception ex) {
     log.LogError(ex, "Failed to set bootstrapping as the current state.");
 }
@@ -66,34 +64,38 @@ var taskSequenceBuilder = services.GetRequiredService<ITaskSequenceBuilder>()
     .ForPhase(Phase.Bootstrapping)
     .Add<MountDeploymentShare>(services, t => options.CopyTo(t.Options))
     .Add<CreateWorkingDirectory>(services)
-    .Add<PersistState>(services, t => t.Path = options.StatePath);
+    .Add<PersistState>(services, t => t.Path = options.StatePath)
+    .Add<RunAgent>(services);
 var taskSequence = taskSequenceBuilder.Build();
 
 
-log.LogInformation("Running bootstrapping task sequence.");
-{
+try {
+    log.LogInformation("Running bootstrapping task sequence.");
     var state = services.GetRequiredService<IState>();
     await taskSequence.ExecuteAsync(state);
-}
-
-
-// Start the agent.
-try {
-    var factory = services.GetRequiredService<ICommandBuilderFactory>();
-    var state = services.GetRequiredService<IState>();
-    var agent = Path.Combine(options.DeploymentShare,
-        options.BinaryPath,
-        options.AgentPath);
-    var command = factory.Run(agent)
-        .WithArgumentList($"--DeploymentShare={state.DeploymentShare}",
-            $"--StateFile={options.StateFile}",
-            $"--Phase={Phase.Installation}")
-        .DoNotWaitForProcess()
-        .Build();
-    log.LogInformation(Resources.StartAgent, command);
-    await command.ExecuteAsync();
+    log.LogInformation("The bootstrapping task sequence completed "
+        + "successfully.");
 } catch (Exception ex) {
-    log.LogCritical(ex, "Failed to start the deployment agent.");
+    log.LogCritical(ex, "The bootstrapping task sequence failed.");
 }
+
+//// Start the agent.
+//try {
+//    var factory = services.GetRequiredService<ICommandBuilderFactory>();
+//    var state = services.GetRequiredService<IState>();
+//    var agent = Path.Combine(options.DeploymentShare,
+//        options.BinaryPath,
+//        options.AgentPath);
+//    var command = factory.Run(agent)
+//        .WithArgumentList($"--DeploymentShare={state.DeploymentShare}",
+//            $"--StateFile={options.StateFile}",
+//            $"--Phase={Phase.Installation}")
+//        .DoNotWaitForProcess()
+//        .Build();
+//    log.LogInformation(Resources.StartAgent, command);
+//    await command.ExecuteAsync();
+//} catch (Exception ex) {
+//    log.LogCritical(ex, "Failed to start the deployment agent.");
+//}
 
 log.LogInformation("The boostrapper is exiting.");

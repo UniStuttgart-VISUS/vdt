@@ -65,7 +65,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <param name="phase">The phase in which the task is
         /// supported.</param>
         public SupportsPhaseAttribute(Phase phase) {
-            Phase = phase;
+            this.Phase = phase;
         }
 
         /// <summary>

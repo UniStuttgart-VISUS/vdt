@@ -115,6 +115,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A valid file for persisting the state must have been set in the state before running this task..
+        /// </summary>
+        internal static string NoStateFile {
+            get {
+                return ResourceManager.GetString("NoStateFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The phase has already been set to {0}..
         /// </summary>
         internal static string PhaseAlreadySet {
@@ -129,6 +138,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string PhaseNotSet {
             get {
                 return ResourceManager.GetString("PhaseNotSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The property {0} of {1} is required, was not set and can also not be set from the task sequence state &quot;{2}&quot;..
+        /// </summary>
+        internal static string RequiredStateNotSet {
+            get {
+                return ResourceManager.GetString("RequiredStateNotSet", resourceCulture);
             }
         }
         

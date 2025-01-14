@@ -135,11 +135,17 @@
   <data name="InvalidWorkingDirectory" xml:space="preserve">
     <value>The path to the working directory must be set. Make sure that the task is configured accordinly or that the working directory has been configured in the state passed to the task.</value>
   </data>
+  <data name="NoStateFile" xml:space="preserve">
+    <value>A valid file for persisting the state must have been set in the state before running this task.</value>
+  </data>
   <data name="PhaseAlreadySet" xml:space="preserve">
     <value>The phase has already been set to {0}.</value>
   </data>
   <data name="PhaseNotSet" xml:space="preserve">
     <value>No phase has been assigned yet.</value>
+  </data>
+  <data name="RequiredStateNotSet" xml:space="preserve">
+    <value>The property {0} of {1} is required, was not set and can also not be set from the task sequence state "{2}".</value>
   </data>
   <data name="TaskCannotExecute" xml:space="preserve">
     <value>The given task cannot execute in phase {0}.</value>
