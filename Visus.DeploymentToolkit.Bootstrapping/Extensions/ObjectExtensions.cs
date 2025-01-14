@@ -42,7 +42,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             foreach (var (p, s, r) in props) {
                 var v = p.GetValue(dst);
 
-                if (v == null) {
+                if ((v == null) || force) {
                     if ((v = src[s]) != null) {
                         p.SetValue(dst, v);
                     }

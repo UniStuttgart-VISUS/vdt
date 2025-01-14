@@ -62,7 +62,7 @@ try {
 log.LogInformation("Preparing bootstrapping task sequence.");
 var taskSequenceBuilder = services.GetRequiredService<ITaskSequenceBuilder>()
     .ForPhase(Phase.Bootstrapping)
-    .Add<MountDeploymentShare>(services, t => options.CopyTo(t.Options))
+    .Add<MountDeploymentShare>(services)
     .Add<CreateWorkingDirectory>(services)
     .Add<PersistState>(services, t => t.Path = options.StatePath)
     .Add<RunAgent>(services);
@@ -73,8 +73,6 @@ try {
     log.LogInformation("Running bootstrapping task sequence.");
     var state = services.GetRequiredService<IState>();
     await taskSequence.ExecuteAsync(state);
-    log.LogInformation("The bootstrapping task sequence completed "
-        + "successfully.");
 } catch (Exception ex) {
     log.LogCritical(ex, "The bootstrapping task sequence failed.");
 }

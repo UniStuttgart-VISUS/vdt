@@ -151,7 +151,7 @@
     <value>Restoring the deployment state from "{0}".</value>
   </data>
   <data name="RunAgent" xml:space="preserve">
-    <value>Runt deployment agent</value>
+    <value>Run deployment agent</value>
   </data>
   <data name="RunCommand" xml:space="preserve">
     <value>Run command</value>

@@ -160,7 +160,7 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Runt deployment agent.
+        ///   Looks up a localized string similar to Run deployment agent.
         /// </summary>
         internal static string RunAgent {
             get {

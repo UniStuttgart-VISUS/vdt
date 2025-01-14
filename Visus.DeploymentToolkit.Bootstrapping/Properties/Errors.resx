@@ -135,6 +135,9 @@
   <data name="InvalidWorkingDirectory" xml:space="preserve">
     <value>The path to the working directory must be set. Make sure that the task is configured accordinly or that the working directory has been configured in the state passed to the task.</value>
   </data>
+  <data name="NoAgent" xml:space="preserve">
+    <value>No valid path to the deployment agent was provided in the task sequence state.</value>
+  </data>
   <data name="NoStateFile" xml:space="preserve">
     <value>A valid file for persisting the state must have been set in the state before running this task.</value>
   </data>

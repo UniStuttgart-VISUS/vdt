@@ -40,6 +40,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             services.AddDirectoryService();
             services.AddDriveInfo();
             services.AddEnvironment();
+            services.AddSessionSecurity();
             services.AddTaskSequenceBuilder();
             return services;
         }
@@ -235,6 +236,20 @@ namespace Visus.DeploymentToolkit.Extensions {
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             services.AddSingleton<IEnvironment, EnvironmentService>();
+            return services;
+        }
+
+        /// <summary>
+        /// Adds the <see cref="ISessionSecurity"/> service to the service
+        /// collection.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        internal static IServiceCollection AddSessionSecurity(
+                this IServiceCollection services) {
+            _ = services ?? throw new ArgumentNullException(nameof(services));
+            services.AddSingleton<ISessionSecurity, SessionSecurityService>();
             return services;
         }
 

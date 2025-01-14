@@ -27,34 +27,62 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public properties
         /// <summary>
+        /// Gets or sets the path to the deployment agent.
+        /// </summary>
+        /// <remarks>
+        /// The format depends of the phase the system is running in. Typically,
+        /// for the bootstrapper, the location is relative to the deployment
+        /// share, but for subsequent phases, we try to use absolute paths on
+        /// the local disk whenever possible.
+        /// </remarks>
+        string? AgentPath { get; set; }
+
+        /// <summary>
         /// Gets or sets the path to the mount point where the
         /// <see cref="DeploymentShare"/> is mounted.
         /// </summary>
         string? DeploymentDirectory { get; set; }
 
         /// <summary>
-        /// Gets the location of the deployment share.
+        /// Gets or sets the location of the deployment share.
         /// </summary>
         string? DeploymentShare { get; set; }
 
         /// <summary>
-        /// Gets a potentially open DISM session, which can be used to modfiy an
-        /// image or Windows installation.
+        /// Gets or sets the name of the domain the server hosting the deployment
+        /// share is joined to.
+        /// </summary>
+        string? DeploymentShareDomain { get; set; }
+
+        /// <summary>
+        /// Gets or sets the encrypted password used to connect to the
+        /// deployment share.
+        /// </summary>
+        string? DeploymentSharePassword { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the user connecting to the deployment share.
+        /// </summary>
+        string? DeploymentShareUser { get; set; }
+
+        /// <summary>
+        /// Gets or sets a potentially open DISM session, which can be used to
+        /// modfiy an image or Windows installation.
         /// </summary>
         IDismScope? DismScope { get; set; }
 
         /// <summary>
-        /// Gets the disk where Windows will be installed.
+        /// Gets or sets the disk where Windows will be installed.
         /// </summary>
         IDisk? InstallationDisk { get; set; }
 
         /// <summary>
-        /// Gets the phase that we are running.
+        /// Gets or sets the phase that we are running.
         /// </summary>
         Phase Phase { get; set; }
 
         /// <summary>
-        /// Gets the zero-based index of the current task.
+        /// Gets or sets the zero-based index of the current task.
         /// </summary>
         int Progress { get; set; }
 

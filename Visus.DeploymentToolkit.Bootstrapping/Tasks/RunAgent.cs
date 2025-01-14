@@ -1,5 +1,5 @@
 ﻿// <copyright file="RunAgent.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
@@ -41,11 +41,14 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <inheritdoc />
         public override async Task ExecuteAsync(
                 CancellationToken cancellationToken) {
+            if (string.IsNullOrEmpty(this._state.AgentPath)) {
+                throw new InvalidOperationException(Errors.NoAgent);
+            }
             if (string.IsNullOrEmpty(this._state.StateFile)) {
                 throw new InvalidOperationException(Errors.NoStateFile);
             }
 
-            var cmd = this._factory.Run("")
+            var cmd = this._factory.Run(this._state.AgentPath)
                 .WithArgumentList(
                     $"--StateFile={this._state.StateFile}",
                     $"--Phase={Phase.Installation}")

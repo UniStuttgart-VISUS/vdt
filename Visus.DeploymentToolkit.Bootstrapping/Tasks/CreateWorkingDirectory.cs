@@ -9,6 +9,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 
@@ -51,6 +52,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// If not valid path was specified, the task will take the working
         /// directory from the current <see cref="IState"/>.
         /// </remarks>
+        [FromState(WellKnownStates.WorkingDirectory)]
         public string? Path { get; set; }
         #endregion
 
@@ -58,11 +60,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <inheritdoc />
         public override async Task ExecuteAsync(
                 CancellationToken cancellationToken) {
-            if (string.IsNullOrWhiteSpace(this.Path)) {
-                this.Path = this._state.WorkingDirectory;
-                this._logger.LogTrace("Using working directory "
-                    + "\"{WorkingDirectory}\" from the state.", this.Path);
-            }
+            this.CopyFrom(this._state);
 
             if (string.IsNullOrWhiteSpace(this.Path)) {
                 throw new InvalidOperationException(

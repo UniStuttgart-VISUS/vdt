@@ -13,6 +13,11 @@ namespace Visus.DeploymentToolkit.Services {
     public static class WellKnownStates {
 
         /// <summary>
+        /// The path to the binary of the deployment agent.
+        /// </summary>
+        public const string AgentPath = nameof(IState.AgentPath);
+
+        /// <summary>
         /// The directory where the deployment share is mounted.
         /// </summary>
         public const string DeploymentDirectory
@@ -22,6 +27,24 @@ namespace Visus.DeploymentToolkit.Services {
         /// The location of the deployment share.
         /// </summary>
         public const string DeploymentShare = nameof(IState.DeploymentShare);
+
+        /// <summary>
+        /// The domain the deployment server is joined to.
+        /// </summary>
+        public const string DeploymentShareDomain
+            = nameof(IState.DeploymentShareDomain);
+
+        /// <summary>
+        /// The password used for the deployment share.
+        /// </summary>
+        public const string DeploymentSharePassword
+            = nameof(IState.DeploymentSharePassword);
+
+        /// <summary>
+        /// The name of the user connecting to the deployment share.
+        /// </summary>
+        public const string DeploymentShareUser
+            = nameof(IState.DeploymentShareUser);
 
         /// <summary>
         /// The current DISM session.

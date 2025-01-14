@@ -115,6 +115,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No valid path to the deployment agent was provided in the task sequence state..
+        /// </summary>
+        internal static string NoAgent {
+            get {
+                return ResourceManager.GetString("NoAgent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A valid file for persisting the state must have been set in the state before running this task..
         /// </summary>
         internal static string NoStateFile {

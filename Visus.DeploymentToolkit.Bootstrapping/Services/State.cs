@@ -42,6 +42,12 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public properties
         /// <inheritdoc />
+        public string? AgentPath {
+            get => this[WellKnownStates.AgentPath] as string;
+            set => this[WellKnownStates.AgentPath] = value;
+        }
+
+        /// <inheritdoc />
         public string? DeploymentDirectory {
             get => this[WellKnownStates.DeploymentDirectory] as string;
             set => this[WellKnownStates.DeploymentDirectory] = value;
@@ -51,6 +57,24 @@ namespace Visus.DeploymentToolkit.Services {
         public string? DeploymentShare {
             get => this[WellKnownStates.DeploymentShare] as string;
             set => this[WellKnownStates.DeploymentShare] = value;
+        }
+
+        /// <inheritdoc />
+        public string? DeploymentShareDomain {
+            get => this[WellKnownStates.DeploymentShareDomain] as string;
+            set => this[WellKnownStates.DeploymentShareDomain] = value;
+        }
+
+        /// <inheritdoc />
+        public string? DeploymentSharePassword {
+            get => this[WellKnownStates.DeploymentSharePassword] as string;
+            set => this[WellKnownStates.DeploymentSharePassword] = value;
+        }
+
+        /// <inheritdoc />
+        public string? DeploymentShareUser {
+            get => this[WellKnownStates.DeploymentShareUser] as string;
+            set => this[WellKnownStates.DeploymentShareUser] = value;
         }
 
         /// <inheritdoc />

@@ -20,22 +20,22 @@ namespace Visus.DeploymentToolkit {
 
         #region Public properties
         /// <summary>
-        /// Gets or sets the path to the agent in the
-        /// <see cref="WorkingDirectory"/>.
+        /// Gets or sets the path to the agent.
         /// </summary>
         /// <remarks>
-        /// Note that the agent binary is copied to the working directory from
-        /// the <see cref="DeploymentShare"/> as part of the bootstrapping.
+        /// See <see cref="IState.AgentPath"/> for further details.
         /// </remarks>
         [State]
         public string AgentPath {
             get;
             set;
-        } = "Visus.DeploymentToolkit.Agent.exe";
+        } = @"bin\Visus.DeploymentToolkit.Agent.exe";
 
         /// <summary>
         /// Gets or sets the path where the binaries are located relative to
-        /// the location of the <see cref="DeploymentShare"/>.
+        /// the location of the <see cref="DeploymentShare"/>, which is required
+        /// to copy the contents of the share to the local disk for later
+        /// installation phases.
         /// </summary>
         public string BinaryPath { get; set; } = "bin";
 
@@ -52,6 +52,13 @@ namespace Visus.DeploymentToolkit {
         /// <summary>
         /// Gets or sets the UNC path of the deployment share.
         /// </summary>
+        /// <remarks>
+        /// If this property is empty and the <see cref="MountDeploymentShare"/>
+        /// task has been configured to be interactive, which is the default, the
+        /// task will prompt the user for the share. This property can be used
+        /// to preconfigure the input such that users do not have to type it
+        /// over and over.
+        /// </remarks>
         [State(WellKnownStates.DeploymentShare)]
         public string DeploymentShare { get; set; } = string.Empty;
 
@@ -59,6 +66,7 @@ namespace Visus.DeploymentToolkit {
         /// Gets or sets the name of the domain the deployment server belongs
         /// to.
         /// </summary>
+        [State(WellKnownStates.DeploymentShareDomain)]
         public string? Domain { get; set; }
 
         /// <summary>
@@ -86,6 +94,7 @@ namespace Visus.DeploymentToolkit {
         /// Gets or sets the name of the user to connect to the deployment
         /// share.
         /// </summary>
+        [State(WellKnownStates.DeploymentShareUser)]
         public string? User { get; set; }
 
         /// <summary>
@@ -94,19 +103,6 @@ namespace Visus.DeploymentToolkit {
         /// </summary>
         [State(WellKnownStates.WorkingDirectory)]
         public string WorkingDirectory { get; set; } = @"\DEIMOS";
-        #endregion
-
-        #region Public methods
-        /// <summary>
-        /// Copy boostrapping options to <see cref="options"/> as a suggestion
-        /// for the user what to use as deployment share.
-        /// </summary>
-        /// <param name="options"></param>
-        public void CopyTo(DeploymentShareOptions options) {
-            options.Domain = this.Domain;
-            options.Path = this.DeploymentShare;
-            options.User = this.User;
-        }
         #endregion
     }
 }

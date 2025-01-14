@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Versioning;
 using System.Threading;
@@ -34,6 +35,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <exception cref="ArgumentNullException"></exception>
         public MountDeploymentShare(IState state,
                 MountNetworkShare mount,
+                ISessionSecurity sessionSecurity,
                 IConsoleInput input,
                 IDriveInfo driveInfo,
                 ILogger<MountNetworkShare> logger)
@@ -44,51 +46,116 @@ namespace Visus.DeploymentToolkit.Tasks {
                 ?? throw new ArgumentNullException(nameof(input));
             this._mount = mount
                 ?? throw new ArgumentNullException(nameof(mount));
+            this._sessionSecurity = sessionSecurity
+                ?? throw new ArgumentNullException(nameof(sessionSecurity));
             this.Name = Resources.MountNetworkShare;
         }
         #endregion
 
         #region Public properties
         /// <summary>
-        /// Gets the options configuring the deployment share.
+        /// Gets or sets the path to the share.
         /// </summary>
-        public DeploymentShareOptions Options { get; } = new();
+        [FromState(WellKnownStates.DeploymentShare)]
+        [Required]
+        public string DeploymentShare { get; set; } = null!;
+
+        /// <summary>
+        /// Gets or sets the domain the deployment server is joined to.
+        /// </summary>
+        [FromState(WellKnownStates.DeploymentShareDomain)]
+        public string? Domain { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether the task should prompt for the deployment share
+        /// and use any data provided only as suggestions.
+        /// </summary>
+        public bool Interactive { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets the mount point for the share, i.e. the drive letter.
+        /// </summary>
+        [FromState(WellKnownStates.DeploymentDirectory)]
+        public string MountPoint { get; set; } = null!;
+
+        /// <summary>
+        /// Gets or sets the password used to connect to the deployment share.
+        /// </summary>
+        [FromState(WellKnownStates.DeploymentSharePassword)]
+        public string? Password { get; set; }
+
+        /// <summary>
+        /// If <c>true</c>, the login data for the deployment share will be
+        /// stored in the <see cref="IState"/> to reconnect automatically after
+        /// a reboot.
+        /// </summary>
+        public bool PreserveConnection { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the user connecting to the share.
+        /// </summary>
+        [FromState(WellKnownStates.DeploymentShareUser)]
+        public string? User { get; set; }
         #endregion
 
         #region Public methods
         /// <inheritdoc />
         [SupportedOSPlatform("windows")]
-        public override Task ExecuteAsync(CancellationToken cancellationToken) {
-            if (string.IsNullOrWhiteSpace(this.Options.MountPoint)) {
+        public override async Task ExecuteAsync(
+                CancellationToken cancellationToken) {
+            this.CopyFrom(this._state);
+
+            if (string.IsNullOrWhiteSpace(this.MountPoint)) {
                 var drives = this._driveInfo.GetFreeDrives();
-                this.Options.MountPoint = drives.Last();
+                this.MountPoint = drives.Last();
                 this._logger.LogInformation("Selected {MountPoint} to mount "
-                    + "the deployment share.", this.Options.MountPoint);
+                    + "the deployment share.", this.MountPoint);
             }
 
-            if (this.Options.Interactive) {
-                this.Options.Path = this._input.ReadInput(
+            if (this.Interactive) {
+                this.DeploymentShare = this._input.ReadInput(
                     Resources.PromptDeploymentShare,
-                    this.Options.Path)!;
-                this.Options.MountPoint = this._input.ReadInput(
+                    this.DeploymentShare)!;
+                this.MountPoint = this._input.ReadInput(
                     Resources.PromptMountPoint,
-                    this.Options.MountPoint);
+                    this.MountPoint)!;
 
-                this.Options.Domain = this._input.ReadInput(
+                this.Domain = this._input.ReadInput(
                     Resources.PromptDomain,
-                    this.Options.Domain);
-                this.Options.User = this._input.ReadInput(
+                    this.Domain);
+                this.User = this._input.ReadInput(
                     Resources.PromptUser,
-                    this.Options.User);
-                this.Options.Password = this._input.ReadPassword(
+                    this.User);
+                this.Password = this._input.ReadPassword(
                     Resources.PromptPassword).ToInsecureString();
             }
 
-            this._mount.Credential = this.Options.Credential;
-            this._mount.Path = this.Options.Path;
-            this._mount.MountPoint = this.Options.MountPoint!;
+            this._mount.Credential = new(this.User, this.Password, this.Domain);
+            this._mount.Path = this.DeploymentShare;
+            this._mount.MountPoint = this.MountPoint;
 
-            return this._mount.ExecuteAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+            await this._mount.ExecuteAsync(cancellationToken);
+            this._logger.LogInformation("Connection to deployment share "
+                + "succeeded.");
+
+            if (this.PreserveConnection) {
+                this._logger.LogInformation("Preserving the settings in the "
+                    + "state for subsequent phases.");
+                this._state.DeploymentShare = this.DeploymentShare;
+                this._state.DeploymentDirectory = this.MountPoint;
+
+                this._state.DeploymentShareDomain = this.Domain;
+
+                if (!string.IsNullOrEmpty(this.Password)) {
+                    this._state.DeploymentSharePassword
+                        = this._sessionSecurity.EncryptString(this.Password);
+                } else {
+                    this._state.DeploymentSharePassword = null;
+                }
+
+                this._state.DeploymentShareUser = this.User;
+            }
         }
         #endregion
 
@@ -96,6 +163,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         private readonly IDriveInfo _driveInfo;
         private readonly IConsoleInput _input;
         private readonly MountNetworkShare _mount;
+        private readonly ISessionSecurity _sessionSecurity;
         #endregion
     }
 }
