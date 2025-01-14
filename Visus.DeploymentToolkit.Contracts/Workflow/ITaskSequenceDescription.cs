@@ -39,6 +39,7 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// creates a WinPE image and <see cref="Phase.Installation"/> for a task
         /// sequence performing a Windows installation.
         /// </summary>
+        [Required]
         Phase Phase { get; set; }
     }
 }

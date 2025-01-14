@@ -29,7 +29,7 @@ namespace Visus.DeploymentToolkit {
         public string AgentPath {
             get;
             set;
-        } = @"bin\Visus.DeploymentToolkit.Agent.exe";
+        } = @"Bin\Visus.DeploymentToolkit.Agent.exe";
 
         /// <summary>
         /// Gets or sets the drive where the deployment share should be mapped.
