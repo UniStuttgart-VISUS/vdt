@@ -89,6 +89,11 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// stored in the <see cref="IState"/> to reconnect automatically after
         /// a reboot.
         /// </summary>
+        /// <remarks>
+        /// Note that enabling this will leave traces of the encrypted password
+        /// in the log files, which might be undesirable in production
+        /// environments.
+        /// </remarks>
         public bool PreserveConnection { get; set; }
 
         /// <summary>

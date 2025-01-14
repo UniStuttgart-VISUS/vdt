@@ -25,19 +25,11 @@ namespace Visus.DeploymentToolkit {
         /// <remarks>
         /// See <see cref="IState.AgentPath"/> for further details.
         /// </remarks>
-        [State]
+        [State(WellKnownStates.AgentPath)]
         public string AgentPath {
             get;
             set;
         } = @"bin\Visus.DeploymentToolkit.Agent.exe";
-
-        /// <summary>
-        /// Gets or sets the path where the binaries are located relative to
-        /// the location of the <see cref="DeploymentShare"/>, which is required
-        /// to copy the contents of the share to the local disk for later
-        /// installation phases.
-        /// </summary>
-        public string BinaryPath { get; set; } = "bin";
 
         /// <summary>
         /// Gets or sets the drive where the deployment share should be mapped.
@@ -66,6 +58,11 @@ namespace Visus.DeploymentToolkit {
         /// Gets or sets the name of the domain the deployment server belongs
         /// to.
         /// </summary>
+        /// <remarks>
+        /// This property works like the <see cref="DeploymentShare"/> in that it
+        /// allows for pre-populating the domain for the UI of
+        /// <see cref="MountDeploymentShare"/>.
+        /// </remarks>
         [State(WellKnownStates.DeploymentShareDomain)]
         public string? Domain { get; set; }
 
@@ -94,6 +91,11 @@ namespace Visus.DeploymentToolkit {
         /// Gets or sets the name of the user to connect to the deployment
         /// share.
         /// </summary>
+        /// <remarks>
+        /// This property works like the <see cref="DeploymentShare"/> in that it
+        /// allows for pre-populating the domain for the UI of
+        /// <see cref="MountDeploymentShare"/>.
+        /// </remarks>
         [State(WellKnownStates.DeploymentShareUser)]
         public string? User { get; set; }
 

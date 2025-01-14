@@ -66,34 +66,17 @@ var taskSequenceBuilder = services.GetRequiredService<ITaskSequenceBuilder>()
     .Add<CreateWorkingDirectory>(services)
     .Add<PersistState>(services, t => t.Path = options.StatePath)
     .Add<RunAgent>(services);
+    //.Add<CopyFiles>(services, t => t.Source = options.LogFile)
 var taskSequence = taskSequenceBuilder.Build();
 
 
+// Run the task sequence, which will start the deployment agent from the share.
+log.LogInformation("Running bootstrapping task sequence.");
 try {
-    log.LogInformation("Running bootstrapping task sequence.");
     var state = services.GetRequiredService<IState>();
     await taskSequence.ExecuteAsync(state);
 } catch (Exception ex) {
     log.LogCritical(ex, "The bootstrapping task sequence failed.");
 }
-
-//// Start the agent.
-//try {
-//    var factory = services.GetRequiredService<ICommandBuilderFactory>();
-//    var state = services.GetRequiredService<IState>();
-//    var agent = Path.Combine(options.DeploymentShare,
-//        options.BinaryPath,
-//        options.AgentPath);
-//    var command = factory.Run(agent)
-//        .WithArgumentList($"--DeploymentShare={state.DeploymentShare}",
-//            $"--StateFile={options.StateFile}",
-//            $"--Phase={Phase.Installation}")
-//        .DoNotWaitForProcess()
-//        .Build();
-//    log.LogInformation(Resources.StartAgent, command);
-//    await command.ExecuteAsync();
-//} catch (Exception ex) {
-//    log.LogCritical(ex, "Failed to start the deployment agent.");
-//}
 
 log.LogInformation("The boostrapper is exiting.");
