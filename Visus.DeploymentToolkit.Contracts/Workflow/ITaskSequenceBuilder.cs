@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System;
 using Visus.DeploymentToolkit.Tasks;
 
 
@@ -22,6 +23,17 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <param name="task"></param>
         /// <returns></returns>
         ITaskSequenceBuilder Add(ITask task);
+
+        /// <summary>
+        /// Instantiates a <typeparamref name="TTask"/> from
+        /// <paramref name="services"/>, possibly configures it and adds it
+        /// to <paramref name="that"/>.
+        /// </summary>
+        /// <typeparam name="TTask"></typeparam>
+        /// <param name="configure"></param>
+        /// <returns></returns>
+        ITaskSequenceBuilder Add<TTask>(Action<TTask>? configure = null)
+            where TTask : ITask;
 
         /// <summary>
         /// Sets the phase the task sequence can run in.
@@ -44,5 +56,17 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <param name="task"></param>
         /// <returns></returns>
         ITaskSequenceBuilder Insert(int index, ITask task);
+
+        /// <summary>
+        /// Insert the given <paramref name="task"/> at the given position in
+        /// the workflow, possibly after configuring it.
+        /// </summary>
+        /// <typeparam name="TTask"></typeparam>
+        /// <param name="index"></param>
+        /// <param name="configure"></param>
+        /// <returns></returns>
+        ITaskSequenceBuilder Insert<TTask>(int index,
+            Action<TTask>? configure = null)
+            where TTask : ITask;
     }
 }

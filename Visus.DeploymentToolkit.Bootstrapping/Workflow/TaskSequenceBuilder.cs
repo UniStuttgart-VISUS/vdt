@@ -4,9 +4,11 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Tasks;
 
@@ -22,13 +24,14 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
-        /// <param name="loggerFactory"></param>
+        /// <param name="serviceProvider">The service provider that allows the
+        /// builder instancing new tasks. All tasks that should be added to a
+        /// task sequence must have been registered before.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public TaskSequenceBuilder(ILoggerFactory loggerFactory) {
-            this._loggerFactory = loggerFactory
-                ?? throw new ArgumentNullException(nameof(loggerFactory));
-            this._logger = this._loggerFactory
-                .CreateLogger<TaskSequenceBuilder>();
+        public TaskSequenceBuilder(IServiceProvider serviceProvider) {
+            this._services = serviceProvider
+                ?? throw new ArgumentNullException(nameof(serviceProvider));
+            this._logger = this.CreateLogger<TaskSequenceBuilder>();
         }
         #endregion
 
@@ -40,6 +43,18 @@ namespace Visus.DeploymentToolkit.Workflow {
                 + " sequence.", task.Name);
             this._tasks.Add(task);
             return this;
+        }
+
+        /// <inheritdoc />
+        public ITaskSequenceBuilder Add<TTask>(
+                Action<TTask>? configure = null) where TTask : ITask {
+            var task = this._services.GetRequiredService<TTask>();
+
+            if (configure != null) {
+                configure(task);
+            }
+
+            return this.Add(task);
         }
 
         /// <inheritdoc />
@@ -55,7 +70,9 @@ namespace Visus.DeploymentToolkit.Workflow {
 
         /// <inheritdoc />
         public ITaskSequence Build() {
-            return new TaskSequence(this._loggerFactory, this._tasks);
+            return new TaskSequence(
+                this._services.GetRequiredService<ILogger<TaskSequence>>(),
+                this._tasks);
         }
 
         /// <inheritdoc />
@@ -65,6 +82,18 @@ namespace Visus.DeploymentToolkit.Workflow {
                 + "{Index} in the sequence.", task.Name, index);
             this._tasks.Insert(index, task);
             return this;
+        }
+
+        /// <inheritdoc />
+        public ITaskSequenceBuilder Insert<TTask>(int index,
+                Action<TTask>? configure = null) where TTask : ITask {
+            var task = this._services.GetRequiredService<TTask>();
+
+            if (configure != null) {
+                configure(task);
+            }
+
+            return this.Insert(index, task);
         }
         #endregion
 
@@ -87,12 +116,25 @@ namespace Visus.DeploymentToolkit.Workflow {
                     nameof(task));
             }
         }
+
+        /// <summary>
+        /// Instantiate a new logger using <see cref="_services"/>.
+        /// </summary>
+        /// <typeparam name="TType"></typeparam>
+        /// <returns></returns>
+        private ILogger<TType> CreateLogger<TType>() {
+            Debug.Assert(this._services != null);
+            var factory = this._services.GetRequiredService<ILoggerFactory>();
+            return factory.CreateLogger<TType>();
+        }
+
+
         #endregion
 
         #region Private fields
         private readonly ILogger _logger;
-        private readonly ILoggerFactory _loggerFactory;
         private Phase _phase = Phase.Unknown;
+        private readonly IServiceProvider _services;
         private readonly List<ITask> _tasks = new();
         #endregion
     }

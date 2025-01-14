@@ -73,14 +73,13 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
-        /// <param name="loggers">A factory for creating the loggers used in
-        /// the task sequence.</param>
+        /// <param name="logger">The logger for the task sequence.</param>
         /// <param name="tasks"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        internal TaskSequence(ILoggerFactory loggers, IList<ITask> tasks) {
-            this._loggers = loggers
-                ?? throw new ArgumentNullException(nameof(loggers));
-            this._logger = loggers.CreateLogger<TaskSequence>();
+        internal TaskSequence(ILogger<TaskSequence> logger,
+                IList<ITask> tasks) {
+            this._logger = logger
+                ?? throw new ArgumentNullException(nameof(logger));
             this._tasks = tasks
                 ?? throw new ArgumentNullException(nameof(tasks));
         }
@@ -88,7 +87,6 @@ namespace Visus.DeploymentToolkit.Workflow {
 
         #region Private fields
         private readonly ILogger _logger;
-        private readonly ILoggerFactory _loggers;
         private readonly IList<ITask> _tasks;
         #endregion
     }
