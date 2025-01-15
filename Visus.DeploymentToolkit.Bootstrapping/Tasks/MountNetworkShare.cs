@@ -18,7 +18,7 @@ using Visus.DeploymentToolkit.Services;
 namespace Visus.DeploymentToolkit.Tasks {
 
     /// <summary>
-    /// A task for mounting a network share to a specific location.
+    /// A task for mounting a (generic) network share to a specific location.
     /// </summary>
     public sealed class MountNetworkShare : TaskBase {
 

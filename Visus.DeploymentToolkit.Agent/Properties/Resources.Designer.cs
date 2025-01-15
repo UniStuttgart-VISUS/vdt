@@ -59,5 +59,14 @@ namespace Visus.DeploymentToolkit.Agent.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Task sequence to run.
+        /// </summary>
+        internal static string PromptTaskSequence {
+            get {
+                return ResourceManager.GetString("PromptTaskSequence", resourceCulture);
+            }
+        }
     }
 }

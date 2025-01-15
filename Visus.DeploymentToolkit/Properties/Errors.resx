@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="EmptySequenceStore" xml:space="preserve">
+    <value>The configured task sequence store is empty.</value>
+  </data>
   <data name="HalNotFound" xml:space="preserve">
     <value>The system could not determine the type of the HAL.</value>
   </data>

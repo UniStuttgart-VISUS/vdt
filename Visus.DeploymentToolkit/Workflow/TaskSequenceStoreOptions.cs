@@ -17,6 +17,11 @@ namespace Visus.DeploymentToolkit.Workflow {
     public sealed class TaskSequenceStoreOptions {
 
         /// <summary>
+        /// The configuration section that is typically mapped to this class.
+        /// </summary>
+        public const string SectionName = "TaskSequenceStore";
+
+        /// <summary>
         /// Gets or sets the way how task sequence IDs are compared.
         /// </summary>
         public StringComparison CompareOption {

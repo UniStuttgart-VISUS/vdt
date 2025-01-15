@@ -133,6 +133,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The value of the task sequence must either be a string identifiying the sequence or a task sequence object itself..
+        /// </summary>
+        internal static string NoTaskSequence {
+            get {
+                return ResourceManager.GetString("NoTaskSequence", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The phase has already been set to {0}..
         /// </summary>
         internal static string PhaseAlreadySet {

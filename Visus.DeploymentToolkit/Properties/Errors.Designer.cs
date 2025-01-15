@@ -61,6 +61,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The configured task sequence store is empty..
+        /// </summary>
+        internal static string EmptySequenceStore {
+            get {
+                return ResourceManager.GetString("EmptySequenceStore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The system could not determine the type of the HAL..
         /// </summary>
         internal static string HalNotFound {

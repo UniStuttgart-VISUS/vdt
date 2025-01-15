@@ -5,16 +5,21 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using Visus.DeploymentToolkit.Services;
+using Visus.DeploymentToolkit.Tasks;
 using Visus.DeploymentToolkit.Workflow;
 
 
 namespace Visus.DeploymentToolkit.Extensions {
 
     /// <summary>
-    /// Provides extension methods for adding deployment services to 
+    /// Provides extension methods for adding the core deployment services to
     /// <see cref="IServiceCollection"/>.
     /// </summary>
     public static class ServiceCollectionExtensions {
@@ -33,6 +38,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             services.AddDiskManagement();
             services.AddRegistry();
             services.AddSystemInformation();
+            services.AddTasks();
             services.AddTaskSequenceStore();
             services.AddWmi();
             return services;
@@ -95,20 +101,38 @@ namespace Visus.DeploymentToolkit.Extensions {
         /// <paramref name="services"/>.
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="options"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         internal static IServiceCollection AddTaskSequenceStore(
-                this IServiceCollection services,
-                Action<TaskSequenceStoreOptions>? options = null) {
+                this IServiceCollection services) {
+            _ = services ?? throw new ArgumentNullException(nameof(services));
+            services.AddSingleton<ITaskSequenceStore>(s => {
+                var o = s.GetRequiredService<IOptions<TaskSequenceStoreOptions>>();
+                var l = s.GetRequiredService<ILogger<TaskSequenceStore>>();
+                return new TaskSequenceStore(o, l);
+            });
+            return services;
+        }
+
+        /// <summary>
+        /// Adds the main deployment tasks implemented in this library, which
+        /// does <i>not</i> include the bootstrapping tasks.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        internal static IServiceCollection AddTasks(
+                this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
 
-            if (options == null) {
-                options = o => { };
+            var assembly = MethodBase.GetCurrentMethod()!.DeclaringType!.Assembly;
+            var tasks = from t in assembly.GetTypes()
+                        where t.IsAssignableTo(typeof(ITask)) && !t.IsAbstract
+                        select t;
+            foreach (var task in tasks) {
+                services.AddTransient(task);
             }
 
-            services.Configure(options)
-                .AddSingleton<ITaskSequenceStore, TaskSequenceStore>();
             return services;
         }
 

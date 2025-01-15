@@ -10,6 +10,12 @@ namespace Visus.DeploymentToolkit.Services {
     /// <summary>
     /// The keys of well known state objects.
     /// </summary>
+    /// <remarks>
+    /// Tasks can store (and this way communicate to other tasks) arbitrary data
+    /// in <see cref="IState"/>, but should avoid using any of these well-known
+    /// identifiers unless they intend to modify the specific state described
+    /// here (and in the corresponding property of <see cref="IState"/>).
+    /// </remarks>
     public static class WellKnownStates {
 
         /// <summary>
@@ -78,9 +84,9 @@ namespace Visus.DeploymentToolkit.Services {
         public const string StateFile = nameof(IState.StateFile);
 
         /// <summary>
-        /// The name of the user connecting to the deployment share.
+        /// Identifies the task sequence that is currently executing.
         /// </summary>
-        //public const string User = nameof(IState.User);
+        public const string TaskSequence = nameof(IState.TaskSequence);
 
         /// <summary>
         /// The working directory where the agent will store temporary files.

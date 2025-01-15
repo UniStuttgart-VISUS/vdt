@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Compliance;
 using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Workflow;
 
@@ -44,7 +45,9 @@ namespace Visus.DeploymentToolkit.Services {
         string? DeploymentDirectory { get; set; }
 
         /// <summary>
-        /// Gets or sets the location of the deployment share.
+        /// Gets or sets the location of the deployment share, which is the UNC
+        /// path of a network location where the deployment agent and all
+        /// configuration data are centrally stored.
         /// </summary>
         string? DeploymentShare { get; set; }
 
@@ -58,6 +61,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// Gets or sets the encrypted password used to connect to the
         /// deployment share.
         /// </summary>
+        [SensitiveData]
         string? DeploymentSharePassword { get; set; }
 
         /// <summary>
@@ -84,6 +88,13 @@ namespace Visus.DeploymentToolkit.Services {
         /// <summary>
         /// Gets or sets the zero-based index of the current task.
         /// </summary>
+        /// <remarks>
+        /// The bootstrapper and the deployment agent use this variable to track
+        /// which task is to be executed next. As the state is being persisted in
+        /// <see cref="StateFile"/>, this information can also survive a reboot,
+        /// which allows the agent to continue a task sequence after the machine
+        /// has restarted.
+        /// </remarks>
         int Progress { get; set; }
 
         /// <summary>
@@ -95,7 +106,24 @@ namespace Visus.DeploymentToolkit.Services {
         /// Gets or sets the key used for encrypting sensitive data in this
         /// session.
         /// </summary>
-        string? SessionKey { get; set; }
+        /// <remarks>
+        /// The session key itself is a sensitive information as it allows for
+        /// decrypting other sensitive data. The encryption feature makes data
+        /// only less obvious in the state file and logs, but the data cannot be
+        /// safe as we need to be able to restore them without user intervention.
+        /// </remarks>
+        [SensitiveData]
+        string? SessionKey { get; set; }    // TODO: we should find a way to exclude sensitive data at least from the log. Use attribute?
+
+        /// <summary>
+        /// Gets or sets the ID or location of the task sequence that is
+        /// currently executing (if the property is a <see cref="string"/>) or
+        /// the task sequence (<see cref="ITaskSequence"/>) itself.
+        /// </summary>
+        /// <exception cref="System.ArgumentException">If the new value is
+        /// neither a <see cref="string"/>, an <see cref="ITaskSequence"/>, nor
+        /// <c>null</c>.</exception>
+        object? TaskSequence { get; set; }
 
         /// <summary>
         /// Gets or sets the path to the working directory on the local machine

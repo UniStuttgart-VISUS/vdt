@@ -141,6 +141,9 @@
   <data name="NoStateFile" xml:space="preserve">
     <value>A valid file for persisting the state must have been set in the state before running this task.</value>
   </data>
+  <data name="NoTaskSequence" xml:space="preserve">
+    <value>The value of the task sequence must either be a string identifiying the sequence or a task sequence object itself.</value>
+  </data>
   <data name="PhaseAlreadySet" xml:space="preserve">
     <value>The phase has already been set to {0}.</value>
   </data>

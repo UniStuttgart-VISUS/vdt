@@ -120,6 +120,12 @@
   <data name="PartitionFormatDisk" xml:space="preserve">
     <value>Partition and format disk</value>
   </data>
+  <data name="PromptTaskSequence" xml:space="preserve">
+    <value>Task sequence</value>
+  </data>
+  <data name="SelectInstallationSequence" xml:space="preserve">
+    <value>Select task sequence</value>
+  </data>
   <data name="SelectInstallDisk" xml:space="preserve">
     <value>Select installation disk</value>
   </data>

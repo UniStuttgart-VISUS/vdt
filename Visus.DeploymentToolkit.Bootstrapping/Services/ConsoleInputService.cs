@@ -5,6 +5,9 @@
 // <author>Christoph Müller</author>
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.WebSockets;
 using System.Security;
 
 
@@ -58,6 +61,41 @@ namespace Visus.DeploymentToolkit.Services {
             Console.WriteLine();
 
             return retval;
+        }
+
+        /// <inheritdoc />
+        public int Select(string? prompt, IEnumerable<string> values) {
+            _ = values ?? throw new ArgumentNullException(nameof(values));
+            var options = values.Count();
+            //Math.Floor(Math.Log10(options) + 1)
+
+            {
+                int i = 0;
+                foreach (var v in values) {
+                    Console.WriteLine($"[{i}] {v}");
+                    ++i;
+                }
+            }
+
+            while (options > 0) {
+                if (prompt != null) {
+                    Console.Write($"{prompt}: ");
+                }
+
+                var input = Console.ReadLine();
+
+                if (string.IsNullOrEmpty(input)) {
+                    return 0;
+                }
+
+                if (int.TryParse(input, out var retval)
+                        && (retval >= 0)
+                        && (retval < options)) {
+                    return retval;
+                }
+            }
+
+            return -1;
         }
     }
 }

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Properties;
 
@@ -29,9 +30,15 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <returns></returns>
         public static ValueTask<TaskSequenceDescription?> ParseAsync(
                 string path) {
+            var options = new JsonSerializerOptions() {
+                Converters = {
+                    new JsonStringEnumConverter<Phase>()
+                }
+            };
+
             using var file = File.OpenRead(path);
             return JsonSerializer.DeserializeAsync<TaskSequenceDescription>(
-                file);
+                file, options);
         }
         #endregion
 

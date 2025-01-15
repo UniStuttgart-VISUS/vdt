@@ -4,11 +4,15 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using Microsoft.Extensions.Compliance.Redaction;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
+using System.Linq;
+using System.Reflection;
+using Visus.DeploymentToolkit.Compliance;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
@@ -59,7 +63,17 @@ namespace Visus.DeploymentToolkit.Extensions {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             _ = file ?? throw new ArgumentNullException(nameof(file));
 
+            // Configure the log redaction to be enabled in the next step.
+            services.AddRedaction(o => {
+                o.SetRedactor<ErasingRedactor>([
+                    new(Classification.SensitiveData)
+                ]);
+            });
+
+            // Configure the logging itself.
             services.AddLogging(o => {
+                o.EnableRedaction();
+
 #if DEBUG
                 o.AddDebug();
 #endif // DEBUG
@@ -146,13 +160,15 @@ namespace Visus.DeploymentToolkit.Extensions {
         internal static IServiceCollection AddBootstrappingTasks(
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
-            services.AddTransient<CopyFiles>();
-            services.AddTransient<CreateWorkingDirectory>();
-            services.AddTransient<MountDeploymentShare>();
-            services.AddTransient<MountNetworkShare>();
-            services.AddTransient<PersistState>();
-            services.AddTransient<RunAgent>();
-            services.AddTransient<RunCommand>();
+
+            var assembly = MethodBase.GetCurrentMethod()!.DeclaringType!.Assembly;
+            var tasks = from t in assembly.GetTypes()
+                        where t.IsAssignableTo(typeof(ITask)) && !t.IsAbstract
+                        select t;
+            foreach (var task in tasks) {
+                services.AddTransient(task);
+            }
+
             return services;
         }
 

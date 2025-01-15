@@ -54,9 +54,11 @@ namespace Visus.DeploymentToolkit.Workflow {
         #region Public methods
         /// <inheritdoc />
         public async Task<ITaskSequenceDescription?> GetTaskSequenceAsync(
-                string taskSequence) {
-            _ = taskSequence
-                ?? throw new ArgumentNullException(nameof(taskSequence));
+                string? taskSequence) {
+            // Trivial reject: if we have no name, there is not TS.
+            if (taskSequence == null) {
+                return null;
+            }
 
             // First, check whether this is a TS file.
             {

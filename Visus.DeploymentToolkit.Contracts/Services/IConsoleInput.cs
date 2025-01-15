@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System.Collections.Generic;
 using System.Security;
 
 
@@ -29,7 +30,18 @@ namespace Visus.DeploymentToolkit.Services {
         /// </summary>
         /// <param name="prompt">The prompt printed on the console. If the
         /// prompt is <c>null</c>, nothing is printed.</param>
-        /// <returns>The passworr read from the user.</returns>
+        /// <returns>The password read from the user.</returns>
         SecureString ReadPassword(string? prompt);
+
+        /// <summary>
+        /// Prompt the user to select one of the specified values and answers the
+        /// selected index.
+        /// </summary>
+        /// <param name="prompt">The prompt printed on the console. If the
+        /// prompt is <c>null</c>, nothing is printed.</param>
+        /// <param name="values"></param>
+        /// <returns>The zero-based selection made by the user or a negative
+        /// value if no <paramref name="values"/> have been provided.</returns>
+        int Select(string? prompt, IEnumerable<string> values);
     }
 }

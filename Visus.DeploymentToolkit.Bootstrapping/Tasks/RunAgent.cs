@@ -48,10 +48,16 @@ namespace Visus.DeploymentToolkit.Tasks {
                 throw new InvalidOperationException(Errors.NoStateFile);
             }
 
+            // Note: we must set the phase and the progress here via the command
+            // line, because the agent cannot reset the progress on its own as
+            // it might restart the machine and therefore cannot now whether it
+            // was invoked after a restart or for the first time from this
+            // bootstrapper.
             var cmd = this._factory.Run(this._state.AgentPath)
                 .WithArgumentList(
                     $"--StateFile={this._state.StateFile}",
-                    $"--Phase={Phase.Installation}")
+                    $"--Phase={Phase.Installation}",
+                    $"--Progress=0")
                 .InWorkingDirectory(this._state.WorkingDirectory)
                 .DoNotWaitForProcess()
                 .Build();

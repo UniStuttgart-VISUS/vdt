@@ -70,6 +70,24 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Task sequence.
+        /// </summary>
+        internal static string PromptTaskSequence {
+            get {
+                return ResourceManager.GetString("PromptTaskSequence", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select task sequence.
+        /// </summary>
+        internal static string SelectInstallationSequence {
+            get {
+                return ResourceManager.GetString("SelectInstallationSequence", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select installation disk.
         /// </summary>
         internal static string SelectInstallDisk {

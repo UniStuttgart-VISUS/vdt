@@ -11,6 +11,7 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Compliance;
 using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Workflow;
@@ -66,6 +67,7 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         /// <inheritdoc />
+        [SensitiveData]
         public string? DeploymentSharePassword {
             get => this[WellKnownStates.DeploymentSharePassword] as string;
             set => this[WellKnownStates.DeploymentSharePassword] = value;
@@ -110,6 +112,7 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         /// <inheritdoc />
+        [SensitiveData]
         public string? SessionKey {
             get => this[WellKnownStates.SessionKey] as string;
             set => this[WellKnownStates.SessionKey] = value;
@@ -119,6 +122,19 @@ namespace Visus.DeploymentToolkit.Services {
         public string? StateFile {
             get => this[WellKnownStates.StateFile] as string;
             set => this[WellKnownStates.StateFile] = value;
+        }
+
+        /// <inheritdoc />
+        public object? TaskSequence {
+            get => this[WellKnownStates.TaskSequence];
+            set {
+                this[WellKnownStates.TaskSequence] = value switch {
+                    string => value,
+                    ITaskSequence => value,
+                    null => value,
+                    _ => throw new ArgumentException(Errors.NoTaskSequence)
+                };
+            }
         }
 
         /// <inheritdoc />
@@ -171,6 +187,7 @@ namespace Visus.DeploymentToolkit.Services {
                 lock (this._lock) {
                     this._values.TryGetValue(key, out var retval);
                     this._values[key] = value;
+                    // TODO: redaction must be applied manually here!
                     this._logger.LogInformation("Changing state \"{State}\" "
                         + "from \"{OldValue}\" to \"{NewValue}\".",
                         key, retval, value);

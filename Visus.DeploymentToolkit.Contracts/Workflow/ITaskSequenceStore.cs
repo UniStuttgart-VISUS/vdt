@@ -26,7 +26,7 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <exception cref="System.ArgumentNullException">If
         /// <paramref name="taskSequence"/> is <c>null</c>.</exception>
         Task<ITaskSequenceDescription?> GetTaskSequenceAsync(
-            string taskSequence);
+            string? taskSequence);
 
         /// <summary>
         /// Retrieves all task sequences from the store.

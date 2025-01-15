@@ -52,9 +52,8 @@ namespace Visus.DeploymentToolkit.Agent {
         public string? TaskSequence { get; set; }
 
         /// <summary>
-        /// Gets or sets the folder relative to the deployment share where the
-        /// task sequences are stored.
+        /// Gets or sets the configuration of the task sequence store.
         /// </summary>
-        public string TaskSequenceFolder { get; set; } = "TaskSequences";
+        public TaskSequenceStoreOptions TaskSequenceStore { get; set; } = new();
     }
 }

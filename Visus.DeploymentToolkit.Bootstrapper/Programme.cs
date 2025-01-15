@@ -32,6 +32,8 @@ var configuration = new ConfigurationBuilder()
     .AddCommandLine(args)
     .Build();
 
+// Load the options such that we can initialise the log and copy the input
+// provided by the user to the state object.
 var options = new BootstrappingOptions();
 configuration.Bind(options);
 
@@ -56,7 +58,7 @@ try {
     options.CopyTo(state);
     state.Phase = Phase.Bootstrapping;
 } catch (Exception ex) {
-    log.LogError(ex, "Failed to set bootstrapping as the current state.");
+    log.LogError(ex, "Failed to initialise user-provided state.");
 }
 
 log.LogInformation("Preparing bootstrapping task sequence.");
