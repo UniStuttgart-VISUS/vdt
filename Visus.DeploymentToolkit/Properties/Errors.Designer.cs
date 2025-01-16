@@ -106,6 +106,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified task sequence &quot;{0}&quot; has not been found in the task sequence store..
+        /// </summary>
+        internal static string SequenceNotInStore {
+            get {
+                return ResourceManager.GetString("SequenceNotInStore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The task sequence store at &quot;{0}&quot; could not be found..
         /// </summary>
         internal static string TsStoreNotFound {

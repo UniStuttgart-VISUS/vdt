@@ -47,8 +47,8 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// Initialises a new instance.
         /// </summary>
         public TaskSequenceDescription() {
-            ID = Guid.NewGuid().ToString("N");
-            Name = string.Format(Resources.TaskSequenceName, ID);
+            this.ID = Guid.NewGuid().ToString("N");
+            this.Name = string.Format(Resources.TaskSequenceName, this.ID);
         }
         #endregion
 
@@ -67,10 +67,9 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <inheritdoc />
         public Phase Phase { get; set; } = Phase.Installation;
 
-        /// <summary>
-        /// Gets or sets the steps in the task sequence.
-        /// </summary>
-        public Dictionary<Phase, TaskDescription[]> Steps { get; set; } = new();
+        /// <inheritdoc />
+        [Required]
+        public IEnumerable<ITaskDescription> Tasks { get; set; } = [ ];
         #endregion
 
         #region Public methods

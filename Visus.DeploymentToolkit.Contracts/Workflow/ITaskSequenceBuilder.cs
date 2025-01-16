@@ -46,7 +46,21 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// </summary>
         /// <param name="phase">The phase the task sequence can run in.</param>
         /// <returns><c>this</c>.</returns>
+        /// <exception cref="InvalidOperationException">If the phase has already
+        /// been set.</exception>
         ITaskSequenceBuilder ForPhase(Phase phase);
+
+        /// <summary>
+        /// Adds everything in <<paramref name="desc"/> to the task sequence.
+        /// </summary>
+        /// <param name="desc">A serialisable description of a task sequence.
+        /// </param>
+        /// <returns><c>this</c>.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="desc"/>
+        /// is <c>null</c>.</exception>
+        /// <exception cref="InvalidOperationException">If the phase has already
+        /// been set.</exception>
+        ITaskSequenceBuilder FromDescription(ITaskSequenceDescription desc);
 
         /// <summary>
         /// Builds the task sequence from the current state of the builder.

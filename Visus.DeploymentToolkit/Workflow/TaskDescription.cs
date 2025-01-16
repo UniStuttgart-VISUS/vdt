@@ -8,14 +8,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 
-namespace Visus.DeploymentToolkit.Workflow
-{
+namespace Visus.DeploymentToolkit.Workflow {
 
     /// <summary>
     /// The in-memory representation of a task description in JSON.
     /// </summary>
-    internal sealed class TaskDescription
-    {
+    internal sealed class TaskDescription {
 
         #region Public properties
         /// <summary>

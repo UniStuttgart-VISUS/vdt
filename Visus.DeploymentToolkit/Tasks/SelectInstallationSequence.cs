@@ -35,6 +35,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <exception cref="ArgumentNullException"></exception>
         public SelectInstallationSequence(IState state,
                 ITaskSequenceStore store,
+                ITaskSequenceFactory tasks,
                 IConsoleInput input,
                 ILogger<SelectInstallationSequence> logger)
                 : base(state, logger) {
@@ -42,6 +43,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                 ?? throw new ArgumentNullException(nameof(input));
             this._store = store
                 ?? throw new ArgumentNullException(nameof(store));
+            this._tasks = tasks
+                ?? throw new ArgumentNullException(nameof(tasks));
         }
         #endregion
 
@@ -58,21 +61,30 @@ namespace Visus.DeploymentToolkit.Tasks {
                 var option = this._input.Select(Resources.PromptTaskSequence,
                     options.Select(o => $"{o.ID} ({o.Name})"));
 
+                cancellationToken.ThrowIfCancellationRequested();
+
                 if (option < 0) {
                     throw new InvalidOperationException(
                         Errors.EmptySequenceStore);
                 }
 
-                this._state.TaskSequence = options[option].ID;
+                var desc = options[option];
+                this._state.TaskSequence = this._tasks.CreateBuilder()
+                    .FromDescription(desc)
+                    .Build();
+
+            } else if (this._state.TaskSequence is string id) {
+                var desc = await this._store.GetTaskSequenceAsync(id);
+
+                if (desc == null) {
+                    throw new InvalidOperationException(string.Format(
+                        Errors.SequenceNotInStore, id));
+                }
+
+                this._state.TaskSequence = this._tasks.CreateBuilder()
+                    .FromDescription(desc)
+                    .Build();
             }
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            // At this point, we should have a valid task sequence configured in
-            // the state object, for which we can get the description.
-            throw new NotImplementedException("TODO");
-            //var description = await this._store.GetTaskSequenceAsync(
-            //    this._state.TaskSequence as string);
         }
 
         #region Private properties
@@ -89,6 +101,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         #region Private fields
         private readonly IConsoleInput _input;
         private readonly ITaskSequenceStore _store;
+        private readonly ITaskSequenceFactory _tasks;
         #endregion
     }
 }

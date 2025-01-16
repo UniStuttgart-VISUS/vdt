@@ -69,6 +69,28 @@ namespace Visus.DeploymentToolkit.Workflow {
         }
 
         /// <inheritdoc />
+        public ITaskSequenceBuilder FromDescription(
+                ITaskSequenceDescription desc) {
+            _ = desc ?? throw new ArgumentNullException(nameof(desc));
+
+            this.ForPhase(desc.Phase);
+
+            foreach (var t in desc.Tasks) {
+                var type = Type.GetType(t.Task, true)!;
+                var task = Activator.CreateInstance(type) as ITask;
+
+                if (task == null) {
+                    throw new ArgumentException(string.Format(
+                        Errors.TypeNotTask, t.Task));
+                }
+
+                this.Add(task);
+            }
+
+            return this;
+        }
+
+        /// <inheritdoc />
         public ITaskSequence Build() {
             return new TaskSequence(
                 this._services.GetRequiredService<ILogger<TaskSequence>>(),

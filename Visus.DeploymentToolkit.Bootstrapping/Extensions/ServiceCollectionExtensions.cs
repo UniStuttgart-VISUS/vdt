@@ -279,7 +279,7 @@ namespace Visus.DeploymentToolkit.Extensions {
         internal static IServiceCollection AddTaskSequenceBuilder(
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
-            services.AddSingleton<ITaskSequenceBuilder, TaskSequenceBuilder>();
+            services.AddTransient<ITaskSequenceBuilder, TaskSequenceBuilder>();
             return services;
         }
         #endregion

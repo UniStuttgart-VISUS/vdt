@@ -176,5 +176,14 @@ namespace Visus.DeploymentToolkit.Properties {
                 return ResourceManager.GetString("TaskCannotExecute", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The type &quot;{0}&quot; exists, but it is not a task..
+        /// </summary>
+        internal static string TypeNotTask {
+            get {
+                return ResourceManager.GetString("TypeNotTask", resourceCulture);
+            }
+        }
     }
 }

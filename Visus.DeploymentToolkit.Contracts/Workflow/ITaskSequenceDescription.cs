@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 
@@ -16,30 +17,37 @@ namespace Visus.DeploymentToolkit.Workflow {
     public interface ITaskSequenceDescription {
 
         /// <summary>
-        /// Gets or sets a description of the task sequence.
+        /// Gets a description of the task sequence.
         /// </summary>
-        string? Description { get; set; }
+        string? Description { get; }
 
         /// <summary>
-        /// Gets or sets the unique ID of the task sequence.
-        /// </summary>
-        [Required]
-        string ID { get; set; }
-
-        /// <summary>
-        /// Gets or sets the name of the task sequence.
+        /// Gets the unique ID of the task sequence.
         /// </summary>
         [Required]
-        string Name { get; set; }
+        string ID { get; }
 
         /// <summary>
-        /// Gets or sets the <see cref="Phase"/> the task sequence can run
+        /// Gets the name of the task sequence.
+        /// </summary>
+        [Required]
+        string Name { get; }
+
+        /// <summary>
+        /// Gets the <see cref="Phase"/> the task sequence can run
         /// in. This typically includes
         /// <see cref="Phase.PreinstalledEnvironment"/> for a task sequence that
         /// creates a WinPE image and <see cref="Phase.Installation"/> for a task
         /// sequence performing a Windows installation.
         /// </summary>
         [Required]
-        Phase Phase { get; set; }
+        Phase Phase { get; }
+
+        /// <summary>
+        /// Gets the tasks to be executed in the order in which they should be
+        /// run.
+        /// </summary>
+        [Required]
+        IEnumerable<ITaskDescription> Tasks { get; }
     }
 }

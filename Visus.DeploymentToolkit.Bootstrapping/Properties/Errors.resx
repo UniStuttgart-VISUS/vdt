@@ -156,4 +156,7 @@
   <data name="TaskCannotExecute" xml:space="preserve">
     <value>The given task cannot execute in phase {0}.</value>
   </data>
+  <data name="TypeNotTask" xml:space="preserve">
+    <value>The type "{0}" exists, but it is not a task.</value>
+  </data>
 </root>

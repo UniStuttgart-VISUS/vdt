@@ -132,6 +132,9 @@
   <data name="OpenRegistryFailed" xml:space="preserve">
     <value>Failed to open the registry path "{0}".</value>
   </data>
+  <data name="SequenceNotInStore" xml:space="preserve">
+    <value>The specified task sequence "{0}" has not been found in the task sequence store.</value>
+  </data>
   <data name="TsStoreNotFound" xml:space="preserve">
     <value>The task sequence store at "{0}" could not be found.</value>
   </data>

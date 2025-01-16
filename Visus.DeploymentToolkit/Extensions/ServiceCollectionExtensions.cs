@@ -39,6 +39,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             services.AddRegistry();
             services.AddSystemInformation();
             services.AddTasks();
+            services.AddTaskSequenceFactory();
             services.AddTaskSequenceStore();
             services.AddWmi();
             return services;
@@ -97,24 +98,6 @@ namespace Visus.DeploymentToolkit.Extensions {
         }
 
         /// <summary>
-        /// Adds the JSON-based <see cref="TaskSequenceStore"/> to
-        /// <paramref name="services"/>.
-        /// </summary>
-        /// <param name="services"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        internal static IServiceCollection AddTaskSequenceStore(
-                this IServiceCollection services) {
-            _ = services ?? throw new ArgumentNullException(nameof(services));
-            services.AddSingleton<ITaskSequenceStore>(s => {
-                var o = s.GetRequiredService<IOptions<TaskSequenceStoreOptions>>();
-                var l = s.GetRequiredService<ILogger<TaskSequenceStore>>();
-                return new TaskSequenceStore(o, l);
-            });
-            return services;
-        }
-
-        /// <summary>
         /// Adds the main deployment tasks implemented in this library, which
         /// does <i>not</i> include the bootstrapping tasks.
         /// </summary>
@@ -133,6 +116,38 @@ namespace Visus.DeploymentToolkit.Extensions {
                 services.AddTransient(task);
             }
 
+            return services;
+        }
+
+        /// <summary>
+        /// Adds the <see cref="ITaskSequenceFactory"/> for creating task
+        /// sequences from code.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        internal static IServiceCollection AddTaskSequenceFactory(
+                this IServiceCollection services) {
+            _ = services ?? throw new ArgumentNullException(nameof(services));
+            services.AddTransient<ITaskSequenceFactory, TaskSequenceFactory>();
+            return services;
+        }
+
+        /// <summary>
+        /// Adds the JSON-based <see cref="TaskSequenceStore"/> to
+        /// <paramref name="services"/>.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        internal static IServiceCollection AddTaskSequenceStore(
+                this IServiceCollection services) {
+            _ = services ?? throw new ArgumentNullException(nameof(services));
+            services.AddSingleton<ITaskSequenceStore>(s => {
+                var o = s.GetRequiredService<IOptions<TaskSequenceStoreOptions>>();
+                var l = s.GetRequiredService<ILogger<TaskSequenceStore>>();
+                return new TaskSequenceStore(o, l);
+            });
             return services;
         }
 
