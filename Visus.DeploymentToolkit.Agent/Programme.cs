@@ -30,8 +30,7 @@ configuration.Bind(options);
 // Collect all the bootstrapping and standard services.
 var services = new ServiceCollection()
     .AddDeploymentServices()
-    //.AddState(options.StateFile)
-    .AddState()
+    .AddState(options.StateFile)
     .Configure<AgentOptions>(configuration.Bind)
     .Configure<TaskSequenceStoreOptions>(configuration.GetSection(nameof(AgentOptions.TaskSequenceStore)).Bind)
     .AddLogging(options.LogFile)
@@ -47,6 +46,7 @@ try {
     options.CopyTo(state);
 } catch (Exception ex) {
     log.LogError(ex, "Failed to initialise user-provided state.");
+    return;
 }
 
 // Find out what task sequence we are running. If there is none specified in the
@@ -61,4 +61,17 @@ try {
     await task.ExecuteAsync();
 } catch (Exception ex) {
     log.LogError(ex, "Failed to select the task sequence to run.");
+    return;
+}
+
+// If the previous task succeeded, the task sequence now must be set in the
+// state and we can just run it.
+try {
+    log.LogInformation("Running the installation task sequence.");
+    var state = services.GetRequiredService<IState>();
+    var sequence = state.TaskSequence as ITaskSequence;
+    await sequence!.ExecuteAsync(state);
+} catch (Exception ex) {
+    log.LogError(ex, "Failed to execute the task sequence.");
+    return;
 }

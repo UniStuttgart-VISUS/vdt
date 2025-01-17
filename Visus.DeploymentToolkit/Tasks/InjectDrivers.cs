@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using Microsoft.Dism;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
@@ -21,7 +22,6 @@ namespace Visus.DeploymentToolkit.Tasks {
                 : base(state, logger) { }
 
         public override Task ExecuteAsync(CancellationToken cancellationToken) {
-
             //DismApi.MountImage()
             throw new NotImplementedException();
         }
