@@ -22,6 +22,11 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// Gets the number of tasks in the sequence.
         /// </summary>
         int Length { get; }
+
+        /// <summary>
+        /// Gets the <see cref="Phase"/> the sequence is applicable to.
+        /// </summary>
+        Phase Phase { get; }
         #endregion
 
         #region Public methods

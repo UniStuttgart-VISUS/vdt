@@ -4,9 +4,11 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Visus.DeploymentToolkit.Services;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
@@ -19,7 +21,23 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Asynchronously executes a task.
         /// </summary>
+        /// <param name="that"></param>
         public static Task ExecuteAsync(this ITask that)
             => that.ExecuteAsync(CancellationToken.None);
+
+        /// <summary>
+        /// Collects the properties of the given <paramref name="task"/> forming
+        /// parameters as a <see cref="IDictionary{TKey, TValue}"/>.
+        /// </summary>
+        /// <param name="task"></param>
+        /// <returns></returns>
+        public static IDictionary<string, object?> GetParameters(
+                this ITask task) {
+            var flags = BindingFlags.Public | BindingFlags.Instance;
+            var type = task.GetType();
+            return (from p in type.GetProperties(flags)
+                    where p.CanRead && p.CanWrite
+                    select p).ToDictionary(p => p.Name, p => p.GetValue(task));
+        }
     }
 }

@@ -24,14 +24,20 @@ namespace Visus.DeploymentToolkit.Extensions {
         /// properties annotated with <see cref="FromStateAttribute"/> from
         /// <paramref name="src"/> to <paramref name="dst"/>.
         /// </summary>
-        /// <param name="dst"></param>
-        /// <param name="src"></param>
-        /// <param name="force"></param>
+        /// <param name="dst">The object receiving property values from the
+        /// given <see cref="IState"/>.</param>
+        /// <param name="src">The state object to read the data from.</param>
+        /// <param name="force">If <c>true</c>, the values in
+        /// <paramref name="dst"/> set set even if the respective property
+        /// already has a non-<c>null</c> value.</param>
+        /// <exception cref="ArgumentNullException">If either
+        /// <paramref name="dst"/> or <paramref name="src"/> is <c>null</c>.
+        /// </exception>
         public static void CopyFrom(this object dst,
                 IState src,
                 bool force = false) {
-            _ = dst ?? throw new ArgumentNullException(nameof(dst));
-            _ = src ?? throw new ArgumentNullException(nameof(src));
+            ArgumentNullException.ThrowIfNull(dst);
+            ArgumentNullException.ThrowIfNull(src);
 
             var props = from p in dst.GetType().GetProperties()
                         let fa = p.GetCustomAttribute<FromStateAttribute>()
@@ -60,12 +66,14 @@ namespace Visus.DeploymentToolkit.Extensions {
         /// Copies the properties of the source object annotated by
         /// <see cref="StateAttribute"/> to the destination state.
         /// </summary>
-        /// <param name="src"></param>
-        /// <param name="dst"></param>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <param name="src">The object which of the annotated properties are
+        /// to be persisted in the <see cref="IState"/>.</param>
+        /// <param name="dst">The state object receiving the data.</param>
+        /// <paramref name="dst"/> or <paramref name="src"/> is <c>null</c>.
+        /// </exception>
         public static void CopyTo(this object src, IState dst) {
-            _ = src ?? throw new ArgumentNullException(nameof(src));
-            _ = dst ?? throw new ArgumentNullException(nameof(dst));
+            ArgumentNullException.ThrowIfNull(src);
+            ArgumentNullException.ThrowIfNull(dst);
 
             var props = from p in src.GetType().GetProperties()
                         let a = p.GetCustomAttribute<StateAttribute>()

@@ -94,6 +94,7 @@ namespace Visus.DeploymentToolkit.Workflow {
         public ITaskSequence Build() {
             return new TaskSequence(
                 this._services.GetRequiredService<ILogger<TaskSequence>>(),
+                this._phase,
                 this._tasks);
         }
 

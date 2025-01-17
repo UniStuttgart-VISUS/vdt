@@ -32,7 +32,7 @@ namespace Visus.DeploymentToolkit.Services {
         #region Public methods
         /// <inheritdoc />
         public async Task CleanAsync(string path) {
-            _ = path ?? throw new ArgumentNullException(nameof(path));
+            ArgumentNullException.ThrowIfNull(nameof(path));
             this._logger.LogTrace("Purging all contents from \"{Path}\".",
                 path);
 
@@ -56,7 +56,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <inheritdoc />
         public Task DeleteAsync(string path, bool recursive = false) {
             if (recursive) {
-                _ = path ?? throw new ArgumentNullException(nameof(path));
+                ArgumentNullException.ThrowIfNull(nameof(path));
                 this._logger.LogTrace("Deleting directory \"{Path}\" and all "
                     + "of its contents.", path);
                 return Task.Factory.StartNew(() => {

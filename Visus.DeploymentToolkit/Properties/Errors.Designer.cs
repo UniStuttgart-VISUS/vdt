@@ -106,6 +106,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The phase has already been set to {0}..
+        /// </summary>
+        internal static string PhaseAlreadySet {
+            get {
+                return ResourceManager.GetString("PhaseAlreadySet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The specified task sequence &quot;{0}&quot; has not been found in the task sequence store..
         /// </summary>
         internal static string SequenceNotInStore {

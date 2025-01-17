@@ -24,6 +24,6 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// Gets parameters that are to be assigned to the properties of the task
         /// when it is instantiated.
         /// </summary>
-        IDictionary<string, object> Parameters { get; }
+        IDictionary<string, object?> Parameters { get; }
     }
 }

@@ -39,13 +39,14 @@ namespace Visus.DeploymentToolkit.Extensions {
             services.AddRegistry();
             services.AddSystemInformation();
             services.AddTasks();
+            services.AddTaskSequenceDescriptionBuilder();
             services.AddTaskSequenceFactory();
             services.AddTaskSequenceStore();
             services.AddWmi();
             return services;
         }
 
-        #region Internal Services
+        #region Internal services
         /// <summary>
         /// Adds the <see cref="VdsService"/> to <paramref name="services"/>.
         /// </summary>
@@ -116,6 +117,21 @@ namespace Visus.DeploymentToolkit.Extensions {
                 services.AddTransient(task);
             }
 
+            return services;
+        }
+
+        /// <summary>
+        /// Adds the <see cref="ITaskSequenceDescriptionBuilder"/> for creating
+        /// task sequence descriptions from code.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        internal static IServiceCollection AddTaskSequenceDescriptionBuilder(
+                this IServiceCollection services) {
+            _ = services ?? throw new ArgumentNullException(nameof(services));
+            services.AddTransient<ITaskSequenceDescriptionBuilder,
+                TaskSequenceDescriptionBuilder>();
             return services;
         }
 
