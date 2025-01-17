@@ -20,6 +20,11 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// <summary>
     /// A task for mounting a (generic) network share to a specific location.
     /// </summary>
+    /// <remarks>
+    /// This task cannot be configured via the <see cref="IState"/>. For the
+    /// deployment share, which is configured and announced via the state, use
+    /// the <see cref="MountDeploymentShare"/> task.
+    /// </remarks>
     public sealed class MountNetworkShare : TaskBase {
 
         #region Public constructors

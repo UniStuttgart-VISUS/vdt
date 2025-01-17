@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 
@@ -46,12 +47,15 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// The destination must be a folder unless the <see cref="Source"/>
         /// designates a single file.
         /// </remarks>
+        [FromState(WellKnownStates.StateFile)]
         public string Path { get; set; } = null!;
         #endregion
 
         #region Public methods
         /// <inheritdoc />
         public override Task ExecuteAsync(CancellationToken cancellationToken) {
+            this.CopyFrom(this._state);
+
             if (string.IsNullOrWhiteSpace(this.Path)) {
                 this.Path = DefaultPath;
             }
