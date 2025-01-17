@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Compliance;
 using Visus.DeploymentToolkit.DiskManagement;
@@ -77,20 +76,6 @@ namespace Visus.DeploymentToolkit.Services {
         public string? DeploymentShareUser {
             get => this[WellKnownStates.DeploymentShareUser] as string;
             set => this[WellKnownStates.DeploymentShareUser] = value;
-        }
-
-        /// <inheritdoc />
-        [JsonIgnore]
-        public IDismScope? DismScope {
-            get => this[WellKnownStates.DismScope] as IDismScope;
-            set {
-                if ((this.DismScope != null) && (value != null)) {
-                    throw new InvalidOperationException(
-                        Errors.DuplicateDismScope);
-                }
-
-                this[WellKnownStates.DismScope] = value;
-            }
         }
 
         /// <inheritdoc />

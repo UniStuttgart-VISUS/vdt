@@ -5,6 +5,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Visus.DeploymentToolkit</RootNamespace>
+    <Description>This package holds the contracts shared by the bootstrapper and the main deployment toolkit.</Description>
   </PropertyGroup>
 
   <ItemGroup>

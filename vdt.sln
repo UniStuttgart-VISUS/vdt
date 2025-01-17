@@ -19,9 +19,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visus.DeploymentToolkit.Bootstrapping", "Visus.DeploymentToolkit.Bootstrapping\Visus.DeploymentToolkit.Bootstrapping.csproj", "{A11C759E-5C07-4F65-BB19-DC212C562196}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Visus.DeploymentToolkit.Bootstrapping", "Visus.DeploymentToolkit.Bootstrapping\Visus.DeploymentToolkit.Bootstrapping.csproj", "{A11C759E-5C07-4F65-BB19-DC212C562196}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Visus.DeploymentToolkit.Bootstrapper", "Visus.DeploymentToolkit.Bootstrapper\Visus.DeploymentToolkit.Bootstrapper.csproj", "{CDCEE6F5-F865-456E-B8C3-F17AE5093A50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visus.DeploymentToolkit.Security", "Visus.DeploymentToolkit.Security\Visus.DeploymentToolkit.Security.csproj", "{948354D6-3632-4B37-BAC4-31CA12B7037E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{CDCEE6F5-F865-456E-B8C3-F17AE5093A50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDCEE6F5-F865-456E-B8C3-F17AE5093A50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDCEE6F5-F865-456E-B8C3-F17AE5093A50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{948354D6-3632-4B37-BAC4-31CA12B7037E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{948354D6-3632-4B37-BAC4-31CA12B7037E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{948354D6-3632-4B37-BAC4-31CA12B7037E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{948354D6-3632-4B37-BAC4-31CA12B7037E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

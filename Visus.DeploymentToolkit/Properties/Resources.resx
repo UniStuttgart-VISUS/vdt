@@ -123,6 +123,12 @@
   <data name="PromptTaskSequence" xml:space="preserve">
     <value>Task sequence</value>
   </data>
+  <data name="RebootMachine" xml:space="preserve">
+    <value>Reboot machine</value>
+  </data>
+  <data name="RebootMessage" xml:space="preserve">
+    <value>A task sequence requires the machine to be restarted.</value>
+  </data>
   <data name="SelectInstallationSequence" xml:space="preserve">
     <value>Select task sequence</value>
   </data>

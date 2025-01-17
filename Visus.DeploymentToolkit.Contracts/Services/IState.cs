@@ -70,12 +70,6 @@ namespace Visus.DeploymentToolkit.Services {
         string? DeploymentShareUser { get; set; }
 
         /// <summary>
-        /// Gets or sets a potentially open DISM session, which can be used to
-        /// modfiy an image or Windows installation.
-        /// </summary>
-        IDismScope? DismScope { get; set; }
-
-        /// <summary>
         /// Gets or sets the disk where Windows will be installed.
         /// </summary>
         IDisk? InstallationDisk { get; set; }

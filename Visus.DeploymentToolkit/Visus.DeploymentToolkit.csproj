@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Visus.DeploymentToolkit.Bootstrapping\Visus.DeploymentToolkit.Bootstrapping.csproj" />
     <ProjectReference Include="..\Visus.DeploymentToolkit.Contracts\Visus.DeploymentToolkit.Contracts.csproj" />
+    <ProjectReference Include="..\Visus.DeploymentToolkit.Security\Visus.DeploymentToolkit.Security.csproj" />
     <ProjectReference Include="..\Visus.DeploymentToolkit.Vds\Visus.DeploymentToolkit.Vds.csproj" />
   </ItemGroup>
 

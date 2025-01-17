@@ -62,4 +62,3 @@ try {
 } catch (Exception ex) {
     log.LogError(ex, "Failed to select the task sequence to run.");
 }
-

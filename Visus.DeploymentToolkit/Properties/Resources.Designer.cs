@@ -79,6 +79,24 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reboot machine.
+        /// </summary>
+        internal static string RebootMachine {
+            get {
+                return ResourceManager.GetString("RebootMachine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A task sequence requires the machine to be restarted..
+        /// </summary>
+        internal static string RebootMessage {
+            get {
+                return ResourceManager.GetString("RebootMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select task sequence.
         /// </summary>
         internal static string SelectInstallationSequence {

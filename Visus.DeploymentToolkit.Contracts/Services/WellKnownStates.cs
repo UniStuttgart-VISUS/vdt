@@ -53,9 +53,10 @@ namespace Visus.DeploymentToolkit.Services {
             = nameof(IState.DeploymentShareUser);
 
         /// <summary>
-        /// The current DISM session.
+        /// The current DISM session, which is only available in the agent and
+        /// never in the bootstrapper.
         /// </summary>
-        public const string DismScope = nameof(IState.DismScope);
+        public const string DismScope = nameof(DismScope);
 
         /// <summary>
         /// The disk to which Windows should be installed.
