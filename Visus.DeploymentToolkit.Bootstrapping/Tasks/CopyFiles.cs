@@ -33,6 +33,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                 ILogger<CopyFiles> logger)
                 : base(state, logger) {
             this._copy = copy ?? throw new ArgumentNullException(nameof(copy));
+            this.Name = Resources.CopyFiles;
         }
         #endregion
 

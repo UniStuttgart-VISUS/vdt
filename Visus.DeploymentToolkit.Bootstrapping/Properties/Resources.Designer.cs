@@ -61,6 +61,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy files.
+        /// </summary>
+        internal static string CopyFiles {
+            get {
+                return ResourceManager.GetString("CopyFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create working directory.
         /// </summary>
         internal static string CreateWorkingDirectory {
