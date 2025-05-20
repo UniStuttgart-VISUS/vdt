@@ -23,6 +23,7 @@ namespace Visus.DeploymentToolkit.Tasks {
     [SupportsPhase(Workflow.Phase.PreinstalledEnvironment)]
     public sealed class CreateWindowsPeIso : WindowsPeTaskBase {
 
+        #region Public constructors
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
@@ -41,6 +42,7 @@ namespace Visus.DeploymentToolkit.Tasks {
             this.IsCritical = true;
             this.Name = Resources.CreateIso;
         }
+        #endregion
 
         #region Public properties
         /// <summary>
