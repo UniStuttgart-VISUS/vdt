@@ -15,7 +15,7 @@ namespace Visus.DeploymentToolkit.Services {
 
     /// <summary>
     /// Implementation of the <see cref="ICommand" /> interfaces based on
-    /// <see cref="ProcessStar"/>
+    /// <see cref="ProcessStartInfo"/>.
     /// </summary>
     internal class Command : ICommand {
 

@@ -1,4 +1,4 @@
-﻿// <copyright file="CreateIso.cs" company="Visualisierungsinstitut der Universität Stuttgart">
+﻿// <copyright file="CreateWindowsPeIso.cs" company="Visualisierungsinstitut der Universität Stuttgart">
 // Copyright © 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
@@ -21,7 +21,7 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// This task creates an ISO file holding the specified Windows PE image.
     /// </summary>
     [SupportsPhase(Workflow.Phase.PreinstalledEnvironment)]
-    public sealed class CreateIso : WindowsPeTaskBase {
+    public sealed class CreateWindowsPeIso : WindowsPeTaskBase {
 
         /// <summary>
         /// Initialises a new instance.
@@ -32,9 +32,9 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <param name="logger">A logger.</param>
         /// <exception cref="ArgumentNullException">If
         /// <paramref name="commands"/> is <c>null</c>.</exception>
-        public CreateIso(IState state,
+        public CreateWindowsPeIso(IState state,
                 ICommandBuilderFactory commands,
-                ILogger<CreateIso> logger)
+                ILogger<CreateWindowsPeIso> logger)
                 : base(state, logger) {
             this._commands = commands
                 ?? throw new ArgumentNullException(nameof(commands));
@@ -89,16 +89,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                 .Build();
 
             this._logger.LogInformation("Running command \"{Command}\".", cmd);
-            var exitCode = await cmd.ExecuteAsync();
-            this._logger.LogTrace("Command \"{Command}\" exited with return "
-                + "value {ExitCode}.", cmd, exitCode);
-
-            if (exitCode != 0) {
-                this._logger.LogError("Command \"{Command}\" failed with exit "
-                    + "code {ExitCode}.", cmd.ToString(), exitCode.Value);
-                throw new CommandFailedException(cmd.ToString()!,
-                    exitCode.Value);
-            }
+            await cmd.ExecuteAndCheckAsync(0, this._logger);
 
             this._logger.LogInformation("ISO file \"{Path}\" created "
                 + "successfully.", this.Path);

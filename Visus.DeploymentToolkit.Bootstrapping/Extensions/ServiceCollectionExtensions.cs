@@ -82,7 +82,7 @@ namespace Visus.DeploymentToolkit.Extensions {
 #if DEBUG
                 config.MinimumLevel.Verbose();
 #else // DEBUG
-                config.MinimumLevel.Info();
+                config.MinimumLevel.Information();
 #endif // DEBUG
 
                 o.AddSerilog(config.CreateLogger());

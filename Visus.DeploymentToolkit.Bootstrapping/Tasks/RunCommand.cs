@@ -10,6 +10,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 
@@ -93,39 +94,10 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             this._logger.LogInformation("Running command \"{Command}\".", cmd);
 
-            var exitCode = await cmd.ExecuteAsync();
-
-            this._logger.LogTrace("Command \"{Command}\" exited with return "
-                + "value {ExitCode}.", cmd, exitCode);
-
-            if (exitCode == null) {
-                // For some reasons, the process did not start at all.
-                throw new InvalidOperationException(
-                    string.Format(Errors.CommandNotRun, cmd.ToString()));
-
-            } else if (this.SucccessExitCodes?.Length > 0) {
-                // If the user indicated which error codes are successful, this
-                // takes precedence and we fail if any other exit code was
-                // returned.
-                if (!this.SucccessExitCodes.Contains(exitCode.Value)) {
-                    this._logger.LogError("Command \"{Command}\" returned the "
-                        + "exit code {ExitCode}, which does not indicate "
-                        + "success.", cmd.ToString(), exitCode.Value);
-                    throw new CommandFailedException(cmd.ToString()!,
-                        exitCode.Value);
-                }
-
-            } else if (this.FailureExitCodes?.Length > 0) {
-                // If the user indicated which error codes are a failure, we
-                // fail if we encounter any of these exit codes.
-                if (this.FailureExitCodes.Contains(exitCode.Value)) {
-                    this._logger.LogError("Command \"{Command}\" returned the "
-                        + "exit code {ExitCode}, which indicates failure.",
-                        cmd.ToString(), exitCode.Value);
-                    throw new CommandFailedException(cmd.ToString()!,
-                        exitCode.Value);
-                }
-            }
+            var exitCode = await cmd.ExecuteAndCheckAsync(
+                this.SucccessExitCodes,
+                this.FailureExitCodes,
+                this._logger);
         }
 
         #region Private fields
