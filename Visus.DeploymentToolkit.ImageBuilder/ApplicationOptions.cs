@@ -6,6 +6,7 @@
 
 using System.Runtime.InteropServices;
 using Visus.DeploymentToolkit.ImageBuilder.Properties;
+using Visus.DeploymentToolkit.Workflow;
 
 
 namespace Visus.DeploymentToolkit.ImageBuilder {
@@ -14,5 +15,10 @@ namespace Visus.DeploymentToolkit.ImageBuilder {
     /// Holds the parameters for the application.
     /// </summary>
     internal sealed class ApplicationOptions {
+
+        /// <summary>
+        /// Gets or sets the configuration of the task sequence store.
+        /// </summary>
+        public TaskSequenceStoreOptions TaskSequenceStore { get; set; } = new();
     }
 }

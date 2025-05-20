@@ -151,6 +151,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified task sequence is for phase {0}, but a task sequence for phase {1} was expected..
+        /// </summary>
+        internal static string UnexpectedPhase {
+            get {
+                return ResourceManager.GetString("UnexpectedPhase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &quot;{0}&quot; is not an architecture supported by Windows PE..
         /// </summary>
         internal static string UnsupportedArchitecture {
