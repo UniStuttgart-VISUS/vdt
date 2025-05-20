@@ -120,6 +120,9 @@
   <data name="CopyWindowsPe" xml:space="preserve">
     <value>Copy Windows Pre-installed Environment</value>
   </data>
+  <data name="CreateIso" xml:space="preserve">
+    <value>Create Windows PE ISO</value>
+  </data>
   <data name="PartitionFormatDisk" xml:space="preserve">
     <value>Partition and format disk</value>
   </data>

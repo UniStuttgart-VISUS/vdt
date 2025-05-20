@@ -59,6 +59,11 @@ namespace Visus.DeploymentToolkit.Tasks {
         public bool IsRecursive { get; set; } = true;
 
         /// <summary>
+        /// Gets or sets whether the source file or directory must exist.
+        /// </summary>
+        public bool IsRequired { get; set; } = false;
+
+        /// <summary>
         /// Gets or sets the source path of the copy operation.
         /// </summary>
         /// <remarks>
@@ -74,6 +79,9 @@ namespace Visus.DeploymentToolkit.Tasks {
             var flags = CopyFlags.None;
             if (this.IsRecursive) {
                 flags |= CopyFlags.Recursive;
+            }
+            if (this.IsRequired) {
+                flags |= CopyFlags.Required;
             }
             if (this.IsOverwrite) {
                 flags |= CopyFlags.Overwrite;

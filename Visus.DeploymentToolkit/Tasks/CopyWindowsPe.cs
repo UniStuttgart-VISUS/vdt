@@ -10,6 +10,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 
@@ -21,39 +22,18 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// building a new boot image.
     /// </summary>
     [SupportsPhase(Workflow.Phase.PreinstalledEnvironment)]
-    public sealed class CopyWindowsPe : TaskBase {
+    public sealed class CopyWindowsPe : WindowsPeTaskBase {
 
         public CopyWindowsPe(IState state,
                 ICopy copy,
                 ILogger<CopyWindowsPe> logger)
                 : base(state, logger) {
             this._copy = copy ?? throw new ArgumentNullException(nameof(copy));
+            this.IsCritical = true;
             this.Name = Resources.CopyWindowsPe;
         }
 
         #region Public properties
-        /// <summary>
-        /// Gets or sets the architecture to use for the PE image.
-        /// </summary>
-        public Architecture Architecture {
-            get;
-            set;
-        } = RuntimeInformation.ProcessArchitecture;
-
-        /// <summary>
-        /// Gets or sets the root directory for the deployment tools, most
-        /// importantly including the firmware files and the oscdimg tool for
-        /// creating ISOs.
-        /// </summary>
-        public string DeploymentToolsRootDirectory {
-            get;
-            set;
-        } = Path.Combine(ProgrammeFiles,
-            "Windows Kits",
-            "10",
-            "Assessment and Deployment Kit",
-            "Deployment Tools");
-
         /// <summary>
         /// Gets or sets the directory where the firmware source files are
         /// stored.
@@ -74,15 +54,6 @@ namespace Visus.DeploymentToolkit.Tasks {
         public string? MediaSourceDirectory { get; set; }
 
         /// <summary>
-        /// Gets or sets the working directory where the image will be staged.
-        /// </summary>
-        /// <remarks>
-        /// If this property is not set, a temporary directory will be created,
-        /// which can be retrieved from this property.
-        /// </remarks>
-        public string? WorkingDirectory { get; set; }
-
-        /// <summary>
         /// Gets or sets the source location of the WinPE image.
         /// </summary>
         /// <remarks>
@@ -90,38 +61,14 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <see cref="WinPeSourceDirectory"/>.
         /// </remarks>
         public string? WimSourcePath { get; set; }
-
-        /// <summary>
-        /// Gets or sets the root directory where the WinPE images are stored in
-        /// the Windows Assessment and Deployment Kit (ADK).
-        /// </summary>
-        public string WinPeSourceDirectory {
-            get;
-            set;
-        } = Path.Combine(ProgrammeFiles,
-            "Windows Kits",
-            "10",
-            "Assessment and Deployment Kit",
-            "Windows Preinstallation Environment");
-
-        /// <summary>
-        /// Gets the architecture string used in the WinPE paths, which is
-        /// derived from <see cref="Architecture"/>.
-        /// </summary>
-        public string WinPeArchitecture => this.Architecture switch {
-            Architecture.X64 => "amd64",
-            Architecture.X86 => "x86",
-            Architecture.Arm => "arm",
-            Architecture.Arm64 => "arm64",
-            _ => throw new NotSupportedException(string.Format(
-                Errors.UnsupportedArchitecture, this.Architecture))
-        };
         #endregion
 
         #region Public methods
         /// <inheritdoc />
         public override async Task ExecuteAsync(
                 CancellationToken cancellationToken) {
+            this.CopyFrom(this._state);
+
             if (string.IsNullOrEmpty(this.WorkingDirectory)) {
                 this.WorkingDirectory = Path.Combine(Path.GetTempPath(),
                     Path.GetRandomFileName());
@@ -184,16 +131,13 @@ namespace Visus.DeploymentToolkit.Tasks {
                 this.FirmwareDirectory,
                 CopyFlags.None)
                 .ConfigureAwait(false);
+
+            // Persist the working directory for subsequent tasks.
+            this._state.WorkingDirectory = this.WorkingDirectory;
         }
         #endregion
 
         #region Private properties
-        /// <summary>
-        /// The folder where we expect the WAIK to be installed.
-        /// </summary>
-        private static string ProgrammeFiles => Environment.GetFolderPath(
-            Environment.SpecialFolder.ProgramFilesX86);
-
         /// <summary>
         /// Gets the location where the BIOS firmware is located.
         /// </summary>
@@ -205,30 +149,6 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// </summary>
         private string EfiSourcePath => Path.Combine(
             this.FirmwareSourceDirectory!, "efisys.bin");
-
-        /// <summary>
-        /// Gets the directory where the firmware files are copied to.
-        /// </summary>
-        private string FirmwareDirectory => Path.Combine(
-            this.WorkingDirectory!, "fwfiles");
-
-        /// <summary>
-        /// Gets the directory where the media files are copied to.
-        /// </summary>
-        private string MediaDirectory => Path.Combine(
-            this.WorkingDirectory!, "media");
-
-        /// <summary>
-        /// Gets the directory where the WinPE image will be mounted.
-        /// </summary>
-        private string MountDirectory => Path.Combine(
-            this.WorkingDirectory!, "mount");
-
-        /// <summary>
-        /// Gets the path where the WinPE image file will be copied to.
-        /// </summary>
-        private string WimPath => Path.Combine(
-            this.MediaDirectory, "sources", "boot.wim");
         #endregion
 
         #region Private fields

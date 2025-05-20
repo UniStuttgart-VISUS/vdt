@@ -147,4 +147,7 @@
   <data name="WaitVdsFailed" xml:space="preserve">
     <value>Failed waiting for Virtual Disk Service to become ready.</value>
   </data>
+  <data name="InvalidWindowsPeDirectory" xml:space="preserve">
+    <value>The directory holding Windows PE is invalid.</value>
+  </data>
 </root>

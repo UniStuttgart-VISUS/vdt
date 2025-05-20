@@ -70,6 +70,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create Windows PE ISO.
+        /// </summary>
+        internal static string CreateIso {
+            get {
+                return ResourceManager.GetString("CreateIso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Partition and format disk.
         /// </summary>
         internal static string PartitionFormatDisk {

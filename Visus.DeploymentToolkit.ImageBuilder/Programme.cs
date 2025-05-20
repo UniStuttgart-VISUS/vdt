@@ -47,6 +47,7 @@ namespace Visus.DeploymentToolkit.ImageBuilder {
             var taskSequence = services.GetRequiredService<ITaskSequenceBuilder>()
                 .ForPhase(Phase.PreinstalledEnvironment)
                 .Add<CopyWindowsPe>()
+                .Add<CreateIso>()
                 .Build();
 
             log.LogInformation("Running Windows PE task sequence.");

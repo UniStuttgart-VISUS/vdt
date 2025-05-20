@@ -79,6 +79,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The directory holding Windows PE is invalid..
+        /// </summary>
+        internal static string InvalidWindowsPeDirectory {
+            get {
+                return ResourceManager.GetString("InvalidWindowsPeDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &quot;{0}&quot; does not designate or does not begin with a valid registry hive..
         /// </summary>
         internal static string NoRegistryHive {

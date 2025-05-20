@@ -4,7 +4,6 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using Microsoft.Dism;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
