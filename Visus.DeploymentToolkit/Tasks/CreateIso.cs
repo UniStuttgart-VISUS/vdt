@@ -23,6 +23,15 @@ namespace Visus.DeploymentToolkit.Tasks {
     [SupportsPhase(Workflow.Phase.PreinstalledEnvironment)]
     public sealed class CreateIso : WindowsPeTaskBase {
 
+        /// <summary>
+        /// Initialises a new instance.
+        /// </summary>
+        /// <param name="state">The application state, which can be used to
+        /// populate the <see cref="WorkingDirectory"/>.</param>
+        /// <param name="commands">The factory for creating commands.</param>
+        /// <param name="logger">A logger.</param>
+        /// <exception cref="ArgumentNullException">If
+        /// <paramref name="commands"/> is <c>null</c>.</exception>
         public CreateIso(IState state,
                 ICommandBuilderFactory commands,
                 ILogger<CreateIso> logger)
@@ -58,6 +67,11 @@ namespace Visus.DeploymentToolkit.Tasks {
             if (string.IsNullOrWhiteSpace(this.WorkingDirectory)) {
                 throw new InvalidOperationException(
                     Errors.InvalidWindowsPeDirectory);
+            }
+
+            if (string.IsNullOrWhiteSpace(this.Path)) {
+                throw new InvalidOperationException(
+                    Errors.InvalidIsoOutput);
             }
 
             if (string.IsNullOrWhiteSpace(this.OscdImgPath)) {

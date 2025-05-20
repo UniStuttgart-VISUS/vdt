@@ -79,6 +79,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The output location for the ISO to create is invalid..
+        /// </summary>
+        internal static string InvalidIsoOutput {
+            get {
+                return ResourceManager.GetString("InvalidIsoOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The directory holding Windows PE is invalid..
         /// </summary>
         internal static string InvalidWindowsPeDirectory {
