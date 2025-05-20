@@ -45,6 +45,16 @@ namespace Visus.DeploymentToolkit.Services {
             var destDir = Directory.Exists(dest);
             var sourceDir = Directory.Exists(source);
 
+            if ((flags & CopyFlags.Required) != CopyFlags.None) {
+                var sourceFile = File.Exists(source);
+
+                if (!sourceDir && !sourceFile) {
+                    throw new ArgumentException(string.Format(
+                        Errors.CopySourceMissing,
+                        source));
+                }
+            }
+
             if (sourceDir && File.Exists(dest)) {
                 throw new ArgumentException(string.Format(
                     Errors.CopyDirectoryToFile,
@@ -86,6 +96,16 @@ namespace Visus.DeploymentToolkit.Services {
 
                         File.Copy(f, d, (flags & CopyFlags.Overwrite) != 0);
                     }
+
+                } else {
+                    if (destDir) {
+                        dest = Path.Combine(dest, Path.GetFileName(source));
+                    }
+
+                    this._logger.LogTrace("Copying \"{Source}\" to "
+                        + "\"{Destination}\".", source, dest);
+
+                    File.Copy(source, dest, (flags & CopyFlags.Overwrite) != 0);
                 }
             });
         }

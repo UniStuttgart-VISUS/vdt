@@ -61,6 +61,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy Windows Pre-installed Environment.
+        /// </summary>
+        internal static string CopyWindowsPe {
+            get {
+                return ResourceManager.GetString("CopyWindowsPe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Partition and format disk.
         /// </summary>
         internal static string PartitionFormatDisk {

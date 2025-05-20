@@ -133,6 +133,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &quot;{0}&quot; is not an architecture supported by Windows PE..
+        /// </summary>
+        internal static string UnsupportedArchitecture {
+            get {
+                return ResourceManager.GetString("UnsupportedArchitecture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed waiting for Virtual Disk Service to become ready..
         /// </summary>
         internal static string WaitVdsFailed {

@@ -88,6 +88,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The source &quot;{0}&quot; does not exist and the copy task was configured to be mandatory..
+        /// </summary>
+        internal static string CopySourceMissing {
+            get {
+                return ResourceManager.GetString("CopySourceMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The path to the deployment share is required, but was not set..
         /// </summary>
         internal static string DeploymentSharePathNotSet {

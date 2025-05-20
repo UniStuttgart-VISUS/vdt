@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Visus.DeploymentToolkit.ImageBuilder": {
+      "commandName": "Project"
+    },
+    "WDS": {
+      "commandName": "Project",
+      "remoteDebugMachine": "nagauta:4026",
+      "authenticationMode": "None"
+    }
+  }
+}

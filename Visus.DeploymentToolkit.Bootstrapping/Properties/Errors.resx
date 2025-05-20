@@ -126,6 +126,9 @@
   <data name="CopyDirectoryToFile" xml:space="preserve">
     <value>The source "{0}" is a directory, but the specified destination "{1}" is a file.</value>
   </data>
+  <data name="CopySourceMissing" xml:space="preserve">
+    <value>The source "{0}" does not exist and the copy task was configured to be mandatory.</value>
+  </data>
   <data name="DeploymentSharePathNotSet" xml:space="preserve">
     <value>The path to the deployment share is required, but was not set.</value>
   </data>

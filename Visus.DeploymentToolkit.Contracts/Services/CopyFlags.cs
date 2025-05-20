@@ -29,6 +29,12 @@ namespace Visus.DeploymentToolkit.Services {
         /// Recursively copies the whole directory structure from the source
         /// to the destination.
         /// </summary>
-        Recursive = 0x00000002
+        Recursive = 0x00000002,
+
+        /// <summary>
+        /// If this flag is set, the source must exist or the operation will
+        /// fail.
+        /// </summary>
+        Required = 0x00000004,
     }
 }
