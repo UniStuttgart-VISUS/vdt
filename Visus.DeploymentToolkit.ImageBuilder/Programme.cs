@@ -25,7 +25,8 @@ var services = new ServiceCollection()
     .AddDeploymentServices()
     .AddLogging(o => { o.AddConsole(); })
     .Configure<ApplicationOptions>(config.Bind)
-    .Configure<TaskSequenceStoreOptions>(config.GetSection(nameof(ApplicationOptions.TaskSequenceStore)).Bind)
+    .ConfigureDism(config)
+    .ConfigureTaskSequenceStore(config)
     .AddState()
     .BuildServiceProvider();
 

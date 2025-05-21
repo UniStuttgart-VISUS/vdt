@@ -4,14 +4,19 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-
 using System;
+
 
 namespace Visus.DeploymentToolkit.Services {
 
     /// <summary>
     /// Allows callers to have DISM being initialised for the calling process.
     /// </summary>
+    /// <remarks>
+    /// The DISM scope should be a singleton service that can be obtained from
+    /// the DI container. It will be initialised when the first task needs
+    /// DISM.
+    /// </remarks>
     public interface IDismScope : IDisposable {
 
         /// <summary>

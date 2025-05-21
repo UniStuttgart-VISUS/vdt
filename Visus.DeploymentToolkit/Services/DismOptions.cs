@@ -13,6 +13,11 @@ namespace Visus.DeploymentToolkit.Services {
     public sealed class DismOptions {
 
         /// <summary>
+        /// The recommended name of the configuration section for DISM.
+        /// </summary>
+        public const string SectionName = "Dism";
+
+        /// <summary>
         /// Gets or sets the path to the DISM log file.
         /// </summary>
         /// <remarks>

@@ -124,6 +124,11 @@ namespace Visus.DeploymentToolkit.Services {
         /// that the agent will use.
         /// </summary>
         string? WorkingDirectory { get; set; }
+
+        /// <summary>
+        /// Gets or sets the currently mounted WIM image.
+        /// </summary>
+        IDismMount? WimMount { get; set; }
         #endregion
 
         #region Public methods

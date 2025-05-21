@@ -24,6 +24,13 @@ namespace Visus.DeploymentToolkit.Tasks {
     [SupportsPhase(Workflow.Phase.PreinstalledEnvironment)]
     public sealed class CopyWindowsPe : WindowsPeTaskBase {
 
+        /// <summary>
+        /// Initialises a new instance.
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="copy"></param>
+        /// <param name="logger"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public CopyWindowsPe(IState state,
                 ICopy copy,
                 ILogger<CopyWindowsPe> logger)
@@ -134,6 +141,10 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             // Persist the working directory for subsequent tasks.
             this._state.WorkingDirectory = this.WorkingDirectory;
+
+            // Persist the information required for mountingt he image.
+            this._state[nameof(MountWim.ImagePath)] = this.WimPath;
+            this._state[nameof(MountWim.MountPoint)] = this.MountDirectory;
         }
         #endregion
 

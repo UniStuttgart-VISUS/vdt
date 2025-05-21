@@ -123,6 +123,9 @@
   <data name="CreateIso" xml:space="preserve">
     <value>Create Windows PE ISO</value>
   </data>
+  <data name="MountWim" xml:space="preserve">
+    <value>Mount a WIM image</value>
+  </data>
   <data name="PartitionFormatDisk" xml:space="preserve">
     <value>Partition and format disk</value>
   </data>
@@ -144,5 +147,8 @@
   <data name="TaskSequenceName" xml:space="preserve">
     <value>Task sequence {0}</value>
     <comment>The template for the name of a newly created task sequence.</comment>
+  </data>
+  <data name="UnmountWim" xml:space="preserve">
+    <value>Unmount a WIM image</value>
   </data>
 </root>

@@ -1,11 +1,11 @@
 ﻿// <copyright file="ServiceCollectionExtensions.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -36,6 +36,7 @@ namespace Visus.DeploymentToolkit.Extensions {
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             services.AddBootstrappingServices();
+            services.AddDism();
             services.AddDiskManagement();
             services.AddRegistry();
             services.AddSystemInformation();
@@ -47,25 +48,75 @@ namespace Visus.DeploymentToolkit.Extensions {
             return services;
         }
 
+        /// <summary>
+        /// Configures the <see cref="DismOptions"/>.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <param name="sectionName"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static IServiceCollection ConfigureDism(
+                this IServiceCollection services,
+                IConfiguration configuration,
+                string sectionName = DismOptions.SectionName) {
+            ArgumentNullException.ThrowIfNull(services);
+            ArgumentNullException.ThrowIfNull(configuration);
+            ArgumentNullException.ThrowIfNull(sectionName);
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                services.Configure<DismOptions>(configuration.GetSection(
+                    sectionName));
+            }
+            return services;
+        }
+
+
+        /// <summary>
+        /// Configures the <see cref="TaskSequenceStoreOptions"/>.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <param name="sectionName"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static IServiceCollection ConfigureTaskSequenceStore(
+                this IServiceCollection services,
+                IConfiguration configuration,
+                string sectionName = TaskSequenceStoreOptions.SectionName) {
+            ArgumentNullException.ThrowIfNull(services);
+            ArgumentNullException.ThrowIfNull(configuration);
+            ArgumentNullException.ThrowIfNull(sectionName);
+            return services.Configure<TaskSequenceStoreOptions>(
+                configuration.GetSection(sectionName));
+        }
+
         #region Internal services
+        /// <summary>
+        /// Adds the <see cref="DismScope"/> to <paramref name="services"/>.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        internal static IServiceCollection AddDism(
+                this IServiceCollection services) {
+            ArgumentNullException.ThrowIfNull(services);
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                services.AddSingleton<IDismScope, DismScope>();
+            }
+            return services;
+        }
+
+
         /// <summary>
         /// Adds the <see cref="VdsService"/> to <paramref name="services"/>.
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="options"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         internal static IServiceCollection AddDiskManagement(
-                this IServiceCollection services,
-                Action<DismOptions>? options = null) {
+                this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-                if (options == null) {
-                    options = o => { };
-                }
-
-                services.Configure(options)
-                    .AddSingleton<IDiskManagement, VdsService>();
+                services.AddSingleton<IDiskManagement, VdsService>();
             }
             return services;
         }

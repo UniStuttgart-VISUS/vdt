@@ -67,6 +67,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                 this._state.TaskSequence = this._tasks.CreateBuilder()
                     .ForPhase(Phase.PreinstalledEnvironment)
                     .Add<CopyWindowsPe>()
+                    .Add<MountWim>()
+                    .Add<UnmountWim>()
                     .Add<CreateWindowsPeIso>()
                     .Build();
             }

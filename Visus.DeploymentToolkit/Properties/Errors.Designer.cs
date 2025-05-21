@@ -79,11 +79,38 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There can only be one WIM image mounted at a time. Unmount &quot;{0}&quot; to mount a new one..
+        /// </summary>
+        internal static string ImageAlreadyMounted {
+            get {
+                return ResourceManager.GetString("ImageAlreadyMounted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;{0}&quot; is not a valid image..
+        /// </summary>
+        internal static string InvalidImage {
+            get {
+                return ResourceManager.GetString("InvalidImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The output location for the ISO to create is invalid..
         /// </summary>
         internal static string InvalidIsoOutput {
             get {
                 return ResourceManager.GetString("InvalidIsoOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;{0}&quot; is not a valid mount point..
+        /// </summary>
+        internal static string InvalidMountPoint {
+            get {
+                return ResourceManager.GetString("InvalidMountPoint", resourceCulture);
             }
         }
         

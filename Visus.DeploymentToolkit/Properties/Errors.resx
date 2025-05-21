@@ -156,4 +156,13 @@
   <data name="UnexpectedPhase" xml:space="preserve">
     <value>The specified task sequence is for phase {0}, but a task sequence for phase {1} was expected.</value>
   </data>
+  <data name="InvalidMountPoint" xml:space="preserve">
+    <value>"{0}" is not a valid mount point.</value>
+  </data>
+  <data name="InvalidImage" xml:space="preserve">
+    <value>"{0}" is not a valid image.</value>
+  </data>
+  <data name="ImageAlreadyMounted" xml:space="preserve">
+    <value>There can only be one WIM image mounted at a time. Unmount "{0}" to mount a new one.</value>
+  </data>
 </root>

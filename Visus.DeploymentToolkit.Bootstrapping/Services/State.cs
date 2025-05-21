@@ -127,6 +127,12 @@ namespace Visus.DeploymentToolkit.Services {
             get => this[WellKnownStates.WorkingDirectory] as string;
             set => this[WellKnownStates.WorkingDirectory] = value;
         }
+
+        /// <inheritdoc />
+        public IDismMount? WimMount {
+            get => this[WellKnownStates.WimMount] as IDismMount;
+            set => this[WellKnownStates.WimMount] = value;
+        }
         #endregion
 
         #region Public methods

@@ -93,5 +93,10 @@ namespace Visus.DeploymentToolkit.Services {
         /// The working directory where the agent will store temporary files.
         /// </summary>
         public const string WorkingDirectory = nameof(IState.WorkingDirectory);
+
+        /// <summary>
+        /// The currently mounted WIM image.
+        /// </summary>
+        public const string WimMount = nameof(IState.WimMount);
     }
 }

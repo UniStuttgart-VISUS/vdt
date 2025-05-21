@@ -79,6 +79,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mount a WIM image.
+        /// </summary>
+        internal static string MountWim {
+            get {
+                return ResourceManager.GetString("MountWim", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Partition and format disk.
         /// </summary>
         internal static string PartitionFormatDisk {
@@ -138,6 +147,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string TaskSequenceName {
             get {
                 return ResourceManager.GetString("TaskSequenceName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unmount a WIM image.
+        /// </summary>
+        internal static string UnmountWim {
+            get {
+                return ResourceManager.GetString("UnmountWim", resourceCulture);
             }
         }
     }
