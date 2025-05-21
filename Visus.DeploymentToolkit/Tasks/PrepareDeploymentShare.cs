@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.DeploymentShare;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
@@ -68,42 +69,42 @@ namespace Visus.DeploymentToolkit.Tasks {
             }
 
             {
-                var p = System.IO.Path.Combine(this.Path, "Bin");
+                var p = System.IO.Path.Combine(this.Path, Layout.BinaryPath);
                 this._logger.LogInformation("Creating directory \"{Path}\" for "
                     + "binaries.", p);
                 Directory.CreateDirectory(p);
             }
 
             {
-                var p = System.IO.Path.Combine(this.Path, "Boot");
+                var p = System.IO.Path.Combine(this.Path, Layout.BootFilePath);
                 this._logger.LogInformation("Creating directory \"{Path}\" for "
                     + "boot files.", p);
                 Directory.CreateDirectory(p);
             }
 
             {
-                var p = System.IO.Path.Combine(this.Path, "Bootstrap");
+                var p = System.IO.Path.Combine(this.Path, Layout.BootstrapperPath);
                 this._logger.LogInformation("Creating directory \"{Path}\" for "
                     + "bootstrapper binaries.", p);
                 Directory.CreateDirectory(p);
             }
 
             {
-                var p = System.IO.Path.Combine(this.Path, "Drivers");
+                var p = System.IO.Path.Combine(this.Path, Layout.DriverPath);
                 this._logger.LogInformation("Creating directory \"{Path}\" for "
                     + "drivers.", p);
                 Directory.CreateDirectory(p);
             }
 
             {
-                var p = System.IO.Path.Combine(this.Path, "Images");
+                var p = System.IO.Path.Combine(this.Path, Layout.InstallImagePath);
                 this._logger.LogInformation("Creating directory \"{Path}\" for "
                     + "image files.", p);
                 Directory.CreateDirectory(p);
             }
 
             {
-                var p = System.IO.Path.Combine(this.Path, "Task Sequences");
+                var p = System.IO.Path.Combine(this.Path, Layout.TaskSequencePath);
                 this._logger.LogInformation("Creating directory \"{Path}\" for "
                     + "task sequences.", p);
                 Directory.CreateDirectory(p);
