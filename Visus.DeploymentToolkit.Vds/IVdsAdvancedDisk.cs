@@ -6,6 +6,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 
 namespace Visus.DeploymentToolkit.Vds {
@@ -16,6 +17,7 @@ namespace Visus.DeploymentToolkit.Vds {
     [ComImport]
     [Guid("6e6f6b40-977c-4069-bddd-ac710059f8c0")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [SupportedOSPlatform("windows")]
     public interface IVdsAdvancedDisk {
 
         /**********************************************************************\

@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 
 namespace Visus.DeploymentToolkit.Vds {
@@ -15,6 +16,7 @@ namespace Visus.DeploymentToolkit.Vds {
     /// Extension methods for VDS interfaces, mostly for marshalling variable
     /// size arrays.
     /// </summary>
+    [SupportedOSPlatform("windows")]
     public static class Extensions {
 
         /// <summary>

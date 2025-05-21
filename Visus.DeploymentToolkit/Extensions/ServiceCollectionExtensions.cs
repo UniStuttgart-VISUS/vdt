@@ -131,7 +131,9 @@ namespace Visus.DeploymentToolkit.Extensions {
         internal static IServiceCollection AddRegistry(
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
-            services.AddSingleton<IRegistry, RegistryService>();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                services.AddSingleton<IRegistry, RegistryService>();
+            }
             return services;
         }
 

@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 
 namespace Visus.DeploymentToolkit.Vds {
@@ -12,6 +13,7 @@ namespace Visus.DeploymentToolkit.Vds {
     [ComImport]
     [Guid("07e5c822-f00c-47a1-8fce-b244da56fd06")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [SupportedOSPlatform("windows")]
     public interface IVdsDisk {
 
         /**********************************************************************\

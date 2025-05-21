@@ -165,4 +165,13 @@
   <data name="ImageAlreadyMounted" xml:space="preserve">
     <value>There can only be one WIM image mounted at a time. Unmount "{0}" to mount a new one.</value>
   </data>
+  <data name="InvalidDeploymentShare" xml:space="preserve">
+    <value>A valid location for the deployment share is required.</value>
+  </data>
+  <data name="DeploymentShareAlreadyExists" xml:space="preserve">
+    <value>A file already exists at the desired location "{0}" for the deployment share.</value>
+  </data>
+  <data name="DeploymentShareNotEmpty" xml:space="preserve">
+    <value>The desired location "{0}" for the deployment share is not empty.</value>
+  </data>
 </root>

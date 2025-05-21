@@ -16,6 +16,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.Versioning;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.SystemInformation;
 
@@ -28,6 +29,7 @@ namespace Visus.DeploymentToolkit.Services {
     internal sealed class SystemInformationService : ISystemInformation {
 
         #region Public constructors
+        [SupportedOSPlatform("windows")]
         public SystemInformationService(IRegistry registry,
                 IManagementService wmi,
                 ILogger<SystemInformationService> logger) {
@@ -55,10 +57,12 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public properties
         /// <inheritdoc />
+        [SupportedOSPlatform("windows")]
         public string? AssetTag => (this._enclosure.Value?["SMBIOSAssetTag"]
             as string)?.Trim();
 
         /// <inheritdoc />
+        [SupportedOSPlatform("windows")]
         public IEnumerable<ChassisType> Chassis {
             get {
                 return (this._enclosure.Value?["ChassisTypes"] as IEnumerable)
@@ -100,10 +104,12 @@ namespace Visus.DeploymentToolkit.Services {
         public bool IsServerCore { get; }
 
         /// <inheritdoc />
+        [SupportedOSPlatform("windows")]
         public string? Manufacturer
             => this._computer.Value?["Manufacturer"] as string;
 
         /// <inheritdoc />
+        [SupportedOSPlatform("windows")]
         public string? Model
             => this._computer.Value?["Model"] as string;
 
@@ -127,10 +133,12 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         /// <inheritdoc />
+        [SupportedOSPlatform("windows")]
         public string? SerialNumber
             => this._bios.Value?["SerialNumber"] as string;
 
         /// <inheritdoc />
+        [SupportedOSPlatform("windows")]
         public Guid? Uuid {
             get {
                 var uuid = this._computerProduct.Value?["UUID"] as string;
@@ -141,6 +149,7 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Private methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [SupportedOSPlatform("windows")]
         private string GetHal(IManagementService wmi, IRegistry registry) {
             Debug.Assert(wmi != null);
             Debug.Assert(registry != null);
@@ -209,6 +218,7 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [SupportedOSPlatform("windows")]
         private ManagementObject? GetWmi(string @class) {
             Debug.Assert(@class != null);
             return this._wmi.GetInstancesOf(@class).FirstOrDefault();

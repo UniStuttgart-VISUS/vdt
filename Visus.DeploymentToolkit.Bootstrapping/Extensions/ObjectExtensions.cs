@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using Microsoft.Extensions.Configuration;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -56,6 +57,43 @@ namespace Visus.DeploymentToolkit.Extensions {
 
                 if (r && (v == null)) {
                     var msg = Errors.RequiredStateNotSet;
+                    msg = string.Format(msg, p.Name, dst.GetType().FullName, s);
+                    throw new InvalidOperationException(msg);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Copies (if <paramref name="force"/> is <c>false</c> only unset)
+        /// public settable properties from <paramref name="src"/> to
+        /// <paramref name="dst"/> based on their name.
+        /// </summary>
+        /// <param name="dst"></param>
+        /// <param name="src"></param>
+        /// <param name="force"></param>
+        public static void CopyFrom(this object dst,
+                IConfiguration src,
+                bool force = false) {
+            ArgumentNullException.ThrowIfNull(dst);
+            ArgumentNullException.ThrowIfNull(src);
+
+            var flags = BindingFlags.Public | BindingFlags.Instance;
+            var props = from p in dst.GetType().GetProperties(flags)
+                        let ra = p.GetCustomAttribute<RequiredAttribute>()
+                        where (p.SetMethod != null)
+                        select (p, p.Name, ra != null);
+
+            foreach (var (p, s, r) in props) {
+                var v = p.GetValue(dst);
+
+                if ((v == null) || force) {
+                    if ((v = src[s]) != null) {
+                        p.SetValue(dst, v);
+                    }
+                }
+
+                if (r && (v == null)) {
+                    var msg = Errors.RequiredPropertyNotSet;
                     msg = string.Format(msg, p.Name, dst.GetType().FullName, s);
                     throw new InvalidOperationException(msg);
                 }

@@ -61,6 +61,24 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A file already exists at the desired location &quot;{0}&quot; for the deployment share..
+        /// </summary>
+        internal static string DeploymentShareAlreadyExists {
+            get {
+                return ResourceManager.GetString("DeploymentShareAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The desired location &quot;{0}&quot; for the deployment share is not empty..
+        /// </summary>
+        internal static string DeploymentShareNotEmpty {
+            get {
+                return ResourceManager.GetString("DeploymentShareNotEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The configured task sequence store is empty..
         /// </summary>
         internal static string EmptySequenceStore {
@@ -84,6 +102,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string ImageAlreadyMounted {
             get {
                 return ResourceManager.GetString("ImageAlreadyMounted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A valid location for the deployment share is required..
+        /// </summary>
+        internal static string InvalidDeploymentShare {
+            get {
+                return ResourceManager.GetString("InvalidDeploymentShare", resourceCulture);
             }
         }
         

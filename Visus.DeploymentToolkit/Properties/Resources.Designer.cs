@@ -97,6 +97,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Stage a deployment share.
+        /// </summary>
+        internal static string PrepareDeploymentShare {
+            get {
+                return ResourceManager.GetString("PrepareDeploymentShare", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Task sequence.
         /// </summary>
         internal static string PromptTaskSequence {

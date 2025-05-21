@@ -1,0 +1,8 @@
+{
+    "profiles": {
+        "Visus.DeploymentToolkit.TaskRunner": {
+            "commandName": "Project",
+            "commandLineArgs": "/Task=PrepareDeploymentShare /Parameters:Path=t:\\depshare"
+        }
+    }
+}

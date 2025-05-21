@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Vds;
@@ -17,6 +18,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
     /// <summary>
     /// A <see cref="IDisk"/> as enumerated by the <see cref="VdsService"/>.
     /// </summary>
+    [SupportedOSPlatform("windows")]
     internal sealed class VdsDisk : IDisk {
 
         #region Public properties

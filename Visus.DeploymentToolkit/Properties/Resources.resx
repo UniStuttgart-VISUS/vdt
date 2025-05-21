@@ -129,6 +129,9 @@
   <data name="PartitionFormatDisk" xml:space="preserve">
     <value>Partition and format disk</value>
   </data>
+  <data name="PrepareDeploymentShare" xml:space="preserve">
+    <value>Stage a deployment share</value>
+  </data>
   <data name="PromptTaskSequence" xml:space="preserve">
     <value>Task sequence</value>
   </data>

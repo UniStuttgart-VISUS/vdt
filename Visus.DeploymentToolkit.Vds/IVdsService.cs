@@ -6,6 +6,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 
 namespace Visus.DeploymentToolkit.Vds {
@@ -16,6 +17,7 @@ namespace Visus.DeploymentToolkit.Vds {
     [ComImport]
     [Guid("0818a8ef-9ba9-40d8-a6f9-e22833cc771e")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [SupportedOSPlatform("windows")]
     public interface IVdsService {
 
         /**********************************************************************\

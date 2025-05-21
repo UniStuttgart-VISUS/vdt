@@ -125,11 +125,14 @@ namespace Visus.DeploymentToolkit.Extensions {
         /// </summary>
         /// <param name="services"></param>
         /// <param name="stateFile"></param>
+        /// <param name="required">If <c>true</c>, it is a fatal error if the
+        /// state could not be restored.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         public static IServiceCollection AddState(
                 this IServiceCollection services,
-                string stateFile) {
+                string stateFile,
+                bool required = false) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             _ = stateFile ?? throw new ArgumentNullException(nameof(stateFile));
 
@@ -137,10 +140,24 @@ namespace Visus.DeploymentToolkit.Extensions {
                 var logger = s.GetRequiredService<ILogger<State>>();
                 logger.LogTrace(Resources.RestoringState, stateFile);
                 var state = new State(logger);
-                new ConfigurationBuilder()
-                    .AddJsonFile(stateFile)
-                    .Build()
-                    .Bind(state);
+
+                try {
+                    new ConfigurationBuilder()
+                        .AddJsonFile(stateFile)
+                        .Build()
+                        .Bind(state);
+                } catch (Exception ex) {
+                    var msg = string.Format(
+                        Errors.RestoringStateFailed,
+                        stateFile);
+
+                    if (required) {
+                        logger.LogError(ex, msg);
+                        throw new AggregateException(msg, ex);
+                    } else {
+                        logger.LogWarning(ex, msg);
+                    }
+                }
                 return state;
             });
 

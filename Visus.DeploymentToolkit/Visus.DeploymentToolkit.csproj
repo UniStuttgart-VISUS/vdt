@@ -1,12 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Title>VISUS Deployment Toolkit</Title>
     <Authors>Christoph Müller</Authors>
-    <Company>Visualisierungsinstitut der Universitöt Stuttgart</Company>
+    <Company>Visualisierungsinstitut der Universität Stuttgart</Company>
+    <Product>Project Deimos</Product>
+    <Copyright>Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart</Copyright>
+    <PackageProjectUrl>https://github.com/UniStuttgart-VISUS/vdt/</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>

@@ -7,6 +7,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using System;
+using System.Runtime.Versioning;
 using System.Security.AccessControl;
 using Visus.DeploymentToolkit.Properties;
 
@@ -16,6 +17,7 @@ namespace Visus.DeploymentToolkit.Services {
     /// <summary>
     /// Implementation of the <see cref="IRegistry"/> service.
     /// </summary>
+    [SupportedOSPlatform("windows")]
     internal sealed class RegistryService : IRegistry {
 
         #region Public constructors

@@ -117,55 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CommandFailed" xml:space="preserve">
-    <value>The command "{0}" failed with exit code {1}.</value>
+  <data name="ErrorNoTask" xml:space="preserve">
+    <value>A valid task must be specified via the command line, application settings or environment.</value>
   </data>
-  <data name="CommandNotRun" xml:space="preserve">
-    <value>The command "{0}" did not run.</value>
+  <data name="ErrorTaskInstantiation" xml:space="preserve">
+    <value>The task "{0}" could not be instantiated.</value>
   </data>
-  <data name="CopyDirectoryToFile" xml:space="preserve">
-    <value>The source "{0}" is a directory, but the specified destination "{1}" is a file.</value>
-  </data>
-  <data name="CopySourceMissing" xml:space="preserve">
-    <value>The source "{0}" does not exist and the copy task was configured to be mandatory.</value>
-  </data>
-  <data name="DeploymentSharePathNotSet" xml:space="preserve">
-    <value>The path to the deployment share is required, but was not set.</value>
-  </data>
-  <data name="DuplicateDismScope" xml:space="preserve">
-    <value>Another DISM session is already open. Only one image or installation can be processed at a time.</value>
-  </data>
-  <data name="InvalidWorkingDirectory" xml:space="preserve">
-    <value>The path to the working directory must be set. Make sure that the task is configured accordinly or that the working directory has been configured in the state passed to the task.</value>
-  </data>
-  <data name="NoAgent" xml:space="preserve">
-    <value>No valid path to the deployment agent was provided in the task sequence state.</value>
-  </data>
-  <data name="NoStateFile" xml:space="preserve">
-    <value>A valid file for persisting the state must have been set in the state before running this task.</value>
-  </data>
-  <data name="NoTaskSequence" xml:space="preserve">
-    <value>The value of the task sequence must either be a string identifiying the sequence or a task sequence object itself.</value>
-  </data>
-  <data name="PhaseAlreadySet" xml:space="preserve">
-    <value>The phase has already been set to {0}.</value>
-  </data>
-  <data name="PhaseNotSet" xml:space="preserve">
-    <value>No phase has been assigned yet.</value>
-  </data>
-  <data name="RequiredStateNotSet" xml:space="preserve">
-    <value>The property {0} of {1} is required, was not set and can also not be set from the task sequence state "{2}".</value>
-  </data>
-  <data name="RequiredPropertyNotSet" xml:space="preserve">
-    <value>The property {0} of {1} is required, was not set and can also not be set from a configuration property "{2}".</value>
-  </data>
-  <data name="RestoringStateFailed" xml:space="preserve">
-    <value>The state could not be restored from "{0}".</value>
-  </data>
-  <data name="TaskCannotExecute" xml:space="preserve">
-    <value>The given task cannot execute in phase {0}.</value>
-  </data>
-  <data name="TypeNotTask" xml:space="preserve">
-    <value>The type "{0}" exists, but it is not a task.</value>
+  <data name="ErrorTaskNotFound" xml:space="preserve">
+    <value>The task identified by "{0}" could not be found.</value>
   </data>
 </root>

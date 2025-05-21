@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Versioning;
 using Visus.DeploymentToolkit.Vds;
 
 
@@ -17,6 +18,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
     /// Implementation of <see cref="IVolume"/> based on the VDS.
     /// </summary>
     [DebuggerDisplay("{Name}")]
+    [SupportedOSPlatform("windows")]
     internal sealed class VdsVolume : IVolume {
 
         #region Public properties
