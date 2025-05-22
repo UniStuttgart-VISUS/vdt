@@ -52,6 +52,46 @@ namespace Visus.DeploymentToolkit.Services {
         bool KeyExists(string key);
 
         /// <summary>
+        /// Sets the given value in the registry.
+        /// </summary>
+        /// <param name="key">The path to the key where the value should be
+        /// added.</param>
+        /// <param name="name">The name of the value. This can be <c>null</c>
+        /// for the default value.</param>
+        /// <param name="value">The value to be set.</param>
+        void SetValue(string key, string? name, string value);
+
+        /// <summary>
+        /// Sets the given value in the registry.
+        /// </summary>
+        /// <param name="key">The path to the key where the value should be
+        /// added.</param>
+        /// <param name="name">The name of the value. This can be <c>null</c>
+        /// for the default value.</param>
+        /// <param name="value">The value to be set.</param>
+        void SetValue(string key, string? name, string[] value);
+
+        /// <summary>
+        /// Sets the given value in the registry.
+        /// </summary>
+        /// <param name="key">The path to the key where the value should be
+        /// added.</param>
+        /// <param name="name">The name of the value. This can be <c>null</c>
+        /// for the default value.</param>
+        /// <param name="value">The value to be set.</param>
+        void SetValue(string key, string? name, int value);
+
+        /// <summary>
+        /// Sets the given value in the registry.
+        /// </summary>
+        /// <param name="key">The path to the key where the value should be
+        /// added.</param>
+        /// <param name="name">The name of the value. This can be <c>null</c>
+        /// for the default value.</param>
+        /// <param name="value">The value to be set.</param>
+        void SetValue(string key, string? name, long value);
+
+        /// <summary>
         /// Unloads a registry hive mounted under the specified key.
         /// </summary>
         /// <remarks>

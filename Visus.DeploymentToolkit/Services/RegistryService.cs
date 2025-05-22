@@ -50,7 +50,7 @@ namespace Visus.DeploymentToolkit.Services {
             var keyPath = Path.GetDirectoryName(mountPoint)!;
             var keyName = Path.GetFileName(mountPoint)!;
 
-            var key = this.OpenKey(keyPath, RegistryRights.CreateSubKey);
+            using var key = this.OpenKey(keyPath, RegistryRights.CreateSubKey);
             if (key == null) {
                 throw new ArgumentException(string.Format(
                     Errors.InvalidHiveMountPoint, mountPoint));
@@ -62,7 +62,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <inheritdoc />
         public bool KeyExists(string key) {
             try {
-                var k = this.OpenKey(key, RegistryRights.ReadPermissions);
+                using var k = this.OpenKey(key, RegistryRights.ReadPermissions);
                 return (k != null);
             } catch (Exception ex) {
                 this._logger.LogDebug(ex, Errors.OpenRegistryFailed, key);
@@ -71,13 +71,29 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         /// <inheritdoc />
+        public void SetValue(string key, string? name, string value)
+            => this.SetValue(key, name, value, RegistryValueKind.String);
+
+        /// <inheritdoc />
+        public void SetValue(string key, string? name, string[] value)
+            => this.SetValue(key, name, value, RegistryValueKind.MultiString);
+
+        /// <inheritdoc />
+        public void SetValue(string key, string? name, int value)
+            => this.SetValue(key, name, value, RegistryValueKind.DWord);
+
+        /// <inheritdoc />
+        public void SetValue(string key, string? name, long value)
+            => this.SetValue(key, name, value, RegistryValueKind.QWord);
+
+        /// <inheritdoc />
         public void UnloadHive(string mountPoint) {
             ArgumentException.ThrowIfNullOrWhiteSpace(mountPoint);
 
             var keyPath = Path.GetDirectoryName(mountPoint)!;
             var keyName = Path.GetFileName(mountPoint)!;
 
-            var key = this.OpenKey(keyPath, RegistryRights.CreateSubKey);
+            using var key = this.OpenKey(keyPath, RegistryRights.CreateSubKey);
             if (key == null) {
                 throw new ArgumentException(string.Format(
                     Errors.InvalidHiveMountPoint, mountPoint));
@@ -227,6 +243,28 @@ namespace Visus.DeploymentToolkit.Services {
             }
 
             return hive.OpenSubKey(path, permissions);
+        }
+
+        /// <summary>
+        /// Sets the given registry value.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <param name="kind"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public void SetValue(string key,
+                string? name,
+                object value,
+                RegistryValueKind kind) {
+            using var k = this.OpenKey(key, RegistryRights.SetValue);
+
+            if (k == null) {
+                throw new ArgumentException(string.Format(
+                    Errors.MissingRegistryKey, key));
+            }
+
+            k.SetValue(name, value, kind);
         }
         #endregion
 
