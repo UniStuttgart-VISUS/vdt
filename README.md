@@ -19,3 +19,11 @@ The agent performs the installation from WinPE and finalises it when booting int
 
 ### Visus.DeploymentToolkit.ImageBuilder
 The image builder is intended for creates the images to be services by the TFTP server.
+
+### Visus.DeploymentToolkit.TaskRunner
+The task runner tool allows for executing individual tasks from the deployment toolkit. The application needs the following parameters, either via the command line or via appsettings.json: The `StateFile` where tasks relying on existing state can obtain this information from, and the `Task`, which is the class name of the work item to be executed. Parameters to the tasks (public properties of the task object) can be set via the `Parameters` configuration section.
+
+For instance, one can create a deployment share via the `Visus.DeploymentToolkit.Tasks.PrepareDeploymentShare` task like this:
+```powershell
+Visus.DeploymentToolkit.TaskRunner.exe /Task=PrepareDeploymentShare /Parameters:Path=d:\DeploymentShare
+```
