@@ -174,4 +174,7 @@
   <data name="DeploymentShareNotEmpty" xml:space="preserve">
     <value>The desired location "{0}" for the deployment share is not empty.</value>
   </data>
+  <data name="InvalidHiveMountPoint" xml:space="preserve">
+    <value>The path "{0}" does not designate a valid mount point for a registry hive.</value>
+  </data>
 </root>

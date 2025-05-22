@@ -5,6 +5,8 @@
 // <author>Christoph Müller</author>
 
 
+using System.Security.AccessControl;
+
 namespace Visus.DeploymentToolkit.Services {
 
     /// <summary>
@@ -26,6 +28,19 @@ namespace Visus.DeploymentToolkit.Services {
         object? GetValue(string key, string? name, object? fallback = null);
 
         /// <summary>
+        /// Mounts a registry hive from the given file into the specified key.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method requires administrative permissions.
+        /// </remarks>
+        /// <param name="path">The path to the registry file to be mounted.
+        /// </param>
+        /// <param name="mountPoint">The location where the registry hive should
+        /// be mounted. Note that you should not provide an existing key here,
+        /// but the name of a new key within an existing location.</param>
+        public void LoadHive(string path, string mountPoint);
+
+        /// <summary>
         /// Answer whether the given registry key exists.
         /// </summary>
         /// <remarks>
@@ -35,5 +50,15 @@ namespace Visus.DeploymentToolkit.Services {
         /// <param name="key"></param>
         /// <returns></returns>
         bool KeyExists(string key);
+
+        /// <summary>
+        /// Unloads a registry hive mounted under the specified key.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method requires administrative permissions.
+        /// </remarks>
+        /// <param name="key">The registry key where the hive is mounted.
+        /// </param>
+        void UnloadHive(string key);
     }
 }

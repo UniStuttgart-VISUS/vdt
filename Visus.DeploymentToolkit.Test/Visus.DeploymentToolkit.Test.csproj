@@ -30,4 +30,10 @@
     <ProjectReference Include="..\Visus.DeploymentToolkit\Visus.DeploymentToolkit.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TestData\SYSTEM">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

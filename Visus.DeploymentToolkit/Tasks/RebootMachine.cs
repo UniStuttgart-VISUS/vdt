@@ -69,7 +69,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         [SupportedOSPlatform("windows")]
         public override Task ExecuteAsync(CancellationToken cancellationToken) {
             this._logger.LogTrace("Enabling shutdown privilege.");
-            EnableShutdownPrivilege();
+            Advapi32.AdjustTokenPrivileges("SeShutdownPrivilege", true);
 
             // TODO: preserve state?
 
@@ -88,32 +88,6 @@ namespace Visus.DeploymentToolkit.Tasks {
         #endregion
 
         #region Private class methods
-        private static void EnableShutdownPrivilege() {
-            const uint SE_PRIVILEGE_ENABLED = 2;
-            const int TOKEN_ADJUST_PRIVILEGES = 32;
-            const int TOKEN_QUERY = 8;
-
-            // Get the LUID of the shutdown privilege and mark it enabled.
-            var privileges = new LuidAndAttributes() {
-                Luid = Advapi32.LookupPrivilegeValue("SeShutdownPrivilege"),
-                Attributes = SE_PRIVILEGE_ENABLED
-            };
-
-            // Get the process token of our own process. Note that if this method
-            // succeeds, the resulting token must be closed after use.
-            nint token = Advapi32.OpenProcessToken(
-                TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY);
-
-            // Activate the shutdown privilege on our process token.
-            try {
-                if (!Advapi32.AdjustTokenPrivileges(token, privileges)) {
-                    throw new Win32Exception();
-                }
-            } finally {
-                Kernel32.CloseHandle(token);
-            }
-        }
-
         [DllImport("advapi32.dll", SetLastError = true)]
         private static extern bool InitiateSystemShutdownEx(string? machineName,
             string? message,

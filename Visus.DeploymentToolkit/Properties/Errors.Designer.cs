@@ -115,6 +115,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The path &quot;{0}&quot; does not designate a valid mount point for a registry hive..
+        /// </summary>
+        internal static string InvalidHiveMountPoint {
+            get {
+                return ResourceManager.GetString("InvalidHiveMountPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &quot;{0}&quot; is not a valid image..
         /// </summary>
         internal static string InvalidImage {

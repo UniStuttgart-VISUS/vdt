@@ -5,13 +5,18 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using Visus.DeploymentToolkit.Security;
 using Visus.DeploymentToolkit.Services;
 
 
 namespace Visus.DeploymentToolkit.Test {
 
     [TestClass]
+    // Cf. https://stackoverflow.com/questions/883270/problems-with-deploymentitem-attribute
+    [DeploymentItem(@"TestData\SYSTEM")]
     public sealed class RegistryTest {
+
+        public TestContext TestContext { get; set; }
 
         [TestMethod]
         public void GetValue() {
@@ -33,6 +38,18 @@ namespace Visus.DeploymentToolkit.Test {
             Assert.IsTrue(registry.KeyExists("hkcu"));
             Assert.IsTrue(registry.KeyExists(@"hklm\software"));
             Assert.IsFalse(registry.KeyExists(@"hklm\horst 3000"));
+        }
+
+        [TestMethod]
+        public void MountHive() {
+            var hive = Path.Combine(this.TestContext.DeploymentDirectory!, "SYSTEM");
+            var registry = new RegistryService(this._loggerFactory.CreateLogger<RegistryService>());
+
+            Advapi32.AdjustTokenPrivileges("SeBackupPrivilege", true);
+            Advapi32.AdjustTokenPrivileges("SeRestorePrivilege", true);
+
+            registry.LoadHive(hive, @"hklm\test");
+            registry.UnloadHive(@"hklm\test");
         }
 
         private readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(l => l.AddDebug());

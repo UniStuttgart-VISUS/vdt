@@ -69,6 +69,10 @@ namespace Visus.DeploymentToolkit.Tasks {
                     .Add<CopyWindowsPe>()
                     .Add<MountWim>()
                     .Add<UnmountWim>()
+                    .Add<CopyFiles>(t => {
+                        //t.Source = this._state.DeploymentShare!;
+                        //t.Destination = this._state.InstallationDisk?.MountPoint;
+                    })
                     .Add<CreateWindowsPeIso>()
                     .Build();
             }

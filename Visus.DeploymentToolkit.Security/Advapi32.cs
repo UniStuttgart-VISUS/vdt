@@ -17,9 +17,9 @@ namespace Visus.DeploymentToolkit.Security {
     public static class Advapi32 {
 
         /// <summary>
-        /// Function enables or disables privileges in the specified access token.
-        /// Enabling or disabling privileges in an access token requires
-        /// <c>TOKEN_ADJUST_PRIVILEGES</c> access.
+        /// This function enables or disables privileges in the specified access
+        /// token. Enabling or disabling privileges in an access token requires
+        /// <see cref="TokenAccess.AdjustPrivileges"/> access.
         /// </summary>
         /// <param name="tokenHandle"></param>
         /// <param name="disableAllPrivileges"></param>
@@ -37,6 +37,14 @@ namespace Visus.DeploymentToolkit.Security {
             nint previousState,
             ref int returnLength);
 
+        /// <summary>
+        /// This function enables or disables privileges in the specified access
+        /// token. Enabling or disabling privileges in an access token requires
+        /// <see cref="TokenAccess.AdjustPrivileges"/> access.
+        /// </summary>
+        /// <param name="tokenHandle"></param>
+        /// <param name="newState"></param>
+        /// <returns></returns>
         public static bool AdjustTokenPrivileges(
                 nint tokenHandle,
                 LuidAndAttributes newState) {
@@ -51,6 +59,54 @@ namespace Visus.DeploymentToolkit.Security {
                 0,
                 nint.Zero,
                 ref returnedLength);
+        }
+
+        /// <summary>
+        /// This function enables or disables privileges in the specified access
+        /// token. Enabling or disabling privileges in an access token requires
+        /// <see cref="TokenAccess.AdjustPrivileges"/> access.
+        /// </summary>
+        /// <param name="tokenHandle"></param>
+        /// <param name="privilege"></param>
+        /// <param name="enabled"></param>
+        /// <exception cref="Win32Exception"></exception>
+        public static void AdjustTokenPrivileges(nint tokenHandle,
+                string privilege,
+                bool enabled) {
+            const uint SE_PRIVILEGE_ENABLED = 2;
+            const uint SE_PRIVILEGE_REMOVED = 4;
+
+            // Get the LUID of the privilege and set the new state.
+            var state = enabled ? SE_PRIVILEGE_ENABLED : SE_PRIVILEGE_REMOVED;
+            var privileges = new LuidAndAttributes() {
+                Luid = LookupPrivilegeValue(privilege),
+                Attributes = state
+            };
+
+            if (!AdjustTokenPrivileges(tokenHandle, privileges)) {
+                throw new Win32Exception();
+            }
+        }
+
+        /// <summary>
+        /// Enables or disables privileges for a token of the calling process.
+        /// </summary>
+        /// <param name="privilege"></param>
+        /// <param name="enabled"></param>
+        /// <exception cref="Win32Exception"></exception>
+        public static void AdjustTokenPrivileges(string privilege,
+                bool enabled) {
+            // Get the process token of our own process. Note that if this
+            // method succeeds, the resulting token must be closed after use.
+            nint token = OpenProcessToken(TokenAccess.AdjustPrivileges
+                | TokenAccess.Query);
+
+            // Activate the shutdown privilege on our process token.
+            try {
+                AdjustTokenPrivileges(token, privilege, enabled);
+            } finally {
+                Kernel32.CloseHandle(token);
+            }
         }
 
         /// <summary>
@@ -129,11 +185,23 @@ namespace Visus.DeploymentToolkit.Security {
         }
 
         /// <summary>
+        /// Opens the access token associated with a process.
+        /// </summary>
+        /// <param name="processHandle"></param>
+        /// <param name="desiredAccess"></param>
+        /// <returns></returns>
+        public static nint OpenProcessToken(
+                nint processHandle,
+                TokenAccess desiredAccess) {
+            return OpenProcessToken(processHandle, (int) desiredAccess);
+        }
+
+        /// <summary>
         /// Opens the access token associated with the current process.
         /// </summary>
         /// <param name="desiredAccess"></param>
         /// <returns></returns>
-        public static nint OpenProcessToken(int desiredAccess) {
+        public static nint OpenProcessToken(TokenAccess desiredAccess) {
             return OpenProcessToken(
                 Process.GetCurrentProcess().Handle,
                 desiredAccess);
