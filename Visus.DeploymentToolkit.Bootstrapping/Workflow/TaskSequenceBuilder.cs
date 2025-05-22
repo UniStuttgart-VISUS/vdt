@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Visus.DeploymentToolkit.Properties;
+using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
 
 
@@ -54,6 +55,16 @@ namespace Visus.DeploymentToolkit.Workflow {
                 configure(task);
             }
 
+            return this.Add(task);
+        }
+
+        /// <inheritdoc />
+        public ITaskSequenceBuilder Add<TTask>(Action<TTask, IState> configure)
+                where TTask : ITask {
+            ArgumentNullException.ThrowIfNull(configure);
+            var t = this._services.GetRequiredService<TTask>();
+            var task = new SelfConfiguringTask<TTask>(t, configure,
+                this._services);
             return this.Add(task);
         }
 
@@ -116,6 +127,17 @@ namespace Visus.DeploymentToolkit.Workflow {
                 configure(task);
             }
 
+            return this.Insert(index, task);
+        }
+
+        /// <inheritdoc />
+        public ITaskSequenceBuilder Insert<TTask>(int index,
+                Action<TTask, IState> configure)
+                where TTask : ITask {
+            ArgumentNullException.ThrowIfNull(configure);
+            var t = this._services.GetRequiredService<TTask>();
+            var task = new SelfConfiguringTask<TTask>(t, configure,
+                this._services);
             return this.Insert(index, task);
         }
         #endregion

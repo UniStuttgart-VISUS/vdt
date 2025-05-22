@@ -169,6 +169,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A mounted WIM image was expected to be stored in &quot;{0}&quot;, but was not found..
+        /// </summary>
+        internal static string MissingWimMount {
+            get {
+                return ResourceManager.GetString("MissingWimMount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &quot;{0}&quot; does not designate or does not begin with a valid registry hive..
         /// </summary>
         internal static string NoRegistryHive {

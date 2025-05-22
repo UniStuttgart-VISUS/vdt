@@ -33,6 +33,14 @@ var services = new ServiceCollection()
 var log = services.GetRequiredService<ILogger<Program>>();
 var options = services.GetRequiredService<IOptions<ApplicationOptions>>().Value;
 
+// Inject the configuration stuff from the application options.
+{
+    var state = services.GetRequiredService<IState>();
+    state.DeploymentShare = options.DeploymentShare;
+    log.LogInformation("Using deployment share \"{DeploymentShare}\".",
+        state.DeploymentShare);
+}
+
 // Load or create the task sequence to run.
 try {
     var task = services.GetRequiredService<SelectWindowsPeSequence>();

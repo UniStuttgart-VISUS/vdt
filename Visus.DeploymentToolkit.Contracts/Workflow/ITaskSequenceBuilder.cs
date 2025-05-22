@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using System;
+using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
 
 
@@ -21,15 +22,16 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// the sequence.
         /// </summary>
         /// <param name="task">The task to be added.</param>
+        /// <param name="configure">A configuration callback that </param>
         /// <returns><c>this</c>.</returns>
         /// <exception cref="System.ArgumentNullException">If
         /// <paramref name="task"/> is <c>null</c>.</exception>
         ITaskSequenceBuilder Add(ITask task);
 
         /// <summary>
-        /// Instantiates a <typeparamref name="TTask"/> from
-        /// <paramref name="services"/>, possibly configures it and adds it
-        /// to <paramref name="that"/>.
+        /// Instantiates a <typeparamref name="TTask"/> from the
+        /// <see cref="IServiceProvider"/> container, possibly configures it
+        /// and adds it to the task sequence.
         /// </summary>
         /// <typeparam name="TTask">The type of the task to be added, which must
         /// have been registered with the <see cref="IServiceProvider"/> used by
@@ -39,6 +41,23 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// to the task sequence.</param>
         /// <returns><c>this</c>.</returns>
         ITaskSequenceBuilder Add<TTask>(Action<TTask>? configure = null)
+            where TTask : ITask;
+
+        /// <summary>
+        /// Instantiates a <typeparamref name="TTask"/> from the
+        /// <see cref="IServiceProvider"/> container, and registers the given
+        /// configuration callback to be executed immediately before the task
+        /// is running.
+        /// </summary>
+        /// <typeparam name="TTask">The type of the task to be added, which must
+        /// have been registered with the <see cref="IServiceProvider"/> used by
+        /// the application.</typeparam>
+        /// <param name="configure">A configuration callback that is executed by
+        /// the task sequence immediately before the task is running.</param>
+        /// <returns><c>this</c>.</returns>
+        /// <exception cref="ArgumentNullException">If
+        /// <paramref name="configure" /> is <c>null</c></exception>
+        ITaskSequenceBuilder Add<TTask>(Action<TTask, IState> configure)
             where TTask : ITask;
 
         /// <summary>
@@ -81,8 +100,9 @@ namespace Visus.DeploymentToolkit.Workflow {
         ITaskSequenceBuilder Insert(int index, ITask task);
 
         /// <summary>
-        /// Insert the given <paramref name="task"/> at the given position in
-        /// the workflow, possibly after configuring it.
+        /// Instantiates a <typeparamref name="TTask"/> from the
+        /// <see cref="IServiceProvider"/> container, possibly configures it
+        /// using the given callback and inserts it at the specified position.
         /// </summary>
         /// <typeparam name="TTask">The type of the task to be added, which must
         /// have been registered with the <see cref="IServiceProvider"/> used by
@@ -95,6 +115,26 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <returns><c>this</c>.</returns>
         ITaskSequenceBuilder Insert<TTask>(int index,
             Action<TTask>? configure = null)
+            where TTask : ITask;
+
+        /// <summary>
+        /// Instantiates a <typeparamref name="TTask"/> from the
+        /// <see cref="IServiceProvider"/> container, inserts it at the
+        /// specified position and adds a configuration step immediately before
+        /// the task is running.
+        /// </summary>
+        /// <typeparam name="TTask">The type of the task to be added, which must
+        /// have been registered with the <see cref="IServiceProvider"/> used by
+        /// the application.</typeparam>
+        /// <param name="index">The position at which the task is inserted into
+        /// the sequence.</param>
+        /// <param name="configure">A configuration callback that is executed by
+        /// the task sequence immediately before the task is running.</param>
+        /// <returns><c>this</c>.</returns>
+        /// <exception cref="ArgumentNullException">If
+        /// <paramref name="configure" /> is <c>null</c></exception>
+        ITaskSequenceBuilder Insert<TTask>(int index,
+            Action<TTask, IState> configure)
             where TTask : ITask;
     }
 }

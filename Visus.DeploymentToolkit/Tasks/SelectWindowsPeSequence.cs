@@ -6,8 +6,10 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Workflow;
 
@@ -68,11 +70,18 @@ namespace Visus.DeploymentToolkit.Tasks {
                     .ForPhase(Phase.PreinstalledEnvironment)
                     .Add<CopyWindowsPe>()
                     .Add<MountWim>()
-                    .Add<UnmountWim>()
-                    .Add<CopyFiles>(t => {
-                        //t.Source = this._state.DeploymentShare!;
-                        //t.Destination = this._state.InstallationDisk?.MountPoint;
+                    .Add<CopyFiles>((t, s) => {
+                        ArgumentNullException.ThrowIfNull(s.DeploymentShare);
+                        ArgumentNullException.ThrowIfNull(s.WimMount);
+                        t.Source = Path.Combine(s.DeploymentShare!,
+                            DeploymentShare.Layout.BootstrapperPath);
+                        t.Destination = Path.Combine(s.WimMount.MountPoint,
+                            "deimos");
+                        t.IsRecursive = true;
+                        t.IsRequired = true;
+                        t.IsCritical = true;
                     })
+                    .Add<UnmountWim>()
                     .Add<CreateWindowsPeIso>()
                     .Build();
             }

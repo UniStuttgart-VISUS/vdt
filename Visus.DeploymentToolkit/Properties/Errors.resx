@@ -180,4 +180,7 @@
   <data name="MissingRegistryKey" xml:space="preserve">
     <value>The registry key "{0}" does not exist.</value>
   </data>
+  <data name="MissingWimMount" xml:space="preserve">
+    <value>A mounted WIM image was expected to be stored in "{0}", but was not found.</value>
+  </data>
 </root>
