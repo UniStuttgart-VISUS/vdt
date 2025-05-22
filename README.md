@@ -44,3 +44,25 @@ All steps that can be executed by Project Deimos must implement the [`Visus.Depl
 > [!TIP]
 > Use the [`Visus.DeploymentToolkit.Extensions.FromStateAttribute`](Visus.DeploymentToolkit.Bootstrapping/Extensions/FromStateAttribute.cs) and the [`Visus.DeploymentToolkit.Extensions.ObjectExtensions.CopyFrom`](Visus.DeploymentToolkit.Bootstrapping/Extensions/ObjectExtensions.cs) extension method to set properties of a task from the injected state. This enables previous tasks to pass on data to their successors.
  
+### Task Sequences
+Task sequences are usually authored by end users in the form of JSON files that are deserialised by the [`Visus.DeploymentToolkit.Workflow.ITaskSequenceStore`](Visus.DeploymentToolkit.Contracts/Workflow/ITaskSequenceStore.cs). However, task sequences can also be created programmatically like this:
+```c#
+ITaskSequenceFactory tasks; // This should be injected from the DI.
+
+tasks.CreateBuilder()
+    .ForPhase(Phase.PreinstalledEnvironment)
+    .Add<CopyWindowsPe>()
+    .Add<MountWim>()
+    .Add<CopyFiles>((t, s) => {
+        ArgumentNullException.ThrowIfNull(s.DeploymentShare);
+        ArgumentNullException.ThrowIfNull(s.WimMount);
+        t.Source = Path.Combine(s.DeploymentShare!, DeploymentShare.Layout.BootstrapperPath);
+        t.Destination = Path.Combine(s.WimMount.MountPoint, "deimos");
+        t.IsRecursive = true;
+        t.IsRequired = true;
+        t.IsCritical = true;
+    })
+    .Add<UnmountWim>()
+    .Add<CreateWindowsPeIso>()
+    .Build();
+```
