@@ -28,3 +28,19 @@ For instance, one can create a deployment share via the `Visus.DeploymentToolkit
 Visus.DeploymentToolkit.TaskRunner.exe /Task=PrepareDeploymentShare /Parameters:Path=d:\DeploymentShare
 ```
 
+## Development
+### Tasks
+All steps that can be executed by Project Deimos must implement the [`Visus.DeploymentToolkit.ITask`](Visus.DeploymentToolkit.Contracts/Tasks/ITask.cs) interface. Typically, this is achieved by inheriting from [`Visus.DeploymentToolkit.Tasks.TaskBase`](Visus.DeploymentToolkit.Bootstrapping/Tasks/TaskBase.cs). Tasks are configured via their public properties. The actual work is performed within `ExecuteAsync`.
+
+> [!IMPORTANT]
+> Implementations should avoid performing blocking operations and just return `Task.CompletedTask`. Start new tasks manually when performing long-running operations that are not inherently asynchronous.
+
+> [!IMPORTANT]
+> Tasks should be placed in `Visus.DeploymentToolkit` instead of `Visus.DeploymentToolkit.Bootstrapping` whenever possible. Adding tasks to the bootstrapping library increases the size of the boot image and requires the image to be recreated for them to become available. Adding tasks in the main library allows the bootstrapper to download them from the network without the need to regenerate the images.
+
+> [!TIP]
+> Use the [`Visus.DeploymentToolkit.Tasks.SupportsPhaseAttribute`](Visus.DeploymentToolkit.Bootstrapping/Tasks/SupportsPhaseAttribute.cs) to have `CanExecute` implemented automatically.
+
+> [!TIP]
+> Use the [`Visus.DeploymentToolkit.Extensions.FromStateAttribute`](Visus.DeploymentToolkit.Bootstrapping/Extensions/FromStateAttribute.cs) and the [`Visus.DeploymentToolkit.Extensions.ObjectExtensions.CopyFrom`](Visus.DeploymentToolkit.Bootstrapping/Extensions/ObjectExtensions.cs) extension method to set properties of a task from the injected state. This enables previous tasks to pass on data to their successors.
+ 
