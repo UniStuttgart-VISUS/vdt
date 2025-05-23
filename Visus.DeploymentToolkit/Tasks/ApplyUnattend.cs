@@ -7,10 +7,10 @@
 using Microsoft.Dism;
 using Microsoft.Extensions.Logging;
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Services;
+using Visus.DeploymentToolkit.Validation;
 using Visus.DeploymentToolkit.Workflow;
 
 
@@ -20,6 +20,7 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// Applies an unattend file to a mounted Windows installation.
     /// </summary>
     [SupportsPhase(Phase.Installation)]
+    [SupportsPhase(Phase.PrepareImage)]
     internal sealed class ApplyUnattend : TaskBase {
 
         #region Public constructors
@@ -51,7 +52,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Gets or sets the path to the unattend file to apply.
         /// </summary>
-        [Required]
+        [FileExists]
         public string UnattendFile { get; set; } = null!;
         #endregion
 
@@ -65,15 +66,18 @@ namespace Visus.DeploymentToolkit.Tasks {
                 ? DismApi.OpenOnlineSession()
                 : DismApi.OpenOfflineSession(this.InstallationPath);
 
-            this._logger.LogInformation("Applying unattend file "
-                + "\"{UnattendFile}\" to \"{Path}\".",
-                this.UnattendFile, this.InstallationPath);
-            DismApi.ApplyUnattend(session, this.UnattendFile, true);
+            try {
+                this._logger.LogInformation("Applying unattend file "
+                    + "\"{UnattendFile}\" to \"{Path}\".",
+                    this.UnattendFile, this.InstallationPath);
+                DismApi.ApplyUnattend(session, this.UnattendFile, true);
 
-            this._logger.LogTrace("Committing changes to \"{Path}\".",
-                this.InstallationPath);
-            DismApi.CommitImage(session, false);
-            DismApi.CloseSession(session);
+                this._logger.LogTrace("Committing changes to \"{Path}\".",
+                    this.InstallationPath);
+                DismApi.CommitImage(session, false);
+            } finally {
+                DismApi.CloseSession(session);
+            }
 
             return Task.CompletedTask;
         }

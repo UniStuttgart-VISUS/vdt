@@ -117,67 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="EmptySequenceStore" xml:space="preserve">
-    <value>The configured task sequence store is empty.</value>
-  </data>
-  <data name="HalNotFound" xml:space="preserve">
-    <value>The system could not determine the type of the HAL.</value>
-  </data>
-  <data name="NoRegistryHive" xml:space="preserve">
-    <value>"{0}" does not designate or does not begin with a valid registry hive.</value>
-  </data>
-  <data name="NoVdsServiceLoader" xml:space="preserve">
-    <value>The service loader for the Virtual Disk Services does not implement the expected interface.</value>
-  </data>
-  <data name="OpenRegistryFailed" xml:space="preserve">
-    <value>Failed to open the registry path "{0}".</value>
-  </data>
-  <data name="PhaseAlreadySet" xml:space="preserve">
-    <value>The phase has already been set to {0}.</value>
-  </data>
-  <data name="SequenceNotInStore" xml:space="preserve">
-    <value>The specified task sequence "{0}" has not been found in the task sequence store.</value>
-  </data>
-  <data name="TsStoreNotFound" xml:space="preserve">
-    <value>The task sequence store at "{0}" could not be found.</value>
-  </data>
-  <data name="WaitVdsFailed" xml:space="preserve">
-    <value>Failed waiting for Virtual Disk Service to become ready.</value>
-  </data>
-  <data name="InvalidWindowsPeDirectory" xml:space="preserve">
-    <value>The directory holding Windows PE is invalid.</value>
-  </data>
-  <data name="InvalidIsoOutput" xml:space="preserve">
-    <value>The output location for the ISO to create is invalid.</value>
-  </data>
-  <data name="UnexpectedPhase" xml:space="preserve">
-    <value>The specified task sequence is for phase {0}, but a task sequence for phase {1} was expected.</value>
-  </data>
-  <data name="InvalidMountPoint" xml:space="preserve">
-    <value>"{0}" is not a valid mount point.</value>
-  </data>
-  <data name="InvalidImage" xml:space="preserve">
-    <value>"{0}" is not a valid image.</value>
-  </data>
-  <data name="ImageAlreadyMounted" xml:space="preserve">
-    <value>There can only be one WIM image mounted at a time. Unmount "{0}" to mount a new one.</value>
-  </data>
-  <data name="InvalidDeploymentShare" xml:space="preserve">
-    <value>A valid location for the deployment share is required.</value>
-  </data>
-  <data name="DeploymentShareAlreadyExists" xml:space="preserve">
-    <value>A file already exists at the desired location "{0}" for the deployment share.</value>
-  </data>
-  <data name="DeploymentShareNotEmpty" xml:space="preserve">
-    <value>The desired location "{0}" for the deployment share is not empty.</value>
-  </data>
-  <data name="InvalidHiveMountPoint" xml:space="preserve">
-    <value>The path "{0}" does not designate a valid mount point for a registry hive.</value>
-  </data>
-  <data name="MissingRegistryKey" xml:space="preserve">
-    <value>The registry key "{0}" does not exist.</value>
-  </data>
-  <data name="MissingWimMount" xml:space="preserve">
-    <value>A mounted WIM image was expected to be stored in "{0}", but was not found.</value>
+  <data name="UnsupportedWaikArchitecture" xml:space="preserve">
+    <value>"{0}" is not an architecture supported by Windows PE or the deployment tools.</value>
   </data>
 </root>

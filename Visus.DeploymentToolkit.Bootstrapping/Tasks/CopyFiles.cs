@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,6 +46,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// The destination must be a folder unless the <see cref="Source"/>
         /// designates a single file.
         /// </remarks>
+        [Required]
         public string Destination { get; set; } = null!;
 
         /// <summary>
@@ -70,6 +72,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// If the source is a directory, all of its contents will be copied to
         /// the destination.
         /// </remarks>
+        [Required]
         public string Source { get; set; } = null!;
         #endregion
 
@@ -86,6 +89,8 @@ namespace Visus.DeploymentToolkit.Tasks {
             if (this.IsOverwrite) {
                 flags |= CopyFlags.Overwrite;
             }
+
+            this.Validate();
 
             return this._copy.CopyAsync(this.Source, this.Destination, flags);
         }

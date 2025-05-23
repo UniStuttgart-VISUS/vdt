@@ -15,6 +15,7 @@ using Visus.DeploymentToolkit.DeploymentShare;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
+using Visus.DeploymentToolkit.Validation;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
@@ -26,8 +27,11 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         #region Public constructors
         public PrepareDeploymentShare(IState state,
+                IDirectory directory,
                 ILogger<PrepareDeploymentShare> logger)
                 : base(state, logger) {
+            this._directory = directory
+                ?? throw new ArgumentNullException(nameof(directory));
             this.Name = Resources.PrepareDeploymentShare;
         }
         #endregion
@@ -37,81 +41,81 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// Gets or sets the location of the deployment share.
         /// </summary>
         [Required]
+        [EmptyDirectory]
         public string Path { get; set; } = null!;
         #endregion
 
         #region Public methods
         /// <inheritdoc />
-        public override Task ExecuteAsync(
+        public override async Task ExecuteAsync(
                 CancellationToken cancellationToken) {
             this.CopyFrom(this._state);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (string.IsNullOrWhiteSpace(this.Path)) {
-                throw new ArgumentException(Errors.InvalidDeploymentShare);
-            }
-
-            if (File.Exists(this.Path)) {
-                throw new ArgumentException(string.Format(
-                    Errors.DeploymentShareAlreadyExists,
-                    this.Path));
-            }
-
-            if (Directory.Exists(this.Path)) {
-                if (Directory.GetFileSystemEntries(this.Path).Any()) {
-                    throw new ArgumentException(string.Format(
-                        Errors.DeploymentShareNotEmpty,
-                        this.Path));
-                }
-            } else {
+            if (!Directory.Exists(this.Path)) {
                 this._logger.LogInformation("Creating deployment share at "
                     + "\"{Path}\".", this.Path);
-                Directory.CreateDirectory(this.Path);
+                await this._directory.CreateAsync(this.Path)
+                    .ConfigureAwait(false);
             }
+
+            // Note: this validation mainly checks that the share did not exist
+            // before, but was either created or an empty folder.
+            this.Validate();
+            cancellationToken.ThrowIfCancellationRequested();
 
             {
                 var p = System.IO.Path.Combine(this.Path, Layout.BinaryPath);
                 this._logger.LogInformation("Creating directory \"{Path}\" for "
                     + "binaries.", p);
-                Directory.CreateDirectory(p);
+                await this._directory.CreateAsync(p).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
             }
 
             {
                 var p = System.IO.Path.Combine(this.Path, Layout.BootFilePath);
                 this._logger.LogInformation("Creating directory \"{Path}\" for "
                     + "boot files.", p);
-                Directory.CreateDirectory(p);
+                await this._directory.CreateAsync(p).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
             }
 
             {
                 var p = System.IO.Path.Combine(this.Path, Layout.BootstrapperPath);
                 this._logger.LogInformation("Creating directory \"{Path}\" for "
                     + "bootstrapper binaries.", p);
-                Directory.CreateDirectory(p);
+                await this._directory.CreateAsync(p).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
             }
 
             {
                 var p = System.IO.Path.Combine(this.Path, Layout.DriverPath);
                 this._logger.LogInformation("Creating directory \"{Path}\" for "
                     + "drivers.", p);
-                Directory.CreateDirectory(p);
+                await this._directory.CreateAsync(p).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
             }
 
             {
                 var p = System.IO.Path.Combine(this.Path, Layout.InstallImagePath);
                 this._logger.LogInformation("Creating directory \"{Path}\" for "
                     + "image files.", p);
-                Directory.CreateDirectory(p);
+                await this._directory.CreateAsync(p).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
             }
 
             {
                 var p = System.IO.Path.Combine(this.Path, Layout.TaskSequencePath);
                 this._logger.LogInformation("Creating directory \"{Path}\" for "
                     + "task sequences.", p);
-                Directory.CreateDirectory(p);
+                await this._directory.CreateAsync(p).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
             }
-
-            return Task.CompletedTask;
         }
+        #endregion
+
+        #region Private fields
+        private readonly IDirectory _directory;
         #endregion
     }
 }

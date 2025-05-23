@@ -7,12 +7,14 @@
 using Microsoft.Extensions.Logging;
 using Serilog.Core;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
+using Visus.DeploymentToolkit.Validation;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
@@ -45,6 +47,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// Gets or sets the path to the image to be mounted.
         /// </summary>
         [FromState(nameof(ImagePath))]
+        [FileExists]
         public string ImagePath { get; set; } = null!;
 
         /// <summary>
@@ -57,6 +60,8 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// Gets or sets the path where the image is mounted.
         /// </summary>
         [FromState(nameof(MountPoint))]
+        [Required]
+        [NonExistingFile]
         public string MountPoint { get; set; } = null!;
         #endregion
 
@@ -64,24 +69,8 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <inheritdoc />
         public override Task ExecuteAsync(CancellationToken cancellationToken) {
             this.CopyFrom(this._state);
-
-            if (string.IsNullOrEmpty(this.ImagePath)
-                    && !File.Exists(this.ImagePath)) {
-                throw new ArgumentException(string.Format(
-                    Errors.InvalidImage, this.ImagePath));
-            }
-
-            if (string.IsNullOrEmpty(this.MountPoint)
-                    && !File.Exists(this.MountPoint)) {
-                throw new ArgumentException(string.Format(
-                    Errors.InvalidMountPoint, this.MountPoint));
-            }
-
-            if (this._state.WimMount != null) {
-                throw new InvalidOperationException(string.Format(
-                    Errors.ImageAlreadyMounted,
-                    this._state.WimMount.MountPoint));
-            }
+            this.Validate();
+            cancellationToken.ThrowIfCancellationRequested();
 
             this._logger.LogInformation("Mounting \"{Image}\" at "
                 + "\"{MountPoint}\".", this.ImagePath, this.MountPoint);
@@ -93,6 +82,19 @@ namespace Visus.DeploymentToolkit.Tasks {
                 this._logger.LogInformation("\"{Image}\" mounted at "
                 + "\"{MountPoint}\".", this.ImagePath, this.MountPoint);
             });
+        }
+        #endregion
+
+        #region Protected methods
+        /// <inheritdoc />
+        protected override void Validate() {
+            base.Validate();
+
+            if (this._state.WimMount != null) {
+                throw new ValidationException(string.Format(
+                    Errors.ImageAlreadyMounted,
+                    this._state.WimMount.MountPoint));
+            }
         }
         #endregion
 

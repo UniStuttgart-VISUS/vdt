@@ -5,12 +5,11 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
-using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using Visus.DeploymentToolkit.Extensions;
-using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
+using Visus.DeploymentToolkit.Validation;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
@@ -38,14 +37,11 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// importantly including the firmware files and the oscdimg tool for
         /// creating ISOs.
         /// </summary>
+        [DirectoryExists]
         public string DeploymentToolsRootDirectory {
             get;
             set;
-        } = Path.Combine(ProgrammeFiles,
-            "Windows Kits",
-            "10",
-            "Assessment and Deployment Kit",
-            "Deployment Tools");
+        } = Waik.Defaults.DeploymentToolsPath;
 
         /// <summary>
         /// Gets or sets the working directory where the image will be staged.
@@ -61,14 +57,11 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// Gets or sets the root directory where the WinPE images are stored in
         /// the Windows Assessment and Deployment Kit (ADK).
         /// </summary>
+        [DirectoryExists]
         public string WinPeSourceDirectory {
             get;
             set;
-        } = Path.Combine(ProgrammeFiles,
-            "Windows Kits",
-            "10",
-            "Assessment and Deployment Kit",
-            "Windows Preinstallation Environment");
+        } = Waik.Defaults.WinPePath;
         #endregion
 
         #region Protected constructors
@@ -82,11 +75,6 @@ namespace Visus.DeploymentToolkit.Tasks {
         #endregion
 
         #region Protected properties
-        /// <summary>
-        /// The folder where we expect the WAIK to be installed.
-        /// </summary>
-        protected static string ProgrammeFiles => Environment.GetFolderPath(
-            Environment.SpecialFolder.ProgramFilesX86);
 
         /// <summary>
         /// Gets the directory where the firmware files are copied to.
@@ -116,14 +104,8 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// Gets the architecture string used in the WinPE paths, which is
         /// derived from <see cref="Architecture"/>.
         /// </summary>
-        protected string WinPeArchitecture => this.Architecture switch {
-            Architecture.X64 => "amd64",
-            Architecture.X86 => "x86",
-            Architecture.Arm => "arm",
-            Architecture.Arm64 => "arm64",
-            _ => throw new NotSupportedException(string.Format(
-                Errors.UnsupportedArchitecture, this.Architecture))
-        };
+        protected string WinPeArchitecture => Waik.Tools.GetArchitecturePath(
+            this.Architecture);
         #endregion
     }
 }

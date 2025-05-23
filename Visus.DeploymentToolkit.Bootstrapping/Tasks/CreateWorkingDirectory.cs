@@ -53,7 +53,8 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// directory from the current <see cref="IState"/>.
         /// </remarks>
         [FromState(WellKnownStates.WorkingDirectory)]
-        public string? Path { get; set; }
+        [Required]
+        public string Path { get; set; } = null!;
         #endregion
 
         #region Public methods
@@ -61,11 +62,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         public override async Task ExecuteAsync(
                 CancellationToken cancellationToken) {
             this.CopyFrom(this._state);
-
-            if (string.IsNullOrWhiteSpace(this.Path)) {
-                throw new InvalidOperationException(
-                    Errors.InvalidWorkingDirectory);
-            }
+            this.Validate();
 
             this._logger.LogInformation("Creating working directory at "
                 + "\"{WorkingDirectory}\".", this.Path);

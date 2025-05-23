@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
+using Visus.DeploymentToolkit.Validation;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
@@ -33,9 +34,13 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <exception cref="ArgumentNullException"></exception>
         public CopyWindowsPe(IState state,
                 ICopy copy,
+                IDirectory directory,
                 ILogger<CopyWindowsPe> logger)
                 : base(state, logger) {
-            this._copy = copy ?? throw new ArgumentNullException(nameof(copy));
+            this._copy = copy
+                ?? throw new ArgumentNullException(nameof(copy));
+            this._directory = directory
+                ?? throw new ArgumentNullException(nameof(directory));
             this.IsCritical = true;
             this.Name = Resources.CopyWindowsPe;
         }
@@ -67,6 +72,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// If this path is not given, it will be derived from
         /// <see cref="WinPeSourceDirectory"/>.
         /// </remarks>
+        [FileExists]
         public string? WimSourcePath { get; set; }
         #endregion
 
@@ -103,15 +109,23 @@ namespace Visus.DeploymentToolkit.Tasks {
                     "winpe.wim");
             }
 
+            this.Validate();
+
             this._logger.LogInformation("Creating Windows PE working directory "
                 + "\"{WorkingDirectory}\".", this.WorkingDirectory);
-            Directory.CreateDirectory(this.WorkingDirectory);
+            await this._directory.CreateAsync(this.WorkingDirectory)
+                .ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
 
             this._logger.LogTrace("Preparing directory structure in "
                 + "\"{WorkingDirectory}\".", this.WorkingDirectory);
-            Directory.CreateDirectory(this.FirmwareDirectory);
-            Directory.CreateDirectory(this.MediaDirectory);
-            Directory.CreateDirectory(this.MountDirectory);
+            await this._directory.CreateAsync(this.FirmwareDirectory)
+                .ConfigureAwait(false);
+            await this._directory.CreateAsync(this.MediaDirectory)
+                .ConfigureAwait(false);
+            await this._directory.CreateAsync(this.MountDirectory)
+                .ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
 
             // Copy the boot files.
             this._logger.LogTrace("Copying boot files ...");
@@ -119,6 +133,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                 this.MediaDirectory,
                 CopyFlags.Recursive | CopyFlags.Required)
                 .ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
 
             // Copy the image.
             this._logger.LogTrace("Copying WIM file ...");
@@ -126,6 +141,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                 this.WimPath,
                 CopyFlags.Required)
                 .ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
 
             // Copy the firmware files.
             this._logger.LogTrace("Copying firmware files ...");
@@ -133,11 +149,13 @@ namespace Visus.DeploymentToolkit.Tasks {
                 this.FirmwareDirectory,
                 CopyFlags.Required)
                 .ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
 
             await this._copy.CopyAsync(this.BiosSourcePath,
                 this.FirmwareDirectory,
                 CopyFlags.None)
                 .ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
 
             // Persist the working directory for subsequent tasks.
             this._state.WorkingDirectory = this.WorkingDirectory;
@@ -164,6 +182,7 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         #region Private fields
         private readonly ICopy _copy;
+        private readonly IDirectory _directory;
         #endregion
     }
 }

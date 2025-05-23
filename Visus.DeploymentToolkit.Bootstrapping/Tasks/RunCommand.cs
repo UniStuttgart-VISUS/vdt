@@ -87,6 +87,8 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <inheritdoc />
         public override async Task ExecuteAsync(
                 CancellationToken cancellationToken) {
+            this.Validate();
+
             var cmd = this._factory.Run(this.Path)
                 .WithArguments(this.Arguments)
                 .InWorkingDirectory(this.WorkingDirectory)

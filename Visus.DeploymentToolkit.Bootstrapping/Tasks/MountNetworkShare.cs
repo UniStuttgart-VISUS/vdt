@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Runtime.Versioning;
@@ -50,11 +51,13 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Gets or sets the mount point for the share, i.e. the drive letter.
         /// </summary>
+        [Required]
         public string MountPoint { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets the path to the share.
         /// </summary>
+        [Required]
         public string Path { get; set; } = null!;
         #endregion
 
@@ -62,6 +65,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <inheritdoc />
         [SupportedOSPlatform("windows")]
         public override Task ExecuteAsync(CancellationToken cancellationToken) {
+            this.Validate();
             this._logger.LogInformation("Mapping \"{NetworkPath}\" to "
                 + "\"{MountPoint}\" as {User}.",
                 this.Path,

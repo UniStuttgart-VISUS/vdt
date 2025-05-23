@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
+using Visus.DeploymentToolkit.Validation;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
@@ -52,11 +54,13 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// If this parameter is not specified, the path is derived from the
         /// <see cref="DeploymentToolsRootDirectory"/>
         /// </remarks>
+        [FileExists]
         public string? OscdImgPath { get; set; }
 
         /// <summary>
         /// Gets or sets the path of the ISO file to be created.
         /// </summary>
+        [Required]
         public string Path { get; set; } = "winpe.iso";
         #endregion
 
@@ -66,16 +70,6 @@ namespace Visus.DeploymentToolkit.Tasks {
                 CancellationToken cancellationToken) {
             this.CopyFrom(this._state);
 
-            if (string.IsNullOrWhiteSpace(this.WorkingDirectory)) {
-                throw new InvalidOperationException(
-                    Errors.InvalidWindowsPeDirectory);
-            }
-
-            if (string.IsNullOrWhiteSpace(this.Path)) {
-                throw new InvalidOperationException(
-                    Errors.InvalidIsoOutput);
-            }
-
             if (string.IsNullOrWhiteSpace(this.OscdImgPath)) {
                 this.OscdImgPath = System.IO.Path.Combine(
                     this.DeploymentToolsRootDirectory,
@@ -83,6 +77,9 @@ namespace Visus.DeploymentToolkit.Tasks {
                     "Oscdimg",
                     "oscdimg.exe");
             }
+
+            this.Validate();
+            cancellationToken.ThrowIfCancellationRequested();
 
             var cmd = this._commands.Run(this.OscdImgPath)
                 .WithArguments($"-bootdata:{this.BootData} -u1 -udfver102 "
@@ -96,6 +93,18 @@ namespace Visus.DeploymentToolkit.Tasks {
             this._logger.LogInformation("ISO file \"{Path}\" created "
                 + "successfully.", this.Path);
         }
+        #endregion
+
+        #region Private methods
+        /// <inheritdoc />
+        protected override void Validate() {
+            base.Validate();
+
+            if (!Directory.Exists(this.WorkingDirectory)) {
+                throw new ValidationException(Errors.InvalidWindowsPeDirectory);
+            }
+        }
+
         #endregion
 
         #region Private properties

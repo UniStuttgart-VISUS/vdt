@@ -48,6 +48,8 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <inheritdoc />
         public override Task ExecuteAsync(CancellationToken cancellationToken) {
             this.CopyFrom(this._state);
+            this.Validate();
+            cancellationToken.ThrowIfCancellationRequested();
 
             var mount = this._state.WimMount;
 

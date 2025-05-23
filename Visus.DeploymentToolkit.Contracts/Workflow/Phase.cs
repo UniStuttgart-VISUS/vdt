@@ -21,11 +21,21 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// Servicing of the pre-installed environment that the computers will
         /// boot into from TFTP.
         /// </summary>
+        /// <remarks>
+        /// This phase runs on a full Windows installation with the WAIK
+        /// installed, from which it gets a WinPE template that is customised
+        /// by the task sequence.
+        /// </remarks>
         PreinstalledEnvironment = 100,
 
         /// <summary>
         /// We are running in the boostrapper preparing the deployment agent.
         /// </summary>
+        /// <remarks>
+        /// This phase uses the stuff from the bootstrapping library to mount
+        /// the deployment share, get the actual deployment agent and start
+        /// other task sequences using the agent.
+        /// </remarks>
         Bootstrapping = 200,
 
         /// <summary>
@@ -40,6 +50,19 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// The first boot into the actual system that has been deployed in the
         /// <see cref="Installation"/> phase.
         /// </summary>
-        PostInstallation = 400
+        PostInstallation = 400,
+
+        /// <summary>
+        /// This phase runs on a full Windows installation that represents the
+        /// gold image to be captured. It performs the generalisation of the
+        /// image using sysprep.
+        /// </summary>
+        PrepareImage = 10000,
+
+        /// <summary>
+        /// This phase runs in WinPE like <see cref="Installation"/>, but it
+        /// does not deploy an image, but captures the system disk.
+        /// </summary>
+        CaptureImage = 10100
     }
 }

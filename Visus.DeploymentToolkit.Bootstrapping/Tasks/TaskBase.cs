@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Services;
@@ -56,10 +57,19 @@ namespace Visus.DeploymentToolkit.Tasks {
         }
         #endregion
 
-        #region Protected fields
+        #region Protected methods
         /// <summary>
-        /// A logger for writing progress and error notes.
+        /// Validates all annotated properties of the task and throws a
+        /// <see cref="ValidationException"/> if any error was found.
         /// </summary>
+        protected virtual void Validate() => Validator.ValidateObject(
+            this, new ValidationContext(this));
+        #endregion
+
+        #region Protected fields
+            /// <summary>
+            /// A logger for writing progress and error notes.
+            /// </summary>
         protected readonly ILogger _logger;
 
         /// <summary>
