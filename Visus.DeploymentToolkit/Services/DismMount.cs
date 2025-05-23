@@ -78,6 +78,10 @@ namespace Visus.DeploymentToolkit.Services {
             this.Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+        /// <inheritdoc />
+        public override string? ToString()
+            => this.MountPoint ?? base.ToString();
         #endregion
 
         #region Private methods
