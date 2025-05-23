@@ -4,8 +4,9 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using Microsoft.Win32;
+using System.Runtime.Versioning;
 
-using System.Security.AccessControl;
 
 namespace Visus.DeploymentToolkit.Services {
 
@@ -13,7 +14,16 @@ namespace Visus.DeploymentToolkit.Services {
     /// The interface of the registry service, which allows retrieving data from
     /// and manipulating the registry.
     /// </summary>
+    [SupportedOSPlatform("windows")]
     public interface IRegistry {
+
+        /// <summary>
+        /// Delete the given value from <paramref name="key"/>.
+        /// </summary>
+        /// <param name="key">The path to the key holding the value to be
+        /// deleted.</param>
+        /// <param name="name">The name of the value to be deleted.</param>
+        void DeleteValue(string key, string name);
 
         /// <summary>
         /// Gets the given value from the registry.
@@ -59,7 +69,10 @@ namespace Visus.DeploymentToolkit.Services {
         /// <param name="name">The name of the value. This can be <c>null</c>
         /// for the default value.</param>
         /// <param name="value">The value to be set.</param>
-        void SetValue(string key, string? name, string value);
+        /// <param name="kind">The type used for stor <paramref name="value"/>.
+        /// </param>
+        void SetValue(string key, string? name, object value,
+            RegistryValueKind kind);
 
         /// <summary>
         /// Sets the given value in the registry.
@@ -69,7 +82,16 @@ namespace Visus.DeploymentToolkit.Services {
         /// <param name="name">The name of the value. This can be <c>null</c>
         /// for the default value.</param>
         /// <param name="value">The value to be set.</param>
-        void SetValue(string key, string? name, string[] value);
+        /// <param name="expand">If <c>true</c>, the string will be marked
+        /// that variables are to be expanded.</param>
+        void SetValue(string key,
+                string? name,
+                string value,
+                bool expand = false)
+            => this.SetValue(key,
+                name,
+                value,
+                expand ? RegistryValueKind.ExpandString : RegistryValueKind.String);
 
         /// <summary>
         /// Sets the given value in the registry.
@@ -79,7 +101,8 @@ namespace Visus.DeploymentToolkit.Services {
         /// <param name="name">The name of the value. This can be <c>null</c>
         /// for the default value.</param>
         /// <param name="value">The value to be set.</param>
-        void SetValue(string key, string? name, int value);
+        void SetValue(string key, string? name, string[] value)
+            => this.SetValue(key, name, value, RegistryValueKind.MultiString);
 
         /// <summary>
         /// Sets the given value in the registry.
@@ -89,7 +112,19 @@ namespace Visus.DeploymentToolkit.Services {
         /// <param name="name">The name of the value. This can be <c>null</c>
         /// for the default value.</param>
         /// <param name="value">The value to be set.</param>
-        void SetValue(string key, string? name, long value);
+        void SetValue(string key, string? name, int value)
+            => this.SetValue(key, name, value, RegistryValueKind.DWord);
+
+        /// <summary>
+        /// Sets the given value in the registry.
+        /// </summary>
+        /// <param name="key">The path to the key where the value should be
+        /// added.</param>
+        /// <param name="name">The name of the value. This can be <c>null</c>
+        /// for the default value.</param>
+        /// <param name="value">The value to be set.</param>
+        void SetValue(string key, string? name, long value)
+            => this.SetValue(key, name, value, RegistryValueKind.QWord);
 
         /// <summary>
         /// Unloads a registry hive mounted under the specified key.
@@ -100,5 +135,17 @@ namespace Visus.DeploymentToolkit.Services {
         /// <param name="key">The registry key where the hive is mounted.
         /// </param>
         void UnloadHive(string key);
+
+        /// <summary>
+        /// Answer whether the given registry key value.
+        /// </summary>
+        /// <remarks>
+        /// This method never throws. Any error indicating failure to open the
+        /// registry will yield <c>false</c>.
+        /// </remarks>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        bool ValueExists(string key, string? value);
     }
 }

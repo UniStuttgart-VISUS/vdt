@@ -180,4 +180,10 @@
   <data name="MissingWimMount" xml:space="preserve">
     <value>A mounted WIM image was expected to be stored in "{0}", but was not found.</value>
   </data>
+  <data name="CannotDeleteDefaultValue" xml:space="preserve">
+    <value>The default value of a registry cannot be deleted.</value>
+  </data>
+  <data name="MissingRegistryValue" xml:space="preserve">
+    <value>A value registry value must be provided unless the value is to be deleted.</value>
+  </data>
 </root>

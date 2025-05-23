@@ -38,6 +38,12 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public methods
         /// <inheritdoc />
+        public void DeleteValue(string key, string name) {
+            using var k = this.OpenKey(key, RegistryRights.ReadKey);
+            k?.DeleteValue(name, false);
+        }
+
+        /// <inheritdoc />
         public object? GetValue(string key, string? name, object? fallback) {
             using var k = this.OpenKey(key, RegistryRights.ReadKey);
             return k?.GetValue(name, fallback);
@@ -70,21 +76,28 @@ namespace Visus.DeploymentToolkit.Services {
             }
         }
 
-        /// <inheritdoc />
-        public void SetValue(string key, string? name, string value)
-            => this.SetValue(key, name, value, RegistryValueKind.String);
+        /// <summary>
+        /// Sets the given registry value.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <param name="kind"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public void SetValue(string key,
+                string? name,
+                object value,
+                RegistryValueKind kind) {
+            using var k = this.OpenKey(key,
+                RegistryRights.ReadKey | RegistryRights.SetValue);
 
-        /// <inheritdoc />
-        public void SetValue(string key, string? name, string[] value)
-            => this.SetValue(key, name, value, RegistryValueKind.MultiString);
+            if (k == null) {
+                throw new ArgumentException(string.Format(
+                    Errors.MissingRegistryKey, key));
+            }
 
-        /// <inheritdoc />
-        public void SetValue(string key, string? name, int value)
-            => this.SetValue(key, name, value, RegistryValueKind.DWord);
-
-        /// <inheritdoc />
-        public void SetValue(string key, string? name, long value)
-            => this.SetValue(key, name, value, RegistryValueKind.QWord);
+            k.SetValue(name, value, kind);
+        }
 
         /// <inheritdoc />
         public void UnloadHive(string mountPoint) {
@@ -100,6 +113,17 @@ namespace Visus.DeploymentToolkit.Services {
             }
 
             this.UnloadHive(key, keyName);
+        }
+
+        /// <inheritdoc />
+        public bool ValueExists(string key, string? value) {
+            try {
+                using var k = this.OpenKey(key, RegistryRights.ReadKey);
+                return (k?.GetValue(value, null) != null);
+            } catch (Exception ex) {
+                this._logger.LogDebug(ex, Errors.OpenRegistryFailed, key);
+                return false;
+            }
         }
         #endregion
 
@@ -243,28 +267,6 @@ namespace Visus.DeploymentToolkit.Services {
             }
 
             return hive.OpenSubKey(path, permissions);
-        }
-
-        /// <summary>
-        /// Sets the given registry value.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <param name="kind"></param>
-        /// <exception cref="ArgumentException"></exception>
-        public void SetValue(string key,
-                string? name,
-                object value,
-                RegistryValueKind kind) {
-            using var k = this.OpenKey(key, RegistryRights.SetValue);
-
-            if (k == null) {
-                throw new ArgumentException(string.Format(
-                    Errors.MissingRegistryKey, key));
-            }
-
-            k.SetValue(name, value, kind);
         }
         #endregion
 

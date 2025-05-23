@@ -61,6 +61,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The default value of a registry cannot be deleted..
+        /// </summary>
+        internal static string CannotDeleteDefaultValue {
+            get {
+                return ResourceManager.GetString("CannotDeleteDefaultValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A file already exists at the desired location &quot;{0}&quot; for the deployment share..
         /// </summary>
         internal static string DeploymentShareAlreadyExists {
@@ -165,6 +174,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string MissingRegistryKey {
             get {
                 return ResourceManager.GetString("MissingRegistryKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A value registry value must be provided unless the value is to be deleted..
+        /// </summary>
+        internal static string MissingRegistryValue {
+            get {
+                return ResourceManager.GetString("MissingRegistryValue", resourceCulture);
             }
         }
         

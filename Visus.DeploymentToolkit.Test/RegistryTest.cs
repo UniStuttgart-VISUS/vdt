@@ -19,6 +19,16 @@ namespace Visus.DeploymentToolkit.Test {
         public TestContext TestContext { get; set; }
 
         [TestMethod]
+        public void ValueExists() {
+            var registry = new RegistryService(this._loggerFactory.CreateLogger<RegistryService>());
+
+            {
+                var value = registry.ValueExists(@"HKLM\SYSTEM\CurrentControlSet\Control\ProductOptions", "ProductType");
+                Assert.IsTrue(value);
+            }
+        }
+
+        [TestMethod]
         public void GetValue() {
             var registry = new RegistryService(this._loggerFactory.CreateLogger<RegistryService>());
 
