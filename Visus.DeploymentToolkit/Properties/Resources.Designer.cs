@@ -151,6 +151,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Share a folder.
+        /// </summary>
+        internal static string ShareFolder {
+            get {
+                return ResourceManager.GetString("ShareFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Task sequence {0}.
         /// </summary>
         internal static string TaskSequenceName {
@@ -165,6 +174,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string UnmountWim {
             get {
                 return ResourceManager.GetString("UnmountWim", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete shared resource.
+        /// </summary>
+        internal static string Unshare {
+            get {
+                return ResourceManager.GetString("Unshare", resourceCulture);
             }
         }
     }

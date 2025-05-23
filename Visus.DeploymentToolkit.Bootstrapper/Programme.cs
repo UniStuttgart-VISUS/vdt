@@ -65,7 +65,10 @@ log.LogInformation("Preparing bootstrapping task sequence.");
 var taskSequenceBuilder = services.GetRequiredService<ITaskSequenceBuilder>()
     .ForPhase(Phase.Bootstrapping)
     .Add<MountDeploymentShare>()
-    .Add<CreateWorkingDirectory>()
+    .Add<CreateDirectory>(t => {
+        t.Path = options.WorkingDirectory;
+        t.State = WellKnownStates.WorkingDirectory;
+    })
     .Add<PersistState>(t => t.Path = options.StatePath)
     .Add<RunAgent>();
     //.Add<CopyFiles>(services, t => t.Source = options.LogFile)

@@ -106,6 +106,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The directory &quot;{0}&quot; already exists..
+        /// </summary>
+        internal static string DirectoryExists {
+            get {
+                return ResourceManager.GetString("DirectoryExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Another DISM session is already open. Only one image or installation can be processed at a time..
         /// </summary>
         internal static string DuplicateDismScope {

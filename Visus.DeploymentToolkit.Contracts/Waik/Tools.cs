@@ -124,6 +124,19 @@ namespace Visus.DeploymentToolkit.Waik {
                 "oscdimg.exe");
 
         /// <summary>
+        /// Gets the path to the Windows setup files.
+        /// </summary>
+        /// <param name="basePath">The installation path of the WAIK.</param>
+        /// <param name="architecture">The platform architecture to get the
+        /// tools for.</param>
+        /// <returns>The path of the setup files.</returns>
+        public static string GetSetupPath(string basePath,
+                Architecture architecture)
+            => Path.Combine(basePath,
+                "Windows Setup",
+                GetArchitecturePath(architecture));
+
+        /// <summary>
         /// Gets the base path where the WinPE extension to WAIK is installed.
         /// </summary>
         /// <param name="basePath">The installation path of the WAIK.</param>

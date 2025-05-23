@@ -147,11 +147,17 @@
   <data name="SelectInstallDisk" xml:space="preserve">
     <value>Select installation disk</value>
   </data>
+  <data name="ShareFolder" xml:space="preserve">
+    <value>Share a folder</value>
+  </data>
   <data name="TaskSequenceName" xml:space="preserve">
     <value>Task sequence {0}</value>
     <comment>The template for the name of a newly created task sequence.</comment>
   </data>
   <data name="UnmountWim" xml:space="preserve">
     <value>Unmount a WIM image</value>
+  </data>
+  <data name="Unshare" xml:space="preserve">
+    <value>Delete shared resource</value>
   </data>
 </root>

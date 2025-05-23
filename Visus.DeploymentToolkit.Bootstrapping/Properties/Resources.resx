@@ -120,8 +120,8 @@
   <data name="CopyFiles" xml:space="preserve">
     <value>Copy files</value>
   </data>
-  <data name="CreateWorkingDirectory" xml:space="preserve">
-    <value>Create working directory</value>
+  <data name="CreateDirectory" xml:space="preserve">
+    <value>Create directory</value>
   </data>
   <data name="CurrentUser" xml:space="preserve">
     <value>current user</value>
@@ -158,5 +158,8 @@
   </data>
   <data name="RunCommand" xml:space="preserve">
     <value>Run command</value>
+  </data>
+  <data name="SetWorkingDirectory" xml:space="preserve">
+    <value>Set the working directory state</value>
   </data>
 </root>

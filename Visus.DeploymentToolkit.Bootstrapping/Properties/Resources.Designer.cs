@@ -70,11 +70,11 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Create working directory.
+        ///   Looks up a localized string similar to Create directory.
         /// </summary>
-        internal static string CreateWorkingDirectory {
+        internal static string CreateDirectory {
             get {
-                return ResourceManager.GetString("CreateWorkingDirectory", resourceCulture);
+                return ResourceManager.GetString("CreateDirectory", resourceCulture);
             }
         }
         
@@ -183,6 +183,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string RunCommand {
             get {
                 return ResourceManager.GetString("RunCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set the working directory state.
+        /// </summary>
+        internal static string SetWorkingDirectory {
+            get {
+                return ResourceManager.GetString("SetWorkingDirectory", resourceCulture);
             }
         }
     }
