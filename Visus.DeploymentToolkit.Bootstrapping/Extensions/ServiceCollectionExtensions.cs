@@ -7,6 +7,7 @@
 using Microsoft.Extensions.Compliance.Redaction;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
@@ -31,6 +32,10 @@ namespace Visus.DeploymentToolkit.Extensions {
         /// <summary>
         /// Adds all services exported by the bootstrapping library.
         /// </summary>
+        /// <remarks>
+        /// This method performs &quot;try add&quot; for all services, so it is
+        /// safe to call it multiple times.
+        /// </remarks>
         /// <param name="services"></param>
         /// <returns><paramref name="services"/>.</returns>
         /// <exception cref="ArgumentNullException">If
@@ -187,7 +192,7 @@ namespace Visus.DeploymentToolkit.Extensions {
                         where t.IsAssignableTo(typeof(ITask)) && !t.IsAbstract
                         select t;
             foreach (var task in tasks) {
-                services.AddTransient(task);
+                services.TryAddTransient(task);
             }
 
             return services;
@@ -204,7 +209,7 @@ namespace Visus.DeploymentToolkit.Extensions {
         internal static IServiceCollection AddCommands(
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
-            services.AddSingleton<ICommandBuilderFactory,
+            services.TryAddSingleton<ICommandBuilderFactory,
                 CommandBuilderFactory>();
             return services;
         }
@@ -219,7 +224,7 @@ namespace Visus.DeploymentToolkit.Extensions {
         internal static IServiceCollection AddConsoleInput(
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
-            services.AddSingleton<IConsoleInput, ConsoleInputService>();
+            services.TryAddSingleton<IConsoleInput, ConsoleInputService>();
             return services;
         }
 
@@ -232,7 +237,7 @@ namespace Visus.DeploymentToolkit.Extensions {
         internal static IServiceCollection AddCopyService(
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
-            services.AddSingleton<ICopy, CopyService>();
+            services.TryAddSingleton<ICopy, CopyService>();
             return services;
         }
 
@@ -245,7 +250,7 @@ namespace Visus.DeploymentToolkit.Extensions {
         internal static IServiceCollection AddDirectoryService(
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
-            services.AddSingleton<IDirectory, DirectoryService>();
+            services.TryAddSingleton<IDirectory, DirectoryService>();
             return services;
         }
 
@@ -258,7 +263,7 @@ namespace Visus.DeploymentToolkit.Extensions {
         internal static IServiceCollection AddDriveInfo(
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
-            services.AddSingleton<IDriveInfo, DriveInfoService>();
+            services.TryAddSingleton<IDriveInfo, DriveInfoService>();
             return services;
         }
 
@@ -272,7 +277,7 @@ namespace Visus.DeploymentToolkit.Extensions {
         internal static IServiceCollection AddEnvironment(
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
-            services.AddSingleton<IEnvironment, EnvironmentService>();
+            services.TryAddSingleton<IEnvironment, EnvironmentService>();
             return services;
         }
 
@@ -286,7 +291,8 @@ namespace Visus.DeploymentToolkit.Extensions {
         internal static IServiceCollection AddSessionSecurity(
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
-            services.AddSingleton<ISessionSecurity, SessionSecurityService>();
+            services.TryAddSingleton<ISessionSecurity,
+                SessionSecurityService>();
             return services;
         }
 
@@ -300,7 +306,8 @@ namespace Visus.DeploymentToolkit.Extensions {
         internal static IServiceCollection AddTaskSequenceBuilder(
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
-            services.AddTransient<ITaskSequenceBuilder, TaskSequenceBuilder>();
+            services.TryAddTransient<ITaskSequenceBuilder,
+                TaskSequenceBuilder>();
             return services;
         }
         #endregion

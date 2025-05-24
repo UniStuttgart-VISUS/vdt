@@ -37,6 +37,7 @@ namespace Visus.DeploymentToolkit.Application {
         /// Initialises a new instance.
         /// </summary>
         /// <param name="arguments"></param>
+        /// <param name="bootstrappingOnly"></param>
         /// <param name="configure"></param>
         /// <param name="stateFile"></param>
         /// <param name="logFile"></param>
