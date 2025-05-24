@@ -59,9 +59,8 @@ namespace Visus.DeploymentToolkit.Extensions {
         /// <exception cref="ArgumentNullException"></exception>
         public static IServiceCollection AddLogging(
                 this IServiceCollection services,
-                string file) {
+                string? file) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
-            _ = file ?? throw new ArgumentNullException(nameof(file));
 
             // Configure the log redaction to be enabled in the next step.
             services.AddRedaction(o => {
@@ -78,7 +77,12 @@ namespace Visus.DeploymentToolkit.Extensions {
                 o.AddDebug();
 #endif // DEBUG
 
-                var config = new LoggerConfiguration().WriteTo.File(file);
+                var config = new LoggerConfiguration();
+                
+                if (file != null) {
+                    config.WriteTo.File(file);
+                }
+
 #if DEBUG
                 config.MinimumLevel.Verbose();
 #else // DEBUG

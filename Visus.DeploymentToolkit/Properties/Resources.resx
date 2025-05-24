@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CheckElevation" xml:space="preserve">
+    <value>Check for administrative permissions</value>
+  </data>
   <data name="CopyWindowsPe" xml:space="preserve">
     <value>Copy Windows Pre-installed Environment</value>
   </data>
@@ -140,6 +143,9 @@
   </data>
   <data name="RebootMessage" xml:space="preserve">
     <value>A task sequence requires the machine to be restarted.</value>
+  </data>
+  <data name="RegistryValue" xml:space="preserve">
+    <value>Modify a registry value</value>
   </data>
   <data name="SelectInstallationSequence" xml:space="preserve">
     <value>Select task sequence</value>

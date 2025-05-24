@@ -75,7 +75,6 @@ namespace Visus.DeploymentToolkit.Tasks {
         #endregion
 
         #region Protected properties
-
         /// <summary>
         /// Gets the directory where the firmware files are copied to.
         /// </summary>

@@ -20,14 +20,25 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// <summary>
     /// A task setting a value in the registry.
     /// </summary>
-    /// <param name="state">The current state of the task sequence.</param>
-    /// <param name="registry">The registry service.</param>
-    /// <param name="logger">A logger for the task.</param>
     [SupportedOSPlatform("windows")]
-    public sealed class RegistryValue(IState state,
-            IRegistry registry,
-            ILogger<RegistryValue> logger)
-            : TaskBase(state, logger) {
+    public sealed class RegistryValue : TaskBase {
+
+        #region Public constructors
+        /// <summary>
+        /// Initialises a new instance.
+        /// </summary>
+        /// <param name="state">The current state of the task sequence.</param>
+        /// <param name="registry">The registry service.</param>
+        /// <param name="logger">A logger for the task.</param>
+        public RegistryValue(IState state,
+                IRegistry registry,
+                ILogger<RegistryValue> logger)
+                : base(state, logger) {
+            this._registry = registry
+                ?? throw new ArgumentNullException(nameof(registry));
+            this.Name = Resources.RegistryValue;
+        }
+        #endregion
 
         #region Public properties
         /// <summary>
@@ -135,8 +146,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         #endregion
 
         #region Private fields
-        private readonly IRegistry _registry = registry
-            ?? throw new ArgumentNullException(nameof(registry));
+        private readonly IRegistry _registry;
         #endregion
     }
 }

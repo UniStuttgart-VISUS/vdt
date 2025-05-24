@@ -205,6 +205,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The task sequence requires elevation, but the process is not running as administrator..
+        /// </summary>
+        internal static string NotAdministrator {
+            get {
+                return ResourceManager.GetString("NotAdministrator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The service loader for the Virtual Disk Services does not implement the expected interface..
         /// </summary>
         internal static string NoVdsServiceLoader {

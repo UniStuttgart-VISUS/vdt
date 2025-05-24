@@ -186,4 +186,7 @@
   <data name="MissingRegistryValue" xml:space="preserve">
     <value>A value registry value must be provided unless the value is to be deleted.</value>
   </data>
+  <data name="NotAdministrator" xml:space="preserve">
+    <value>The task sequence requires elevation, but the process is not running as administrator.</value>
+  </data>
 </root>

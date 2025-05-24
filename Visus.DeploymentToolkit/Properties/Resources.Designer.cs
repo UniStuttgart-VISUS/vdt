@@ -61,6 +61,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Check for administrative permissions.
+        /// </summary>
+        internal static string CheckElevation {
+            get {
+                return ResourceManager.GetString("CheckElevation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copy Windows Pre-installed Environment.
         /// </summary>
         internal static string CopyWindowsPe {
@@ -129,6 +138,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string RebootMessage {
             get {
                 return ResourceManager.GetString("RebootMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modify a registry value.
+        /// </summary>
+        internal static string RegistryValue {
+            get {
+                return ResourceManager.GetString("RegistryValue", resourceCulture);
             }
         }
         
