@@ -115,6 +115,11 @@ namespace Visus.DeploymentToolkit.Application {
         /// Gets the DI container for the application.
         /// </summary>
         protected IServiceProvider Services { get; }
+
+        /// <summary>
+        /// Gets the application state from the DI container.
+        /// </summary>
+        protected IState State => this.GetRequiredService<IState>();
         #endregion
 
         #region Protected methods

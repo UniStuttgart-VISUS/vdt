@@ -32,14 +32,15 @@ namespace Visus.DeploymentToolkit.ImageBuilder {
 
                 // If the previous task succeeded, the task sequence now must be
                 // set in the state and we can just run it.
-                this.Logger.LogInformation("Running the installation task sequence.");
+                this.Logger.LogInformation("Running the installation task "
+                    + "sequence.");
                 var state = this.GetRequiredService<IState>();
                 var sequence = state.TaskSequence as ITaskSequence;
                 await sequence!.ExecuteAsync(state);
 
                 return 0;
             } catch (Exception ex) {
-                this.Logger.LogError(ex, "Building a boot image failed.");
+                this.Logger.LogCritical(ex, "Building a boot image failed.");
                 return 1;
             }
         }

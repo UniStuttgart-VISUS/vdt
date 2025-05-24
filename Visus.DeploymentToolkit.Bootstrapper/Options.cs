@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using System.IO;
+using Visus.DeploymentToolkit.Application;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
@@ -16,7 +17,16 @@ namespace Visus.DeploymentToolkit {
     /// Structured representation of the options used for bootstrapping the
     /// installation.
     /// </summary>
-    public sealed class BootstrappingOptions {
+    public sealed class Options : OptionsBase {
+
+        #region Public constructors
+        /// <summary>
+        /// Initialises a new instance.
+        /// </summary>
+        public Options() {
+            this.LogFile = "deimosbootstrapper.log";
+        }
+        #endregion
 
         #region Public properties
         /// <summary>
@@ -42,19 +52,6 @@ namespace Visus.DeploymentToolkit {
         public string? DeploymentDrive { get; set; }
 
         /// <summary>
-        /// Gets or sets the UNC path of the deployment share.
-        /// </summary>
-        /// <remarks>
-        /// If this property is empty and the <see cref="MountDeploymentShare"/>
-        /// task has been configured to be interactive, which is the default, the
-        /// task will prompt the user for the share. This property can be used
-        /// to preconfigure the input such that users do not have to type it
-        /// over and over.
-        /// </remarks>
-        [State(WellKnownStates.DeploymentShare)]
-        public string DeploymentShare { get; set; } = string.Empty;
-
-        /// <summary>
         /// Gets or sets the name of the domain the deployment server belongs
         /// to.
         /// </summary>
@@ -65,18 +62,6 @@ namespace Visus.DeploymentToolkit {
         /// </remarks>
         [State(WellKnownStates.DeploymentShareDomain)]
         public string? Domain { get; set; }
-
-        /// <summary>
-        /// Gets the path to the log file.
-        /// </summary>
-        public string LogFile { get; set; } = "deimosbootstrapper.log";
-
-        /// <summary>
-        /// Gets or sets the path to the state file where the bootstrapper
-        /// persists the current <see cref="Services.IState"/> before calling
-        /// into the agent.
-        /// </summary>
-        public string StateFile { get; set; } = PersistState.DefaultPath;
 
         /// <summary>
         /// Gets the path to the <see cref="StateFile"/> in the
