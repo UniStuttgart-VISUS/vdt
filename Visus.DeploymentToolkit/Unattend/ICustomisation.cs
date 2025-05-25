@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System.Xml;
 using System.Xml.Linq;
 
 
@@ -13,7 +14,7 @@ namespace Visus.DeploymentToolkit.Unattend {
     /// The interface of a customisation step that can be applied to an
     /// unattend.xml file.
     /// </summary>
-    public interface ICustomisationStep {
+    public interface ICustomisation {
 
         #region Public methods
         /// <summary>

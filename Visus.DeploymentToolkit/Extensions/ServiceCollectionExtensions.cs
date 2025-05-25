@@ -236,7 +236,7 @@ namespace Visus.DeploymentToolkit.Extensions {
 
             var assembly = MethodBase.GetCurrentMethod()!.DeclaringType!.Assembly;
             var steps = from t in assembly.GetTypes()
-                        where t.IsAssignableTo(typeof(ICustomisationStep)) && !t.IsAbstract
+                        where t.IsAssignableTo(typeof(ICustomisation)) && !t.IsAbstract
                         select t;
             foreach (var step in steps) {
                 services.AddTransient(step);

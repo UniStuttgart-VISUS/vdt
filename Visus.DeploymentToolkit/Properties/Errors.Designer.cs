@@ -223,6 +223,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The XPath expression &quot;{0}&quot; did match more than element..
+        /// </summary>
+        internal static string NonUniqueXPath {
+            get {
+                return ResourceManager.GetString("NonUniqueXPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &quot;{0}&quot; does not designate or does not begin with a valid registry hive..
         /// </summary>
         internal static string NoRegistryHive {

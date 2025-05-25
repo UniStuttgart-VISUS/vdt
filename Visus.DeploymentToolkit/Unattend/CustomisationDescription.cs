@@ -4,67 +4,68 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
-using System.Text.Json;
-using System.Threading.Tasks;
+using System.Linq;
+using System.Reflection;
 
 
 namespace Visus.DeploymentToolkit.Unattend {
 
     /// <summary>
-    /// Describes how an unattend.xml file should be customised.
+    /// Describes a customisation step for an unattend.xml file.
     /// </summary>
-    /// <remarks>
-    /// This is effectively a glorified list of
-    /// <see cref="CustomisationDescription"/>s that can be loaded from a
-    /// JSON file.
-    /// </remarks>
-    public sealed class CustomisationDescription
-            : IEnumerable<CustomisationStepDescription> {
+    public sealed class CustomisationDescription {
+
+        #region Factory methods
+        /// <summary>
+        /// Creates a description for the given <see cref="ICustomisation"/>
+        /// <paramref name="step"/>.
+        /// </summary>
+        /// <typeparam name="TStep">The type of the step to be described.
+        /// </typeparam>
+        /// <param name="step">The step to create the description for.</param>
+        /// <returns>The description of the given <paramref name="step"/>.
+        /// </returns>
+        public static CustomisationDescription Create<TStep>(TStep step)
+                where TStep : ICustomisation {
+            ArgumentNullException.ThrowIfNull(step);
+            var flags = BindingFlags.Public | BindingFlags.Instance;
+            var type = step.GetType();
+            var parameters = from p in type.GetProperties(flags)
+                             where p.CanRead && p.CanWrite
+                             select new {
+                                 Key = p.Name,
+                                 Value = p.GetValue(step)
+                             };
+
+            var retval = new CustomisationDescription() {
+                Parameters = parameters.ToDictionary(p => p.Key, p => p.Value)!,
+                Type = type.FullName!
+            };
+
+            return retval;
+        }
+        #endregion
 
         #region Public properties
         /// <summary>
-        /// Gets or sets an optional description of what the customisation
-        /// tries to achieve.
+        /// Gets or sets the properties to be set in the step.
         /// </summary>
-        public string? Description { get; set; }
+        public IDictionary<string, object?> Parameters { get; init; } = null!;
 
         /// <summary>
-        /// Gets or sets the descriptions of the individual customisation
-        /// steps.
+        /// Gets or sets the fully qualified type name of the customisation
+        /// step.
         /// </summary>
         [Required]
-        public IEnumerable<CustomisationStepDescription> Steps {
-            get;
-            set;
-        } = [];
+        public string Type { get; set; } = null!;
         #endregion
 
         #region Public methods
-        /// <summary>
-        /// Saves the description to the file at the given location.
-        /// </summary>
-        /// <param name="path">The path to the file where the description should
-        /// be stored.</param>
-        /// <returns>A task for waiting to the serialisation to complete.</returns>
-        public Task SaveAsync(string path) {
-            using var file = File.OpenWrite(path);
-            return JsonSerializer.SerializeAsync(file, this,
-                new JsonSerializerOptions() {
-                    AllowTrailingCommas = false,
-                    WriteIndented = true
-                });
-        }
-
         /// <inheritdoc />
-        public IEnumerator<CustomisationStepDescription> GetEnumerator()
-            => this.Steps!.GetEnumerator();
-
-        /// <inheritdoc />
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        public override string ToString() => this.Type ?? base.ToString()!;
         #endregion
     }
 }

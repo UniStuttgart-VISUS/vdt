@@ -13,7 +13,7 @@ namespace Visus.DeploymentToolkit.Test {
 
     [TestClass]
     // Cf. https://stackoverflow.com/questions/883270/problems-with-deploymentitem-attribute
-    [DeploymentItem(@"TestData\SYSTEM")]
+    [DeploymentItem(@"TestData\Unattend_PE_x64.xm")]
     public sealed class RegistryTest {
 
         public TestContext TestContext { get; set; }

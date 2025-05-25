@@ -198,4 +198,7 @@
   <data name="InexistentXPath" xml:space="preserve">
     <value>The element selected by the XPath expression "{0}" does not exist.</value>
   </data>
+  <data name="NonUniqueXPath" xml:space="preserve">
+    <value>The XPath expression "{0}" did match more than element.</value>
+  </data>
 </root>
