@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
+using Visus.DeploymentToolkit.Unattend;
 using Visus.DeploymentToolkit.Workflow;
 
 
@@ -44,6 +45,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             services.AddTaskSequenceDescriptionBuilder();
             services.AddTaskSequenceFactory();
             services.AddTaskSequenceStore();
+            services.AddUnattendCustomisations();
             services.AddWmi();
             return services;
         }
@@ -218,6 +220,28 @@ namespace Visus.DeploymentToolkit.Extensions {
                 var l = s.GetRequiredService<ILogger<TaskSequenceStore>>();
                 return new TaskSequenceStore(o, l);
             });
+            return services;
+        }
+
+        /// <summary>
+        /// Adds the customisation steps for an unattend.xml file to
+        /// <paramref name="services"/>
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        internal static IServiceCollection AddUnattendCustomisations(
+                this IServiceCollection services) {
+            _ = services ?? throw new ArgumentNullException(nameof(services));
+
+            var assembly = MethodBase.GetCurrentMethod()!.DeclaringType!.Assembly;
+            var steps = from t in assembly.GetTypes()
+                        where t.IsAssignableTo(typeof(ICustomisationStep)) && !t.IsAbstract
+                        select t;
+            foreach (var step in steps) {
+                services.AddTransient(step);
+            }
+
             return services;
         }
 

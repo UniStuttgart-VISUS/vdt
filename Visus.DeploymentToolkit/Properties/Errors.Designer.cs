@@ -124,6 +124,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The element selected by the XPath expression &quot;{0}&quot; does not exist..
+        /// </summary>
+        internal static string InexistentXPath {
+            get {
+                return ResourceManager.GetString("InexistentXPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A valid location for the deployment share is required..
         /// </summary>
         internal static string InvalidDeploymentShare {
