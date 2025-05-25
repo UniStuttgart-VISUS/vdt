@@ -10,7 +10,7 @@
     <Company>Visualisierungsinstitut der Universität Stuttgart</Company>
     <Product>Project Deimos</Product>
     <Description>Bootstrapper for setting up the deployment agent from a deployment share.</Description>
-    <Copyright>© 2014 Visualisierungsinstitut der Universität Stuttgart</Copyright>
+    <Copyright>© 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart</Copyright>
     <RepositoryUrl>https://github.com/UniStuttgart-VISUS/vdt</RepositoryUrl>
   </PropertyGroup>
 

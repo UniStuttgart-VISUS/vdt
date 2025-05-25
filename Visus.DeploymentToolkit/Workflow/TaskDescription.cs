@@ -28,6 +28,9 @@ namespace Visus.DeploymentToolkit.Workflow {
         public string Task { get; set; } = null!;
         #endregion
 
-        // TODO: How do we instantiate the task while resolving its dependencies?
+        #region Public methods
+        /// <inheritdoc />
+        public override string ToString() => this.Task ?? base.ToString()!;
+        #endregion
     }
 }

@@ -4,14 +4,12 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using Microsoft.Dism;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Validation;
-using Visus.DeploymentToolkit.Workflow;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
@@ -19,23 +17,23 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// <summary>
     /// Applies an unattend file to a mounted Windows installation.
     /// </summary>
-    [SupportsPhase(Phase.Installation)]
-    [SupportsPhase(Phase.PrepareImage)]
     internal sealed class ApplyUnattend : TaskBase {
 
         #region Public constructors
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
-        /// <param name="state"></param>
-        /// <param name="dism"></param>
+        /// <param name="state">The current state of the task sequence.</param>
+        /// <param name="imageServicing">A new image servicing implementation
+        /// to perform the work.</param>
         /// <param name="logger">The logger used to report results of the
         /// operation.</param>
         public ApplyUnattend(IState state,
-                IDismScope dism,
+                IImageServicing imageServicing,
                 ILogger<ApplyUnattend> logger)
                 : base(state,logger) {
-            this._dism = dism ?? throw new ArgumentNullException(nameof(dism));
+            this._imageServicing = imageServicing
+                ?? throw new ArgumentNullException(nameof(imageServicing));
         }
         #endregion
 
@@ -60,31 +58,25 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <inheritdoc />
         public override Task ExecuteAsync(CancellationToken cancellationToken) {
             this._logger.LogInformation("Opening a DISM servicing session "
-                + "for \"{Path}\" to apply unattend settings.",
+                + "for \"{Image}\" to apply unattend settings.",
                 this.InstallationPath);
-            using var session = (this.InstallationPath is null)
-                ? DismApi.OpenOnlineSession()
-                : DismApi.OpenOfflineSession(this.InstallationPath);
+            this._imageServicing.Open(this.InstallationPath);
 
-            try {
-                this._logger.LogInformation("Applying unattend file "
-                    + "\"{UnattendFile}\" to \"{Path}\".",
-                    this.UnattendFile, this.InstallationPath);
-                DismApi.ApplyUnattend(session, this.UnattendFile, true);
+            this._logger.LogInformation("Applying unattend file "
+                + "\"{UnattendFile}\" to \"{Image}\".",
+                this.UnattendFile, this._imageServicing.Name);
+            this._imageServicing.ApplyUnattend(this.UnattendFile);
 
-                this._logger.LogTrace("Committing changes to \"{Path}\".",
-                    this.InstallationPath);
-                DismApi.CommitImage(session, false);
-            } finally {
-                DismApi.CloseSession(session);
-            }
+            this._logger.LogTrace("Committing changes to \"{Image}\".",
+                this._imageServicing.Name);
+            this._imageServicing.Commit();
 
             return Task.CompletedTask;
         }
         #endregion
 
         #region Private fields
-        private readonly IDismScope _dism;
+        private readonly IImageServicing _imageServicing;
         #endregion
     }
 }

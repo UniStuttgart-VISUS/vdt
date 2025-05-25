@@ -191,6 +191,7 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [SupportedOSPlatform("windows")]
         private bool GetIsWinPE(IRegistry registry) {
             Debug.Assert(registry != null);
             var key = @"HKLM\System\CurrentControlSet\Control\MiniNT";
@@ -198,6 +199,7 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [SupportedOSPlatform("windows")]
         public bool GetIsServer(IRegistry registry) {
             Debug.Assert(registry != null);
 

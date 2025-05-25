@@ -6,6 +6,11 @@
     <Nullable>enable</Nullable>
     <RootNamespace>Visus.DeploymentToolkit</RootNamespace>
     <Description>This package holds the contracts shared by the bootstrapper and the main deployment toolkit.</Description>
+    <Title>Project Deimos API Contracts</Title>
+    <Authors>Christoph Müller</Authors>
+    <Company>Visualisierungsinstitut der Universität Stuttgart</Company>
+    <Product>Project Deimos</Product>
+    <Copyright>© 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

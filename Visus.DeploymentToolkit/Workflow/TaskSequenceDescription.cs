@@ -76,8 +76,9 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <summary>
         /// Saves the description to the file at the given location.
         /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
+        /// <param name="path">The path to the file where the description should
+        /// be stored.</param>
+        /// <returns>A task for waiting to the serialisation to complete.</returns>
         public Task SaveAsync(string path) {
             using var file = File.OpenWrite(path);
             return JsonSerializer.SerializeAsync(file, this,

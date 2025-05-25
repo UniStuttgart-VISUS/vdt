@@ -15,6 +15,30 @@ namespace Visus.DeploymentToolkit.Services {
     /// </summary>
     public interface IImageServicing : IDisposable {
 
+        #region Public properties
+        /// <summary>
+        /// Gets a description of the installation that is bein services.
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
+        /// Gets the path to the image that is being serviced or <c>null</c> if
+        /// the current Windows installation is being serviced.
+        /// </summary>
+        string? Path { get; }
+        #endregion
+
+        #region Public methods
+        /// <summary>
+        /// Applies the specified unattend.xml file to the image.
+        /// </summary>
+        /// <param name="path">A relative or absolute path to the answer file
+        /// that will be applied to the image.</param>
+        /// <param name="singleSession">Specifies whether the packages that are
+        /// listed in an answer file will be processed in a single session or
+        /// in multiple sessions.</param>
+        void ApplyUnattend(string path, bool singleSession = true);
+
         /// <summary>
         /// Commits all changes to the image.
         /// </summary>
@@ -33,12 +57,15 @@ namespace Visus.DeploymentToolkit.Services {
         /// <summary>
         /// Opens a WIM file at the specified location.
         /// </summary>
-        /// <param name="path"></param>
-        void Open(string path);
+        /// <param name="path">The path to the mounted WIM image to service or
+        /// <c>null</c> to service the current Windows we are running on.
+        /// </param>
+        void Open(string? path);
 
         /// <summary>
         /// Rolls back all changes.
         /// </summary>
         void RollBack();
+        #endregion
     }
 }

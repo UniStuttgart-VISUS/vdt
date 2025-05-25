@@ -189,4 +189,10 @@
   <data name="NotAdministrator" xml:space="preserve">
     <value>The task sequence requires elevation, but the process is not running as administrator.</value>
   </data>
+  <data name="NoDismSession" xml:space="preserve">
+    <value>A DISM image needs to be opened before this operation can be performed.</value>
+  </data>
+  <data name="DuplicateDismSession" xml:space="preserve">
+    <value>A DISM servicing session has already been opened.</value>
+  </data>
 </root>

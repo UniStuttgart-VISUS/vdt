@@ -7,6 +7,11 @@
 using Microsoft.Dism;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 
 
@@ -18,6 +23,14 @@ namespace Visus.DeploymentToolkit.Imaging {
     internal sealed class ImageServicing : IImageServicing {
 
         #region Public constructors
+        /// <summary>
+        /// Initialises a new instance.
+        /// </summary>
+        /// <param name="dism">The DISM scope which makes sure that the API has
+        /// been loaded.</param>
+        /// <param name="logger">A logger for reporting progress and errors.
+        /// </param>
+        /// <exception cref="ArgumentNullException"></exception>
         public ImageServicing(IDismScope dism,
                 ILogger<IImageServicing> logger) {
             this._dism = dism
@@ -27,12 +40,26 @@ namespace Visus.DeploymentToolkit.Imaging {
         }
         #endregion
 
-        #region Public methods
+        #region Public properties
+        /// <inheritdoc />
+        public string Name => this._path ?? RuntimeInformation.OSDescription;
+
+        /// <inheritdoc />
+        public string? Path => this._path;
+        #endregion
+
+        #region Public metods
+        /// <inheritdoc />
+        public void ApplyUnattend(string path, bool singleSession) {
+            this.CheckSession();
+            DismApi.ApplyUnattend(this._session, path, singleSession);
+        }
+
         /// <inheritdoc />
         public void Commit() {
-            _ = this._session ?? throw new InvalidOperationException(
-                "A DISM image needs to be opened before this operation can be "
-                + "performed.");
+            this.CheckSession();
+            this._logger.LogTrace("Committing changes to DISM image "
+                + "\"{Image}\".", this.Name);
             DismApi.CommitImage(this._session, false);
         }
 
@@ -48,9 +75,7 @@ namespace Visus.DeploymentToolkit.Imaging {
         public void InjectDrivers(string folder,
                 bool recursive = false,
                 bool forceUnsigned = false) {
-            _ = this._session ?? throw new InvalidOperationException(
-                "A DISM image needs to be opened before this operation can be "
-                + "performed.");
+            this.CheckSession();
             DismApi.AddDriversEx(this._session,
                 folder,
                 forceUnsigned,
@@ -58,26 +83,50 @@ namespace Visus.DeploymentToolkit.Imaging {
         }
 
         /// <inheritdoc />
-        public void Open(string path) {
-            _ = path ?? throw new ArgumentNullException(nameof(path));
-            this._logger.LogInformation("Opening an offline servicing session "
-                + "for \"{Path}\".", path);
-            this._session = DismApi.OpenOfflineSessionEx(path);
+        public void Open(string? path) {
+            this.CheckNoSession();
 
+            if ((this._path = path) is not null) {
+                this._logger.LogTrace("Opening an offline servicing session "
+                    + "for \"{Image}\".", this._path);
+                this._session = DismApi.OpenOfflineSessionEx(this._path);
+
+            } else {
+                this._logger.LogTrace("Opening an online servicing session for "
+                    + "the current Windows installation.");
+                this._session = DismApi.OpenOnlineSessionEx();
+                Debug.Assert(this._path is null);
+            }
         }
 
         /// <inheritdoc />
         public void RollBack() {
-            _ = this._session ?? throw new InvalidOperationException(
-                "A DISM image needs to be opened before this operation can be "
-                + "performed.");
+            this.CheckSession();
+            this._logger.LogTrace("Reverting changes to DISM image "
+                + "\"{Image}\".", this.Name);
             DismApi.CommitImage(this._session, true);
         }
+        #endregion
+
+        #region Private methods
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void CheckNoSession() {
+            if (this._session != null) {
+                throw new InvalidOperationException(
+                    Errors.DuplicateDismSession);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MemberNotNull(nameof(_session))]
+        private void CheckSession() => _ = this._session
+            ?? throw new InvalidOperationException(Errors.NoDismSession);
         #endregion
 
         #region Private fields
         private readonly IDismScope _dism;
         private readonly ILogger _logger;
+        private string? _path;
         private DismSession? _session;
         #endregion
     }

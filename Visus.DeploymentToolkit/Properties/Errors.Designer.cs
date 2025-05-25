@@ -88,6 +88,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A DISM servicing session has already been opened..
+        /// </summary>
+        internal static string DuplicateDismSession {
+            get {
+                return ResourceManager.GetString("DuplicateDismSession", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The configured task sequence store is empty..
         /// </summary>
         internal static string EmptySequenceStore {
@@ -192,6 +201,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string MissingWimMount {
             get {
                 return ResourceManager.GetString("MissingWimMount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A DISM image needs to be opened before this operation can be performed..
+        /// </summary>
+        internal static string NoDismSession {
+            get {
+                return ResourceManager.GetString("NoDismSession", resourceCulture);
             }
         }
         

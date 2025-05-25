@@ -16,6 +16,13 @@ namespace Visus.DeploymentToolkit.Workflow {
     /// </summary>
     internal sealed class TaskSequenceFactory : ITaskSequenceFactory {
 
+        /// <summary>
+        /// Initialises a new instsance.
+        /// </summary>
+        /// <param name="services">The serviec provider that allow us to
+        /// create the builders including all their dependencies.</param>
+        /// <exception cref="ArgumentNullException">If
+        /// <paramref name="services"/> is <c>null</c>.</exception>
         public TaskSequenceFactory(IServiceProvider services) {
             this._services = services
                 ?? throw new ArgumentNullException(nameof(services));
