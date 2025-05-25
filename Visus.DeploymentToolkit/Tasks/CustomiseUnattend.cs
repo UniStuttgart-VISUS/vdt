@@ -11,7 +11,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
 using System.Xml.Linq;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
@@ -65,7 +64,8 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         #region Public methods
         /// <inheritdoc />
-        public override Task ExecuteAsync(CancellationToken cancellationToken) {
+        public override async Task ExecuteAsync(
+                CancellationToken cancellationToken) {
             this.Validate();
 
             if (this.OutputPath == null) {
@@ -74,28 +74,29 @@ namespace Visus.DeploymentToolkit.Tasks {
                 this.OutputPath = this.Path;
             }
 
-            return Task.Run(() => {
-                this._logger.LogInformation("Opening unatten file \"{Path}\" "
-                    + "for customisation.", this.Path);
-                XDocument doc = null!;
+            this._logger.LogInformation("Opening unatten file \"{Path}\" "
+                + "for customisation.", this.Path);
+            XDocument doc = null!;
 
-                using (var stream = File.OpenRead(this.Path))
-                using (var reader = XmlReader.Create(stream)) {
-                    doc = XDocument.Load(reader);
-                }
-                Debug.Assert(doc is not null);
+            using (var s = File.OpenRead(this.Path)) {
+                doc = await XDocument.LoadAsync(s,
+                    LoadOptions.None,
+                    cancellationToken);
+            }
+            Debug.Assert(doc is not null);
 
-                foreach (var c in this.Customisations) {
-                    this._logger.LogTrace("Applying {Type} customisation.",
-                        c.GetType().FullName);
-                    cancellationToken.ThrowIfCancellationRequested();
-                    c.Apply(doc);
-                }
+            foreach (var c in this.Customisations) {
+                this._logger.LogTrace("Applying {Type} customisation.",
+                    c.GetType().FullName);
+                cancellationToken.ThrowIfCancellationRequested();
+                c.Apply(doc);
+            }
 
-                this._logger.LogInformation("Saving customised unattend file "
-                    + "to \"{OutputPath}\".", this.OutputPath);
-                doc.Save(this.OutputPath);
-            });
+            this._logger.LogInformation("Saving customised unattend file "
+                + "to \"{OutputPath}\".", this.OutputPath);
+            using (var s = File.OpenWrite(this.OutputPath)) {
+                await doc.SaveAsync(s, SaveOptions.None, cancellationToken);
+            }
         }
         #endregion
     }
