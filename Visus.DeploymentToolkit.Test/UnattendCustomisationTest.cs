@@ -5,11 +5,8 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
-using System.Reflection.Metadata;
-using System.Security.Cryptography;
 using System.Xml;
 using System.Xml.Linq;
-using System.Xml.XPath;
 using Visus.DeploymentToolkit.Unattend;
 
 
@@ -109,15 +106,14 @@ namespace Visus.DeploymentToolkit.Test {
                 Assert.IsTrue(nodes.Any(n => n.Value == "de-DE"));
             }
 
-            //Assert.Throws<InvalidOperationException>(() => {
-            //    var customisation = new XmlAttributeCustomisation(this._loggerFactory.CreateLogger<XmlAttributeCustomisation>()) {
-            //        Path = "/unattend:unattend/unattend:hugo3000",
-            //        Name = "pass",
-            //        Value = "horst",
-            //        IsRequired = true
-            //    };
-            //    customisation.Apply(doc);
-            //});
+            Assert.Throws<InvalidOperationException>(() => {
+                var customisation = new XmlValueCustomisation(this._loggerFactory.CreateLogger<XmlValueCustomisation>()) {
+                    Path = "//unattend:component[contains(@name, 'saddam')]/unattend:SetupUILanguage/unattend:UILanguage",
+                    Value = "de-DE",
+                    IsRequired = true
+                };
+                customisation.Apply(doc);
+            });
         }
 
         private readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(l => l.AddDebug());
