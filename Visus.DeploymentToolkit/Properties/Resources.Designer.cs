@@ -88,6 +88,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Customise unattend.xml.
+        /// </summary>
+        internal static string CustomiseUnattend {
+            get {
+                return ResourceManager.GetString("CustomiseUnattend", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mount a WIM image.
         /// </summary>
         internal static string MountWim {

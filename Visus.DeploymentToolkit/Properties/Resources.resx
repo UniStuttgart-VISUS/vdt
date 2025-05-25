@@ -126,6 +126,9 @@
   <data name="CreateIso" xml:space="preserve">
     <value>Create Windows PE ISO</value>
   </data>
+  <data name="CustomiseUnattend" xml:space="preserve">
+    <value>Customise unattend.xml</value>
+  </data>
   <data name="MountWim" xml:space="preserve">
     <value>Mount a WIM image</value>
   </data>
