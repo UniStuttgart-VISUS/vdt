@@ -74,7 +74,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                 this.OutputPath = this.Path;
             }
 
-            this._logger.LogInformation("Opening unatten file \"{Path}\" "
+            this._logger.LogInformation("Opening unattend file \"{Path}\" "
                 + "for customisation.", this.Path);
             XDocument doc = null!;
 
@@ -93,7 +93,8 @@ namespace Visus.DeploymentToolkit.Tasks {
             }
 
             this._logger.LogInformation("Saving customised unattend file "
-                + "to \"{OutputPath}\".", this.OutputPath);
+                + "to \"{OutputPath}\".",
+                System.IO.Path.GetFullPath(this.OutputPath));
             using (var s = File.OpenWrite(this.OutputPath)) {
                 await doc.SaveAsync(s, SaveOptions.None, cancellationToken);
             }
