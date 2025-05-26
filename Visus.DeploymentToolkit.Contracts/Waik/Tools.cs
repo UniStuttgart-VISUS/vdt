@@ -7,6 +7,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 
 
@@ -19,26 +20,6 @@ namespace Visus.DeploymentToolkit.Waik {
     public static class Tools {
 
         /// <summary>
-        /// Gets the architecture string used in the WinPE paths, which is
-        /// derived from <see cref="Architecture"/>.
-        /// </summary>
-        /// <param name="architecture">The architecture to get the folder name
-        /// for.</param>
-        /// <returns>The name of teh subfolder for the specified architecture.
-        /// </returns>
-        /// <exception cref="ArgumentException">The architecture is not
-        /// supported by the WAIK.</exception>
-        public static string GetArchitecturePath(Architecture architecture)
-            => architecture switch {
-                Architecture.X64 => "amd64",
-                Architecture.X86 => "x86",
-                Architecture.Arm => "arm",
-                Architecture.Arm64 => "arm64",
-                _ => throw new ArgumentException(string.Format(
-                    Errors.UnsupportedWaikArchitecture, architecture))
-            };
-
-        /// <summary>
         /// Gets the path to the bcdboot tool for restoring the BCD store.
         /// </summary>
         /// <param name="basePath">The installation path of the WAIK.</param>
@@ -49,7 +30,7 @@ namespace Visus.DeploymentToolkit.Waik {
         public static string GetBcdbootPath(string basePath,
                 Architecture architecture)
             => Path.Combine(GetDeploymentToolsPath(basePath),
-                GetArchitecturePath(architecture),
+                architecture.GetFolder(),
                 "BCDBoot",
                 "bcdboot.exe");
 
@@ -64,7 +45,7 @@ namespace Visus.DeploymentToolkit.Waik {
         public static string GetBcdedit(string basePath,
                 Architecture architecture)
             => Path.Combine(GetDeploymentToolsPath(basePath),
-                GetArchitecturePath(architecture),
+                architecture.GetFolder(),
                 "BCDBoot",
                 "bcdedit.exe");
 
@@ -79,7 +60,7 @@ namespace Visus.DeploymentToolkit.Waik {
         public static string GetBootsect(string basePath,
                 Architecture architecture)
             => Path.Combine(GetDeploymentToolsPath(basePath),
-                GetArchitecturePath(architecture),
+                architecture.GetFolder(),
                 "BCDBoot",
                 "bootsect.exe");
 
@@ -104,7 +85,7 @@ namespace Visus.DeploymentToolkit.Waik {
         public static string GetDismPath(string basePath,
                 Architecture architecture)
             => Path.Combine(GetDeploymentToolsPath(basePath),
-                GetArchitecturePath(architecture),
+                architecture.GetFolder(),
                 "DISM",
                 "dism.exe");
 
@@ -119,7 +100,7 @@ namespace Visus.DeploymentToolkit.Waik {
         public static string GetOscdimgPath(string basePath,
                 Architecture architecture)
             => Path.Combine(GetDeploymentToolsPath(basePath),
-                GetArchitecturePath(architecture),
+                architecture.GetFolder(),
                 "Oscdimg",
                 "oscdimg.exe");
 
@@ -134,7 +115,7 @@ namespace Visus.DeploymentToolkit.Waik {
                 Architecture architecture)
             => Path.Combine(basePath,
                 "Windows Setup",
-                GetArchitecturePath(architecture));
+                architecture.GetFolder());
 
         /// <summary>
         /// Gets the base path where the WinPE extension to WAIK is installed.

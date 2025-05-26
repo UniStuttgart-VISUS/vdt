@@ -103,8 +103,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// Gets the architecture string used in the WinPE paths, which is
         /// derived from <see cref="Architecture"/>.
         /// </summary>
-        protected string WinPeArchitecture => Waik.Tools.GetArchitecturePath(
-            this.Architecture);
+        protected string WinPeArchitecture => this.Architecture.GetFolder();
         #endregion
     }
 }
