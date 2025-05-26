@@ -6,13 +6,9 @@
 
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.PortableExecutable;
 using System.Xml;
 using System.Xml.Linq;
-using System.Xml.XPath;
-using Visus.DeploymentToolkit.Properties;
+using Visus.DeploymentToolkit.Extensions;
 
 
 namespace Visus.DeploymentToolkit.Unattend {
@@ -32,64 +28,14 @@ namespace Visus.DeploymentToolkit.Unattend {
 
         #region Protected methods
         /// <summary>
-        /// Creates an <see cref="IXmlNamespaceResolver"/> for the specified
-        /// <see cref="XDocument"/>.
+        /// Gets a namespace resolver for the default namespace of the given
+        /// XML documment, which is mapped to the prefix &quot;unattend&quot;
+        /// and &quot;u&quot;.
         /// </summary>
-        /// <param name="document">The XML document for which the namespace
-        /// resolver is created, which must have a default namespace</param>
-        /// <param name="defaultNamespace">The prefix to associate with the
-        /// default namespace of the document.</param>
-        /// <returns>An <see cref="IXmlNamespaceResolver"/> that resolves
-        /// namespaces using the default namespace of the specified document.
-        /// </returns>
-        protected static IXmlNamespaceResolver GetResolver(XDocument document,
-                string defaultNamespace = "unattend") {
-            ArgumentNullException.ThrowIfNull(document);
-            ArgumentNullException.ThrowIfNull(defaultNamespace);
-            var retval = new XmlNamespaceManager(new NameTable());
-            retval.AddNamespace(defaultNamespace,
-                document.Root!.GetDefaultNamespace().NamespaceName);
-            return retval;
-        }
-
-        /// <summary>
-        /// Gets all elements matching the given XPath expression.
-        /// </summary>
-        /// <param name="document"></param>
-        /// <param name="path"></param>
+        /// <param name="unattend"></param>
         /// <returns></returns>
-        protected IEnumerable<XElement> GetElements(XDocument document,
-                string path) {
-            ArgumentNullException.ThrowIfNull(document);
-            ArgumentNullException.ThrowIfNull(path);
-            this._logger.LogTrace("Selecting elements to modify via XPath "
-                + "expression \"{Path}\".", path);
-            var resolver = new XmlNamespaceManager(new NameTable());
-            resolver.AddNamespace("unattend",
-                document.Root!.GetDefaultNamespace().NamespaceName);
-            return document.XPathSelectElements(path, GetResolver(document));
-        }
-
-        /// <summary>
-        /// Gets all elements matching the given XPath expression and throws if
-        /// nothing did match.
-        /// </summary>
-        /// <param name="element"></param>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        protected IEnumerable<XElement> GetRequiredElements(XDocument element,
-                string path) {
-            var retval = this.GetElements(element, path);
-
-            if (retval?.Any() != true) {
-                this._logger.LogError("The XML element at \"{Path}\" is "
-                        + "expected to exist but does not.", path);
-                throw new InvalidOperationException(string.Format(
-                    Errors.InexistentXPath, path));
-            }
-
-            return retval;
-        }
+        protected static IXmlNamespaceResolver GetResolver(XDocument unattend)
+            => unattend.GetResolver("unattend", "u");
         #endregion
 
         #region Protected fields

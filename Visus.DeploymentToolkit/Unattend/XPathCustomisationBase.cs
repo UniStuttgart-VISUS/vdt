@@ -12,6 +12,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 
 
@@ -56,9 +57,10 @@ namespace Visus.DeploymentToolkit.Unattend {
         public override void Apply(XDocument unattend) {
             ArgumentNullException.ThrowIfNull(this.Path);
 
+            var resolver = GetResolver(unattend);
             var elements = (this.IsRequired || this.IsUnique)
-                ? this.GetRequiredElements(unattend, this.Path)
-                : this.GetElements(unattend, this.Path);
+                ? unattend.XPathSelectRequiredElements(this.Path, resolver)
+                : unattend.XPathSelectElements(this.Path, resolver);
             var cnt = elements.Count();
 
             if (this.IsUnique && (cnt != 1)) {

@@ -5,8 +5,10 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
+using Visus.DeploymentToolkit.SystemInformation;
 using Visus.DeploymentToolkit.Unattend;
 
 
@@ -20,6 +22,11 @@ namespace Visus.DeploymentToolkit.Test {
     public sealed class UnattendCustomisationTest {
 
         public TestContext TestContext { get; set; }
+
+        [TestMethod]
+        public void TestInputLayout() {
+            Assert.AreEqual("0407:00000407",InputProfiles.ForCulture(new CultureInfo("de-DE")));
+        }
 
         [TestMethod]
         public void TestDescripionFactory() {
@@ -70,7 +77,7 @@ namespace Visus.DeploymentToolkit.Test {
                 }
             }
 
-            Assert.Throws<InvalidOperationException>(() => {
+            Assert.Throws<ArgumentException>(() => {
                 var customisation = new XmlAttributeCustomisation(this._loggerFactory.CreateLogger<XmlAttributeCustomisation>()) {
                     Path = "/unattend:unattend/unattend:hugo3000",
                     Name = "pass",
@@ -106,7 +113,7 @@ namespace Visus.DeploymentToolkit.Test {
                 Assert.IsTrue(nodes.Any(n => n.Value == "de-DE"));
             }
 
-            Assert.Throws<InvalidOperationException>(() => {
+            Assert.Throws<ArgumentException>(() => {
                 var customisation = new XmlValueCustomisation(this._loggerFactory.CreateLogger<XmlValueCustomisation>()) {
                     Path = "//unattend:component[contains(@name, 'saddam')]/unattend:SetupUILanguage/unattend:UILanguage",
                     Value = "de-DE",
@@ -114,6 +121,27 @@ namespace Visus.DeploymentToolkit.Test {
                 };
                 customisation.Apply(doc);
             });
+        }
+
+        [TestMethod]
+        public void TestLocalisationCustomisation() {
+            var file = Path.Combine(this.TestContext.DeploymentDirectory!, "Unattend_Core_x64.xml");
+            Assert.IsTrue(File.Exists(file));
+
+            var doc = XDocument.Load(file, LoadOptions.None);
+            Assert.IsNotNull(doc);
+
+            {
+                var customisation = new LocalisationCustomisation(this._loggerFactory.CreateLogger<LocalisationCustomisation>()) {
+                    InputLocale = new CultureInfo("de-DE"),
+                    InputProfile = "0407:00000407",
+                    UserInterfaceLanguage = new CultureInfo("de-DE"),
+                    SetupLocale = new CultureInfo("de-DE"),
+                    SystemLocale = new CultureInfo("de-DE"),
+                    UserLocale = new CultureInfo("de-DE")
+                };
+                customisation.Apply(doc);
+            }
         }
 
         private readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(l => l.AddDebug());
