@@ -18,8 +18,11 @@ namespace Visus.DeploymentToolkit.SystemInformation {
     /// </summary>
     public static class InputProfiles {
 
-        public static string? ForCulture(CultureInfo culture) {
-            ArgumentNullException.ThrowIfNull(culture);
+        public static string? ForCulture(CultureInfo? culture) {
+            if (culture is null) {
+                return null;
+            }
+
             var flags = BindingFlags.Public | BindingFlags.Static;
             var fields = from f in typeof(InputProfiles).GetFields(flags)
                          where f.FieldType == typeof(string)

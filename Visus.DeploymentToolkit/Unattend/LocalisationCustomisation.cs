@@ -15,6 +15,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Visus.DeploymentToolkit.Extensions;
+using Visus.DeploymentToolkit.SystemInformation;
 
 
 namespace Visus.DeploymentToolkit.Unattend {
@@ -116,7 +117,9 @@ namespace Visus.DeploymentToolkit.Unattend {
 
             {
                 var locale = this.InputProfile
+                    ?? InputProfiles.ForCulture(this.InputLocale)
                     ?? this.InputLocale?.IetfLanguageTag;
+
                 if ((locale is not null) && (input is not null)) {
                     this._logger.LogTrace("Setting {Element} to \"{Locale}\"",
                         input.Name.LocalName, locale);
