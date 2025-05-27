@@ -9,7 +9,6 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Visus.DeploymentToolkit.Extensions;
@@ -22,6 +21,13 @@ namespace Visus.DeploymentToolkit.Unattend {
     /// The base class for customisation steps that modify an unattend.xml file
     /// using XPath expressions specified by the caller.
     /// </summary>
+    /// <remarks>
+    /// <para>This customisations step does not honour
+    /// <see cref="ICustomisation.Passes"/> on purpose such that the XPath
+    /// expression can select truly anything in the unattend file. XPath
+    /// expressions can and must assume that the work on the root node of the
+    /// document.</para>
+    /// </remarks>
     /// <param name="logger">The logger used by the step to record errors and
     /// progress messages.</param>
     public abstract class XPathCustomisationBase(ILogger logger)

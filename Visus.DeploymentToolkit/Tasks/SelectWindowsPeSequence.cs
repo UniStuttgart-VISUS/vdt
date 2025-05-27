@@ -6,11 +6,13 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
+using Visus.DeploymentToolkit.Unattend;
 using Visus.DeploymentToolkit.Workflow;
 
 
@@ -35,8 +37,28 @@ namespace Visus.DeploymentToolkit.Tasks {
         public SelectWindowsPeSequence(IState state,
                 ITaskSequenceStore? store,
                 ITaskSequenceFactory tasks,
+                RunCommandCustomisation runBootstrapper,
+                LocalisationCustomisation setLanguage,
                 ILogger<SelectWindowsPeSequence> logger)
-            : base(state, store, tasks, logger) { }
+                : base(state, store, tasks, logger) {
+            ArgumentNullException.ThrowIfNull(runBootstrapper);
+            ArgumentNullException.ThrowIfNull(setLanguage);
+
+            runBootstrapper.Passes = [ Passes.WindowsPE ];
+            runBootstrapper.Description = Resources.RunDeimosBootstrapper;
+            runBootstrapper.Path = Path.DirectorySeparatorChar
+                + Path.Combine(WorkingDirectory,
+                "Visus.DeploymentToolkit.Bootstrapper.exe");
+
+            setLanguage.Passes = [ Passes.WindowsPE ];
+            setLanguage.Components = [ Components.InternationalCoreWinPe ];
+            setLanguage.InputLocale
+                = setLanguage.UserLocale
+                = setLanguage.SystemLocale
+                = new("de-DE");
+
+            this._customisations = [ runBootstrapper, setLanguage ];
+        }
 
         /// <summary>
         /// Initialises a new instance.
@@ -46,10 +68,13 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <exception cref="ArgumentNullException"></exception>
         public SelectWindowsPeSequence(IState state,
                 ITaskSequenceFactory tasks,
+                RunCommandCustomisation runBootstrapper,
+                LocalisationCustomisation setLanguage,
                 ILogger<SelectWindowsPeSequence> logger)
-            : base(state, null, tasks, logger) { }
+            : this(state, null, tasks, runBootstrapper, setLanguage, logger) { }
         #endregion
 
+        #region Public methods
         /// <inheritdoc />
         public override async Task ExecuteAsync(
                 CancellationToken cancellationToken) {
@@ -77,13 +102,20 @@ namespace Visus.DeploymentToolkit.Tasks {
                             t.Source = "Unattend_PE";
                             t.Destination = s.WimMount.MountPoint;
                         })
+                    .Add<CustomiseUnattend>((t, s) => {
+                        ArgumentNullException.ThrowIfNull(s.WimMount);
+                        t.Customisations = this._customisations;
+                        t.IsCritical = true;
+                        t.Path = Path.Combine(s.WimMount.MountPoint,
+                            CopyUnattend.DefaultFileName);
+                    })
                     .Add<CopyFiles>((t, s) => {
                         ArgumentNullException.ThrowIfNull(s.DeploymentShare);
                         ArgumentNullException.ThrowIfNull(s.WimMount);
                         t.Source = Path.Combine(s.DeploymentShare!,
                             DeploymentShare.Layout.BootstrapperPath);
                         t.Destination = Path.Combine(s.WimMount.MountPoint,
-                            "deimos");
+                            WorkingDirectory);
                         t.IsRecursive = true;
                         t.IsRequired = true;
                         t.IsCritical = true;
@@ -96,6 +128,15 @@ namespace Visus.DeploymentToolkit.Tasks {
             CheckPhase(this._state.TaskSequence as ITaskSequence,
                 Phase.PreinstalledEnvironment);
         }
+        #endregion
 
+        #region Private constants
+        private const string WorkingDirectory = "deimos";
+        #endregion
+
+        #region Private fields
+        private readonly IEnumerable<ICustomisation> _customisations;
+        #endregion
     }
+
 }

@@ -169,6 +169,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Runs the installation bootstrapper copying the required files from the network and starts the agent..
+        /// </summary>
+        internal static string RunDeimosBootstrapper {
+            get {
+                return ResourceManager.GetString("RunDeimosBootstrapper", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select task sequence.
         /// </summary>
         internal static string SelectInstallationSequence {

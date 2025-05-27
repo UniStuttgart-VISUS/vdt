@@ -168,6 +168,8 @@ namespace Visus.DeploymentToolkit.Tasks {
             await this._copy.CopyAsync(this.Source,
                 this.Destination,
                 CopyFlags.Required);
+            this._logger.LogInformation("The unattend file was copied to "
+                + "\"{Destination}\".", this.Destination);
         }
         #endregion
 

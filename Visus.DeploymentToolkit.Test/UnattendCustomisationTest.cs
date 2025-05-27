@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
+using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.SystemInformation;
 using Visus.DeploymentToolkit.Unattend;
@@ -21,9 +22,11 @@ namespace Visus.DeploymentToolkit.Test {
     /// </summary>
     [TestClass]
     [DeploymentItem(@"TestData\Unattend_Core_x64.xml")]
+    [DeploymentItem(@"TestData\Unattend_PE_x64.xml")]
+    [DeploymentItem(@"TestData\Unattend_PE_x64_damaged.xml")]
     public sealed class UnattendCustomisationTest {
 
-        public TestContext TestContext { get; set; }
+        public TestContext TestContext { get; set; } = null!;
 
         [TestMethod]
         public void TestInputLayout() {
@@ -146,6 +149,88 @@ namespace Visus.DeploymentToolkit.Test {
                 };
                 customisation.Apply(doc);
             }
+        }
+
+        [TestMethod]
+        public void TestRunCommandCustomisation() {
+            var cmd = @"C:\Windows\System32\cmd.exe /c echo Hello World!";
+            var desc = "Test command";
+
+            {
+                var file = Path.Combine(this.TestContext.DeploymentDirectory!, "Unattend_PE_x64.xml");
+                Assert.IsTrue(File.Exists(file));
+
+                var doc = XDocument.Load(file, LoadOptions.None);
+                Assert.IsNotNull(doc);
+
+                var builder = new UnattendBuilder(Options.Create<UnattendBuilderOptions>(new()));
+                var logger = this._loggerFactory.CreateLogger<RunCommandCustomisation>();
+                var customisation = new RunCommandCustomisation(builder, logger) {
+                    Description = desc,
+                    Order = 1,
+                    Path = cmd
+                };
+                customisation.Apply(doc);
+
+                var nodes = doc.DescendantNodes()
+                    .Where(n => n is XElement e && e.Name.LocalName == "RunSynchronousCommand")
+                    .Select(n => (XElement) n);
+                Assert.IsNotNull(nodes);
+                Assert.IsTrue(nodes.Any());
+
+                foreach (var n in nodes) {
+                    var d = n.Descendant("Description");
+                    Assert.IsNotNull(d);
+                    Assert.AreEqual(desc, d.Value);
+
+                    var o = n.Descendant("Order");
+                    Assert.IsNotNull(o);
+                    Assert.AreEqual("1", o.Value);
+
+                    var p = n.Descendant("Path");
+                    Assert.IsNotNull(p);
+                    Assert.AreEqual(cmd, p.Value);
+                }
+            }
+
+            {
+                var file = Path.Combine(this.TestContext.DeploymentDirectory!, "Unattend_PE_x64_damaged.xml");
+                Assert.IsTrue(File.Exists(file));
+
+                var doc = XDocument.Load(file, LoadOptions.None);
+                Assert.IsNotNull(doc);
+
+                var builder = new UnattendBuilder(Options.Create<UnattendBuilderOptions>(new()));
+                var logger = this._loggerFactory.CreateLogger<RunCommandCustomisation>();
+                var customisation = new RunCommandCustomisation(builder, logger) {
+                    Description = desc,
+                    Order = 1,
+                    Path = cmd
+                };
+                customisation.Apply(doc);
+
+                var nodes = doc.DescendantNodes()
+                    .Where(n => n is XElement e && e.Name.LocalName == "RunSynchronousCommand")
+                    .Select(n => (XElement) n);
+                Assert.IsNotNull(nodes);
+                Assert.IsTrue(nodes.Any());
+
+                foreach (var n in nodes) {
+                    var d = n.Descendant("Description");
+                    Assert.IsNotNull(d);
+                    Assert.AreEqual(desc, d.Value);
+
+                    var o = n.Descendant("Order");
+                    Assert.IsNotNull(o);
+                    Assert.AreEqual("1", o.Value);
+
+                    var p = n.Descendant("Path");
+                    Assert.IsNotNull(p);
+                    Assert.AreEqual(cmd, p.Value);
+                }
+            }
+
+
         }
 
         private readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(l => l.AddDebug());

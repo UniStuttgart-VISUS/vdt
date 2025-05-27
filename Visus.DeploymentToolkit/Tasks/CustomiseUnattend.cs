@@ -95,7 +95,8 @@ namespace Visus.DeploymentToolkit.Tasks {
             this._logger.LogInformation("Saving customised unattend file "
                 + "to \"{OutputPath}\".",
                 System.IO.Path.GetFullPath(this.OutputPath));
-            using (var s = File.OpenWrite(this.OutputPath)) {
+            using (var s = File.Open(this.OutputPath, FileMode.Create,
+                    FileAccess.Write)) {
                 await doc.SaveAsync(s, SaveOptions.None, cancellationToken);
             }
         }

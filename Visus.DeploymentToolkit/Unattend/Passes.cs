@@ -1,4 +1,4 @@
-﻿// <copyright file="Phases.cs" company="Visualisierungsinstitut der Universität Stuttgart">
+﻿// <copyright file="Passes.cs" company="Visualisierungsinstitut der Universität Stuttgart">
 // Copyright © 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
@@ -11,7 +11,7 @@ namespace Visus.DeploymentToolkit.Unattend {
     /// Provides constants for the different phases that can be customised
     /// in an unattend.xml file.
     /// </summary>
-    public static class Phases {
+    public static class Passes {
 
         public const string AuditSystem = "auditSystem";
 

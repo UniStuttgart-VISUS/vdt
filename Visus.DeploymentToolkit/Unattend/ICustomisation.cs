@@ -4,7 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using System.Xml;
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 
@@ -15,6 +15,14 @@ namespace Visus.DeploymentToolkit.Unattend {
     /// unattend.xml file.
     /// </summary>
     public interface ICustomisation {
+
+        #region Public properties
+        /// <summary>
+        /// Gets or sets a list of phases in which the customisation should be
+        /// applied. If this is empty, all phases are assumed to be valid.
+        /// </summary>
+        IEnumerable<string> Passes { get; set; }
+        #endregion
 
         #region Public methods
         /// <summary>

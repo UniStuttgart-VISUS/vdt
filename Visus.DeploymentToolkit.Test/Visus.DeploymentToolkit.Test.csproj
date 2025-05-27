@@ -37,6 +37,9 @@
     <None Update="TestData\Unattend_Core_x64.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestData\Unattend_PE_x64_damaged.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestData\Unattend_PE_x64.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

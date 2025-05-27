@@ -30,20 +30,6 @@ namespace Visus.DeploymentToolkit.Unattend {
             ILogger<LocalisationCustomisation> logger)
             : CustomisationBase(logger) {
 
-        #region Public constants
-        /// <summary>
-        /// The name of the internation core component.
-        /// </summary>
-        public const string InternationalCoreComponent
-            = "Microsoft-Windows-International-Core";
-
-        /// <summary>
-        /// The name of the internation core component for WinPE.
-        /// </summary>
-        public const string InternationalCoreWinPeComponent
-            = "Microsoft-Windows-International-Core-WinPE";
-        #endregion
-
         #region Public properties
         /// <summary>
         /// Gets or sets the name of the components to be searched for
@@ -54,7 +40,10 @@ namespace Visus.DeploymentToolkit.Unattend {
         public IEnumerable<string> Components {
             get;
             set;
-        } = [ InternationalCoreComponent, InternationalCoreWinPeComponent ];
+        } = [
+            Unattend.Components.InternationalCore,
+            Unattend.Components.InternationalCoreWinPe
+        ];
 
         /// <summary>
         /// Gets or sets the input locale to be configured.
@@ -102,10 +91,11 @@ namespace Visus.DeploymentToolkit.Unattend {
             ArgumentNullException.ThrowIfNull(unattend);
             var resolver = GetResolver(unattend);
 
+            // TODO: this does not honour the passes filter.
+
             foreach (var c in this.Components) {
                 var elements = unattend.XPathSelectElements(
-                    $"//u:component[@name='{c}']",
-                    resolver);
+                    GetComponentFilter(c), resolver);
 
                 foreach (var e in elements) {
                     this._logger.LogTrace("Setting locales for {Element}",
@@ -136,7 +126,7 @@ namespace Visus.DeploymentToolkit.Unattend {
         /// <returns></returns>
         private XElement MakeInternationalCore(string? architecture)
             => this.AddLocales(this._builder.MakeComponent(
-                InternationalCoreComponent, architecture));
+                Unattend.Components.InternationalCore, architecture));
 
         /// <summary>
         /// Makes an international core for WinPE component element with the
@@ -146,7 +136,8 @@ namespace Visus.DeploymentToolkit.Unattend {
         /// <returns></returns>
         private XElement MakeInternationalCoreWinPE(string? architecture) {
             var retval = this.AddLocales(this._builder.MakeComponent(
-                InternationalCoreWinPeComponent, architecture));
+                Unattend.Components.InternationalCoreWinPe,
+                architecture));
 
             var uiLang = new XElement(this._builder.MakeName(
                 UILanguageElement));
