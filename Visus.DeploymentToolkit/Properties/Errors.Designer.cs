@@ -124,6 +124,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified path &quot;{0}&quot; did not specify a valid unattend file or an architecture-independent template for such..
+        /// </summary>
+        internal static string InexistentUnattend {
+            get {
+                return ResourceManager.GetString("InexistentUnattend", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The element selected by the XPath expression &quot;{0}&quot; does not exist..
         /// </summary>
         internal static string InexistentXPath {

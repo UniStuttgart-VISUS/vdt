@@ -120,6 +120,9 @@
   <data name="CheckElevation" xml:space="preserve">
     <value>Check for administrative permissions</value>
   </data>
+  <data name="CopyUnattend" xml:space="preserve">
+    <value>Copy unattend.xml</value>
+  </data>
   <data name="CopyWindowsPe" xml:space="preserve">
     <value>Copy Windows Pre-installed Environment</value>
   </data>

@@ -71,6 +71,12 @@ namespace Visus.DeploymentToolkit.Tasks {
                     .Add<CheckElevation>()
                     .Add<CopyWindowsPe>()
                     .Add<MountWim>()
+                    .Add<CopyUnattend>(
+                        (t, s) => {
+                            ArgumentNullException.ThrowIfNull(s.WimMount);
+                            t.Source = "Unattend_PE";
+                            t.Destination = s.WimMount.MountPoint;
+                        })
                     .Add<CopyFiles>((t, s) => {
                         ArgumentNullException.ThrowIfNull(s.DeploymentShare);
                         ArgumentNullException.ThrowIfNull(s.WimMount);

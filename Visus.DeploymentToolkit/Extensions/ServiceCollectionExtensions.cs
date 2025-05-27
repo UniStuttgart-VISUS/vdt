@@ -45,6 +45,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             services.AddTaskSequenceDescriptionBuilder();
             services.AddTaskSequenceFactory();
             services.AddTaskSequenceStore();
+            services.AddUnattendBuilder();
             services.AddUnattendCustomisations();
             services.AddWmi();
             return services;
@@ -72,7 +73,6 @@ namespace Visus.DeploymentToolkit.Extensions {
             return services;
         }
 
-
         /// <summary>
         /// Configures the <see cref="TaskSequenceStoreOptions"/>.
         /// </summary>
@@ -92,6 +92,24 @@ namespace Visus.DeploymentToolkit.Extensions {
                 configuration.GetSection(sectionName));
         }
 
+        /// <summary>
+        /// Configures the <see cref="UnattendBuilderOptions"/>.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <param name="sectionName"></param>
+        /// <returns></returns>
+        public static IServiceCollection ConfigureUnattendBuilder(
+                this IServiceCollection services,
+                IConfiguration configuration,
+                string sectionName = UnattendBuilderOptions.SectionName) {
+            ArgumentNullException.ThrowIfNull(services);
+            ArgumentNullException.ThrowIfNull(configuration);
+            ArgumentNullException.ThrowIfNull(sectionName);
+            return services.Configure<UnattendBuilderOptions>(
+                configuration.GetSection(sectionName));
+        }
+
         #region Internal services
         /// <summary>
         /// Adds the <see cref="DismScope"/> to <paramref name="services"/>.
@@ -106,7 +124,6 @@ namespace Visus.DeploymentToolkit.Extensions {
             }
             return services;
         }
-
 
         /// <summary>
         /// Adds the <see cref="VdsService"/> to <paramref name="services"/>.
@@ -220,6 +237,19 @@ namespace Visus.DeploymentToolkit.Extensions {
                 var l = s.GetRequiredService<ILogger<TaskSequenceStore>>();
                 return new TaskSequenceStore(o, l);
             });
+            return services;
+        }
+
+        /// <summary>
+        /// Adds the <see cref="UnattendBuilder"/> to
+        /// <paramref name="services"/>.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        internal static IServiceCollection AddUnattendBuilder(
+                this IServiceCollection services) {
+            ArgumentNullException.ThrowIfNull(services);
+            services.AddSingleton<IUnattendBuilder, UnattendBuilder>();
             return services;
         }
 

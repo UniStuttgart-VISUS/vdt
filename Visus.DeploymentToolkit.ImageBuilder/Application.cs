@@ -50,6 +50,7 @@ namespace Visus.DeploymentToolkit.ImageBuilder {
                 IConfiguration config) {
             services.ConfigureDism(config);
             services.ConfigureTaskSequenceStore(config);
+            services.ConfigureUnattendBuilder(config);
             services.AddDeploymentServices();
         }
         #endregion

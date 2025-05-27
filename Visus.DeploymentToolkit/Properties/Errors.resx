@@ -201,4 +201,7 @@
   <data name="NonUniqueXPath" xml:space="preserve">
     <value>The XPath expression "{0}" did match more than element.</value>
   </data>
+  <data name="InexistentUnattend" xml:space="preserve">
+    <value>The specified path "{0}" did not specify a valid unattend file or an architecture-independent template for such.</value>
+  </data>
 </root>

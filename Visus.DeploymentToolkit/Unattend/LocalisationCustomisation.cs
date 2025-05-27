@@ -4,7 +4,6 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -15,6 +14,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Visus.DeploymentToolkit.Extensions;
+using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.SystemInformation;
 
 
@@ -26,8 +26,23 @@ namespace Visus.DeploymentToolkit.Unattend {
     /// </summary>
     /// <param name="logger"></param>
     public sealed class LocalisationCustomisation(
+            IUnattendBuilder builder,
             ILogger<LocalisationCustomisation> logger)
             : CustomisationBase(logger) {
+
+        #region Public constants
+        /// <summary>
+        /// The name of the internation core component.
+        /// </summary>
+        public const string InternationalCoreComponent
+            = "Microsoft-Windows-International-Core";
+
+        /// <summary>
+        /// The name of the internation core component for WinPE.
+        /// </summary>
+        public const string InternationalCoreWinPeComponent
+            = "Microsoft-Windows-International-Core-WinPE";
+        #endregion
 
         #region Public properties
         /// <summary>
@@ -39,10 +54,7 @@ namespace Visus.DeploymentToolkit.Unattend {
         public IEnumerable<string> Components {
             get;
             set;
-        } = [
-            "Microsoft-Windows-International-Core",
-            "Microsoft-Windows-International-Core-WinPE"
-        ];
+        } = [ InternationalCoreComponent, InternationalCoreWinPeComponent ];
 
         /// <summary>
         /// Gets or sets the input locale to be configured.
@@ -83,6 +95,7 @@ namespace Visus.DeploymentToolkit.Unattend {
         public CultureInfo? UserLocale { get; set; }
         #endregion
 
+        #region Public methods
         /// <inheritdoc />
         public override void Apply(XDocument unattend) {
             ArgumentNullException.ThrowIfNull(this.Components);
@@ -101,29 +114,124 @@ namespace Visus.DeploymentToolkit.Unattend {
                 }
             }
         }
+        #endregion
 
+        #region Private properties
+        /// <summary>
+        /// Gets the actual value for the input profile based on the
+        /// <see cref="InputProfile"/> or on the <see cref="InputLocale"/>.
+        /// </summary>
+        private string? ConsolidatedInputProfile
+            => this.InputProfile
+                ?? InputProfiles.ForCulture(this.InputLocale)
+                ?? this.InputLocale?.IetfLanguageTag;
+        #endregion
+
+        #region Private methods
+        /// <summary>
+        /// Makes an international core component element with the properties of
+        /// this object set as initial attribute values.
+        /// </summary>
+        /// <param name="architecture"></param>
+        /// <returns></returns>
+        private XElement MakeInternationalCore(string? architecture)
+            => this.AddLocales(this._builder.MakeComponent(
+                InternationalCoreComponent, architecture));
+
+        /// <summary>
+        /// Makes an international core for WinPE component element with the
+        /// properties of this object set as initial attribute values.
+        /// </summary>
+        /// <param name="architecture"></param>
+        /// <returns></returns>
+        private XElement MakeInternationalCoreWinPE(string? architecture) {
+            var retval = this.AddLocales(this._builder.MakeComponent(
+                InternationalCoreWinPeComponent, architecture));
+
+            var uiLang = new XElement(this._builder.MakeName(
+                UILanguageElement));
+            var lang = this.SetupLocale ?? CultureInfo.CurrentCulture;
+            uiLang.SetValue(lang.IetfLanguageTag);
+
+            var setupUI = new XElement(this._builder.MakeName(
+                SetupUILanguageElement));
+            setupUI.Add(uiLang);
+
+            retval.Add(setupUI);
+            return retval;
+        }
+
+        /// <summary>
+        /// Adds teh locales shared between international core and WinPE
+        /// as children of the given element.
+        /// </summary>
+        /// <param name="retval">The parent element to which the locales
+        /// should be added.</param>
+        /// <returns><paramref name="retval"/>.</returns>
+        private XElement AddLocales(XElement retval) {
+            Debug.Assert(retval is not null);
+
+            {
+                var element = new XElement(this._builder.MakeName(
+                    InputLocaleElement));
+                element.SetValue(this.ConsolidatedInputProfile
+                    ?? InputProfiles.ForCulture(CultureInfo.CurrentCulture)
+                    ?? InputProfiles.German);
+                retval.Add(element);
+            }
+
+            {
+                var element = new XElement(this._builder.MakeName(
+                    SystemLocaleElement));
+                var lang = this.SystemLocale ?? CultureInfo.CurrentCulture;
+                element.SetValue(lang.IetfLanguageTag);
+                retval.Add(element);
+            }
+
+            {
+                var element = new XElement(this._builder.MakeName(
+                    UserLocaleElement));
+                var lang = this.UserLocale ?? CultureInfo.CurrentCulture;
+                element.SetValue(lang.IetfLanguageTag);
+                retval.Add(element);
+            }
+
+            {
+                var element = new XElement(this._builder.MakeName(
+                    UILanguageElement));
+                var lang = this.UserInterfaceLanguage
+                    ?? CultureInfo.CurrentCulture;
+                element.SetValue(lang.IetfLanguageTag);
+                retval.Add(element);
+            }
+
+            return retval;
+        }
+
+        /// <summary>
+        /// Sets all configured locale information on the given element.
+        /// </summary>
+        /// <param name="element"></param>
+        /// <param name="resolver"></param>
         private void SetLocales(XElement element,
                 IXmlNamespaceResolver resolver) {
             Debug.Assert(element != null);
             Debug.Assert(resolver != null);
 
-            var input = element.Descendant("InputLocale");
+            var input = element.Descendant(InputLocaleElement);
             var setup = element.XPathSelectElement(
-                "/u:SetupUILanguage/u:UILanguage",
+                $"/u:{SetupUILanguageElement}/u:{UILanguageElement}",
                 resolver);
-            var system = element.Descendant("SystemLocale");
-            var ui = element.Descendant("UILanguage");
-            var user = element.Descendant("UserLocale");
+            var system = element.Descendant(SystemLocaleElement);
+            var ui = element.Descendant(UILanguageElement);
+            var user = element.Descendant(UserLocaleElement);
 
             {
-                var locale = this.InputProfile
-                    ?? InputProfiles.ForCulture(this.InputLocale)
-                    ?? this.InputLocale?.IetfLanguageTag;
-
-                if ((locale is not null) && (input is not null)) {
+                var profile = ConsolidatedInputProfile;
+                if ((profile is not null) && (input is not null)) {
                     this._logger.LogTrace("Setting {Element} to \"{Locale}\"",
-                        input.Name.LocalName, locale);
-                    input.SetValue(locale);
+                        input.Name.LocalName, profile);
+                    input.SetValue(profile);
                 }
             }
 
@@ -152,5 +260,16 @@ namespace Visus.DeploymentToolkit.Unattend {
                 user.SetValue(this.UserLocale.IetfLanguageTag);
             }
         }
+        #endregion
+
+        #region Private fields
+        private const string InputLocaleElement = "InputLocale";
+        private const string SetupUILanguageElement = "SetupUILanguage";
+        private const string SystemLocaleElement = "SystemLocale";
+        private const string UserLocaleElement = "UserLocale";
+        private const string UILanguageElement = "UILanguage";
+        private readonly IUnattendBuilder _builder = builder
+            ?? throw new ArgumentNullException(nameof(builder));
+        #endregion
     }
 }

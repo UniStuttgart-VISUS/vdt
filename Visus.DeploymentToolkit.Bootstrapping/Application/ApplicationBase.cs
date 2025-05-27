@@ -22,7 +22,7 @@ namespace Visus.DeploymentToolkit.Application {
     /// <typeparam name="TOptions">The type of the options class used by
     /// the application.</typeparam>
     public abstract class ApplicationBase<TOptions>
-            where TOptions: class, new() {
+            where TOptions: OptionsBase, new() {
 
         #region Public methods
         /// <summary>
@@ -40,11 +40,13 @@ namespace Visus.DeploymentToolkit.Application {
         /// <param name="bootstrappingOnly"></param>
         /// <param name="configure"></param>
         /// <param name="stateFile"></param>
+        /// <param name="stateRequired"></param>
         /// <param name="logFile"></param>
         /// <param name="settingsFile"></param>
         protected ApplicationBase(string[] arguments,
                 Action<IServiceCollection, IConfiguration> configure,
                 string? stateFile = null,
+                bool stateRequired = false,
                 string? logFile = null,
                 string settingsFile = "appsettings.json") {
             ArgumentNullException.ThrowIfNull(arguments);
@@ -66,12 +68,12 @@ namespace Visus.DeploymentToolkit.Application {
             var provider = new ServiceCollection()
                     .Configure<TOptions>(this.Configuration.Bind)
                     .AddBootstrappingServices()
-                    .AddLogging(logFile);
+                    .AddLogging(logFile ?? this.Options.LogFile);
 
             // If we have one, add the state restored from the state file.
             // Otherwise, add blank state and restore from annotated options.
             if (stateFile != null) {
-                provider.AddState(stateFile);
+                provider.AddState(stateFile, stateRequired);
             } else {
                 provider.AddState();
             }

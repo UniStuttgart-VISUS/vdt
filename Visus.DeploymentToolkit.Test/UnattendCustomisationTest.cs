@@ -5,9 +5,11 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
+using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.SystemInformation;
 using Visus.DeploymentToolkit.Unattend;
 
@@ -132,7 +134,9 @@ namespace Visus.DeploymentToolkit.Test {
             Assert.IsNotNull(doc);
 
             {
-                var customisation = new LocalisationCustomisation(this._loggerFactory.CreateLogger<LocalisationCustomisation>()) {
+                var builder = new UnattendBuilder(Options.Create<UnattendBuilderOptions>(new()));
+                var logger = this._loggerFactory.CreateLogger<LocalisationCustomisation>();
+                var customisation = new LocalisationCustomisation(builder, logger) {
                     InputLocale = new CultureInfo("de-DE"),
                     InputProfile = "0407:00000407",
                     UserInterfaceLanguage = new CultureInfo("de-DE"),

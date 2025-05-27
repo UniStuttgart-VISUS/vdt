@@ -111,6 +111,14 @@ namespace Visus.DeploymentToolkit.Tasks {
                 await this._directory.CreateAsync(p).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
             }
+
+            {
+                var p = System.IO.Path.Combine(this.Path, Layout.TemplatesPath);
+                this._logger.LogInformation("Creating directory \"{Path}\" for "
+                    + "template files.", p);
+                await this._directory.CreateAsync(p).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
+            }
         }
         #endregion
 

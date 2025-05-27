@@ -4,11 +4,9 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using Visus.DeploymentToolkit.Extensions;
-using Visus.DeploymentToolkit.Properties;
 
 
 namespace Visus.DeploymentToolkit.Waik {

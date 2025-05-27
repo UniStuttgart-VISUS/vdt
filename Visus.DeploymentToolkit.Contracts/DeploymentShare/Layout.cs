@@ -44,5 +44,11 @@ namespace Visus.DeploymentToolkit.DeploymentShare {
         /// The folder where the task sequences are stored.
         /// </summary>
         public const string TaskSequencePath = "TaskSequences";
+
+        /// <summary>
+        /// The folder where template files for task sequences, unattend.xml
+        /// etc. are stored.
+        /// </summary>
+        public const string TemplatesPath = "Templates";
     }
 }
