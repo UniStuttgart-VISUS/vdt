@@ -12,6 +12,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Visus.DeploymentToolkit.Imaging;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
 using Visus.DeploymentToolkit.Unattend;
@@ -39,6 +40,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             services.AddBootstrappingServices();
             services.AddDism();
             services.AddDiskManagement();
+            services.AddImaging();
             services.AddRegistry();
             services.AddSystemInformation();
             services.AddTasks();
@@ -136,6 +138,22 @@ namespace Visus.DeploymentToolkit.Extensions {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
                 services.AddSingleton<IDiskManagement, VdsService>();
+            }
+            return services;
+        }
+
+        /// <summary>
+        /// Adds the WIM image manipulation service to
+        /// <paramref name="services"/>.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        internal static IServiceCollection AddImaging(
+                this IServiceCollection services) {
+            _ = services ?? throw new ArgumentNullException(nameof(services));
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                services.AddSingleton<IImageServicing, ImageServicing>();
             }
             return services;
         }

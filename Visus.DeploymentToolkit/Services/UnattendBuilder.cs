@@ -27,7 +27,7 @@ namespace Visus.DeploymentToolkit.Services {
 
             return new XElement(this.MakeName("component"),
                 new XAttribute("name", name),
-                new XAttribute("architecture", architecture),
+                new XAttribute("processorArchitecture", architecture),
                 new XAttribute("publicKeyToken", this._options.PublicKeyToken),
                 new XAttribute("versionScope", this._options.VersionScope),
                 new XAttribute("language", this._options.Language));

@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Services;
@@ -57,6 +58,12 @@ namespace Visus.DeploymentToolkit.Tasks {
         #region Public methods
         /// <inheritdoc />
         public override Task ExecuteAsync(CancellationToken cancellationToken) {
+            if (this.InstallationPath is null) {
+                this._logger.LogTrace("No installation path was set, so we "
+                    + "consider any mounted WIM image a candidate.");
+                this.InstallationPath = this._state.WimMount?.MountPoint;
+            }
+
             this._logger.LogInformation("Opening a DISM servicing session "
                 + "for \"{Image}\" to apply unattend settings.",
                 this.InstallationPath);

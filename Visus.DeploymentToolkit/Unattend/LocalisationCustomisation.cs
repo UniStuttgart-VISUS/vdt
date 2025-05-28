@@ -6,10 +6,9 @@
 
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -31,20 +30,6 @@ namespace Visus.DeploymentToolkit.Unattend {
             : CustomisationBase(logger) {
 
         #region Public properties
-        /// <summary>
-        /// Gets or sets the name of the components to be searched for
-        /// localisation stuff. This defaults to international core and
-        /// international cor for WinPE.
-        /// </summary>
-        [Required]
-        public IEnumerable<string> Components {
-            get;
-            set;
-        } = [
-            Unattend.Components.InternationalCore,
-            Unattend.Components.InternationalCoreWinPe
-        ];
-
         /// <summary>
         /// Gets or sets the input locale to be configured.
         /// </summary>
@@ -87,20 +72,38 @@ namespace Visus.DeploymentToolkit.Unattend {
         #region Public methods
         /// <inheritdoc />
         public override void Apply(XDocument unattend) {
-            ArgumentNullException.ThrowIfNull(this.Components);
             ArgumentNullException.ThrowIfNull(unattend);
             var resolver = GetResolver(unattend);
+            var settings = unattend.XPathSelectElements(this.SettingsFilter,
+                resolver);
 
-            // TODO: this does not honour the passes filter.
-
-            foreach (var c in this.Components) {
-                var elements = unattend.XPathSelectElements(
-                    GetComponentFilter(c), resolver);
+            foreach (var s in settings) {
+                var elements = s.XPathSelectElements(GetComponentFilter(
+                    Components.InternationalCore,
+                    Components.InternationalCoreWinPe), resolver);
 
                 foreach (var e in elements) {
                     this._logger.LogTrace("Setting locales for {Element}",
                         e.GetXPath(resolver));
                     this.SetLocales(e, resolver);
+                }
+
+                if (!elements.Any()) {
+                    var pass = s.Attribute("pass")?.Value;
+                    var arch = GetArchitecture(unattend, resolver);
+
+                    if (pass == Unattend.Passes.WindowsPE) {
+                        this._logger.LogTrace("There was no existing "
+                            + "localisation block, so we add \"{Component}\".",
+                            Components.InternationalCoreWinPe);
+                        s.Add(this.MakeInternationalCoreWinPE(arch));
+
+                    } else {
+                        this._logger.LogTrace("There was no existing "
+                            + "localisation block, so we add \"{Component}\".",
+                            Components.InternationalCore);
+                        s.Add(this.MakeInternationalCore(arch));
+                    }
                 }
             }
         }
@@ -126,7 +129,7 @@ namespace Visus.DeploymentToolkit.Unattend {
         /// <returns></returns>
         private XElement MakeInternationalCore(string? architecture)
             => this.AddLocales(this._builder.MakeComponent(
-                Unattend.Components.InternationalCore, architecture));
+                Components.InternationalCore, architecture));
 
         /// <summary>
         /// Makes an international core for WinPE component element with the
@@ -135,9 +138,8 @@ namespace Visus.DeploymentToolkit.Unattend {
         /// <param name="architecture"></param>
         /// <returns></returns>
         private XElement MakeInternationalCoreWinPE(string? architecture) {
-            var retval = this.AddLocales(this._builder.MakeComponent(
-                Unattend.Components.InternationalCoreWinPe,
-                architecture));
+            var retval = this._builder.MakeComponent(
+                Components.InternationalCoreWinPe, architecture);
 
             var uiLang = new XElement(this._builder.MakeName(
                 UILanguageElement));
@@ -149,7 +151,8 @@ namespace Visus.DeploymentToolkit.Unattend {
             setupUI.Add(uiLang);
 
             retval.Add(setupUI);
-            return retval;
+
+            return this.AddLocales(retval);
         }
 
         /// <summary>
@@ -181,17 +184,17 @@ namespace Visus.DeploymentToolkit.Unattend {
 
             {
                 var element = new XElement(this._builder.MakeName(
-                    UserLocaleElement));
-                var lang = this.UserLocale ?? CultureInfo.CurrentCulture;
+                    UILanguageElement));
+                var lang = this.UserInterfaceLanguage
+                    ?? CultureInfo.CurrentCulture;
                 element.SetValue(lang.IetfLanguageTag);
                 retval.Add(element);
             }
 
             {
                 var element = new XElement(this._builder.MakeName(
-                    UILanguageElement));
-                var lang = this.UserInterfaceLanguage
-                    ?? CultureInfo.CurrentCulture;
+                    UserLocaleElement));
+                var lang = this.UserLocale ?? CultureInfo.CurrentCulture;
                 element.SetValue(lang.IetfLanguageTag);
                 retval.Add(element);
             }

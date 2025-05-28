@@ -8,8 +8,11 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using Visus.DeploymentToolkit.Extensions;
 
 
@@ -47,10 +50,28 @@ namespace Visus.DeploymentToolkit.Unattend {
         public string SettingsFilter
             => ((this.Passes is null) || !this.Passes.Any())
             ? "//u:settings"
-            : $"//u:settings[@pass='{string.Join(" or @pass='", this.Passes)}']";
+            : $"//u:settings[@pass='{string.Join("' or @pass='", this.Passes)}']";
         #endregion
 
         #region Protected methods
+        /// <summary>
+        /// Finds the architecture of any component in the given unattend.xml.
+        /// </summary>
+        /// <remarks>
+        /// A valid unattend.xml should have the same processor architecture for
+        /// all components, so it should be safe to select any of them as
+        /// reference.
+        /// </remarks>
+        /// <param name="unattend"></param>
+        /// <param name="resolver"></param>
+        /// <returns></returns>
+        protected static string GetArchitecture(XDocument unattend,
+                IXmlNamespaceResolver? resolver = null)
+            => unattend.XPathSelectElement("//*[@processorArchitecture]",
+                resolver ?? GetResolver(unattend))
+                ?.Attribute("processorArchitecture")?.Value
+                ?? RuntimeInformation.ProcessArchitecture.GetFolder();
+
         /// <summary>
         /// Gets a filter expression that matches the component with the
         /// specified name.
@@ -59,6 +80,15 @@ namespace Visus.DeploymentToolkit.Unattend {
         /// <returns></returns>
         protected static string GetComponentFilter(string componentName)
             => $"//u:component[@name='{componentName}']";
+
+        /// <summary>
+        /// Gets a filter expression that matches any of the componets with the
+        /// specified names.
+        /// </summary>
+        /// <param name="componentNames"></param>
+        /// <returns></returns>
+        protected static string GetComponentFilter(params string[] componentNames)
+            => $"//u:component[@name='{string.Join("' or @name='", componentNames)}']";
 
         /// <summary>
         /// Gets a namespace resolver for the default namespace of the given

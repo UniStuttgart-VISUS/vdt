@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 
@@ -20,6 +21,7 @@ namespace Visus.DeploymentToolkit.Imaging {
     /// <summary>
     /// Implements servicing of WIM images using DISM.
     /// </summary>
+    [SupportedOSPlatform("windows")]
     internal sealed class ImageServicing : IImageServicing {
 
         #region Public constructors

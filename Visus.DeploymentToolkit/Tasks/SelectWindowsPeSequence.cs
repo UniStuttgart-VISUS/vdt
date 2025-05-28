@@ -44,14 +44,14 @@ namespace Visus.DeploymentToolkit.Tasks {
             ArgumentNullException.ThrowIfNull(runBootstrapper);
             ArgumentNullException.ThrowIfNull(setLanguage);
 
+            // The following unattend.xml customisations are used when the
+            // task sequence creates a new Windows PE image.
             runBootstrapper.Passes = [ Passes.WindowsPE ];
             runBootstrapper.Description = Resources.RunDeimosBootstrapper;
             runBootstrapper.Path = Path.DirectorySeparatorChar
-                + Path.Combine(WorkingDirectory,
-                "Visus.DeploymentToolkit.Bootstrapper.exe");
+                + Path.Combine(WorkingDirectory, Bootstrapper);
 
             setLanguage.Passes = [ Passes.WindowsPE ];
-            setLanguage.Components = [ Components.InternationalCoreWinPe ];
             setLanguage.InputLocale
                 = setLanguage.UserLocale
                 = setLanguage.SystemLocale
@@ -94,14 +94,19 @@ namespace Visus.DeploymentToolkit.Tasks {
                 this._state.TaskSequence = this._tasks.CreateBuilder()
                     .ForPhase(Phase.PreinstalledEnvironment)
                     .Add<CheckElevation>()
+                    // Copy the Windows PE files from the deployment share.
                     .Add<CopyWindowsPe>()
+                    // Mount the boot.wim used by Windows PE.
                     .Add<MountWim>()
+                    // Copy the unattend file for Windows PE into the image.
                     .Add<CopyUnattend>(
                         (t, s) => {
                             ArgumentNullException.ThrowIfNull(s.WimMount);
                             t.Source = "Unattend_PE";
                             t.Destination = s.WimMount.MountPoint;
                         })
+                    // Customise the unattend.xml to set the language and
+                    // start the bootstrapper as synchronous command.
                     .Add<CustomiseUnattend>((t, s) => {
                         ArgumentNullException.ThrowIfNull(s.WimMount);
                         t.Customisations = this._customisations;
@@ -109,6 +114,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                         t.Path = Path.Combine(s.WimMount.MountPoint,
                             CopyUnattend.DefaultFileName);
                     })
+                    // Copy the bootstrapper from the deployment share into the
+                    // WIM image.
                     .Add<CopyFiles>((t, s) => {
                         ArgumentNullException.ThrowIfNull(s.DeploymentShare);
                         ArgumentNullException.ThrowIfNull(s.WimMount);
@@ -120,7 +127,15 @@ namespace Visus.DeploymentToolkit.Tasks {
                         t.IsRequired = true;
                         t.IsCritical = true;
                     })
+                    //.Add<ApplyUnattend>((t, s) => {
+                    //    ArgumentNullException.ThrowIfNull(s.WimMount);
+                    //    t.InstallationPath = s.WimMount.MountPoint;
+                    //    t.UnattendFile = Path.Combine(s.WimMount.MountPoint,
+                    //        CopyUnattend.DefaultFileName);
+                    //})
+                    // Unmount the image and commit the changes.
                     .Add<UnmountWim>()
+                    // Create an ISO image from the customised Window PE.
                     .Add<CreateWindowsPeIso>()
                     .Build();
             }
@@ -131,6 +146,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         #endregion
 
         #region Private constants
+        private const string Bootstrapper = "Visus.DeploymentToolkit.Bootstrapper.exe";
         private const string WorkingDirectory = "deimos";
         #endregion
 
