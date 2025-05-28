@@ -39,6 +39,30 @@ namespace Visus.DeploymentToolkit.Services {
                 ?? throw new ArgumentNullException(nameof(mountPoint));
             DismApi.MountImage(imagePath, mountPoint, imageIndex);
         }
+
+        /// <summary>
+        /// Initialises a new instance.
+        /// </summary>
+        /// <param name="dism">The DISM scope representing the library handle.
+        /// </param>
+        /// <param name="imagePath">The path of the WIM image to be mounted.
+        /// </param>
+        /// <param name="imageName">The name of the image to be mounted, which
+        /// is the SKU in case of a vanilla Windows image.</param>
+        /// <param name="mountPoint">The path where the image should be mounted.
+        /// </param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public DismMount(IDismScope dism,
+                string imagePath,
+                string? imageName,
+                string mountPoint) {
+            this._dism = dism ?? throw new ArgumentNullException(nameof(dism));
+            this.ImagePath = imagePath
+                ?? throw new ArgumentNullException(nameof(imagePath));
+            this.MountPoint = mountPoint
+                ?? throw new ArgumentNullException(nameof(mountPoint));
+            DismApi.MountImage(imagePath, mountPoint, imageName);
+        }
         #endregion
 
         #region Finaliser

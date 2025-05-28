@@ -44,6 +44,16 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         #region Public properties
         /// <summary>
+        /// Gets or sets the name of the image to be mounted.
+        /// </summary>
+        /// <remarks>
+        /// If a name and a valid <see cref="ImageIndex"/> are specified,
+        /// the name takes precedence.
+        /// </remarks>
+        [FromState(nameof(ImageName))]
+        public string? ImageName { get; set; }
+
+        /// <summary>
         /// Gets or sets the path to the image to be mounted.
         /// </summary>
         [FromState(nameof(ImagePath))]
@@ -53,6 +63,10 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Gets or sets the index of the image to be mounted.
         /// </summary>
+        /// <remarks>
+        /// The index is one-based. If an <see cref="ImageName"/> is specified,
+        /// this parameter is ignored.
+        /// </remarks>
         [FromState(nameof(ImageIndex))]
         public int ImageIndex { get; set; } = 1;
 
@@ -75,10 +89,22 @@ namespace Visus.DeploymentToolkit.Tasks {
             this._logger.LogInformation("Mounting \"{Image}\" at "
                 + "\"{MountPoint}\".", this.ImagePath, this.MountPoint);
             return Task.Factory.StartNew(() => {
-                this._state.WimMount = new DismMount(this._dism,
-                    this.ImagePath,
-                    this.ImageIndex,
-                    this.MountPoint);
+                if (string.IsNullOrEmpty(this.ImageName)) {
+                    this._logger.LogInformation("Mounting image index "
+                        + "{ImageIndex}.", this.ImageIndex);
+                    this._state.WimMount = new DismMount(this._dism,
+                        this.ImagePath,
+                        this.ImageIndex,
+                        this.MountPoint);
+                } else {
+                    this._logger.LogInformation("Mounting image name "
+                        + "\"{ImageName}\".", this.ImageName);
+                    this._state.WimMount = new DismMount(this._dism,
+                        this.ImagePath,
+                        this.ImageName,
+                        this.MountPoint);
+                }
+
                 this._logger.LogInformation("The \"{Image}\" has been mounted "
                 + "at \"{MountPoint}\". Should the need arise to unmount this "
                 + "image manually, you can do so by invoking "
