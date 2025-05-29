@@ -27,10 +27,10 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
-        /// <param name="diskManagement">The disk management service that allows
-        /// the task to retrieve the disks available on the system.</param>
         /// <param name="state">The state where the selected disk will be stored
         /// in as <see cref="WellKnownStates.InstallationDisk"/>.</param>
+        /// <param name="diskManagement">The disk management service that allows
+        /// the task to retrieve the disks available on the system.</param>
         /// <param name="logger">A logger to persist errors.</param>
         /// <exception cref="ArgumentNullException">If
         /// <paramref name="diskManagement"/> is <c>null</c>, or if

@@ -23,10 +23,15 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
-        /// <param name="state"></param>
-        /// <param name="store"></param>
-        /// <param name="logger"></param>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <param name="state">The current state of the task sequence.</param>
+        /// <param name="store">The task sequence store that provides the task
+        /// selected that can be selected.</param>
+        /// <param name="tasks">A task sequence factory that allows for creating
+        /// new task sequences.</param>
+        /// <param name="logger">A logger for progress and error messages.
+        /// </param>
+        /// <exception cref="ArgumentNullException">If <paramref name="tasks"/>
+        /// is <c>null</c>.</exception>
         public SelectTaskSequenceBase(IState state,
                 ITaskSequenceStore? store,
                 ITaskSequenceFactory tasks,

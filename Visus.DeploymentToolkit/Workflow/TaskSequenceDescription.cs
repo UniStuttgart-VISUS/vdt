@@ -8,8 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Properties;
 
@@ -24,6 +26,23 @@ namespace Visus.DeploymentToolkit.Workflow {
 
         #region Factory methods
         /// <summary>
+        /// Creates a new task sequence description from an existing task
+        /// sequence.
+        /// </summary>
+        /// <typeparam name="TTaskSequence"></typeparam>
+        /// <param name="taskSequence"></param>
+        /// <returns></returns>
+        public static TaskSequenceDescription FromTaskSequence<TTaskSequence>(
+                TTaskSequence taskSequence)
+                where TTaskSequence : ITaskSequence {
+            ArgumentNullException.ThrowIfNull(taskSequence);
+            return new TaskSequenceDescription() {
+                Phase = taskSequence.Phase,
+                Tasks = taskSequence.Select(t => TaskDescription.FromTask(t))
+            };
+        }
+
+        /// <summary>
         /// Parse a task sequence description from the given JSON file.
         /// </summary>
         /// <param name="path"></param>
@@ -32,8 +51,12 @@ namespace Visus.DeploymentToolkit.Workflow {
                 string path) {
             var options = new JsonSerializerOptions() {
                 Converters = {
-                    new JsonStringEnumConverter<Phase>()
-                }
+                    new JsonStringEnumConverter<Phase>(),
+                    new TaskDescriptionConverter()
+                },
+                //TypeInfoResolver = new DefaultJsonTypeInfoResolver() {
+                //    Modifiers = { GetTypeResolvers() }
+                //}
             };
 
             using var file = File.OpenRead(path);
@@ -84,8 +107,28 @@ namespace Visus.DeploymentToolkit.Workflow {
             return JsonSerializer.SerializeAsync(file, this,
                 new JsonSerializerOptions() {
                     AllowTrailingCommas = false,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                    Converters = {
+                        new JsonStringEnumConverter<Phase>()
+                    },
                     WriteIndented = true
                 });
+        }
+        #endregion
+
+        #region Private methods
+        /// <summary>
+        /// Resolves interface types during deserialisation, which is required
+        /// because the task sequence description refers to the task
+        /// descriptions by their interface type.
+        /// </summary>
+        /// <returns></returns>
+        public static Action<JsonTypeInfo> GetTypeResolvers() {
+            return t => {
+                if (t.Type == typeof(ITaskDescription)) {
+                    t.CreateObject = () => new TaskDescription();
+                }
+            };
         }
         #endregion
     }

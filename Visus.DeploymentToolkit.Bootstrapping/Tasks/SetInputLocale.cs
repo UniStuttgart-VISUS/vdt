@@ -7,6 +7,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Threading;
@@ -50,14 +51,7 @@ namespace Visus.DeploymentToolkit.Tasks {
             this.CopyFrom(this._state);
             this.Validate();
 
-            if (!OperatingSystem.IsWindows()) {
-                this._logger.LogWarning("{Task} is not supported on {OS}.",
-                    nameof(SetInputLocale),
-                    Environment.OSVersion.VersionString);
-                return Task.CompletedTask;
-            }
-
-            if (this.InputLocale is not null) {
+            if ((this.InputLocale is not null) && OperatingSystem.IsWindows()) {
                 this._logger.LogInformation("Changing input locale to "
                     + "\"{InputLocale}\".", this.InputLocale);
                 var hkl = LoadKeyboardLayout(this.InputLocale, 0);

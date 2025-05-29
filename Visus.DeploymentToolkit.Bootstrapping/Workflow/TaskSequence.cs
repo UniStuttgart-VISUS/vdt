@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Services;
@@ -21,7 +22,7 @@ namespace Visus.DeploymentToolkit.Workflow {
 
         #region Public properties
         /// <inheritdoc />
-        public int Length => this._tasks.Count;
+        public int Count => this._tasks.Count;
 
         /// <inheritdoc />
         public Phase Phase { get; init; }
@@ -32,7 +33,7 @@ namespace Visus.DeploymentToolkit.Workflow {
         public async Task ExecuteAsync(IState state) {
             _ = state ?? throw new ArgumentNullException(nameof(state));
 
-            if (state.Progress >= this.Length) {
+            if (state.Progress >= this.Count) {
                 // Special case when a task sequence that has already completed
                 // is executed again.
                 this._logger.LogWarning("A task sequence that has already "
@@ -42,7 +43,7 @@ namespace Visus.DeploymentToolkit.Workflow {
                 return;
             }
 
-            for (; state.Progress < this.Length; ++state.Progress) {
+            for (; state.Progress < this.Count; ++state.Progress) {
                 var task = this._tasks[state.Progress];
 
                 try {
@@ -70,6 +71,13 @@ namespace Visus.DeploymentToolkit.Workflow {
             this._logger.LogInformation("The task sequence completed "
                 + "successfully.");
         }
+
+        /// <inheritdoc />
+        public IEnumerator<ITask> GetEnumerator()
+            => this._tasks.GetEnumerator();
+
+        /// <inheritdoc />
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
         #endregion
 
         #region Internal constructors

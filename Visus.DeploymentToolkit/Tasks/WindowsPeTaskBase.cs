@@ -17,8 +17,12 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// <summary>
     /// A base class for tasks working with Windows PE images.
     /// </summary>
+    /// <param name="state">The current state of the task sequence.</param>
+    /// <param name="logger">A logger for progress and error messages.
+    /// </param>
     [SupportsPhase(Workflow.Phase.PreinstalledEnvironment)]
-    public abstract class WindowsPeTaskBase : TaskBase {
+    public abstract class WindowsPeTaskBase(IState state, ILogger logger)
+            : TaskBase(state, logger) {
 
         #region Public properties
         /// <summary>
@@ -62,16 +66,6 @@ namespace Visus.DeploymentToolkit.Tasks {
             get;
             set;
         } = Waik.Defaults.WinPePath;
-        #endregion
-
-        #region Protected constructors
-        /// <summary>
-        /// Initialises a new instance.
-        /// </summary>
-        /// <param name="state"></param>
-        /// <param name="logger"></param>
-        protected WindowsPeTaskBase(IState state, ILogger logger)
-            : base(state, logger) { }
         #endregion
 
         #region Protected properties

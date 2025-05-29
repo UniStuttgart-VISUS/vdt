@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
@@ -15,14 +16,9 @@ namespace Visus.DeploymentToolkit.Workflow {
     /// Defines the interface of a task sequence, which describes how the
     /// installation should be performed.
     /// </summary>
-    public interface ITaskSequence {
+    public interface ITaskSequence : IReadOnlyCollection<ITask> {
 
         #region Public properties
-        /// <summary>
-        /// Gets the number of tasks in the sequence.
-        /// </summary>
-        int Length { get; }
-
         /// <summary>
         /// Gets the <see cref="Phase"/> the sequence is applicable to.
         /// </summary>
