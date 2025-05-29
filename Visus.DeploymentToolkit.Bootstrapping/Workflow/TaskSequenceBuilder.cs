@@ -87,15 +87,7 @@ namespace Visus.DeploymentToolkit.Workflow {
             this.ForPhase(desc.Phase);
 
             foreach (var t in desc.Tasks) {
-                var type = Type.GetType(t.Task, true)!;
-                var task = Activator.CreateInstance(type) as ITask;
-
-                if (task == null) {
-                    throw new ArgumentException(string.Format(
-                        Errors.TypeNotTask, t.Task));
-                }
-
-                this.Add(task);
+                this.Add(t.ToTask());
             }
 
             return this;

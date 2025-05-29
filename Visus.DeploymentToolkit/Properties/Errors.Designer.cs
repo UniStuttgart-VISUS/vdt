@@ -295,11 +295,29 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The task type &quot;{0}&quot; does not exist..
+        /// </summary>
+        internal static string TaskNotFound {
+            get {
+                return ResourceManager.GetString("TaskNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The task sequence store at &quot;{0}&quot; could not be found..
         /// </summary>
         internal static string TsStoreNotFound {
             get {
                 return ResourceManager.GetString("TsStoreNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The type &quot;{0}&quot; exists, but it is not a task..
+        /// </summary>
+        internal static string TypeNotTask {
+            get {
+                return ResourceManager.GetString("TypeNotTask", resourceCulture);
             }
         }
         

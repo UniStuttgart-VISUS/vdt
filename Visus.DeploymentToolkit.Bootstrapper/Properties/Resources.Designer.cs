@@ -77,5 +77,14 @@ namespace Visus.DeploymentToolkit.Bootstrapper.Properties {
                 return ResourceManager.GetString("StartAgent", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logging and prompt should not overlap..
+        /// </summary>
+        internal static string WaitForLog {
+            get {
+                return ResourceManager.GetString("WaitForLog", resourceCulture);
+            }
+        }
     }
 }

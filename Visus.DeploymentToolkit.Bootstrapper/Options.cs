@@ -4,10 +4,12 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System.Globalization;
 using System.IO;
 using Visus.DeploymentToolkit.Application;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Services;
+using Visus.DeploymentToolkit.SystemInformation;
 using Visus.DeploymentToolkit.Tasks;
 
 
@@ -64,6 +66,25 @@ namespace Visus.DeploymentToolkit {
         public string? Domain { get; set; }
 
         /// <summary>
+        /// Gets or sets the input locale to be applied by the bootstrapper.
+        /// </summary>
+        [State(nameof(SetInputLocale.InputLocale))]
+        public string? InputLocale {
+            get => this._inputLocale;
+            set {
+                this._inputLocale = value;
+
+                // Check whether the locale is not a numeric stuff, but an IETF
+                // culture code. If so, try to convert it to an keyboard layout.
+                try {
+                    var culture = new CultureInfo(this._inputLocale!);
+                    this._inputLocale = InputProfiles.ForCulture(culture)
+                        ?? this._inputLocale;
+                } catch { /* This is expected and can be ignored. */ }
+            }
+        }
+
+        /// <summary>
         /// Gets the path to the <see cref="StateFile"/> in the
         /// <see cref="WorkingDirectory"/>.
         /// </summary>
@@ -90,6 +111,10 @@ namespace Visus.DeploymentToolkit {
         /// </summary>
         [State(WellKnownStates.WorkingDirectory)]
         public string WorkingDirectory { get; set; } = @"\deimos";
+        #endregion
+
+        #region Private fields
+        private string? _inputLocale;
         #endregion
     }
 }

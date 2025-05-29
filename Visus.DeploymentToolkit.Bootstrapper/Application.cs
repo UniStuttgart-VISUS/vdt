@@ -6,9 +6,12 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Application;
+using Visus.DeploymentToolkit.Bootstrapper.Properties;
 using Visus.DeploymentToolkit.Services;
+using Visus.DeploymentToolkit.SystemInformation;
 using Visus.DeploymentToolkit.Tasks;
 using Visus.DeploymentToolkit.Workflow;
 
@@ -39,6 +42,13 @@ namespace Visus.DeploymentToolkit.Bootstrapper {
             this.Logger.LogInformation("Preparing bootstrapping task sequence.");
             var builder = this.GetRequiredService<ITaskSequenceBuilder>()
                 .ForPhase(Phase.Bootstrapping)
+                .Add<SetInputLocale>(t => {
+                    t.InputLocale = this.Options.InputLocale;
+                })
+                .Add<Delay>(t => {
+                    t.Duration = TimeSpan.FromSeconds(2);
+                    t.Reason = Resources.WaitForLog;
+                })
                 .Add<MountDeploymentShare>()
                 .Add<CreateDirectory>(t => {
                     t.Path = this.Options.WorkingDirectory;
@@ -48,7 +58,6 @@ namespace Visus.DeploymentToolkit.Bootstrapper {
                 .Add<RunAgent>();
             //.Add<CopyFiles>(services, t => t.Source = options.LogFile)
             var taskSequence = builder.Build();
-
 
             // Run the task sequence, which will start the deployment agent from
             // the share.

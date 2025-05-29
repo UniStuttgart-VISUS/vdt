@@ -204,4 +204,10 @@
   <data name="InexistentUnattend" xml:space="preserve">
     <value>The specified path "{0}" did not specify a valid unattend file or an architecture-independent template for such.</value>
   </data>
+  <data name="TypeNotTask" xml:space="preserve">
+    <value>The type "{0}" exists, but it is not a task.</value>
+  </data>
+  <data name="TaskNotFound" xml:space="preserve">
+    <value>The task type "{0}" does not exist.</value>
+  </data>
 </root>

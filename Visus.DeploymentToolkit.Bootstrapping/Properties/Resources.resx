@@ -126,6 +126,9 @@
   <data name="CurrentUser" xml:space="preserve">
     <value>current user</value>
   </data>
+  <data name="Delay" xml:space="preserve">
+    <value>Delay execution</value>
+  </data>
   <data name="MountDeploymentShare" xml:space="preserve">
     <value>Mount deployment share</value>
   </data>
@@ -158,6 +161,9 @@
   </data>
   <data name="RunCommand" xml:space="preserve">
     <value>Run command</value>
+  </data>
+  <data name="SetKeyboardLocale" xml:space="preserve">
+    <value>Set keyboard locale</value>
   </data>
   <data name="SetWorkingDirectory" xml:space="preserve">
     <value>Set the working directory state</value>

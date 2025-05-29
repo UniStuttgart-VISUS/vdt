@@ -180,8 +180,10 @@
   </data>
   <data name="UnmountWim" xml:space="preserve">
     <value>Unmount a WIM image</value>
+    <comment>The title of the UnmountWimtask</comment>
   </data>
   <data name="Unshare" xml:space="preserve">
     <value>Delete shared resource</value>
+    <comment>The title of the UnshareTask</comment>
   </data>
 </root>

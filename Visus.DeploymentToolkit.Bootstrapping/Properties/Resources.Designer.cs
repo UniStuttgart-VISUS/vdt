@@ -88,6 +88,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delay execution.
+        /// </summary>
+        internal static string Delay {
+            get {
+                return ResourceManager.GetString("Delay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mount deployment share.
         /// </summary>
         internal static string MountDeploymentShare {
@@ -183,6 +192,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string RunCommand {
             get {
                 return ResourceManager.GetString("RunCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set keyboard locale.
+        /// </summary>
+        internal static string SetKeyboardLocale {
+            get {
+                return ResourceManager.GetString("SetKeyboardLocale", resourceCulture);
             }
         }
         

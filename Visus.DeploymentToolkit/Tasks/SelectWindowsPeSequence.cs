@@ -57,6 +57,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                 = setLanguage.SystemLocale
                 = new("de-DE");
 
+            //this._customisations = [runBootstrapper ];
             this._customisations = [ runBootstrapper, setLanguage ];
         }
 

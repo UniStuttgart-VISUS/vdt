@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using System.Collections.Generic;
+using Visus.DeploymentToolkit.Tasks;
 
 
 namespace Visus.DeploymentToolkit.Workflow {
@@ -25,5 +26,14 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// when it is instantiated.
         /// </summary>
         IDictionary<string, object?> Parameters { get; }
+
+        /// <summary>
+        /// Restores a task instance from the description.
+        /// </summary>
+        /// <returns>The task that has been restored from this description.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">If the
+        /// <see cref="Task"/> does not designate a valid task type.</exception>
+        ITask ToTask();
     }
 }

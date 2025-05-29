@@ -1,9 +1,10 @@
-﻿// <copyright file="Configuration.cs" company="Visualisierungsinstitut der Universität Stuttgart">
+﻿// <copyright file="Options.cs" company="Visualisierungsinstitut der Universität Stuttgart">
 // Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
 
+using Visus.DeploymentToolkit.Application;
 using Visus.DeploymentToolkit.Workflow;
 
 
@@ -16,32 +17,25 @@ namespace Visus.DeploymentToolkit.Agent {
     /// <remarks>
     /// The configuration is read from the application settings file or from the
     /// command line and most importantly determines in which phase the process
-    /// is. In the application settings file, the <see cref="AgentOptions"/>
+    /// is. In the application settings file, the <see cref="Options"/>
     /// class maps to the root of the file.
     /// </remarks>
-    internal sealed class AgentOptions {
+    internal sealed class Options : OptionsBase {
 
+        #region Public constructors
+        /// <summary>
+        /// Initialises a new instance.
+        /// </summary>
+        public Options() {
+            this.LogFile ="deimosagent.log";
+        }
+        #endregion
+
+        #region Public properties
         /// <summary>
         /// Gets or sets the phase in which the agent is currently running.
         /// </summary>
         public Phase Phase { get; set; } = Phase.Unknown;
-
-        /// <summary>
-        /// Gets or sets the path of the deployment share, either the UNC path
-        /// or the drive letter.
-        /// </summary>
-        public string DeploymentShare { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Gets the path to the log file.
-        /// </summary>
-        public string LogFile { get; set; } = "deimosagent.log";
-
-        /// <summary>
-        /// Gets or sets the path to the state file where the bootstrapper
-        /// has persisted the state that is loaded when starting.
-        /// </summary>
-        public string StateFile { get; set; } = "deimosstate.json";
 
         /// <summary>
         /// Gets or sets the name of the task sequence to execute.
@@ -55,5 +49,6 @@ namespace Visus.DeploymentToolkit.Agent {
         /// Gets or sets the configuration of the task sequence store.
         /// </summary>
         public TaskSequenceStoreOptions TaskSequenceStore { get; set; } = new();
+        #endregion
     }
 }

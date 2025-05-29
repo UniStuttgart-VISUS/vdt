@@ -123,4 +123,7 @@
   <data name="StartAgent" xml:space="preserve">
     <value>Starting the deployment agent as {0}.</value>
   </data>
+  <data name="WaitForLog" xml:space="preserve">
+    <value>Logging and prompt should not overlap.</value>
+  </data>
 </root>
