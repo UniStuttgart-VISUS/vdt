@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ApplyImage" xml:space="preserve">
+    <value>Apply WIM image</value>
+  </data>
+  <data name="ApplyUnattend" xml:space="preserve">
+    <value>Apply unattend.xml</value>
+  </data>
   <data name="CheckElevation" xml:space="preserve">
     <value>Check for administrative permissions</value>
   </data>
@@ -131,6 +137,9 @@
   </data>
   <data name="CustomiseUnattend" xml:space="preserve">
     <value>Customise unattend.xml</value>
+  </data>
+  <data name="InjectDrivers" xml:space="preserve">
+    <value>Inject drivers</value>
   </data>
   <data name="MountWim" xml:space="preserve">
     <value>Mount a WIM image</value>

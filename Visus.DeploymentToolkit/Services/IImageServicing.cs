@@ -17,6 +17,11 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public properties
         /// <summary>
+        /// Gets whether the service has an open session or not.
+        /// </summary>
+        bool IsOpen { get; }
+
+        /// <summary>
         /// Gets a description of the installation that is bein services.
         /// </summary>
         string Name { get; }

@@ -53,10 +53,11 @@ namespace Visus.DeploymentToolkit.Services {
             = nameof(IState.DeploymentShareUser);
 
         /// <summary>
-        /// The current DISM session, which is only available in the agent and
-        /// never in the bootstrapper.
+        /// Gets or sets the path where the installation disk is mounted in
+        /// WinPE.
         /// </summary>
-        public const string DismScope = nameof(DismScope);
+        public const string InstallationDirectory
+            = nameof(IState.InstallationDirectory);
 
         /// <summary>
         /// The disk to which Windows should be installed.

@@ -70,6 +70,12 @@ namespace Visus.DeploymentToolkit.Services {
         string? DeploymentShareUser { get; set; }
 
         /// <summary>
+        /// Gets or sets the path where the installation disk is mounted in
+        /// WinPE.
+        /// </summary>
+        string? InstallationDirectory { get; set; }
+
+        /// <summary>
         /// Gets or sets the disk where Windows will be installed.
         /// </summary>
         IDisk? InstallationDisk { get; set; }

@@ -61,6 +61,24 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Apply WIM image.
+        /// </summary>
+        internal static string ApplyImage {
+            get {
+                return ResourceManager.GetString("ApplyImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apply unattend.xml.
+        /// </summary>
+        internal static string ApplyUnattend {
+            get {
+                return ResourceManager.GetString("ApplyUnattend", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Check for administrative permissions.
         /// </summary>
         internal static string CheckElevation {
@@ -102,6 +120,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string CustomiseUnattend {
             get {
                 return ResourceManager.GetString("CustomiseUnattend", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inject drivers.
+        /// </summary>
+        internal static string InjectDrivers {
+            get {
+                return ResourceManager.GetString("InjectDrivers", resourceCulture);
             }
         }
         

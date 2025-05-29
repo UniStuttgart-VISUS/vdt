@@ -12,7 +12,6 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Visus.DeploymentToolkit.Imaging;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
 using Visus.DeploymentToolkit.Unattend;

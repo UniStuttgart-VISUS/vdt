@@ -5,10 +5,9 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
-using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Validation;
 
@@ -18,7 +17,7 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// <summary>
     /// Applies an unattend file to a mounted Windows installation.
     /// </summary>
-    internal sealed class ApplyUnattend : TaskBase {
+    public sealed class ApplyUnattend : ImageServicingTaskBase {
 
         #region Public constructors
         /// <summary>
@@ -32,22 +31,13 @@ namespace Visus.DeploymentToolkit.Tasks {
         public ApplyUnattend(IState state,
                 IImageServicing imageServicing,
                 ILogger<ApplyUnattend> logger)
-                : base(state,logger) {
-            this._imageServicing = imageServicing
-                ?? throw new ArgumentNullException(nameof(imageServicing));
+                : base(state,imageServicing, logger) {
+            this.Name = Resources.ApplyUnattend;
+            this.IsCritical = true;
         }
         #endregion
 
         #region Public properties
-        /// <summary>
-        /// Gets or sets the path to the Windows installation being modified.
-        /// </summary>
-        /// <remarks>
-        /// If this path is <c>null</c>, an online servicing session for the
-        /// current Windows installation is opened.
-        /// </remarks>
-        public string? InstallationPath { get; set; }
-
         /// <summary>
         /// Gets or sets the path to the unattend file to apply.
         /// </summary>
@@ -58,32 +48,16 @@ namespace Visus.DeploymentToolkit.Tasks {
         #region Public methods
         /// <inheritdoc />
         public override Task ExecuteAsync(CancellationToken cancellationToken) {
-            if (this.InstallationPath is null) {
-                this._logger.LogTrace("No installation path was set, so we "
-                    + "consider any mounted WIM image a candidate.");
-                this.InstallationPath = this._state.WimMount?.MountPoint;
-            }
+            this.Validate();
 
-            this._logger.LogInformation("Opening a DISM servicing session "
-                + "for \"{Image}\" to apply unattend settings.",
-                this.InstallationPath);
-            this._imageServicing.Open(this.InstallationPath);
-
-            this._logger.LogInformation("Applying unattend file "
-                + "\"{UnattendFile}\" to \"{Image}\".",
-                this.UnattendFile, this._imageServicing.Name);
-            this._imageServicing.ApplyUnattend(this.UnattendFile);
-
-            this._logger.LogTrace("Committing changes to \"{Image}\".",
-                this._imageServicing.Name);
-            this._imageServicing.Commit();
-
-            return Task.CompletedTask;
+            return Task.Run(() => {
+                try {
+                    this.Open().ApplyUnattend(this.UnattendFile);
+                } finally {
+                    this.Close();
+                }
+            }, cancellationToken);
         }
-        #endregion
-
-        #region Private fields
-        private readonly IImageServicing _imageServicing;
         #endregion
     }
 }

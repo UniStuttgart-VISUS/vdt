@@ -79,6 +79,12 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         /// <inheritdoc />
+        public string? InstallationDirectory {
+            get => this[WellKnownStates.InstallationDirectory] as string;
+            set => this[WellKnownStates.InstallationDirectory] = value;
+        }
+
+        /// <inheritdoc />
         public IDisk? InstallationDisk {
             get => this[WellKnownStates.InstallationDisk] as IDisk;
             set => this[WellKnownStates.InstallationDisk] = value;

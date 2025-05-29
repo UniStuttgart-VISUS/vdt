@@ -13,10 +13,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using Visus.DeploymentToolkit.Properties;
-using Visus.DeploymentToolkit.Services;
 
 
-namespace Visus.DeploymentToolkit.Imaging {
+namespace Visus.DeploymentToolkit.Services {
 
     /// <summary>
     /// Implements servicing of WIM images using DISM.
@@ -44,6 +43,9 @@ namespace Visus.DeploymentToolkit.Imaging {
 
         #region Public properties
         /// <inheritdoc />
+        public bool IsOpen => this._session != null;
+
+        /// <inheritdoc />
         public string Name => this._path ?? RuntimeInformation.OSDescription;
 
         /// <inheritdoc />
@@ -54,6 +56,8 @@ namespace Visus.DeploymentToolkit.Imaging {
         /// <inheritdoc />
         public void ApplyUnattend(string path, bool singleSession) {
             this.CheckSession();
+            this._logger.LogTrace("Applying unattend file \"{Path}\" to "
+                + "image \"{Image}\".", path, this.Name);
             DismApi.ApplyUnattend(this._session, path, singleSession);
         }
 
@@ -78,6 +82,8 @@ namespace Visus.DeploymentToolkit.Imaging {
                 bool recursive = false,
                 bool forceUnsigned = false) {
             this.CheckSession();
+            this._logger.LogTrace("Injecting drivers from \"{Path}\" to "
+                + "image \"{Image}\".", folder, this.Name);
             DismApi.AddDriversEx(this._session,
                 folder,
                 forceUnsigned,
@@ -113,7 +119,7 @@ namespace Visus.DeploymentToolkit.Imaging {
         #region Private methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CheckNoSession() {
-            if (this._session != null) {
+            if (this.IsOpen) {
                 throw new InvalidOperationException(
                     Errors.DuplicateDismSession);
             }

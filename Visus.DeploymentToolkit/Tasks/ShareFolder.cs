@@ -84,7 +84,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                     this.MaxUsers);
                 this._logger.LogInformation("The \"{Share}\" was created "
                     + "successfully.", this.Share);
-            });
+            }, cancellationToken);
         }
         #endregion
     }
