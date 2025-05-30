@@ -136,7 +136,7 @@ namespace Visus.DeploymentToolkit.Workflow {
         internal static IEnumerable<PropertyInfo> GetParameters(Type type) {
             ArgumentNullException.ThrowIfNull(type);
             var flags = BindingFlags.Public | BindingFlags.Instance;
-            var retval = from p in type.GetType().GetProperties(flags)
+            var retval = from p in type.GetProperties(flags)
                          where p.CanRead && p.CanWrite
                          select p;
             return retval;

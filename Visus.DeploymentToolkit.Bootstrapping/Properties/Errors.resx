@@ -154,7 +154,7 @@
     <value>No phase has been assigned yet.</value>
   </data>
   <data name="RequiredStateNotSet" xml:space="preserve">
-    <value>The property {0} of {1} is required, was not set and can also not be set from the task sequence state "{2}".</value>
+    <value>The property {0} of {1} is required, was not set and can also not be set from any of the task sequence states "{2}".</value>
   </data>
   <data name="RequiredPropertyNotSet" xml:space="preserve">
     <value>The property {0} of {1} is required, was not set and can also not be set from a configuration property "{2}".</value>

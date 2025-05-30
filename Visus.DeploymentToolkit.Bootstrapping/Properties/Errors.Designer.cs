@@ -187,7 +187,7 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The property {0} of {1} is required, was not set and can also not be set from the task sequence state &quot;{2}&quot;..
+        ///   Looks up a localized string similar to The property {0} of {1} is required, was not set and can also not be set from any of the task sequence states &quot;{2}&quot;..
         /// </summary>
         internal static string RequiredStateNotSet {
             get {

@@ -44,20 +44,26 @@ namespace Visus.DeploymentToolkit.Extensions {
                         let fa = p.GetCustomAttribute<FromStateAttribute>()
                         let ra = p.GetCustomAttribute<RequiredAttribute>()
                         where (fa != null)
-                        select (p, fa.Property ?? p.Name, ra != null);
+                        let pp = fa.Properties.Any()
+                        select (p, pp ? fa.Properties : [ p.Name ], ra != null);
 
-            foreach (var (p, s, r) in props) {
+            foreach (var (p, ss, r) in props) {
                 var v = p.GetValue(dst);
 
                 if ((v == null) || force) {
-                    if ((v = src[s]) != null) {
-                        p.SetValue(dst, v);
+                    foreach (var s in ss) {
+                        if ((v = src[s]) != null) {
+                            p.SetValue(dst, v);
+                            break;
+                        }
                     }
                 }
 
                 if (r && (v == null)) {
-                    var msg = Errors.RequiredStateNotSet;
-                    msg = string.Format(msg, p.Name, dst.GetType().FullName, s);
+                    var msg = string.Format(Errors.RequiredStateNotSet,
+                        p.Name,
+                        dst.GetType().FullName,
+                        string.Join(", ", ss));
                     throw new InvalidOperationException(msg);
                 }
             }

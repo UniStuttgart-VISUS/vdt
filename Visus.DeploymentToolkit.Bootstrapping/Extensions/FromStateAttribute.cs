@@ -13,17 +13,20 @@ namespace Visus.DeploymentToolkit.Extensions {
     /// Annotates a property of a class as being retrieved from
     /// <see cref="Visus.DeploymentToolkit.Services.IState"/>.
     /// </summary>
-    /// <param name="property">The name of the property in the state.</param>
+    /// <param name="properties">The name of the properties in the state, sorted
+    /// in descending preference.</param>
     [AttributeUsage(AttributeTargets.Property,
         AllowMultiple = true,
         Inherited = false)]
-    public sealed class FromStateAttribute(string? property = null) : Attribute {
+    public sealed class FromStateAttribute(params string[] properties)
+            : Attribute {
 
         /// <summary>
-        /// Gets the name of the property in the state that the annotated
-        /// property should be retrieved from. If <c>null</c>, the name of the
-        /// source property should be used.
+        /// Gets the name of the properties in the state that the annotated
+        /// property should be retrieved from. If empty, the name of the source
+        /// property should be used. Otherwise, the first property that was
+        /// found should be used.
         /// </summary>
-        public string? Property { get; } = property;
+        public string[] Properties { get; } = properties;
     }
 }
