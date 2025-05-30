@@ -87,7 +87,7 @@ namespace Visus.DeploymentToolkit.Workflow {
             this.ForPhase(desc.Phase);
 
             foreach (var t in desc.Tasks) {
-                this.Add(t.ToTask());
+                this.Add(t.ToTask(this._services));
             }
 
             return this;

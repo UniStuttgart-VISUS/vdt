@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Visus.DeploymentToolkit.Properties;
 
 
 namespace Visus.DeploymentToolkit.Workflow {
@@ -24,8 +25,29 @@ namespace Visus.DeploymentToolkit.Workflow {
                 ref Utf8JsonReader reader,
                 Type typeToConvert,
                 JsonSerializerOptions options) {
-            var doc = JsonDocument.ParseValue(ref reader);
-            return JsonSerializer.Deserialize<TaskDescription>(doc, options);
+            using var doc = JsonDocument.ParseValue(ref reader);
+            var retval = new TaskDescription();
+
+            // Restore the type of the task.
+            var task = doc.RootElement.GetProperty(
+                nameof(TaskDescription.Task));
+            retval.Task = task.GetString()
+                ?? throw new JsonException(Errors.MissingTaskType);
+
+            // Restore the configuration.
+            if (doc.RootElement.TryGetProperty(
+                    nameof(TaskDescription.Parameters),
+                    out var parameters)) {
+                foreach (var p in TaskDescription.GetParameters(retval.Type)) {
+                    if (parameters.TryGetProperty(p.Name, out var value)) {
+                        var v = JsonSerializer.Deserialize(value,
+                            p.PropertyType);
+                        p.SetValue(retval, v);
+                    }
+                }
+            }
+
+            return retval;
         }
 
         /// <inheritdoc />

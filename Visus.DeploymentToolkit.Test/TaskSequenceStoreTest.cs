@@ -6,13 +6,10 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Text.Json;
-using System.Xml.Linq;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
-using Visus.DeploymentToolkit.Unattend;
 using Visus.DeploymentToolkit.Workflow;
 
 
@@ -89,6 +86,12 @@ namespace Visus.DeploymentToolkit.Test {
 
             var desc = await TaskSequenceDescription.ParseAsync(path);
             Assert.IsNotNull(desc);
+
+            var builder = provider.GetRequiredService<ITaskSequenceBuilder>();
+            Assert.IsNotNull(builder);
+
+            var restored = builder.FromDescription(desc);
+            Assert.IsNotNull(restored);
         }
 
         private static ILogger<T> CreateLogger<T>() where T : class  => LoggerFactory.CreateLogger<T>();

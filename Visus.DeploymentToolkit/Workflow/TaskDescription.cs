@@ -4,14 +4,13 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
@@ -38,29 +37,24 @@ namespace Visus.DeploymentToolkit.Workflow {
         public static TaskDescription FromTask<TTask>(TTask task)
                 where TTask : ITask {
             ArgumentNullException.ThrowIfNull(task);
+            var type = task.GetType();
+
+            if (type.IsGenericOf(typeof(SelfConfiguringTask<>))) {
+                // Serialise a self-configuring task as its base task. It is
+                // impossible to restore the self configuration part from JSON
+                // as this happens via lambdas in code.
+                type = type.GetGenericArguments().Single();
+            }
+
             var retval = new TaskDescription {
-                Task = task.GetType().FullName!,
+                //Task = type.AssemblyQualifiedName!,
+                Task = type.FullName!,
                 Parameters = new Dictionary<string, object?>()
             };
 
-            var flags = BindingFlags.Public | BindingFlags.Instance;
-            var properties = from p in task.GetType().GetProperties(flags)
-                             where p.CanRead && p.CanWrite
-                             select p;
-            var options = new JsonSerializerOptions() {
-                Converters = {
-                    new JsonStringEnumConverter<Phase>()
-                }
-            };
-
-            foreach (var p in properties) {
+            foreach (var p in GetParameters(typeof(TTask))) {
                 var value = p.GetValue(task);
-                var type = p.PropertyType;
-                retval.Parameters[p.Name] = value switch {
-                    null => null,
-                    _ when type.IsBasicJson() => value,
-                    _ => JsonSerializer.Serialize(value, type, options)
-                };
+                retval.Parameters[p.Name] = value;
             }
 
             return retval;
@@ -78,6 +72,31 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// </summary>
         [Required]
         public string Task { get; set; } = null!;
+
+        /// <summary>
+        /// Gets the type resolved from <see cref="Task"/>
+        /// </summary>
+        [JsonIgnore]
+        public Type Type {
+            get {
+                Debug.WriteLine(this.Task);
+                var retval = Type.GetType(this.Task, false, true);
+
+                if (retval is null) {
+                    // Try harder.
+                    retval = AppDomain.CurrentDomain.GetAssemblies()
+                        .SelectMany(a => a.GetTypes())
+                        .FirstOrDefault(t => t.FullName == this.Task);
+                }
+
+                if (retval is null) {
+                    // Now, we cannot do anything else.
+                    throw new InvalidOperationException(string.Format(
+                        Errors.TaskNotFound, this.Task));
+                }
+                return retval;
+            }
+        }
         #endregion
 
         #region Public methods
@@ -85,39 +104,41 @@ namespace Visus.DeploymentToolkit.Workflow {
         public override string ToString() => this.Task ?? base.ToString()!;
 
         /// <inheritdoc />
-        public ITask ToTask() {
-            var type = Type.GetType(this.Task, true);
-            if (type == null) {
-                throw new InvalidOperationException(string.Format(
-                    Errors.TaskNotFound, this.Task));
-            }
+        public ITask ToTask(IServiceProvider services) {
+            ArgumentNullException.ThrowIfNull(services);
 
-            var retval = Activator.CreateInstance(type) as ITask;
+            var retval = services.GetRequiredService(this.Type) as ITask;
             if (retval == null) {
                 throw new InvalidOperationException(string.Format(
                     Errors.TypeNotTask, this.Task));
             }
 
-            var options = new JsonSerializerOptions() {
-                Converters = {
-                    new JsonStringEnumConverter<Phase>()
-                }
-            };
-
-            foreach (var p in this.Parameters) {
-                var property = retval.GetType().GetProperty(p.Key);
-
-                if (property?.CanWrite == true) {
-                    type = property.PropertyType;
-                    var value = p.Value switch {
-                        null => null,
-                        _ when type.IsBasicJson() => p.Value,
-                        _ => JsonSerializer.Serialize(p.Value, type, options)
-                    };
-                    property.SetValue(retval, value);
+            if (this.Parameters is not null) {
+                foreach (var p in this.Parameters) {
+                    var property = retval.GetType().GetProperty(p.Key);
+                    if (property?.CanWrite == true) {
+                        property.SetValue(retval, p.Value);
+                    }
                 }
             }
 
+            return retval;
+        }
+        #endregion
+
+        #region Internal methods
+        /// <summary>
+        /// Gets the properties of the task <paramref name="type"/> that are
+        /// considered to be parameters.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        internal static IEnumerable<PropertyInfo> GetParameters(Type type) {
+            ArgumentNullException.ThrowIfNull(type);
+            var flags = BindingFlags.Public | BindingFlags.Instance;
+            var retval = from p in type.GetType().GetProperties(flags)
+                         where p.CanRead && p.CanWrite
+                         select p;
             return retval;
         }
         #endregion

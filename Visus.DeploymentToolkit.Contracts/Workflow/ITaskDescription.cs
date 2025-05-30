@@ -4,7 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using System.Collections.Generic;
+using System;
 using Visus.DeploymentToolkit.Tasks;
 
 
@@ -14,6 +14,13 @@ namespace Visus.DeploymentToolkit.Workflow {
     /// The description of an <see cref="Tasks.ITask"/> that needs to be
     /// instantiated to create an actual task sequence from a description.
     /// </summary>
+    /// <remarks>
+    /// The serialised version of a task description typically contains more
+    /// properties that map to the properties of the task they describe. A
+    /// custom serialiser is used to restore this information. This is, however,
+    /// not relevant for the public interface, so we only provide the ability
+    /// to restore the task here.
+    /// </remarks>
     public interface ITaskDescription {
 
         /// <summary>
@@ -22,18 +29,18 @@ namespace Visus.DeploymentToolkit.Workflow {
         string Task { get; }
 
         /// <summary>
-        /// Gets parameters that are to be assigned to the properties of the task
-        /// when it is instantiated.
-        /// </summary>
-        IDictionary<string, object?> Parameters { get; }
-
-        /// <summary>
         /// Restores a task instance from the description.
         /// </summary>
+        /// <param name="services">A service provider that can resolve the
+        /// dependencies for the task. The description needs this information
+        /// as it cannot know how potential dependencies of a task can be
+        /// resolved otherwise.</param>
         /// <returns>The task that has been restored from this description.
         /// </returns>
+        /// <exception cref="ArgumentNullException">If
+        /// <paramref name="services"/> is <see langword="null"/>.</exception>
         /// <exception cref="InvalidOperationException">If the
         /// <see cref="Task"/> does not designate a valid task type.</exception>
-        ITask ToTask();
+        ITask ToTask(IServiceProvider services);
     }
 }

@@ -210,4 +210,10 @@
   <data name="TaskNotFound" xml:space="preserve">
     <value>The task type "{0}" does not exist.</value>
   </data>
+  <data name="UnexpectedParameterType" xml:space="preserve">
+    <value>The type of a deserialised parameter was none of the expected ones.</value>
+  </data>
+  <data name="MissingTaskType" xml:space="preserve">
+    <value>The task object does not have the mandatory Type property.</value>
+  </data>
 </root>

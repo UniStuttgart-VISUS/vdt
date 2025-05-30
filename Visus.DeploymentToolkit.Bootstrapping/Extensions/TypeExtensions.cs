@@ -24,10 +24,15 @@ namespace Visus.DeploymentToolkit.Extensions {
         /// <param name="that"></param>
         /// <returns></returns>
         public static bool IsBasicJson(this Type that) {
-            return (that != null)
-                && ((that == typeof(string))
-                || (that == typeof(bool))
-                || that.IsNumeric());
+            return that switch {
+                _ when (that == typeof(string)) => true,
+                _ when (that == typeof(bool)) => true,
+                _ when (that == typeof(DateTime)) => true,
+                _ when (that == typeof(DateTimeOffset)) => true,
+                _ when (that == typeof(TimeSpan)) => true,
+                _ when that.IsNumeric() => true,
+                _ => false
+            };
         }
 
         /// <summary>

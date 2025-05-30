@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
@@ -49,19 +50,9 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <returns></returns>
         public static ValueTask<TaskSequenceDescription?> ParseAsync(
                 string path) {
-            var options = new JsonSerializerOptions() {
-                Converters = {
-                    new JsonStringEnumConverter<Phase>(),
-                    new TaskDescriptionConverter()
-                },
-                //TypeInfoResolver = new DefaultJsonTypeInfoResolver() {
-                //    Modifiers = { GetTypeResolvers() }
-                //}
-            };
-
             using var file = File.OpenRead(path);
             return JsonSerializer.DeserializeAsync<TaskSequenceDescription>(
-                file, options);
+                file, JsonOptions);
         }
         #endregion
 
@@ -101,19 +92,28 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// </summary>
         /// <param name="path">The path to the file where the description should
         /// be stored.</param>
-        /// <returns>A task for waiting to the serialisation to complete.</returns>
+        /// <returns>A task for waiting to the serialisation to complete.
+        /// </returns>
         public Task SaveAsync(string path) {
             using var file = File.OpenWrite(path);
-            return JsonSerializer.SerializeAsync(file, this,
-                new JsonSerializerOptions() {
-                    AllowTrailingCommas = false,
-                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                    Converters = {
-                        new JsonStringEnumConverter<Phase>()
-                    },
-                    WriteIndented = true
-                });
+            return JsonSerializer.SerializeAsync(file, this, JsonOptions);
         }
+        #endregion
+
+        #region Private constants
+        /// <summary>
+        /// The options for the JSON serialiser used to persist task sequences.
+        /// </summary>
+        private static readonly JsonSerializerOptions JsonOptions = new() {
+            AllowTrailingCommas = false,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            Converters = {
+                new JsonStringEnumConverter<Architecture>(),
+                new JsonStringEnumConverter<Phase>(),
+                new TaskDescriptionConverter()
+            },
+            WriteIndented = true
+        };
         #endregion
 
         #region Private methods

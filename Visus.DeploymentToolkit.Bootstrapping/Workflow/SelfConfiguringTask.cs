@@ -25,10 +25,18 @@ namespace Visus.DeploymentToolkit.Workflow {
     /// immediately before the task.</param>
     /// <param name="services">The service provider for retrieving the state.
     /// </param>
-    internal sealed class SelfConfiguringTask<TTask>(TTask task,
+    public sealed class SelfConfiguringTask<TTask>(TTask task,
             Action<TTask, IState> configure,
             IServiceProvider services)
             : ITask where TTask: ITask {
+
+        ///// <summary>
+        ///// Converts a self-configuring task to the task it wraps.
+        ///// </summary>
+        ///// <param name="task">A self configuring task.</param>
+        ///// <returns>The wrapped task.</returns>
+        //public static implicit operator TTask(SelfConfiguringTask<TTask> task)
+        //    => task._task;
 
         /// <inheritdoc />
         public bool IsCritical => this._task.IsCritical;

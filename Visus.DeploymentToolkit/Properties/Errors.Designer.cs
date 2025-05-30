@@ -214,6 +214,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The task object does not have the mandatory Type property..
+        /// </summary>
+        internal static string MissingTaskType {
+            get {
+                return ResourceManager.GetString("MissingTaskType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A mounted WIM image was expected to be stored in &quot;{0}&quot;, but was not found..
         /// </summary>
         internal static string MissingWimMount {
@@ -318,6 +327,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string TypeNotTask {
             get {
                 return ResourceManager.GetString("TypeNotTask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The type of a deserialised parameter was none of the expected ones..
+        /// </summary>
+        internal static string UnexpectedParameterType {
+            get {
+                return ResourceManager.GetString("UnexpectedParameterType", resourceCulture);
             }
         }
         
