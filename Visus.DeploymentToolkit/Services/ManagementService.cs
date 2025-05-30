@@ -7,10 +7,10 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Management;
 using System.Runtime.Versioning;
-using Visus.DeploymentToolkit.Properties;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -18,7 +18,7 @@ namespace Visus.DeploymentToolkit.Services {
     /// <summary>
     /// Implementation of the WMI abstraction.
     /// </summary>
-    [SupportedOSPlatform("windows")]
+    [SupportedOSPlatform("windows")] 
     internal sealed class ManagementService : IManagementService {
 
         #region Public constructors
@@ -31,9 +31,14 @@ namespace Visus.DeploymentToolkit.Services {
                 retval.Connect();
                 return retval;
             });
-            this._windowsStoageScope = new(() => {
+            this._windowsStorageScope = new(() => {
                 var retval = new ManagementScope(
                     @"\\.\root\Microsoft\Windows\Storage");
+                retval.Connect();
+                return retval;
+            });
+            this._wmiScope = new(() => {
+                var retval = new ManagementScope(@"\\.\root\wmi");
                 retval.Connect();
                 return retval;
             });
@@ -46,14 +51,40 @@ namespace Visus.DeploymentToolkit.Services {
 
         /// <inheritdoc />
         public ManagementScope WindowsStorageScope
-            => this._windowsStoageScope.Value;
+            => this._windowsStorageScope.Value;
+
+        /// <inheritdoc />
+        public ManagementScope WmiScope => this._wmiScope.Value;
         #endregion
 
         #region Public methods
         /// <inheritdoc />
+        public ManagementClass GetClass(string name,
+                ManagementScope? scope,
+                ObjectGetOptions? objectGetOptions) {
+            this._logger.LogTrace("Getting management class \"{Path}\".",
+                name);
+            return new ManagementClass(scope ?? this.DefaultScope,
+                new ManagementPath(name),
+                objectGetOptions);
+        }
+
+        /// <inheritdoc />
         public IEnumerable<ManagementObject> GetInstancesOf(string @class,
-                ManagementScope? scope = null) {
+                ManagementScope? scope) {
             return this.Query($"SELECT * FROM {@class}", scope);
+        }
+
+        /// <inheritdoc />
+        public ManagementObject GetObject(string path,
+                ManagementScope? scope,
+                ObjectGetOptions? objectGetOptions) {
+            ArgumentNullException.ThrowIfNull(path);
+            this._logger.LogTrace("Selecting a WMI object via its path "
+                + "\"{Path}\".", path);
+            return new ManagementObject(scope ?? this.DefaultScope,
+                new ManagementPath(path),
+                objectGetOptions);
         }
 
         /// <inheritdoc />
@@ -62,7 +93,7 @@ namespace Visus.DeploymentToolkit.Services {
             this._logger.LogTrace("Issuing WMI query \"{Query}\".", query);
             var search = new ManagementObjectSearcher(
                 scope ?? this.DefaultScope,
-                 new ObjectQuery(query));
+                new ObjectQuery(query));
             return search.Get().Cast<ManagementObject>();
         }
         #endregion
@@ -70,7 +101,8 @@ namespace Visus.DeploymentToolkit.Services {
         #region Private fields
         private readonly Lazy<ManagementScope> _defaultScope;
         private readonly ILogger _logger;
-        private readonly Lazy<ManagementScope> _windowsStoageScope;
+        private readonly Lazy<ManagementScope> _windowsStorageScope;
+        private readonly Lazy<ManagementScope> _wmiScope;
         #endregion
     }
 }

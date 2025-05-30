@@ -36,6 +36,7 @@ namespace Visus.DeploymentToolkit.Extensions {
         public static IServiceCollection AddDeploymentServices(
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
+            services.AddBootService();
             services.AddBootstrappingServices();
             services.AddDism();
             services.AddDiskManagement();
@@ -112,6 +113,18 @@ namespace Visus.DeploymentToolkit.Extensions {
         }
 
         #region Internal services
+        /// <summary>
+        /// Adds the <see cref="BootService"/> to <paramref name="services"/>.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        internal static IServiceCollection AddBootService(
+                this IServiceCollection services) {
+            ArgumentNullException.ThrowIfNull(services);
+            services.AddSingleton<IBootService, BootService>();
+            return services;
+        }
+
         /// <summary>
         /// Adds the <see cref="DismScope"/> to <paramref name="services"/>.
         /// </summary>

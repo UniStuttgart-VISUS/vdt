@@ -216,4 +216,7 @@
   <data name="MissingTaskType" xml:space="preserve">
     <value>The task object does not have the mandatory Type property.</value>
   </data>
+  <data name="FailedCreateBcdStore" xml:space="preserve">
+    <value>The BCD store \"{0}\" could not be created. Make sure that the store does not already exist.</value>
+  </data>
 </root>

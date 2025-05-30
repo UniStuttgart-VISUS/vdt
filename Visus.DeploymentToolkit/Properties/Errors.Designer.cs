@@ -106,6 +106,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The BCD store \&quot;{0}\&quot; could not be created. Make sure that the store does not already exist..
+        /// </summary>
+        internal static string FailedCreateBcdStore {
+            get {
+                return ResourceManager.GetString("FailedCreateBcdStore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The system could not determine the type of the HAL..
         /// </summary>
         internal static string HalNotFound {
