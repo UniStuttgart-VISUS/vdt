@@ -1,5 +1,5 @@
 ﻿// <copyright file="FromStateAttribute.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
@@ -14,7 +14,8 @@ namespace Visus.DeploymentToolkit.Extensions {
     /// <see cref="Visus.DeploymentToolkit.Services.IState"/>.
     /// </summary>
     /// <param name="properties">The name of the properties in the state, sorted
-    /// in descending preference.</param>
+    /// in descending preference, i.e. the first state that was found non-empty
+    /// will be set, otherwise the subsequent ones are checked.</param>
     [AttributeUsage(AttributeTargets.Property,
         AllowMultiple = true,
         Inherited = false)]

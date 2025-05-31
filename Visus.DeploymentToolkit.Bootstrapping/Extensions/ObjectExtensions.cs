@@ -1,5 +1,5 @@
 ﻿// <copyright file="ObjectExtensions.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
@@ -21,19 +21,20 @@ namespace Visus.DeploymentToolkit.Extensions {
     public static class ObjectExtensions {
 
         /// <summary>
-        /// Copies (if <paramref name="force"/> is <c>false</c> only unset)
-        /// properties annotated with <see cref="FromStateAttribute"/> from
-        /// <paramref name="src"/> to <paramref name="dst"/>.
+        /// Copies (if <paramref name="force"/> is <see langword="false"/>
+        /// only unset) properties annotated with
+        /// <see cref="FromStateAttribute"/> from <paramref name="src"/> to
+        /// <paramref name="dst"/>.
         /// </summary>
         /// <param name="dst">The object receiving property values from the
         /// given <see cref="IState"/>.</param>
         /// <param name="src">The state object to read the data from.</param>
-        /// <param name="force">If <c>true</c>, the values in
+        /// <param name="force">If <see langword="true"/>, the values in
         /// <paramref name="dst"/> set set even if the respective property
-        /// already has a non-<c>null</c> value.</param>
+        /// already has a non-<see langword="null"/> value.</param>
         /// <exception cref="ArgumentNullException">If either
-        /// <paramref name="dst"/> or <paramref name="src"/> is <c>null</c>.
-        /// </exception>
+        /// <paramref name="dst"/> or <paramref name="src"/> is
+        /// <see langword="null"/>.</exception>
         public static void CopyFrom(this object dst,
                 IState src,
                 bool force = false) {
@@ -70,8 +71,8 @@ namespace Visus.DeploymentToolkit.Extensions {
         }
 
         /// <summary>
-        /// Copies (if <paramref name="force"/> is <c>false</c> only unset)
-        /// public settable properties from <paramref name="src"/> to
+        /// Copies (if <paramref name="force"/> is <see langword="false"/> only
+        /// unset) public settable properties from <paramref name="src"/> to
         /// <paramref name="dst"/> based on their name.
         /// </summary>
         /// <param name="dst"></param>
@@ -107,14 +108,70 @@ namespace Visus.DeploymentToolkit.Extensions {
         }
 
         /// <summary>
+        /// Copies (if <paramref name="force"/> is set <see langword="false"/>
+        /// only unsed) public settable properties annotated with
+        /// <see cref="FromEnvironmentAttribute"/> of <paramref name="dst"/>
+        /// from the specified environment variable
+        /// </summary>
+        /// <param name="dst"></param>
+        /// <param name="variable"></param>
+        /// <param name="force"></param>
+        /// <exception cref="ArgumentNullException">If <paramref name="dst"/>
+        /// is <see langword="null"/>.</exception>
+        public static void CopyFromEnvironment(this object dst,
+                string variable,
+                bool force = false) {
+            ArgumentNullException.ThrowIfNull(dst);
+
+            var props = from p in dst.GetType().GetProperties()
+                        let fa = p.GetCustomAttribute<FromEnvironmentAttribute>()
+                        let ra = p.GetCustomAttribute<RequiredAttribute>()
+                        where (fa != null)
+                        let pp = fa.Variables.Any()
+                        select (p, pp ? fa.Variables : [p.Name], ra != null, fa.Expand);
+
+            foreach (var (p, vars, required, expand) in props) {
+                var value = p.GetValue(dst);
+
+                if ((value is null) || force) {
+                    foreach (var v in vars) {
+                        var env = Environment.GetEnvironmentVariable(v);
+
+                        if (env is not null) {
+                            if (expand) {
+                                // If requested, expand the environment variable
+                                // before setting the value.
+                                env = Environment.ExpandEnvironmentVariables(
+                                    env);
+                            }
+
+                            p.SetValue(dst, env);
+                            break;
+                        }
+                    }
+                }
+
+                if (required && (value is null)) {
+                    var msg = string.Format(Errors.RequiredEnvironmentNotSet,
+                        p.Name,
+                        dst.GetType().FullName,
+                        string.Join(", ", vars));
+                    throw new InvalidOperationException(msg);
+                }
+            }
+        }
+
+        /// <summary>
         /// Copies the properties of the source object annotated by
         /// <see cref="StateAttribute"/> to the destination state.
         /// </summary>
         /// <param name="src">The object which of the annotated properties are
         /// to be persisted in the <see cref="IState"/>.</param>
         /// <param name="dst">The state object receiving the data.</param>
-        /// <paramref name="dst"/> or <paramref name="src"/> is <c>null</c>.
-        /// </exception>
+        /// <paramref name="dst"/> or <paramref name="src"/> is
+        /// <exception cref="ArgumentNullException">If either
+        /// <paramref name="dst"/> or <paramref name="src"/> is
+        /// <see langword="null"/>.</exception>
         public static void CopyTo(this object src, IState dst) {
             ArgumentNullException.ThrowIfNull(src);
             ArgumentNullException.ThrowIfNull(dst);
