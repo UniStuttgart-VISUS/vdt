@@ -1,5 +1,5 @@
 ﻿// <copyright file="IDiskManagement.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
@@ -14,7 +14,10 @@ using Visus.DeploymentToolkit.DiskManagement;
 namespace Visus.DeploymentToolkit.Services {
 
     /// <summary>
-    /// Defines the interface of the disk management service.
+    /// Defines the interface of the disk management service, which interfaces
+    /// with the virtual disk service to provide enumeration capabilities for
+    /// disks. Furthermore, the disk management service allows for partitioning
+    /// and formatting disks as well.
     /// </summary>
     public interface IDiskManagement {
 

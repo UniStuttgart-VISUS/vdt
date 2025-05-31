@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Compliance;
@@ -104,9 +105,30 @@ namespace Visus.DeploymentToolkit.Services {
 
         /// <inheritdoc />
         [SensitiveData]
-        public string? SessionKey {
-            get => this[WellKnownStates.SessionKey] as string;
-            set => this[WellKnownStates.SessionKey] = value;
+        public string SessionKey {
+            get {
+                var retval = this[WellKnownStates.SessionKey] as string;
+
+                if (retval is null) {
+                    this[WellKnownStates.SessionKey]
+                        = retval
+                        = RandomNumberGenerator.GetString(Vocabulary, 256);
+                }
+
+                return retval;
+            }
+            set {
+                var current = this[WellKnownStates.SessionKey] as string;
+
+                // Note: we allow the same key to be set multiple times just
+                // to make serialisation easier.
+                if ((current is not null) && (current != value)) {
+                    throw new InvalidOperationException(
+                        Errors.CannotChangeSessionKey);
+                }
+
+                this[WellKnownStates.SessionKey] = value;
+            }
         }
 
         /// <inheritdoc />
@@ -194,6 +216,8 @@ namespace Visus.DeploymentToolkit.Services {
         #endregion
 
         #region Private fields
+        private const string Vocabulary = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜabcdefg"
+            + "hijklmnopqrstuvwxyzäöü0123456789+-*/!§$%&/()=?*_:;{}[]#-.,+~@|µ";
         private readonly object _lock = new();
         private readonly ILogger _logger;
         private readonly Dictionary<string, object?> _values = new();

@@ -107,13 +107,19 @@ namespace Visus.DeploymentToolkit.Services {
         /// session.
         /// </summary>
         /// <remarks>
-        /// The session key itself is a sensitive information as it allows for
-        /// decrypting other sensitive data. The encryption feature makes data
-        /// only less obvious in the state file and logs, but the data cannot be
-        /// safe as we need to be able to restore them without user intervention.
+        /// <para>The session key itself is a sensitive information as it allows
+        /// for decrypting other sensitive data. The encryption feature makes
+        /// data only less obvious in the state file and logs, but the data
+        /// cannot be safe as we need to be able to restore them without user
+        /// intervention.</para>
+        /// <para>If a caller tries to retrieve a session key, but it has not
+        /// yet been set before, a new random key will be generated.</para>
         /// </remarks>
+        /// <exception cref="System.InvalidOperationException">If the caller
+        /// tries to set a session key, but another one has already been set.
+        /// </exception>
         [SensitiveData]
-        string? SessionKey { get; set; }    // TODO: we should find a way to exclude sensitive data at least from the log. Use attribute?
+        string SessionKey { get; set; }
 
         /// <summary>
         /// Gets or sets the ID or location of the task sequence that is

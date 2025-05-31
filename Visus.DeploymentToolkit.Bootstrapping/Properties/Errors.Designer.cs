@@ -61,6 +61,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Once a session key has been set, it cannot be changed as it might already have been used to encrypt data..
+        /// </summary>
+        internal static string CannotChangeSessionKey {
+            get {
+                return ResourceManager.GetString("CannotChangeSessionKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The command &quot;{0}&quot; failed with exit code {1}..
         /// </summary>
         internal static string CommandFailed {

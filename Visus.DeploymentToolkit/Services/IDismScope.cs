@@ -15,7 +15,11 @@ namespace Visus.DeploymentToolkit.Services {
     /// <remarks>
     /// The DISM scope should be a singleton service that can be obtained from
     /// the DI container. It will be initialised when the first task needs
-    /// DISM.
+    /// DISM. While not stricly necessary (the scope is a singleton), classes
+    /// working with DISM hold a reference to this service in order to make sure
+    /// that the DISM library stays open as long as the users live. The options
+    /// stored in the DISM service also allow for finding the log files and
+    /// other stuff.
     /// </remarks>
     public interface IDismScope : IDisposable {
 
