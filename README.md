@@ -66,3 +66,6 @@ tasks.CreateBuilder()
     .Add<CreateWindowsPeIso>()
     .Build();
 ```
+
+### Services
+The aforementioned tasks usually do only very little actual work besides processing user-provided parameters. For instance, the task for copying files mainly checks that all parameters are valid, but the actual copy is made by a copy service. This is the case for the majority of tasks, and the rationale behind this design is that certain basic work might be needed by multiple tasks. In order to build such compound tasks that use basic services, the services are provided by the dependency injection mechanism for reuse.
