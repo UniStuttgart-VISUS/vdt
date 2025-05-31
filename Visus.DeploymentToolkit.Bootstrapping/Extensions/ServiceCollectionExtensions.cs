@@ -5,7 +5,6 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Compliance.Redaction;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;

@@ -50,6 +50,7 @@ namespace Visus.DeploymentToolkit.Test {
 
             var path = Path.Combine(this.TestContext.DeploymentDirectory!, "state.json");
             await state.SaveAsync(path);
+            Assert.AreEqual("horst", state.DeploymentSharePassword, "In-memory state is untouched");
 
             var restored = new ServiceCollection()
                 .AddLogging()
