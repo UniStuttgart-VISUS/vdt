@@ -7,11 +7,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Numerics;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
@@ -20,7 +16,7 @@ using Visus.DeploymentToolkit.Services;
 namespace Visus.DeploymentToolkit.Extensions {
 
     /// <summary>
-    /// Extension method for <see cref="ICommands"/>.
+    /// Extension methods for <see cref="ICommands"/>.
     /// </summary>
     public static class CommandExtensions {
 

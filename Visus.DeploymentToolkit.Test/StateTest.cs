@@ -16,6 +16,8 @@ namespace Visus.DeploymentToolkit.Test {
     [TestClass]
     public sealed class StateTest {
 
+        public TestContext TestContext { get; set; } = null!;
+
         [TestMethod]
         public void Properties() {
             var state = new State(this._loggerFactory.CreateLogger<State>());
@@ -43,16 +45,21 @@ namespace Visus.DeploymentToolkit.Test {
             state.Phase = Phase.Installation;
             Assert.AreEqual(Phase.Installation, state.Phase);
 
-            await state.SaveAsync("state.json");
+            state.DeploymentSharePassword = "horst";
+            Assert.AreEqual("horst", state.DeploymentSharePassword);
+
+            var path = Path.Combine(this.TestContext.DeploymentDirectory!, "state.json");
+            await state.SaveAsync(path);
 
             var restored = new ServiceCollection()
                 .AddLogging()
-                .AddState("state.json")
+                .AddState(path)
                 .BuildServiceProvider()
                 .GetRequiredService<IState>();
 
             Assert.AreEqual(state.DeploymentShare, restored.DeploymentShare);
             Assert.AreEqual(state.Phase, restored.Phase);
+            Assert.AreEqual(state.DeploymentSharePassword, restored.DeploymentSharePassword);
         }
 
         private readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(l => l.AddDebug());

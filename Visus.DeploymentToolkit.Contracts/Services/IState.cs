@@ -112,14 +112,12 @@ namespace Visus.DeploymentToolkit.Services {
         /// data only less obvious in the state file and logs, but the data
         /// cannot be safe as we need to be able to restore them without user
         /// intervention.</para>
-        /// <para>If a caller tries to retrieve a session key, but it has not
-        /// yet been set before, a new random key will be generated.</para>
         /// </remarks>
         /// <exception cref="System.InvalidOperationException">If the caller
         /// tries to set a session key, but another one has already been set.
         /// </exception>
         [SensitiveData]
-        string SessionKey { get; set; }
+        string? SessionKey { get; set; }
 
         /// <summary>
         /// Gets or sets the ID or location of the task sequence that is
@@ -145,16 +143,30 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public methods
         /// <summary>
+        /// Restores the state from the given JSON file.
+        /// </summary>
+        /// <remarks>
+        /// <para>This method will also make sure that sensitive properties are
+        /// decrypted after they have been loaded.</para>
+        /// </remarks>
+        /// <param name="path">The path to an existing state file. If this is
+        /// <see langword="null"/>, the method will try using
+        /// <see cref="StateFile"/>.</param>
+        /// <returns>A task for waiting for the operation to complete.</returns>
+        Task LoadAsync(string? path);
+
+        /// <summary>
         /// Persists the state to a JSON file at the specified location.
         /// </summary>
         /// <remarks>
         /// The method will update the <see cref="StateFile"/> variable to the
-        /// given <paramref name="path"/> if this string is non-<c>null</c>.
-        /// Otherwise, an existing <see cref="StateFile"/> will be used. If
-        /// either are <c>null</c>, the operation will fail.
+        /// given <paramref name="path"/> if this string is
+        /// non-<see langword="null"/>. Otherwise, an existing
+        /// <see cref="StateFile"/> will be used. If either are
+        /// <see langword="null"/>, the operation will fail.
         /// </remarks>
         /// <param name="path"></param>
-        /// <returns></returns>
+        /// <returns>A task for waiting for the operation to complete.</returns>
         Task SaveAsync(string? path);
         #endregion
 

@@ -151,10 +151,7 @@ namespace Visus.DeploymentToolkit.Extensions {
                 var state = new State(logger);
 
                 try {
-                    new ConfigurationBuilder()
-                        .AddJsonFile(stateFile)
-                        .Build()
-                        .Bind(state);
+                    state.LoadAsync(stateFile).Wait();
                 } catch (Exception ex) {
                     var msg = string.Format(
                         Errors.RestoringStateFailed,
