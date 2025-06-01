@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
+using System.Security.Principal;
 using Visus.DeploymentToolkit.Bcd;
 using Visus.DeploymentToolkit.Security;
 using Visus.DeploymentToolkit.Services;
@@ -54,28 +55,32 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public void MountedHive() {
-            var hive = Path.Combine(this.TestContext.DeploymentDirectory!, "SYSTEM");
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                var hive = Path.Combine(this.TestContext.DeploymentDirectory!, "SYSTEM");
 
-            using (var seBackup = new TokenPrivilege("SeBackupPrivilege"))
-            using (var seRestore = new TokenPrivilege("SeRestorePrivilege")) {
-                using var mounted = new MountedHive(Registry.LocalMachine, "test", hive);
-                Assert.IsNotNull(mounted);
-                using RegistryKey? key = mounted;
-                Assert.IsNotNull(key);
+                using (var seBackup = new TokenPrivilege("SeBackupPrivilege"))
+                using (var seRestore = new TokenPrivilege("SeRestorePrivilege")) {
+                    using var mounted = new MountedHive(Registry.LocalMachine, "test", hive);
+                    Assert.IsNotNull(mounted);
+                    using RegistryKey? key = mounted;
+                    Assert.IsNotNull(key);
+                }
             }
         }
 
         [TestMethod]
         public void MountHive() {
-            var hive = Path.Combine(this.TestContext.DeploymentDirectory!, "SYSTEM");
-            var registry = new RegistryService(this._loggerFactory.CreateLogger<RegistryService>());
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                var hive = Path.Combine(this.TestContext.DeploymentDirectory!, "SYSTEM");
+                var registry = new RegistryService(this._loggerFactory.CreateLogger<RegistryService>());
 
-            using (var seBackup = new TokenPrivilege("SeBackupPrivilege"))
-            using (var seRestore = new TokenPrivilege("SeRestorePrivilege")) {
-                var mounted = registry.LoadHive(hive, @"hklm\test");
-                Assert.IsNotNull(mounted);
-                using RegistryKey? key = mounted;
-                Assert.IsNotNull(key);
+                using (var seBackup = new TokenPrivilege("SeBackupPrivilege"))
+                using (var seRestore = new TokenPrivilege("SeRestorePrivilege")) {
+                    var mounted = registry.LoadHive(hive, @"hklm\test");
+                    Assert.IsNotNull(mounted);
+                    using RegistryKey? key = mounted;
+                    Assert.IsNotNull(key);
+                }
             }
         }
 

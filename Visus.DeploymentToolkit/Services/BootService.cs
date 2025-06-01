@@ -9,7 +9,7 @@ using System;
 using System.IO;
 using System.Management;
 using System.Runtime.Versioning;
-using Visus.DeploymentToolkit.Properties;
+using Visus.DeploymentToolkit.Bcd;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -29,28 +29,10 @@ namespace Visus.DeploymentToolkit.Services {
         #region Public methods
         /// <inheritdoc />
         [SupportedOSPlatform("windows")]
-        public ManagementBaseObject CreateBcdStore(string path) {
-            ArgumentException.ThrowIfNullOrWhiteSpace(path);
-            path = Path.GetFullPath(path);
-
-            var bcd = this._wmi.GetClass(BcdStoreClass, this._wmi.WmiScope);
-
-            var args = bcd.GetMethodParameters("CreateStore");
-            args["File"] = path;
-
+        public IBcdStore CreateBcdStore(string path) {
             this._logger.LogTrace("Creating new BCD store at \"{Path}\".",
                 path);
-            var result = bcd.InvokeMethod("CreateStore", args, null);
-            if (!(bool) result["ReturnValue"]) {
-                this._logger.LogError("The WMI call to create the BCD "
-                    + "store \"{Path}\" succeeded, but the methor indicated "
-                    + "failure. Most likely, a file at the specified location "
-                    + "already exists.", path);
-                throw new InvalidOperationException(string.Format(
-                    Errors.FailedCreateBcdStore, path));
-            }
-
-            return (ManagementBaseObject) result["Store"];
+            return WmiBcdStore.Create(path);
         }
 
         /// <inheritdoc />

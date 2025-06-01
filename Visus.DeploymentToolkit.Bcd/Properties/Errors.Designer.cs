@@ -59,5 +59,14 @@ namespace Visus.DeploymentToolkit.Bcd.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The BCD store \&quot;{0}\&quot; could not be created. Make sure that the store does not already exist..
+        /// </summary>
+        internal static string FailedCreateBcdStore {
+            get {
+                return ResourceManager.GetString("FailedCreateBcdStore", resourceCulture);
+            }
+        }
     }
 }

@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using System.Management;
+using Visus.DeploymentToolkit.Bcd;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -24,7 +25,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// </remarks>
         /// <param name="path">The path to the BCD store to be created.</param>
         /// <returns>The WMI object representing the new store.</returns>
-        ManagementBaseObject CreateBcdStore(string path);
+        IBcdStore CreateBcdStore(string path);
 
         /// <summary>
         /// Opens a BCD store at the specified location.
