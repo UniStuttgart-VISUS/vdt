@@ -55,6 +55,28 @@ namespace Visus.DeploymentToolkit.Test {
             Assert.AreEqual(0x20300000u, (uint) BcdObjectType.InheritDevice);
         }
 
+        [TestMethod]
+        public void TestWellKnownBcdObjects() {
+            Assert.AreEqual(Guid.Parse("{0CE4991B-E6B3-4B16-B23C-5E0D9250E5D9}"), WellKnownBcdObject.EmsSettingsGroup.GetGuid());
+            Assert.AreEqual(Guid.Parse("{1AFA9C49-16AB-4A5C-4A90-212802DA9460}"), WellKnownBcdObject.ResumeLoaderSettingsGroup.GetGuid());
+            Assert.AreEqual(Guid.Parse("{1CAE1EB7-A0DF-4D4D-9851-4860E34EF535}"), WellKnownBcdObject.DefaultBootEntry.GetGuid());
+            Assert.AreEqual(Guid.Parse("{313E8EED-7098-4586-A9BF-309C61F8D449}"), WellKnownBcdObject.KernelDebuggerSettingsGroup.GetGuid());
+            Assert.AreEqual(Guid.Parse("{4636856E-540F-4170-A130-A84776F4C654}"), WellKnownBcdObject.DebuggerSettingsGroup.GetGuid());
+            Assert.AreEqual(Guid.Parse("{466F5A88-0AF2-4F76-9038-095B170DC21C}"), WellKnownBcdObject.WindowsLegacyNtldr.GetGuid());
+            Assert.AreEqual(Guid.Parse("{5189B25C-5558-4BF2-BCA4-289B11BD29E2}"), WellKnownBcdObject.BadMemoryGroup.GetGuid());
+            Assert.AreEqual(Guid.Parse("{6EFB52BF-1766-41DB-A6B3-0EE5EFF72BD7}"), WellKnownBcdObject.BootLoaderSettingsGroup.GetGuid());
+            Assert.AreEqual(Guid.Parse("{7254A080-1510-4E85-AC0F-E7FB3D444736}"), WellKnownBcdObject.WindowsSetupEfi.GetGuid());
+            Assert.AreEqual(Guid.Parse("{7EA2E1AC-2E61-4728-AAA3-896D9D0A9F0E}"), WellKnownBcdObject.GlobalSettingsGroup.GetGuid());
+            Assert.AreEqual(Guid.Parse("{7FF607E0-4395-11DB-B0DE-0800200C9A66}"), WellKnownBcdObject.HypervisorSettingsGroup.GetGuid());
+            Assert.AreEqual(Guid.Parse("{9DEA862C-5CDD-4E70-ACC1-F32B344D4795}"), WellKnownBcdObject.WindowsBootmgr.GetGuid());
+            Assert.AreEqual(Guid.Parse("{A1943BBC-EA85-487C-97C7-C9EDE908A38A}"), WellKnownBcdObject.WindowsOsTargetTemplatePcat.GetGuid());
+            Assert.AreEqual(Guid.Parse("{A5A30FA2-3D06-4E9F-B5F4-A01DF9D1FCBA}"), WellKnownBcdObject.FirmwareBootmgr.GetGuid());
+            Assert.AreEqual(Guid.Parse("{AE5534E0-A924-466C-B836-758539A3EE3A}"), WellKnownBcdObject.WindowsSetupRamdiskOptions.GetGuid());
+            Assert.AreEqual(Guid.Parse("{B012B84D-C47C-4ED5-B722-C0C42163E569}"), WellKnownBcdObject.WindowsOsTargetTemplateEfi.GetGuid());
+            Assert.AreEqual(Guid.Parse("{B2721D73-1DB4-4C62-BF78-C548A880142D}"), WellKnownBcdObject.WindowsMemoryTester.GetGuid());
+            Assert.AreEqual(Guid.Parse("{CBD971BF-B7B8-4885-951A-FA03044F5D71}"), WellKnownBcdObject.WindowsSetupPcat.GetGuid());
+            Assert.AreEqual(Guid.Parse("{FA926493-6F1C-4193-A414-58F0B2456D1E}"), WellKnownBcdObject.CurrentBootEntry.GetGuid());
+        }
 
         [TestMethod]
         public void TestCreateRegistryBcdStore() {

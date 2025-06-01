@@ -1,4 +1,4 @@
-﻿// <copyright file="BcdObject.cs" company="Visualisierungsinstitut der Universität Stuttgart">
+﻿// <copyright file="WellKnownBcdObject.cs" company="Visualisierungsinstitut der Universität Stuttgart">
 // Copyright © 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
@@ -11,13 +11,13 @@ namespace Visus.DeploymentToolkit.Bcd {
     /// Enumerate the types of BCD object as described on
     /// https://www.geoffchappell.com/notes/windows/boot/bcd/objects.htm.
     /// </summary>
-    public enum BcdObject {
+    public enum WellKnownBcdObject {
 
         [BcdID("{0CE4991B-E6B3-4B16-B23C-5E0D9250E5D9}")]
         [BcdEditName("{emssettings}")]
         EmsSettingsGroup,
 
-        [BcdID("{1AFA9C49-16AB-4A5C-4A90-212802DA9460 }")]
+        [BcdID("{1AFA9C49-16AB-4A5C-4A90-212802DA9460}")]
         [BcdEditName("{resumeloadersettings}")]
         ResumeLoaderSettingsGroup,
 
@@ -52,11 +52,11 @@ namespace Visus.DeploymentToolkit.Bcd {
 
         [BcdID("{7EA2E1AC-2E61-4728-AAA3-896D9D0A9F0E}")]
         [BcdEditName("{globalsettings}")]
-        GlobalSettinsGroup,
+        GlobalSettingsGroup,
 
-        [BcdID("7FF607E0-4395-11DB-B0DE-0800200C9A66}")]
+        [BcdID("{7FF607E0-4395-11DB-B0DE-0800200C9A66}")]
         [BcdEditName("{hypervisorsettings}")]
-        HypervisedSettingsGroup,
+        HypervisorSettingsGroup,
 
         [BcdID("{9DEA862C-5CDD-4E70-ACC1-F32B344D4795}")]
         [BcdEditName("{bootmgr}")]

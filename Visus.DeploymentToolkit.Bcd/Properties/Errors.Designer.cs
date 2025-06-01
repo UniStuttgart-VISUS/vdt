@@ -68,5 +68,14 @@ namespace Visus.DeploymentToolkit.Bcd.Properties {
                 return ResourceManager.GetString("FailedCreateBcdStore", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value {0} does not designate a valid well-known BCD object..
+        /// </summary>
+        internal static string InvalidWellKnownBcdObject {
+            get {
+                return ResourceManager.GetString("InvalidWellKnownBcdObject", resourceCulture);
+            }
+        }
     }
 }
