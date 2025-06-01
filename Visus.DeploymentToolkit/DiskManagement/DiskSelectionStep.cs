@@ -115,7 +115,12 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                     logger.LogInformation("Selecting a disk that fulfills the "
                         + "condition \"{Condition}\".",
                         Condition);
-                    retval = disks.AsQueryable().Where(Condition);
+                    retval = disks.AsQueryable().Where(
+                        new ParsingConfig() {
+
+                            //ResolveTypesBySimpleName = true
+                        },
+                        Condition);
                     break;
             }
 

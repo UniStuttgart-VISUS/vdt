@@ -13,7 +13,9 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Security.AccessControl;
+using Visus.DeploymentToolkit.Bcd;
 using Visus.DeploymentToolkit.Properties;
+using Visus.DeploymentToolkit.Security;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -50,7 +52,7 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         /// <inheritdoc />
-        public void LoadHive(string path, string mountPoint) {
+        public MountedHive LoadHive(string path, string mountPoint) {
             ArgumentException.ThrowIfNullOrWhiteSpace(mountPoint);
 
             var keyPath = Path.GetDirectoryName(mountPoint)!;
@@ -62,7 +64,10 @@ namespace Visus.DeploymentToolkit.Services {
                     Errors.InvalidHiveMountPoint, mountPoint));
             }
 
-            this.LoadHive(key, keyName, path);
+            this._logger.LogTrace("Loading the registry hive from the file "
+                + "\"{File}\" into the key \"{MountPoint}\".", path,
+                    Path.Combine(key.Name, keyName));
+            return new MountedHive(key, keyName, path);
         }
 
         /// <inheritdoc />
@@ -100,22 +105,6 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         /// <inheritdoc />
-        public void UnloadHive(string mountPoint) {
-            ArgumentException.ThrowIfNullOrWhiteSpace(mountPoint);
-
-            var keyPath = Path.GetDirectoryName(mountPoint)!;
-            var keyName = Path.GetFileName(mountPoint)!;
-
-            using var key = this.OpenKey(keyPath, RegistryRights.CreateSubKey);
-            if (key == null) {
-                throw new ArgumentException(string.Format(
-                    Errors.InvalidHiveMountPoint, mountPoint));
-            }
-
-            this.UnloadHive(key, keyName);
-        }
-
-        /// <inheritdoc />
         public bool ValueExists(string key, string? value) {
             try {
                 using var k = this.OpenKey(key, RegistryRights.ReadKey);
@@ -128,78 +117,6 @@ namespace Visus.DeploymentToolkit.Services {
         #endregion
 
         #region Private methods
-        /// <summary>
-        /// Loads a registry hive from the given file into the specified key.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="mountPoint"></param>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        [DllImport("advapi32.dll")]
-        static extern int RegLoadKey(IntPtr key, string mountPoint, string file);
-
-        /// <summary>
-        /// Unloads a registry hive mounted at <paramref name="mountPoint"/>.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="mountPoint"></param>
-        /// <returns></returns>
-        [DllImport("advapi32.dll")]
-        static extern int RegUnLoadKey(IntPtr key, string mountPoint);
-
-        /// <summary>
-        /// Loads a registry hive from the given file to the specified key and
-        /// returns this key.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="mountPoint"></param>
-        /// <param name="path"></param>
-        /// <param name="permissions"></param>
-        /// <returns></returns>
-        /// <exception cref="Win32Exception"></exception>
-        private void LoadHive(RegistryKey key, string mountPoint, string path) {
-            Debug.Assert(key != null);
-            Debug.Assert(!string.IsNullOrWhiteSpace(mountPoint));
-            Debug.Assert(!string.IsNullOrWhiteSpace(path));
-
-            this._logger.LogTrace("Loading the registry hive from the file "
-                + "\"{File}\" into the key \"{MountPoint}\".", path,
-                Path.Combine(key.Name, mountPoint));
-
-            var status = RegLoadKey(key.Handle.DangerousGetHandle(),
-                mountPoint,
-                path);
-            if (status != 0) {
-                this._logger.LogError("RegLoadKey(\"{Key}\","
-                    + " \"{MountPoint}\", \"{File}\") failed with error "
-                    + "code {Error}.", key.Name, mountPoint, path, status);
-                throw new Win32Exception(status);
-            }
-        }
-
-        /// <summary>
-        /// Unmounts a previously mounted registry hive.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="mountPoint"></param>
-        /// <exception cref="Win32Exception"></exception>
-        private void UnloadHive(RegistryKey key, string mountPoint) {
-            Debug.Assert(key != null);
-            Debug.Assert(!string.IsNullOrWhiteSpace(mountPoint));
-
-            this._logger.LogTrace("Unloading the hive mounted at "
-                + "\"{MountPoint}\".", Path.Combine(key.Name, mountPoint));
-
-            var status = RegUnLoadKey(key.Handle.DangerousGetHandle(),
-                mountPoint);
-            if (status != 0) {
-                this._logger.LogError("RegUnloadKey(\"{Key}\","
-                    + " \"{MountPoint}\") failed with error code {Error}.",
-                    key.Name, mountPoint, status);
-                throw new Win32Exception(status);
-            }
-        }
-
         /// <summary>
         /// Parses the registry hive from the given <paramref name="key"/> path
         /// and opens the hive.

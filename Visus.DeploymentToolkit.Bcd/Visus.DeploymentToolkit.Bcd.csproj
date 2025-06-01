@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Title>BCD store API</Title>
+    <Company>Visualisierungsinstitut der Universität Stuttgart</Company>
+    <Authors>Christoph Müller</Authors>
+    <Product>Project Deimos</Product>
+    <Copyright>Copyright © 2025 Visualisierungsinstitut der Universität Stuttgart</Copyright>
+    <PackageProjectUrl>https://github.com/UniStuttgart-VISUS/vdt/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/UniStuttgart-VISUS/vdt/</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Visus.DeploymentToolkit.Security\Visus.DeploymentToolkit.Security.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Errors.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Errors.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Errors.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Errors.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

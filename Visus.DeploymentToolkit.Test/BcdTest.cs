@@ -14,6 +14,7 @@ namespace Visus.DeploymentToolkit.Test {
     [TestClass]
     public sealed class BcdTest {
 
+
         [TestMethod]
         public void TestCreateBcdStore() {
             if (WindowsIdentity.GetCurrent().IsAdministrator()) {

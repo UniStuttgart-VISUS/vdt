@@ -6,6 +6,7 @@
 
 using Microsoft.Win32;
 using System.Runtime.Versioning;
+using Visus.DeploymentToolkit.Bcd;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -41,14 +42,20 @@ namespace Visus.DeploymentToolkit.Services {
         /// Mounts a registry hive from the given file into the specified key.
         /// </summary>
         /// <remarks>
-        /// Calling this method requires administrative permissions.
+        /// Calling this method requires administrative permissions and holding
+        /// &quot;SeRestorePrivilege&quot;. Callers can achieve this by holding
+        /// a <see cref="Visus.DeploymentToolkit.Security.TokenPrivilege"/>
+        /// object for each privilege. Note that the caller must hold both
+        /// privileges until the <see cref="MountedHive"/> is disposed.
         /// </remarks>
         /// <param name="path">The path to the registry file to be mounted.
         /// </param>
         /// <param name="mountPoint">The location where the registry hive should
         /// be mounted. Note that you should not provide an existing key here,
         /// but the name of a new key within an existing location.</param>
-        public void LoadHive(string path, string mountPoint);
+        /// <returns>An object representing the mounted hive. The hive will be
+        /// unmounted once this object is disposed.</returns>
+        public MountedHive LoadHive(string path, string mountPoint);
 
         /// <summary>
         /// Answer whether the given registry key exists.
@@ -125,16 +132,6 @@ namespace Visus.DeploymentToolkit.Services {
         /// <param name="value">The value to be set.</param>
         void SetValue(string key, string? name, long value)
             => this.SetValue(key, name, value, RegistryValueKind.QWord);
-
-        /// <summary>
-        /// Unloads a registry hive mounted under the specified key.
-        /// </summary>
-        /// <remarks>
-        /// Calling this method requires administrative permissions.
-        /// </remarks>
-        /// <param name="key">The registry key where the hive is mounted.
-        /// </param>
-        void UnloadHive(string key);
 
         /// <summary>
         /// Answer whether the given registry key value.

@@ -5,6 +5,8 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Win32;
+using Visus.DeploymentToolkit.Bcd;
 using Visus.DeploymentToolkit.Security;
 using Visus.DeploymentToolkit.Services;
 
@@ -16,7 +18,7 @@ namespace Visus.DeploymentToolkit.Test {
     [DeploymentItem(@"TestData\Unattend_PE_x64.xm")]
     public sealed class RegistryTest {
 
-        public TestContext TestContext { get; set; }
+        public TestContext TestContext { get; set; } = null!;
 
         [TestMethod]
         public void ValueExists() {
@@ -51,15 +53,30 @@ namespace Visus.DeploymentToolkit.Test {
         }
 
         [TestMethod]
+        public void MountedHive() {
+            var hive = Path.Combine(this.TestContext.DeploymentDirectory!, "SYSTEM");
+
+            using (var seBackup = new TokenPrivilege("SeBackupPrivilege"))
+            using (var seRestore = new TokenPrivilege("SeRestorePrivilege")) {
+                using var mounted = new MountedHive(Registry.LocalMachine, "test", hive);
+                Assert.IsNotNull(mounted);
+                using RegistryKey? key = mounted;
+                Assert.IsNotNull(key);
+            }
+        }
+
+        [TestMethod]
         public void MountHive() {
             var hive = Path.Combine(this.TestContext.DeploymentDirectory!, "SYSTEM");
             var registry = new RegistryService(this._loggerFactory.CreateLogger<RegistryService>());
 
-            Advapi32.AdjustTokenPrivileges("SeBackupPrivilege", true);
-            Advapi32.AdjustTokenPrivileges("SeRestorePrivilege", true);
-
-            registry.LoadHive(hive, @"hklm\test");
-            registry.UnloadHive(@"hklm\test");
+            using (var seBackup = new TokenPrivilege("SeBackupPrivilege"))
+            using (var seRestore = new TokenPrivilege("SeRestorePrivilege")) {
+                var mounted = registry.LoadHive(hive, @"hklm\test");
+                Assert.IsNotNull(mounted);
+                using RegistryKey? key = mounted;
+                Assert.IsNotNull(key);
+            }
         }
 
         private readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(l => l.AddDebug());
