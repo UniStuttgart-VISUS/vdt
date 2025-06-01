@@ -76,6 +76,24 @@ namespace Visus.DeploymentToolkit.Test {
             Assert.AreEqual(Guid.Parse("{B2721D73-1DB4-4C62-BF78-C548A880142D}"), WellKnownBcdObject.WindowsMemoryTester.GetGuid());
             Assert.AreEqual(Guid.Parse("{CBD971BF-B7B8-4885-951A-FA03044F5D71}"), WellKnownBcdObject.WindowsSetupPcat.GetGuid());
             Assert.AreEqual(Guid.Parse("{FA926493-6F1C-4193-A414-58F0B2456D1E}"), WellKnownBcdObject.CurrentBootEntry.GetGuid());
+
+            Assert.IsTrue(WellKnownBcdObject.EmsSettingsGroup.GetNames().Contains("{emssettings}"));
+            Assert.IsTrue(WellKnownBcdObject.ResumeLoaderSettingsGroup.GetNames().Contains("{resumeloadersettings}"));
+            Assert.IsTrue(WellKnownBcdObject.DefaultBootEntry.GetNames().Contains("{default}"));
+            Assert.IsTrue(WellKnownBcdObject.KernelDebuggerSettingsGroup.GetNames().Contains("{kerneldbgsettings}"));
+            Assert.IsTrue(WellKnownBcdObject.DebuggerSettingsGroup.GetNames().Contains("{dbgsettings}"));
+            Assert.IsTrue(WellKnownBcdObject.DebuggerSettingsGroup.GetNames().Contains("{eventsettings}"));
+            Assert.IsTrue(WellKnownBcdObject.WindowsLegacyNtldr.GetNames().Contains("{legacy}"));
+            Assert.IsTrue(WellKnownBcdObject.WindowsLegacyNtldr.GetNames().Contains("{ntldr}"));
+            Assert.IsTrue(WellKnownBcdObject.BadMemoryGroup.GetNames().Contains("{badmemory}"));
+            Assert.IsTrue(WellKnownBcdObject.BootLoaderSettingsGroup.GetNames().Contains("{bootloadersettings}"));
+            Assert.IsTrue(WellKnownBcdObject.GlobalSettingsGroup.GetNames().Contains("{globalsettings}"));
+            Assert.IsTrue(WellKnownBcdObject.HypervisorSettingsGroup.GetNames().Contains("{hypervisorsettings}"));
+            Assert.IsTrue(WellKnownBcdObject.WindowsBootmgr.GetNames().Contains("{bootmgr}"));
+            Assert.IsTrue(WellKnownBcdObject.FirmwareBootmgr.GetNames().Contains("{fwbootmgr}"));
+            Assert.IsTrue(WellKnownBcdObject.WindowsSetupRamdiskOptions.GetNames().Contains("{ramdiskoptions}"));
+            Assert.IsTrue(WellKnownBcdObject.WindowsMemoryTester.GetNames().Contains("{memdiag}"));
+            Assert.IsTrue(WellKnownBcdObject.CurrentBootEntry.GetNames().Contains("{current}"));
         }
 
         [TestMethod]
