@@ -112,7 +112,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
                 case BuiltInCondition.None:
                 default:
-                    logger.LogInformation("Selecting a disk that fulfills the "
+                    logger.LogInformation("Selecting a disk that fulfils the "
                         + "condition \"{Condition}\".",
                         Condition);
                     retval = disks.AsQueryable().Where(
@@ -200,9 +200,8 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         private static IEnumerable<IDisk> SelectEfiSystemDisks(
                 IEnumerable<IDisk> disks, EfiPartitionType type) {
             Debug.Assert(disks != null);
-            // First, filter for GPT disks with at least one partition.
             var retval = from d in disks
-                         where d.PartitionStyle == PartitionStyle.Gpt
+                         //where d.PartitionStyle == PartitionStyle.Gpt
                          where d.Partitions.Any(p => p.Type == PartitionType.EfiSystem)
                          select d;
 

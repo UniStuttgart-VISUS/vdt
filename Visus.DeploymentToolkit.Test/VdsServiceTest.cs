@@ -54,14 +54,14 @@ namespace Visus.DeploymentToolkit.Test {
 
                 {
                     selection.BuiltInCondition = BuiltInCondition.None;
-                    selection.Condition = "BusType == Visus.DeploymentToolkit.DiskManagement.StorageBusType.Nvme";
+                    selection.Condition = "BusType == \"Nvme\"";
                     var selected = await selection.ApplyAsync(disks, service, logger);
                     Assert.IsTrue(selected.Any());
                 }
 
                 {
                     selection.BuiltInCondition = BuiltInCondition.None;
-                    selection.Condition = "BusType == Visus.DeploymentToolkit.DiskManagement.StorageBusType.SD";
+                    selection.Condition = "BusType == \"SD\"";
                     var selected = await selection.ApplyAsync(disks, service, logger);
                     Assert.IsTrue(selected.Any());
                 }
@@ -86,7 +86,7 @@ namespace Visus.DeploymentToolkit.Test {
 
                 {
                     selection.BuiltInCondition = BuiltInCondition.None;
-                    selection.Condition = "PartitionStyle == Visus.DeploymentToolkit.DiskManagement.PartitionStyle.Gpt";
+                    selection.Condition = "PartitionStyle == \"Gpt\"";
                     var selected = await selection.ApplyAsync(disks, service, logger);
                     Assert.IsTrue(selected.Any());
                 }
