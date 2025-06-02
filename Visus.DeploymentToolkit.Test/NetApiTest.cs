@@ -18,8 +18,12 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public void ShareUnshare() {
-            NetApi.ShareFolder(null, "test$", Directory.GetCurrentDirectory());
-            NetApi.Unshare(null, "test$");
+            try {
+                NetApi.ShareFolder(null, "test$", Directory.GetCurrentDirectory());
+                Assert.IsTrue(Directory.Exists(@"\\localhost\test$"));
+            } finally {
+                NetApi.Unshare(null, "test$");
+            }
         }
 
         [TestMethod]

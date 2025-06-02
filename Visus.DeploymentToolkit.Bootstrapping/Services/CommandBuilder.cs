@@ -8,8 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Runtime.Versioning;
+using System.Text;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -132,6 +134,22 @@ namespace Visus.DeploymentToolkit.Services {
             }
 
             return this;
+        }
+
+        /// <inheritdoc />
+        public override string ToString() {
+            var sb = new StringBuilder(this._processStartInfo.FileName);
+
+            if (this._processStartInfo.ArgumentList?.Any() == true) {
+                foreach (var a in this._processStartInfo.ArgumentList) {
+                    sb.Append(' ').Append(a);
+                }
+
+            } else if (!string.IsNullOrEmpty(this._processStartInfo.Arguments)) {
+                sb.Append(' ').Append(this._processStartInfo.Arguments);
+            }
+
+            return sb.ToString();
         }
         #endregion
 

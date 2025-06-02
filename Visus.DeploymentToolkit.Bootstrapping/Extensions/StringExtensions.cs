@@ -17,6 +17,15 @@ namespace Visus.DeploymentToolkit.Extensions {
     public static class StringExtensions {
 
         /// <summary>
+        /// Compares two strings for equality, ignoring case.
+        /// </summary>
+        /// <param name="that"></param>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public static bool EqualsIgnoreCase(this string? that, string? other)
+            => string.Equals(that, other, StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
         /// Converts a <see cref="SecureString"/> to a <see cref="string"/>.
         /// </summary>
         /// <param name="that"></param>

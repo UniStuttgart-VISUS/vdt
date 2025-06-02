@@ -23,7 +23,7 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// <see cref="IState.TaskSequence"/> or creates the default WinPE servicing
     /// task sequence.
     /// </summary>
-    [SupportsPhase(Workflow.Phase.PreinstalledEnvironment)]
+    [SupportsPhase(Phase.PreinstalledEnvironment)]
     public sealed class SelectWindowsPeSequence : SelectTaskSequenceBase {
 
         #region Public constructors

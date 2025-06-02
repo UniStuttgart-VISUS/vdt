@@ -219,4 +219,7 @@
   <data name="FailedCreateBcdStore" xml:space="preserve">
     <value>The BCD store \"{0}\" could not be created. Make sure that the store does not already exist.</value>
   </data>
+  <data name="InvalidWimHandle" xml:space="preserve">
+    <value>The handle for the WIM file is invalid or closed.</value>
+  </data>
 </root>

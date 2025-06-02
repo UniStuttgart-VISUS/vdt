@@ -51,7 +51,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             foreach (var (p, ss, r) in props) {
                 var v = p.GetValue(dst);
 
-                if ((v == null) || force) {
+                if ((v == default) || force) {
                     foreach (var s in ss) {
                         if ((v = src[s]) != null) {
                             p.SetValue(dst, v);
@@ -93,7 +93,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             foreach (var (p, s, r) in props) {
                 var v = p.GetValue(dst);
 
-                if ((v == null) || force) {
+                if ((v == default) || force) {
                     if ((v = src[s]) != null) {
                         p.SetValue(dst, v);
                     }
@@ -133,7 +133,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             foreach (var (p, vars, required, expand) in props) {
                 var value = p.GetValue(dst);
 
-                if ((value is null) || force) {
+                if ((value == default) || force) {
                     foreach (var v in vars) {
                         var env = Environment.GetEnvironmentVariable(v);
 

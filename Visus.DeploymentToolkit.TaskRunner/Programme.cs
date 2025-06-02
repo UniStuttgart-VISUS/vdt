@@ -71,7 +71,7 @@ try {
 
     log.LogInformation("Applying parameters to \"{Task}\" ...", task.Name);
     var parameters = config.GetSection("Parameters");
-    task.CopyFrom(parameters);
+    task.CopyFrom(parameters, true);
 
     log.LogInformation("Running \"{Task}\" ...", task.Name);
     await task.ExecuteAsync();

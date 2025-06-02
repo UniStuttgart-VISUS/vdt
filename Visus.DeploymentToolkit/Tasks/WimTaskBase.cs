@@ -9,7 +9,8 @@ using Microsoft.Wim;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
-using Visus.DeploymentToolkit.Extensions;
+using System.Xml.XPath;
+using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Validation;
 
@@ -56,17 +57,40 @@ namespace Visus.DeploymentToolkit.Tasks {
         public WimFileAccess DesiredAccess { get; set; } = WimFileAccess.Read;
 
         /// <summary>
-        /// Gets or sets the name of the WIM image to work with.
+        /// Gets or sets the path to the WIM file to work with.
         /// </summary>
         [Required]
         [FileExists]
         public string Image { get; set; } = null!;
 
         /// <summary>
+        /// Gets or sets the one-based index of the image in the WIM file to
+        /// work with.
+        /// </summary>
+        /// <remarks>
+        /// The image (typically the SKU) is either selected by its
+        /// <see cref="ImageName"/> or by its <see cref="ImageIndex"/> in the WIM
+        /// file. If both are set, the name will be checked first, and if that
+        /// fails, the index will be used.
+        /// </remarks>
+        public int ImageIndex { get; set; } = 0;
+
+        /// <summary>
+        /// Getr or sets the name of the image in the WIM file to work with.
+        /// </summary>
+        /// <remarks>
+        /// The image (typically the SKU) is either selected by its
+        /// <see cref="ImageName"/> or by its <see cref="ImageIndex"/> in the WIM
+        /// file. If both are set, the name will be checked first, and if that
+        /// fails, the index will be used.
+        /// </remarks>
+        public string? ImageName { get; set; }
+
+        /// <summary>
         /// Gets or sets the temporary directory used by the WIMG API.
         /// </summary>
         /// <remarks>
-        /// This directory is set by the <see cref="OpenImage"/> method if it
+        /// This directory is set by the <see cref="OpenFile"/> method if it
         /// exists.
         /// </remarks>
         public string? TemporaryDirectory { get; set; }
@@ -74,10 +98,49 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         #region Protected methods
         /// <summary>
+        /// Loads the image identified by <see cref="ImageName"/> or
+        /// <see cref="ImageIndex"/> from the WIM file identified by
+        /// <paramref name="wim"/>.
+        /// </summary>
+        /// <param name="wim">The handle to the WIM file, typically obtained
+        /// from <see cref="OpenFile"/>.</param>
+        /// <returns></returns>
+        protected WimHandle LoadImage(WimHandle wim) {
+            ArgumentNullException.ThrowIfNull(wim);
+
+            if (wim.IsInvalid || wim.IsClosed) {
+                throw new ArgumentException(Errors.InvalidWimHandle);
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.ImageName)) {
+                this._logger.LogTrace("Searching for an image named "
+                    + "\"{ImageName}\".", this.ImageName);
+                var info = WimgApi.GetImageInformationAsXDocument(wim);
+
+                var p = info.XPathSelectElement(
+                    $"//NAME[contains(text(), \"{this.ImageName}\")]");
+                if (p is not null) {
+                    var i = p.Parent?.Attribute("INDEX")?.Value;
+
+                    if (i is not null) {
+                        this.ImageIndex = int.Parse(i);
+                        this._logger.LogTrace("Found image \"{ImageName}\" "
+                            + "at index {ImageIndex}.", this.ImageName,
+                            this.ImageIndex);
+                    }
+                }
+            }
+
+            this._logger.LogTrace("Loading image with index {ImageIndex}.",
+                this.ImageIndex);
+            return WimgApi.LoadImage(wim, this.ImageIndex);
+        }
+
+        /// <summary>
         /// Creates or opens the WIM file specified in <see cref="Image"/>.
         /// </summary>
         /// <returns>A handle for the WIM image.</returns>
-        protected WimHandle OpenImage() {
+        protected WimHandle OpenFile() {
             this._logger.LogTrace("Opening WIM image \"{Image}\" "
                 + "with access {DesiredAccess}, "
                 + "creation disposition {CreationDisposition}, "

@@ -61,12 +61,16 @@ namespace Visus.DeploymentToolkit.Tasks {
             this.Validate();
 
             return Task.Run(() => {
-                using var wim = this.OpenImage();
+                using var wim = this.OpenFile();
+
+                cancellationToken.ThrowIfCancellationRequested();
+                using var img = this.LoadImage(wim);
+
                 cancellationToken.ThrowIfCancellationRequested();
                 this._logger.LogInformation("Applying \"{Image}\" to"
                     + " \"{Path}\" with options {Options}.",
                     this.Image, this.Path, this.Options);
-                WimgApi.ApplyImage(wim, this.Path, this.Options);
+                WimgApi.ApplyImage(img, this.Path, this.Options);
             }, cancellationToken);
         }
         #endregion

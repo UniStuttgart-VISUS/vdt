@@ -196,6 +196,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The handle for the WIM file is invalid or closed..
+        /// </summary>
+        internal static string InvalidWimHandle {
+            get {
+                return ResourceManager.GetString("InvalidWimHandle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The directory holding Windows PE is invalid..
         /// </summary>
         internal static string InvalidWindowsPeDirectory {

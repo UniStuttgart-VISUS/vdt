@@ -5,11 +5,9 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Win32;
 using System.Security.Principal;
 using Visus.DeploymentToolkit.Bcd;
 using Visus.DeploymentToolkit.Security;
-using Visus.DeploymentToolkit.Services;
 
 
 namespace Visus.DeploymentToolkit.Test {
@@ -395,7 +393,6 @@ namespace Visus.DeploymentToolkit.Test {
             Assert.AreEqual(0x3600000Bu, (uint) BcdElementType.RamdiskTftpVarWindow);
             Assert.AreEqual(0x3600000Cu, (uint) BcdElementType.VhdRamdiskBoot);
             Assert.AreEqual(0x3500000Du, (uint) BcdElementType.X3500000D);
-
         }
 
         [TestMethod]
@@ -470,45 +467,6 @@ namespace Visus.DeploymentToolkit.Test {
                     var img = obj.FirstOrDefault(e => e.Type == BcdElementType.LibraryApplicationPath);
                     Assert.IsNotNull(img);
                 }
-            }
-        }
-
-        [TestMethod]
-        public void TestCreateBcdStore() {
-            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
-                var wmi = new ManagementService(GetLogger<ManagementService>());
-                var boot = new BootService(wmi, GetLogger<BootService>());
-
-                var path = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-                path = $"{Path.GetPathRoot(path)}{Path.GetFileName(Path.GetTempFileName())}";
-
-                var store = boot.CreateBcdStore(path);
-                Assert.IsNotNull(store);
-                Assert.IsTrue(File.Exists(path));
-
-                try {
-                    var opened = boot.OpenBcdStore(path);
-                    Assert.IsNotNull(opened);
-                } finally {
-                    File.Delete(path);
-                }
-            }
-        }
-
-        [TestMethod]
-        public void TestOpenSystemStore() {
-            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
-                var wmi = new ManagementService(GetLogger<ManagementService>());
-                var boot = new BootService(wmi, GetLogger<BootService>());
-
-                var store = boot.OpenBcdStore(null);
-                Assert.IsNotNull(store);
-
-                var p = store.GetMethodParameters("EnumerateObjects");
-                p["Type"] = 0x10200003;
-                var r = store.InvokeMethod("EnumerateObjects", p, null);
-                var retval = r["ReturnValue"];
-                var objs = r["Objects"];
             }
         }
 

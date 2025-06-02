@@ -7,9 +7,9 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
-using System.Management;
-using System.Runtime.Versioning;
-using Visus.DeploymentToolkit.Bcd;
+using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Extensions;
+using Visus.DeploymentToolkit.SystemInformation;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -24,31 +24,102 @@ namespace Visus.DeploymentToolkit.Services {
     /// <param name="wmi"></param>
     /// <param name="logger"></param>
     internal sealed class BootService(IManagementService wmi,
+            ICommandBuilderFactory commands,
+            IDirectory directory,
             ILogger<BootService> logger) : IBootService {
 
         #region Public methods
         /// <inheritdoc />
-        [SupportedOSPlatform("windows")]
-        public IBcdStore CreateBcdStore(string path) {
-            this._logger.LogTrace("Creating new BCD store at \"{Path}\".",
-                path);
-            return WmiBcdStore.Create(path);
+        public async Task CleanAsync(string drive,
+                string version,
+                FirmwareType firmware) {
+            ArgumentException.ThrowIfNullOrWhiteSpace(drive);
+            ArgumentException.ThrowIfNullOrWhiteSpace(version);
+            this._logger.LogTrace("Cleaning boot configuration on drive "
+                + "\"{Drive}\", assuming version {Version} and firmware "
+                + "{Type}.",
+                drive, version, firmware);
+
+            if ("nt52".EqualsIgnoreCase(version)) {
+                {
+                    var path = Path.Combine(drive, "Boot");
+                    this._logger.LogTrace("Deleting \"{Path}\".", path);
+                    await this._directory.DeleteAsync(path, true);
+                }
+
+                {
+                    var path = Path.Combine(drive, "BootMgr");
+                    this._logger.LogTrace("Deleting \"{Path}\".", path);
+                    File.Delete(path);
+                }
+
+            } else if (firmware == FirmwareType.Bios) {
+                var path = Path.Combine(drive, "boot", "bcd");
+                this._logger.LogTrace("Deleting \"{Path}\".", path);
+                File.Delete(path);
+
+            } else {
+                var path = Path.Combine(drive, "efi", "microsoft", "boot",
+                    "bcd");
+                this._logger.LogTrace("Deleting \"{Path}\".", path);
+                File.Delete(path);
+            }
         }
 
         /// <inheritdoc />
-        [SupportedOSPlatform("windows")]
-        public ManagementObject OpenBcdStore(string? path) {
-            if (string.IsNullOrWhiteSpace(path)) {
-                this._logger.LogTrace("Opening BCD system store.");
-                return this._wmi.GetObject($"{BcdStoreClass}.FilePath=''",
-                    this._wmi.WmiScope);
+        public async Task CreateBcdStore(string windowsPath,
+                string? bootDrive,
+                FirmwareType firmware) {
+            ArgumentException.ThrowIfNullOrWhiteSpace(windowsPath);
+            this._logger.LogTrace("Creating BCD store for Windows installation "
+                + " \"{WindowsPath}\" and boot drive \"{BootDrive}\", "
+                + "assuming firmware {Type}.", windowsPath, bootDrive,
+                firmware);
 
-            } else {
-                path = Path.GetFullPath(path);
-                this._logger.LogTrace("Opening BCD store at \"{Path}\".", path);
-                return this._wmi.GetObject(
-                    $"{BcdStoreClass}.FilePath='{path}'",
-                    this._wmi.WmiScope);
+            var destination = !string.IsNullOrWhiteSpace(bootDrive)
+                ? $@" /s ""{bootDrive}"""
+                : string.Empty;
+
+            var cmd = this._commands.Run("bcdboot.exe")
+                .WithArguments($@"""{windowsPath}""{destination}")
+                .WaitForProcess()
+                .Build();
+
+            await cmd.ExecuteAndCheckAsync(0, this._logger);
+        }
+
+        /// <inheritdoc />
+        public async Task CreateBootsector(string drive,
+                string version,
+                FirmwareType firmware) {
+            ArgumentException.ThrowIfNullOrWhiteSpace(drive);
+            ArgumentException.ThrowIfNullOrWhiteSpace(version);
+            this._logger.LogTrace("Creating bootsector on drive \"{Drive}\", "
+                + "assuming version {Version} and firmware {Type}.",
+                drive, version, firmware);
+            var mbr = firmware switch {
+                FirmwareType.Bios => " /mbr",
+                _ => string.Empty
+            };
+
+            var cmd = this._commands.Run("bootsect.exe")
+                .WithArguments($"/{version} {drive}{mbr}")
+                .WaitForProcess();
+
+            try {
+                await cmd.Build().ExecuteAndCheckAsync(0, this._logger);
+            } catch {
+                if (string.IsNullOrEmpty(mbr)) {
+                    // If we did not specify /mbr, this must be an actual error.
+                    throw;
+
+                } else {
+                    // Similar to LTIApply.wsf in MDT.
+                    this._logger.LogWarning("The command \"{Command}\" may not "
+                        + "support the /mbr switch. Retrying without it.", cmd);
+                    cmd.WithArguments($"/{version} {drive}");
+                    await cmd.Build().ExecuteAndCheckAsync(0, this._logger);
+                }
             }
         }
         #endregion
@@ -61,6 +132,10 @@ namespace Visus.DeploymentToolkit.Services {
         #endregion
 
         #region Private fields
+        private readonly ICommandBuilderFactory _commands = commands
+            ?? throw new ArgumentNullException(nameof(commands));
+        private readonly IDirectory _directory = directory
+            ?? throw new ArgumentNullException(nameof(directory));
         private readonly ILogger<BootService> _logger = logger
             ?? throw new ArgumentNullException(nameof(logger));
         private readonly IManagementService _wmi = wmi
