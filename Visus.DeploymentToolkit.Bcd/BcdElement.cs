@@ -20,7 +20,7 @@ namespace Visus.DeploymentToolkit.Bcd {
     /// <summary>
     /// Represents a BCD element within a BCD object.
     /// </summary>
-    [DebuggerDisplay($"{{{nameof(Type)}}}")]
+    [DebuggerDisplay($"{{{nameof(Type)}}} = {{{nameof(Value)}}}")]
     public sealed class BcdElement {
 
         #region Public properties
@@ -70,6 +70,10 @@ namespace Visus.DeploymentToolkit.Bcd {
 
             // Post-process some values as necessary.
             switch (this.Format) {
+                case BcdElementType.Boolean:
+                    this.Value = (((byte[]) this.Value).Single() != 0);
+                    break;
+
                 case BcdElementType.Guid:
                     this.Value = Guid.Parse((string) this.Value);
                     break;

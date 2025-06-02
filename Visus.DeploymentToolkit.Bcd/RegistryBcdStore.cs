@@ -9,8 +9,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.Versioning;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using Visus.DeploymentToolkit.Bcd.Properties;
 
 
@@ -22,7 +24,7 @@ namespace Visus.DeploymentToolkit.Bcd {
     /// active registry.
     /// </summary>
     [SupportedOSPlatform("windows")]
-    public sealed class RegistryBcdStore : IBcdStore, IDisposable {
+    public sealed partial class RegistryBcdStore : IBcdStore, IDisposable {
 
         #region Factory methods
         /// <summary>
@@ -90,6 +92,35 @@ namespace Visus.DeploymentToolkit.Bcd {
         /// disposed.</param>
         public RegistryBcdStore(RegistryKey key)
             => CheckStructure(this._store = key, nameof(key));
+
+        /// <summary>
+        /// Initialises a new instance.
+        /// </summary>
+        /// <remarks>
+        /// This constructor searches the registry for a BCD store that has the
+        /// &quot;System&quot; flag set in its description.
+        /// </remarks>
+        /// <exception cref="InvalidOperationException">If no BCD store
+        /// strucuture could be found that was marked as the system store.
+        /// </exception>
+        public RegistryBcdStore() {
+            foreach (var s in Registry.LocalMachine.GetSubKeyNames()) {
+                if (GetBcdKeyName().IsMatch(s)) {
+                    using var key = Registry.LocalMachine.OpenSubKey(
+                        Path.Combine(s, "Description"));
+                    if (key is not null) {
+                        if ((int) key.GetValue("System", 0) != 0) {
+                            this._store = Registry.LocalMachine.OpenSubKey(s)!;
+                            break;
+                        }
+                    }
+                } /* if (GetBcdKeyName().IsMatch(s)) */
+            } /* foreach (var s in Registry.LocalMachine.GetSubKeyNames()) */
+
+            if (this._store is null) {
+                throw new InvalidOperationException(Errors.NoBcdStoreFound);
+            }
+        }
         #endregion
 
         #region Finaliser
@@ -148,6 +179,14 @@ namespace Visus.DeploymentToolkit.Bcd {
                     parameterName);
             }
         }
+
+        /// <summary>
+        /// Generates a regular expression that matches the typical names of
+        /// the BCD stores in the registry.
+        /// </summary>
+        /// <returns></returns>
+        [GeneratedRegex(@"BCD\d+$", RegexOptions.IgnoreCase)]
+        private static partial Regex GetBcdKeyName();
 
         /// <summary>
         /// Disposes all resources we hold, most importantly the mounted
