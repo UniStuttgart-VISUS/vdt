@@ -70,6 +70,15 @@ namespace Visus.DeploymentToolkit.Bcd.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The registry key provided does not seem to point to a valid BCD store entry..
+        /// </summary>
+        internal static string InvalidRegistryKey {
+            get {
+                return ResourceManager.GetString("InvalidRegistryKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The value {0} does not designate a valid well-known BCD object..
         /// </summary>
         internal static string InvalidWellKnownBcdObject {

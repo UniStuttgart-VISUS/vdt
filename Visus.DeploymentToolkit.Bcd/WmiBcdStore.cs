@@ -5,6 +5,8 @@
 // <author>Christoph Müller</author>
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Management;
 using System.Runtime.Versioning;
@@ -70,6 +72,17 @@ namespace Visus.DeploymentToolkit.Bcd {
             this._store = new ManagementObject(WmiScope.Value,
                 new ManagementPath($"{BcdStoreClass}.FilePath='{path}'"),
                 options);
+        }
+        #endregion
+
+
+        #region Public methods
+        public IEnumerator<BcdObject> GetEnumerator() {
+            throw new NotImplementedException();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return this.GetEnumerator();
         }
         #endregion
 

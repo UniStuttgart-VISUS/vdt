@@ -48,6 +48,7 @@ namespace Visus.DeploymentToolkit.Bcd {
         BootLoaderSettingsGroup,
 
         [BcdID("{7254A080-1510-4E85-AC0F-E7FB3D444736}")]
+        [Undocumented]
         WindowsSetupEfi,
 
         [BcdID("{7EA2E1AC-2E61-4728-AAA3-896D9D0A9F0E}")]
@@ -63,6 +64,7 @@ namespace Visus.DeploymentToolkit.Bcd {
         WindowsBootmgr,
 
         [BcdID("{A1943BBC-EA85-487C-97C7-C9EDE908A38A}")]
+        [Undocumented]
         WindowsOsTargetTemplatePcat,
 
         [BcdID("{A5A30FA2-3D06-4E9F-B5F4-A01DF9D1FCBA}")]
@@ -81,6 +83,7 @@ namespace Visus.DeploymentToolkit.Bcd {
         WindowsMemoryTester,
 
         [BcdID("{CBD971BF-B7B8-4885-951A-FA03044F5D71}")]
+        [Undocumented]
         WindowsSetupPcat,
 
         [BcdID("{FA926493-6F1C-4193-A414-58F0B2456D1E}")]

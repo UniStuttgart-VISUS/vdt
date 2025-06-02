@@ -120,6 +120,9 @@
   <data name="FailedCreateBcdStore" xml:space="preserve">
     <value>The BCD store \"{0}\" could not be created. Make sure that the store does not already exist.</value>
   </data>
+  <data name="InvalidRegistryKey" xml:space="preserve">
+    <value>The registry key provided does not seem to point to a valid BCD store entry.</value>
+  </data>
   <data name="InvalidWellKnownBcdObject" xml:space="preserve">
     <value>The value {0} does not designate a valid well-known BCD object.</value>
   </data>

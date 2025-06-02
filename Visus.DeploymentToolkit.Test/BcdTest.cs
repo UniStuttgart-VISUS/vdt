@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Win32;
 using System.Security.Principal;
 using Visus.DeploymentToolkit.Bcd;
 using Visus.DeploymentToolkit.Security;
@@ -53,6 +54,34 @@ namespace Visus.DeploymentToolkit.Test {
             Assert.AreEqual(0x20200008u, (uint) BcdObjectType.InheritBootsector);
             Assert.AreEqual(0x20200009u, (uint) BcdObjectType.InheritStartup);
             Assert.AreEqual(0x20300000u, (uint) BcdObjectType.InheritDevice);
+        }
+
+        [TestMethod]
+        public void TestBcdElementType() {
+            Assert.AreEqual(0x11000001u, (uint) BcdElementType.LibraryApplicationDevice);
+            Assert.AreEqual(0x12000002u, (uint) BcdElementType.LibraryApplicationPath);
+            Assert.AreEqual(0x12000004u, (uint) BcdElementType.LibraryDescription);
+            Assert.AreEqual(0x12000005u, (uint) BcdElementType.LibraryLocale);
+            Assert.AreEqual(0x14000006u, (uint) BcdElementType.LibraryInheritObjects);
+            Assert.AreEqual(0x15000007u, (uint) BcdElementType.LibraryTruncatePhysicalMemory);
+            Assert.AreEqual(0x14000008u, (uint) BcdElementType.LibraryRecoverySequence);
+            Assert.AreEqual(0x16000009u, (uint) BcdElementType.LibraryAutoRecoveryEnabled);
+            Assert.AreEqual(0x1700000Au, (uint) BcdElementType.LibraryBadMemoryList);
+            Assert.AreEqual(0x1600000Bu, (uint) BcdElementType.LibraryAllowBadMemoryAccess);
+            Assert.AreEqual(0x1500000Cu, (uint) BcdElementType.LibraryFirstMegabytePolicy);
+            Assert.AreEqual(0x1500000Du, (uint) BcdElementType.LibraryRelocatePhysicalMemory);
+            Assert.AreEqual(0x1500000Eu, (uint) BcdElementType.LibraryAvoidLowPhysicalMemory);
+            Assert.AreEqual(0x1600000Fu, (uint) BcdElementType.LibraryTraditionalKsegMappings);
+            Assert.AreEqual(0x16000010u, (uint) BcdElementType.LibraryDebuggerEnabled);
+            Assert.AreEqual(0x15000011u, (uint) BcdElementType.LibraryDebuggerType);
+
+
+
+            Assert.AreEqual(0x26000202u, (uint) BcdElementType.FfuLoaderTypeOneShotSkipFfuUpdate);
+            Assert.AreEqual(0x26000203u, (uint) BcdElementType.FfuLoaderTypeForceFfu);
+            Assert.AreEqual(0x25000510u, (uint) BcdElementType.ChargingTypeBootThreshold);
+            Assert.AreEqual(0x26000512u, (uint) BcdElementType.ChargingTypeOffModeCharging);
+            Assert.AreEqual(0x25000AAAu, (uint) BcdElementType.GlobalTypeBootFlow);
         }
 
         [TestMethod]
@@ -110,6 +139,23 @@ namespace Visus.DeploymentToolkit.Test {
                     } finally {
                         File.Delete(path);
                     }
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TestOpenRegistrySystemStore() {
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                var key = Registry.LocalMachine.OpenSubKey("BCD00000000");
+                Assert.IsNotNull(key);
+
+                using var store = new RegistryBcdStore(key);
+                Assert.IsNotNull(store);
+                Assert.IsTrue(store.Any());
+
+
+                foreach (var o in store) {
+                    var sss = o;
                 }
             }
         }

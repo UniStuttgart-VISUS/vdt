@@ -16,6 +16,6 @@ namespace Visus.DeploymentToolkit.Bcd {
     /// <summary>
     /// The interface of a class modifying a BCD store.
     /// </summary>
-    public interface IBcdStore {
+    public interface IBcdStore : IEnumerable<BcdObject> {
     }
 }

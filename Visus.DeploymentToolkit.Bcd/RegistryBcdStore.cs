@@ -6,8 +6,12 @@
 
 using Microsoft.Win32;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.Versioning;
 using System.Security.Cryptography;
+using Visus.DeploymentToolkit.Bcd.Properties;
 
 
 namespace Visus.DeploymentToolkit.Bcd {
@@ -73,8 +77,19 @@ namespace Visus.DeploymentToolkit.Bcd {
                 key = "_bcd_" + RandomNumberGenerator.GetHexString(64, true);
             }
 
-            this._store = new(hive, key, path);
+            this._hive = new(hive, key, path);
+            this._store = this._hive!;
+            CheckStructure(this._store, nameof(path));
         }
+
+        /// <summary>
+        /// Initialises a new instance.
+        /// </summary>
+        /// <param name="key">The registry key representing the BCD store. The
+        /// object will take ownership of this key and dispose it when it is
+        /// disposed.</param>
+        public RegistryBcdStore(RegistryKey key)
+            => CheckStructure(this._store = key, nameof(key));
         #endregion
 
         #region Finaliser
@@ -90,9 +105,50 @@ namespace Visus.DeploymentToolkit.Bcd {
             this.Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+        /// <inheritdoc />
+        public IEnumerator<BcdObject> GetEnumerator() {
+            ObjectDisposedException.ThrowIf(this._store is null, this);
+
+            using var objects = this._store.OpenSubKey("Objects");
+            Debug.Assert(objects is not null);
+
+            foreach (var s in objects.GetSubKeyNames()) {
+                using var o = objects.OpenSubKey(s);
+                if (o is null) {
+                    throw new InvalidOperationException(
+                    Errors.InvalidRegistryKey);
+                }
+
+                yield return new(o);
+            }
+        }
+
+        /// <inheritdoc />
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
         #endregion
 
         #region Private methods
+        /// <summary>
+        /// Checks the basic structure we expect for a BCD store.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="parameterName"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        private static void CheckStructure(RegistryKey key,
+                string parameterName) {
+            if (key is null) {
+                throw new ArgumentNullException(parameterName);
+            }
+
+            using var objects = key.OpenSubKey("Objects");
+            if (objects is null) {
+                throw new ArgumentException(Errors.InvalidRegistryKey,
+                    parameterName);
+            }
+        }
+
         /// <summary>
         /// Disposes all resources we hold, most importantly the mounted
         /// registry hive.
@@ -102,15 +158,18 @@ namespace Visus.DeploymentToolkit.Bcd {
             if (this._store is not null) {
                 if (disposing) {
                     this._store.Dispose();
+                    this._hive?.Dispose();
                 }
 
-                this._store = null;
+                this._hive = null;
+                this._store = null!;
             }
         }
         #endregion
 
         #region Private fields
-        private MountedHive? _store;
+        private MountedHive? _hive;
+        private RegistryKey _store;
         #endregion
     }
 }

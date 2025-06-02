@@ -1,4 +1,4 @@
-﻿// <copyright file="WellKnownBcdObjectExtensions.cs" company="Visualisierungsinstitut der Universität Stuttgart">
+﻿// <copyright file="EnumExtensions.cs" company="Visualisierungsinstitut der Universität Stuttgart">
 // Copyright © 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
@@ -14,9 +14,9 @@ using Visus.DeploymentToolkit.Bcd.Properties;
 namespace Visus.DeploymentToolkit.Bcd {
 
     /// <summary>
-    /// Extension methods for the <see cref="WellKnownBcdObject"/> enumeration.
+    /// Extension methods for the annotated enumerations in this assembly.
     /// </summary>
-    public static class WellKnownBcdObjectExtensions {
+    public static class EnumExtensions {
 
         /// <summary>
         /// Gets the <see cref="Guid"/> that identifies the given well-known BCD
@@ -31,20 +31,49 @@ namespace Visus.DeploymentToolkit.Bcd {
                 ?? Guid.Empty;
 
         /// <summary>
+        /// Gets, if known, the human-readable names for the given BCD element
+        /// as used in the bcdedit application.
+        /// </summary>
+        /// <param name="that"></param>
+        /// <returns>The names used for the element in bcdedit.exe.</returns>
+        public static IEnumerable<string> GetNames(this BcdElementType that)
+            => that.GetField()
+                .GetCustomAttributes<BcdEditNameAttribute>()
+                .Select(a => a.Name);
+
+        /// <summary>
+        /// Gets, if known, the human-readable names for the given BCD element
+        /// as used in the bcdedit application.
+        /// </summary>
+        /// <param name="that"></param>
+        /// <returns>The names used for the element in bcdedit.exe.</returns>
+        public static IEnumerable<string> GetNames(this BcdObjectType that)
+            => that.GetField()
+                .GetCustomAttributes<BcdEditNameAttribute>()
+                .Select(a => a.Name);
+
+        /// <summary>
         /// Gets, if known, the name used for the given well-known BCD object in
-        /// the bcdedit.application.
+        /// the bcdedit application.
         /// </summary>
         /// <param name="that">The well-known BCD object to get the name in
         /// bcdedit.exe for.</param>
-        /// <returns>The name used for the object in bcdedit.exe or
-        /// <see langword="null"/> if this information is unavailable.</returns>
+        /// <returns>The names used for the object in bcdedit.exe.</returns>
         public static IEnumerable<string> GetNames(this WellKnownBcdObject that)
             => that.GetField()
                 .GetCustomAttributes<BcdEditNameAttribute>()
                 .Select(a => a.Name);
 
         #region Private methods
-        private static FieldInfo GetField(this WellKnownBcdObject that) {
+        /// <summary>
+        /// Gets the <see cref="FieldInfo"/> for a given enumeration value.
+        /// </summary>
+        /// <typeparam name="TEnum"></typeparam>
+        /// <param name="that"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        private static FieldInfo GetField<TEnum>(this TEnum that)
+                where TEnum : struct, Enum {
             var name = Enum.GetName(that);
             if (name is null) {
                 throw new ArgumentException(string.Format(
