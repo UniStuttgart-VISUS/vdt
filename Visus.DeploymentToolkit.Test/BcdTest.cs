@@ -58,6 +58,7 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public void TestBcdElementType() {
+            // Library elements
             Assert.AreEqual(0x11000001u, (uint) BcdElementType.LibraryApplicationDevice);
             Assert.AreEqual(0x12000002u, (uint) BcdElementType.LibraryApplicationPath);
             Assert.AreEqual(0x12000004u, (uint) BcdElementType.LibraryDescription);
@@ -148,12 +149,14 @@ namespace Visus.DeploymentToolkit.Test {
             Assert.AreEqual(0x12000088u, (uint) BcdElementType.LibraryAdditionalCiPolicy);
             Assert.AreEqual(0x15000088u, (uint) BcdElementType.LibraryLinearAddress57Policy);
 
+            // Application elements
             Assert.AreEqual(0x26000202u, (uint) BcdElementType.FfuLoaderTypeOneShotSkipFfuUpdate);
             Assert.AreEqual(0x26000203u, (uint) BcdElementType.FfuLoaderTypeForceFfu);
             Assert.AreEqual(0x25000510u, (uint) BcdElementType.ChargingTypeBootThreshold);
             Assert.AreEqual(0x26000512u, (uint) BcdElementType.ChargingTypeOffModeCharging);
             Assert.AreEqual(0x25000AAAu, (uint) BcdElementType.GlobalTypeBootFlow);
 
+            // Template elements
             Assert.AreEqual(0x45000001u, (uint) BcdElementType.DeviceType);
             Assert.AreEqual(0x42000002u, (uint) BcdElementType.ApplicationRelativePath);
             Assert.AreEqual(0x42000003u, (uint) BcdElementType.RamDiskDeviceRelativePath);
@@ -161,6 +164,7 @@ namespace Visus.DeploymentToolkit.Test {
             Assert.AreEqual(0x47000006u, (uint) BcdElementType.ElementsToMigrateList);
             Assert.AreEqual(0x46000010u, (uint) BcdElementType.RecoveryOs);
 
+            // FWBOOTMGR and BOOTMGR elements
             Assert.AreEqual(0x24000001u, (uint) BcdElementType.DisplayOrder);
             Assert.AreEqual(0x24000002u, (uint) BcdElementType.BootSequence);
             Assert.AreEqual(0x23000003u, (uint) BcdElementType.DefaultObject);
@@ -201,6 +205,7 @@ namespace Visus.DeploymentToolkit.Test {
             Assert.AreEqual(0x25000050u, (uint) BcdElementType.FveStationPortIPv4);
             Assert.AreEqual(0x25000051u, (uint) BcdElementType.FveStationPortIPv6);
 
+            // OSLOADER elements
             Assert.AreEqual(0x21000001u, (uint) BcdElementType.OperatingSystemDevice);
             Assert.AreEqual(0x22000002u, (uint) BcdElementType.SystemRoot);
             Assert.AreEqual(0x23000003u, (uint) BcdElementType.AssociatedResumeObject);
@@ -331,6 +336,65 @@ namespace Visus.DeploymentToolkit.Test {
             Assert.AreEqual(0x21000155u, (uint) BcdElementType.BspFilePath);
             Assert.AreEqual(0x22000156u, (uint) BcdElementType.KernelDebuggerNetHostIPv6);
             Assert.AreEqual(0x22000161u, (uint) BcdElementType.HypervisorDebuggerNetHostIpv6);
+
+            // RESUME elements
+            Assert.AreEqual(0x21000001u, (uint) BcdElementType.HiberFileDevice);
+            Assert.AreEqual(0x22000002u, (uint) BcdElementType.HiberFilePath);
+            Assert.AreEqual(0x26000003u, (uint) BcdElementType.UseCustomSettings);
+            Assert.AreEqual(0x26000004u, (uint) BcdElementType.X86PaeMode);
+            Assert.AreEqual(0x21000005u, (uint) BcdElementType.AssociatedOsDevice);
+            Assert.AreEqual(0x26000006u, (uint) BcdElementType.DebugOptionEnabled);
+            Assert.AreEqual(0x25000007u, (uint) BcdElementType.ResumeBootUxPolicy);
+            Assert.AreEqual(0x25000008u, (uint) BcdElementType.ResumeBootMenuPolicy);
+            Assert.AreEqual(0x26000024u, (uint) BcdElementType.ResumeHormEnabled);
+
+            // MEMDIAG elements
+            Assert.AreEqual(0x25000001u, (uint) BcdElementType.PassCount);
+            Assert.AreEqual(0x25000002u, (uint) BcdElementType.TestMix);
+            Assert.AreEqual(0x25000003u, (uint) BcdElementType.FailureCount);
+            Assert.AreEqual(0x26000003u, (uint) BcdElementType.CacheEnable);
+            Assert.AreEqual(0x25000004u, (uint) BcdElementType.TestToFail);
+            Assert.AreEqual(0x26000004u, (uint) BcdElementType.FailuresEnabled);
+            Assert.AreEqual(0x26000005u, (uint) BcdElementType.CacheEnableLegacy);
+            Assert.AreEqual(0x25000005u, (uint) BcdElementType.StrideFailureCount);
+            Assert.AreEqual(0x25000006u, (uint) BcdElementType.InvcFailureCount);
+            Assert.AreEqual(0x25000007u, (uint) BcdElementType.MatsFailureCount);
+            Assert.AreEqual(0x25000008u, (uint) BcdElementType.RandFailureCount);
+            Assert.AreEqual(0x25000009u, (uint) BcdElementType.ChckrFailureCount);
+
+            // NTLDR and SETUPLDR elements
+            Assert.AreEqual(0x22000001u, (uint) BcdElementType.BpbString);
+
+            // STARTUP elements
+            Assert.AreEqual(0x26000001u, (uint) BcdElementType.PxeSoftReboot);
+            Assert.AreEqual(0x22000002u, (uint) BcdElementType.PxeApplicationName);
+
+            // BOOTAPP elements
+            Assert.AreEqual(0x26000145u, (uint) BcdElementType.EnableBootDebugPolicy);
+            Assert.AreEqual(0x26000146u, (uint) BcdElementType.EnableBootOrderClean);
+            Assert.AreEqual(0x26000147u, (uint) BcdElementType.EnableDeviceID);
+            Assert.AreEqual(0x26000148u, (uint) BcdElementType.EnableFfuLoader);
+            Assert.AreEqual(0x26000149u, (uint) BcdElementType.EnableIuLoader);
+            Assert.AreEqual(0x2600014Au, (uint) BcdElementType.EnableMassStorage);
+            Assert.AreEqual(0x2600014Bu, (uint) BcdElementType.EnableRpmbProvisioning);
+            Assert.AreEqual(0x2600014Cu, (uint) BcdElementType.EnableSecureBootPolicy);
+            Assert.AreEqual(0x2600014Du, (uint) BcdElementType.EnableStartCharge);
+            Assert.AreEqual(0x2600014Eu, (uint) BcdElementType.EnableResetTpm);
+
+            // Device elements
+            Assert.AreEqual(0x35000001u, (uint) BcdElementType.RamdiskImageOffset);
+            Assert.AreEqual(0x35000002u, (uint) BcdElementType.RamdiskTftpClientPort);
+            Assert.AreEqual(0x31000003u, (uint) BcdElementType.RamdiskSdiDevice);
+            Assert.AreEqual(0x32000004u, (uint) BcdElementType.RamdiskSdiPath);
+            Assert.AreEqual(0x35000005u, (uint) BcdElementType.RamdiskImageLength);
+            Assert.AreEqual(0x36000006u, (uint) BcdElementType.RamdiskExportAsCd);
+            Assert.AreEqual(0x35000007u, (uint) BcdElementType.RamdiskTftpBlockSize);
+            Assert.AreEqual(0x35000008u, (uint) BcdElementType.RamdiskTftpWindowSize);
+            Assert.AreEqual(0x36000009u, (uint) BcdElementType.RamdiskMulticastEnabled);
+            Assert.AreEqual(0x3600000Au, (uint) BcdElementType.RamdiskMulticastTftpFallback);
+            Assert.AreEqual(0x3600000Bu, (uint) BcdElementType.RamdiskTftpVarWindow);
+            Assert.AreEqual(0x3600000Cu, (uint) BcdElementType.VhdRamdiskBoot);
+            Assert.AreEqual(0x3500000Du, (uint) BcdElementType.X3500000D);
 
         }
 

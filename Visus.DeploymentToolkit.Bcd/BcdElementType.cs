@@ -1174,114 +1174,189 @@ namespace Visus.DeploymentToolkit.Bcd {
         [Undocumented]
         HypervisorDebuggerNetHostIpv6 = Application | String | 0x00000161,
 
+        [BcdEditName("filedevice")]
+        HiberFileDevice = Application | DevicePath | 0x00000001,
 
-        //0x26000145	BCDE_OSLOADER_TYPE_DTRACE_ENABLED   dtrace	 	1809 and higher
-        //0x21000150	BCDE_OSLOADER_TYPE_SYSTEM_DATA_DEVICE   systemdatadevice    device	10.0 and higher
-        //0x21000151	BCDE_OSLOADER_TYPE_OS_ARC_DEVICE    osarcdevice device	1511 and higher
-        //0x21000152	 	 	device	1607 and higher
-        //0x21000153	BCDE_OSLOADER_TYPE_OS_DATA_DEVICE   osdatadevice    device	1803 and higher
-        //0x21000154	BCDE_OSLOADER_TYPE_BSP_DEVICE   bspdevice   device	1803 and higher
-        //0x21000155	BCDE_OSLOADER_TYPE_BSP_FILEPATH bspfilepath	string	1803 and higher
-        //0x22000156	BCDE_OSLOADER_TYPE_KERNEL_DEBUGGER_NET_HOST_IPV6    kernelhostipv6	 	1809 and higher
-        //0x22000161	BCDE_OSLOADER_TYPE_HYPERVISOR_DEBUGGER_NET_HOST_IPV6    hypervisorhostipv6	 	1809 and higher
+        [BcdEditName("filepath")]
+        HiberFilePath = Application | String | 0x00000002,
 
+        [BcdEditName("customsettings")]
+        UseCustomSettings = Application | Boolean | 0x00000003,
 
-        //0x21000001	BcdResumeDevice_HiberFileDevice
-        //BCDE_RESUME_LOADER_TYPE_HIBERFILE_DEVICE    filedevice  device	6.0 and higher
-        //0x22000002	BcdResumeString_HiberFilePath
-        //BCDE_RESUME_LOADER_TYPE_HIBERFILE_PATH  filepath	string	6.0 and higher
-        //0x26000003	BcdResumeBoolean_UseCustomSettings
-        //BCDE_RESUME_LOADER_TYPE_USE_CUSTOM_SETTINGS customsettings  boolean	6.0 and higher
-        //0x26000004	BcdResumeBoolean_x86PaeMode
-        //BCDE_RESUME_LOADER_TYPE_X86_PAE_MODE    pae boolean	6.0 and higher
-        //0x21000005	BcdResumeDevice_AssociatedOsDevice
-        //BCDE_RESUME_LOADER_TYPE_ASSOCIATED_OS_DEVICE    associatedosdevice  device	6.0 and higher
-        //0x26000006	BCDE_RESUME_LOADER_TYPE_DEBUG_OPTION_ENABLED    debugoptionenabled  boolean	6.0 and higher
-        //BcdResumeBoolean_DebugOptionEnabled	 	 	6.2 and higher
-        //0x25000007	BCDE_RESUME_LOADER_TYPE_BOOTUX_POLICY   bootux	0 = Disabled
-        //1 = Basic
-        //2 = Standard	6.1 and higher
-        //BcdResumeInteger_BootUxPolicy	 	 	6.2 and higher
-        //0x25000008	BcdResumeInteger_BootMenuPolicy
-        //BCDE_RESUME_LOADER_TYPE_BOOT_MENU_POLICY    bootmenupolicy	0 = Legacy
-        //1 = Standard	6.2 and higher
-        //0x26000024	BcdResumeBoolean_HormEnabled	 	 	6.2 and higher
+        [BcdEditName("pae")]
+        X86PaeMode = Application | Boolean | 0x00000004,
 
-        //0x25000001	BcdMemDiagInteger_PassCount
-        //BCDE_MEMTEST_TYPE_PASS_COUNT    passcount   integer	6.0 and higher
-        //0x25000002	BcdMemDiagInteger_TestMix
-        //BCDE_MEMTEST_TYPE_TESTMIX   testmix	0 = Basic
-        //1 = Extended	6.0 and higher
-        //0x25000003	BcdMemDiagInteger_FailureCount
-        //BCDE_MEMTEST_TYPE_FAILURE_COUNT failurecount    integer	6.0 to 6.1
-        //0x26000003	BcdMemDiagBoolean_CacheEnabled
-        //BCDE_MEMTEST_TYPE_CACHE_ENABLE  cacheenable boolean	6.2 and higher
-        //0x25000004	BcdMemDiagInteger_TestToFail
-        //BCDE_MEMTEST_TYPE_TEST_TO_FAIL  testtofail	0 = Stride
-        //1 = Mats
-        //2 = InverseCoupling
-        //3 = RandomPattern
-        //4 = Checkerboard	6.0 to 6.1
-        //0x26000004	BcdMemDiagBoolean_FailuresEnabled
-        //BCDE_MEMTEST_TYPE_FAILURES_ENABLED  failuresenabled boolean	6.2 and higher
-        //0x26000005	BCDE_MEMTEST_TYPE_CACHE_ENABLE  cacheenable boolean	6.1 only
-        //0x25000005	BcdMemDiagInteger_StrideFailureCount
-        //BCDE_MEMTEST_TYPE_STRIDE_FAILURE_COUNT  stridefailcount integer	6.2 and higher
-        //0x25000006	BcdMemDiagInteger_InvcFailureCount
-        //BCDE_MEMTEST_TYPE_INVC_FAILURE_COUNT    invcfailcount   integer	6.2 and higher
-        //0x25000007	BcdMemDiagInteger_MatsFailureCount
-        //BCDE_MEMTEST_TYPE_MATS_FAILURE_COUNT    matsfailcount   integer	6.2 and higher
-        //0x25000008	BcdMemDiagInteger_RandFailureCount
-        //BCDE_MEMTEST_TYPE_RAND_FAILURE_COUNT    randfailcount   integer	6.2 and higher
-        //0x25000009	BcdMemDiagInteger_ChckrFailureCount
-        //BCDE_MEMTEST_TYPE_CHCKR_FAILURE_COUNT   chckrfailcount  integer	6.2 and higher
+        [BcdEditName("associatedosdevice")]
+        AssociatedOsDevice = Application | DevicePath | 0x00000005,
+
+        [BcdEditName("debugoptionenabled")]
+        [Undocumented]
+        DebugOptionEnabled = Application | Boolean | 0x00000006,
+
+        /// <remarks>
+        /// 0 = Disabled
+        /// 1 = Basic
+        /// 2 = Standard
+        /// </remarks>
+        [BcdEditName("bootux")]
+        ResumeBootUxPolicy = Application | Integer | 0x00000007,
+
+        /// <remarks>
+        /// 0 = Legacy
+        /// 1 = Standard
+        /// </remarks>
+        [BcdEditName("bootmenupolicy")]
+        ResumeBootMenuPolicy = Application | Integer | 0x00000008,
+
+        [Undocumented]
+        ResumeHormEnabled = Application | Boolean | 0x00000024,
+
+        [BcdEditName("passcount")]
+        [Undocumented]
+        PassCount = Application | Integer | 0x00000001,
+
+        /// <remarks>
+        /// 0 = Basic
+        /// 1 = Extended
+        /// </remarks>
+        [BcdEditName("testmix")]
+        TestMix = Application | Integer | 0x00000002,
+
+        [BcdEditName("failurecount")]
+        [Undocumented]
+        FailureCount = Application | Integer | 0x00000003,
+
+        [BcdEditName("cacheenable", Major = 6, Minor = 2)]
+        CacheEnable = Application | Boolean | 0x00000003,
+
+        /// <remarks>
+        /// 0 = Stride
+        /// 1 = Mats
+        /// 2 = InverseCoupling
+        /// 3 = RandomPattern
+        /// 4 = Checkerboard
+        /// </remarks>
+        [BcdEditName("testtofail")]
+        [Undocumented]
+        TestToFail = Application | Integer | 0x00000004,
+
+        [BcdEditName("failuresenabled", Major = 6, Minor = 2)]
+        [Undocumented]
+        FailuresEnabled = Application | Boolean | 0x00000004,
+
+        [BcdEditName("cacheenable", Major = 6, Minor = 1)]
+        CacheEnableLegacy = Application | Boolean | 0x00000005,
+
+        [BcdEditName("stridefailcount", Major = 6, Minor = 2)]
+        [Undocumented]
+        StrideFailureCount = Application | Integer | 0x00000005,
+
+        [BcdEditName("invcfailcount", Major = 6, Minor = 2)]
+        [Undocumented]
+        InvcFailureCount = Application | Integer | 0x00000006,
+
+        [BcdEditName("matsfailcount", Major = 6, Minor = 2)]
+        [Undocumented]
+        MatsFailureCount = Application | Integer | 0x00000007,
+
+        [BcdEditName("randfailcount", Major = 6, Minor = 2)]
+        [Undocumented]
+        RandFailureCount = Application | Integer | 0x00000008,
+
+        [BcdEditName("chckrfailcount", Major = 6, Minor = 2)]
+        [Undocumented]
+        ChckrFailureCount = Application | Integer | 0x00000009,
 
         [BcdEditName("bpbstring")]
         [Undocumented]
-        BpbSring = Application | String | 0x00000001,
+        BpbString = Application | String | 0x00000001,
 
-        //0x26000001	BCDE_STARTUP_TYPE_PXE_SOFT_REBOOT   pxesoftreboot   boolean	6.0 and higher
-        //0x22000002	BCDE_STARTUP_TYPE_PXE_APPLICATION_NAME  applicationname	string	6.0 and higher
+        [BcdEditName("pxesoftreboot")]
+        [Undocumented]
+        PxeSoftReboot = Application | Boolean | 0x00000001,
 
-        //0x26000145	BCDE_MOBILESTARTUP_TYPE_ENABLE_BOOT_DEBUG_POLICY    enablebootdebugpolicy   boolean	1607 and higher
-        //0x26000146	BCDE_MOBILESTARTUP_TYPE_ENABLE_BOOT_ORDER_CLEAN enablebootorderclean    boolean	1607 and higher
-        //0x26000147	BCDE_MOBILESTARTUP_TYPE_ENABLE_DEVICE_ID    enabledeviceid  boolean	1607 and higher
-        //0x26000148	BCDE_MOBILESTARTUP_TYPE_ENABLE_FFU_LOADER   enableffuloader boolean	1607 and higher
-        //0x26000149	BCDE_MOBILESTARTUP_TYPE_ENABLE_IU_LOADER    enableiuloader  boolean	1607 and higher
-        //0x2600014A	BCDE_MOBILESTARTUP_TYPE_ENABLE_MASS_STORAGE enablemassstorage   boolean	1607 and higher
-        //0x2600014B	BCDE_MOBILESTARTUP_TYPE_ENABLE_RPMB_PROVISIONING    enablerpmbprovisioning  boolean	1607 and higher
-        //0x2600014C	BCDE_MOBILESTARTUP_TYPE_ENABLE_SECURE_BOOT_POLICY   enablesecurebootpolicy  boolean	1607 and higher
-        //0x2600014D	BCDE_MOBILESTARTUP_TYPE_ENABLE_START_CHARGE enablestartcharge   boolean	1607 and higher
-        //0x2600014E	BCDE_MOBILESTARTUP_TYPE_ENABLE_RESET_TPM    enableresettpm  boolean	1703 and higher
+        [BcdEditName("applicationname")]
+        [Undocumented]
+        PxeApplicationName = Application | String | 0x00000002,
 
-        //0x35000001	BcdDeviceInteger_RamdiskImageOffset
-        //BCDE_DEVICE_TYPE_RAMDISK_IMAGE_OFFSET   ramdiskimageoffset  integer	6.0 and higher
-        //0x35000002	BcdDeviceInteger_TftpClientPort
-        //BCDE_DEVICE_TYPE_RAMDISK_TFTP_CLIENT_PORT   ramdisktftpclientport   integer	6.0 and higher
-        //0x31000003	BcdDeviceDevice_SdiDevice
-        //BCDE_DEVICE_TYPE_RAMDISK_SDI_DEVICE ramdisksdidevice    device	6.0 and higher
-        //0x32000004	BcdDeviceString_SdiPath
-        //BCDE_DEVICE_TYPE_RAMDISK_SDI_PATH   ramdisksdipath	string	6.0 and higher
-        //0x35000005	BcdDeviceInteger_RamdiskImageLength
-        //BCDE_DEVICE_TYPE_RAMDISK_IMAGE_LENGTH   ramdiskimagelength  integer	6.0 and higher
-        //0x36000006	BCDE_DEVICE_TYPE_RAMDISK_EXPORT_AS_CD   exportascd  boolean	6.0 and higher
-        //BcdDeviceBoolean_ExportAsCdRamdiskImageOffset	 	 	6.0 to 6.1
-        //BcdDeviceBoolean_RamdiskExportAsCd	 	 	6.2 and higher
-        //0x35000007	BCDE_DEVICE_TYPE_RAMDISK_TFTP_BLOCK_SIZE    ramdisktftpblocksize    integer	6.0 and higher
-        //BcdDeviceInteger_TftpBlockSize	 	 	6.0 to 6.1
-        //BcdDeviceInteger_RamdiskTftpBlockSize	 	 	6.2 and higher
-        //0x35000008	BCDE_DEVICE_TYPE_RAMDISK_TFTP_WINDOW_SIZE   ramdisktftpwindowsize   integer	6.0 SP1 and higher
-        //BcdDeviceInteger_TftpWindowSize	 	 	6.0 SP1 to 6.1
-        //BcdDeviceInteger_RamdiskTftpWindowSize	 	 	6.2 and higher
-        //0x36000009	BCDE_DEVICE_TYPE_RAMDISK_MULTICAST_ENABLED  ramdiskmcenabled    boolean	6.1 and higher
-        //BcdDeviceInteger_MulticastEnabled	 	 	6.1 only
-        //BcdDeviceBoolean_RamdiskMulticastEnabled	 	 	6.2 and higher
-        //0x3600000A	BCDE_DEVICE_TYPE_RAMDISK_MULTICAST_TFTP_FALLBACK    ramdiskmctftpfallback   boolean	6.1 and higher
-        //BcdDeviceInteger_MulticastTftpFallback	 	 	6.1 only
-        //BcdDeviceInteger_RamdiskMulticastTftpFallback	 	 	6.2 and higher
-        //0x3600000B	BcdDeviceBoolean_RamdiskTftpVarWindow
-        //BCDE_DEVICE_TYPE_RAMDISK_TFTP_VAR_WINDOW    ramdisktftpvarwindow    boolean	6.2 and higher
-        //0x3600000C	BCDE_DEVICE_TYPE_VHD_RAMDISK_BOOT   vhdramdiskboot  boolean	1809 and higher
-        //0x3500000D	 	 	integer	1903 and higher
+        [BcdEditName("enablebootdebugpolicy")]
+        [Undocumented]
+        EnableBootDebugPolicy = Application | Boolean | 0x00000145,
+
+        [BcdEditName("enablebootorderclean")]
+        [Undocumented]
+        EnableBootOrderClean = Application | Boolean | 0x00000146,
+
+        [BcdEditName("enabledeviceid")]
+        [Undocumented]
+        EnableDeviceID = Application | Boolean | 0x00000147,
+
+        [BcdEditName("enableffuloader")]
+        [Undocumented]
+        EnableFfuLoader = Application | Boolean | 0x00000148,
+
+        [BcdEditName("enableiuloader")]
+        [Undocumented]
+        EnableIuLoader = Application | Boolean | 0x00000149,
+
+        [BcdEditName("enablemassstorage")]
+        [Undocumented]
+        EnableMassStorage = Application | Boolean | 0x0000014A,
+
+        [BcdEditName("enablerpmbprovisioning")]
+        [Undocumented]
+        EnableRpmbProvisioning = Application | Boolean | 0x0000014B,
+
+        [BcdEditName("enablesecurebootpolicy")]
+        [Undocumented]
+        EnableSecureBootPolicy = Application | Boolean | 0x0000014C,
+
+        [BcdEditName("enablestartcharge")]
+        [Undocumented]
+        EnableStartCharge = Application | Boolean | 0x0000014D,
+
+        [BcdEditName("enableresettpm")]
+        [Undocumented]
+        EnableResetTpm = Application | Boolean | 0x0000014E,
+
+        [BcdEditName("ramdiskimageoffset")]
+        RamdiskImageOffset = Device | Integer | 0x00000001,
+
+        [BcdEditName("ramdisktftpclientport")]
+        RamdiskTftpClientPort = Device | Integer | 0x00000002,
+
+        [BcdEditName("ramdisksdidevice")]
+        RamdiskSdiDevice = Device | DevicePath | 0x00000003,
+
+        [BcdEditName("ramdisksdipath")]
+        RamdiskSdiPath = Device | String | 0x00000004,
+
+        [BcdEditName("ramdiskimagelength")]
+        RamdiskImageLength = Device | Integer | 0x00000005,
+
+        [BcdEditName("exportascd")]
+        RamdiskExportAsCd = Device | Boolean | 0x00000006,
+
+        [BcdEditName("ramdisktftpblocksize")]
+        RamdiskTftpBlockSize = Device | Integer | 0x00000007,
+
+        [BcdEditName("ramdisktftpwindowsize")]
+        RamdiskTftpWindowSize = Device | Integer | 0x00000008,
+
+        [BcdEditName("ramdiskmcenabled", Major = 6, Minor = 1)]
+        RamdiskMulticastEnabled = Device | Boolean | 0x00000009,
+
+        [BcdEditName("ramdiskmctftpfallback", Major = 6, Minor = 1)]
+        RamdiskMulticastTftpFallback = Device | Boolean | 0x0000000A,
+
+        [BcdEditName("ramdisktftpvarwindow", Major = 6, Minor = 2)]
+        RamdiskTftpVarWindow = Device | Boolean | 0x0000000B,
+
+        [BcdEditName("vhdramdiskboot")]
+        [Undocumented]
+        VhdRamdiskBoot = Device | Boolean | 0x0000000C,
+
+        [Undocumented]
+        X3500000D = Device | Integer | 0x0000000D,
     }
 }
