@@ -82,6 +82,7 @@ namespace Visus.DeploymentToolkit.Bcd {
             this._hive = new(hive, key, path);
             this._store = this._hive!;
             CheckStructure(this._store, nameof(path));
+            this.UpdateDescription();
         }
 
         /// <summary>
@@ -90,8 +91,10 @@ namespace Visus.DeploymentToolkit.Bcd {
         /// <param name="key">The registry key representing the BCD store. The
         /// object will take ownership of this key and dispose it when it is
         /// disposed.</param>
-        public RegistryBcdStore(RegistryKey key)
-            => CheckStructure(this._store = key, nameof(key));
+        public RegistryBcdStore(RegistryKey key) {
+            CheckStructure(this._store = key, nameof(key));
+            this.UpdateDescription();
+        }
 
         /// <summary>
         /// Initialises a new instance.
@@ -120,7 +123,20 @@ namespace Visus.DeploymentToolkit.Bcd {
             if (this._store is null) {
                 throw new InvalidOperationException(Errors.NoBcdStoreFound);
             }
+
+            this.UpdateDescription();
         }
+        #endregion
+
+        #region Public properties
+        /// <inheritdoc />
+        public string? KeyName { get; private set; }
+
+        /// <inheritdoc />
+        public bool IsSystem { get; private set; }
+
+        /// <inheritdoc />
+        public bool TreatAsSystem { get; private set; }
         #endregion
 
         #region Finaliser
@@ -173,6 +189,12 @@ namespace Visus.DeploymentToolkit.Bcd {
                 throw new ArgumentNullException(parameterName);
             }
 
+            using var desc = key.OpenSubKey("Description");
+            if (desc is null) {
+                throw new ArgumentException(Errors.InvalidRegistryKey,
+                    parameterName);
+            }
+
             using var objects = key.OpenSubKey("Objects");
             if (objects is null) {
                 throw new ArgumentException(Errors.InvalidRegistryKey,
@@ -202,6 +224,30 @@ namespace Visus.DeploymentToolkit.Bcd {
 
                 this._hive = null;
                 this._store = null!;
+            }
+        }
+
+        /// <summary>
+        /// Updates the description properties of the store from the registry.
+        /// </summary>
+        private void UpdateDescription() {
+            ObjectDisposedException.ThrowIf(this._store is null, this);
+            using var desc = this._store.OpenSubKey("Description");
+            Debug.Assert(desc is not null);
+
+            {
+                var value = desc.GetValue("KeyName", null);
+                this.KeyName = value as string;
+            }
+
+            {
+                var value = desc.GetValue("System", 0);
+                this.IsSystem = (value is int v) && (v != 0);
+            }
+
+            {
+                var value = desc.GetValue("TreatAsSystem", 0);
+                this.TreatAsSystem = (value is int v) && (v != 0);
             }
         }
         #endregion

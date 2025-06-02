@@ -34,6 +34,7 @@ namespace Visus.DeploymentToolkit.Test {
             var service = new EnvironmentService(this._loggerFactory.CreateLogger<EnvironmentService>());
             service[variable] = expected;
             Assert.AreEqual(expected, service[variable]);
+            Assert.AreEqual(expected, Environment.GetEnvironmentVariable(variable));
             service[variable] = null;
             Assert.IsNull(service[variable]);
         }

@@ -162,6 +162,9 @@
   <data name="RunCommand" xml:space="preserve">
     <value>Run command</value>
   </data>
+  <data name="SetEnvironmentVariable" xml:space="preserve">
+    <value>Set an environment variable</value>
+  </data>
   <data name="SetKeyboardLocale" xml:space="preserve">
     <value>Set keyboard locale</value>
   </data>

@@ -196,6 +196,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Set an environment variable.
+        /// </summary>
+        internal static string SetEnvironmentVariable {
+            get {
+                return ResourceManager.GetString("SetEnvironmentVariable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Set keyboard locale.
         /// </summary>
         internal static string SetKeyboardLocale {

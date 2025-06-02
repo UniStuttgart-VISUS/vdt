@@ -4,11 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace Visus.DeploymentToolkit.Bcd {
@@ -17,5 +13,11 @@ namespace Visus.DeploymentToolkit.Bcd {
     /// The interface of a class modifying a BCD store.
     /// </summary>
     public interface IBcdStore : IEnumerable<BcdObject> {
+
+        //string? KeyName { get; }
+
+        //bool IsSystem { get; }
+
+        //bool TreatAsSystem { get; }
     }
 }

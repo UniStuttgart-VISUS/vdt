@@ -20,14 +20,14 @@ namespace Visus.DeploymentToolkit.Test {
     [DeploymentItem(@"TestData\Unattend_Core_x64.xml")]
     public sealed class TaskTest {
 
-        public TestContext TestContext { get; set; }
+        public TestContext TestContext { get; set; } = null!;
 
         [TestMethod]
         public async Task TestCopyFilesFlat() {
-            var state = new State(this._loggerFactory.CreateLogger<State>());
-            var dir = new DirectoryService(this._loggerFactory.CreateLogger<DirectoryService>());
-            var copy = new CopyService(dir, this._loggerFactory.CreateLogger<CopyService>());
-            var task = new CopyFiles(state, copy, this._loggerFactory.CreateLogger<CopyFiles>());
+            var state = new State(CreateLogger<State>());
+            var dir = new DirectoryService(CreateLogger<DirectoryService>());
+            var copy = new CopyService(dir, CreateLogger<CopyService>());
+            var task = new CopyFiles(state, copy, CreateLogger<CopyFiles>());
             task.Source = ".";
             task.Destination = Path.Combine(Path.GetTempPath(), "DeimosTest2");
             task.IsRecursive = false;
@@ -38,10 +38,10 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public async Task TestCopyFilesRecursive() {
-            var state = new State(this._loggerFactory.CreateLogger<State>());
-            var dir = new DirectoryService(this._loggerFactory.CreateLogger<DirectoryService>());
-            var copy = new CopyService(dir,this._loggerFactory.CreateLogger<CopyService>());
-            var task = new CopyFiles(state, copy, this._loggerFactory.CreateLogger<CopyFiles>());
+            var state = new State(  CreateLogger<State>());
+            var dir = new DirectoryService(CreateLogger<DirectoryService>());
+            var copy = new CopyService(dir,CreateLogger<CopyService>());
+            var task = new CopyFiles(state, copy, CreateLogger<CopyFiles>());
             task.Source = ".";
             task.Destination = Path.Combine(Path.GetTempPath(), "DeimosTest");
             task.IsOverwrite = true;
@@ -50,8 +50,8 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public async Task TestRunCommand() {
-            var state = new State(this._loggerFactory.CreateLogger<State>());
-            var task = new RunCommand(state, new CommandBuilderFactory(), this._loggerFactory.CreateLogger<RunCommand>());
+            var state = new State(CreateLogger<State>());
+            var task = new RunCommand(state, new CommandBuilderFactory(), CreateLogger<RunCommand>());
             task.Path = @"c:\Windows\System32\cmd.exe";
             task.Arguments = "/c @(call)";
             task.SucccessExitCodes = [ 1 ];
@@ -62,12 +62,12 @@ namespace Visus.DeploymentToolkit.Test {
         public async Task TestCustomiseUnattend() {
             var file = Path.Combine(this.TestContext.DeploymentDirectory!, "Unattend_Core_x64.xml");
             Assert.IsTrue(File.Exists(file));
-            var state = new State(this._loggerFactory.CreateLogger<State>());
-            var task = new CustomiseUnattend(state, this._loggerFactory.CreateLogger<CustomiseUnattend>());
+            var state = new State(CreateLogger<State>());
+            var task = new CustomiseUnattend(state, CreateLogger<CustomiseUnattend>());
             task.Path = file;
             task.OutputPath = "TestCustomiseUnattend.xml";
             task.Customisations = [
-                new XmlValueCustomisation(this._loggerFactory.CreateLogger<XmlValueCustomisation>()) {
+                new XmlValueCustomisation(CreateLogger < XmlValueCustomisation >()) {
                     Path = "//unattend:UILanguage",
                     Value = "de-DE",
                     IsRequired = true
@@ -86,6 +86,39 @@ namespace Visus.DeploymentToolkit.Test {
             }
         }
 
-        private readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(l => l.AddDebug());
+        [TestMethod]
+        public async Task TestSetEnvironmentVariable() {
+            var state = new State(CreateLogger<State>());
+            var env = new EnvironmentService(CreateLogger<EnvironmentService>());
+
+            var task = new SetEnvironmentVariable(state, env, CreateLogger<SetEnvironmentVariable>());
+            task.Variable = "__DEIMOS_TEST_VARIABLE__";
+
+            task.Value = "TestValue";
+            task.IsNoOverwrite = false;
+            await task.ExecuteAsync();
+            Assert.AreEqual(task.Value, Environment.GetEnvironmentVariable(task.Variable));
+
+            task.Value = "AnotherValue";
+            task.IsNoOverwrite = true;
+            await task.ExecuteAsync();
+            Assert.AreEqual("TestValue", Environment.GetEnvironmentVariable(task.Variable));
+
+            task.IsNoOverwrite = false;
+            await task.ExecuteAsync();
+            Assert.AreEqual(task.Value, Environment.GetEnvironmentVariable(task.Variable));
+
+            task.Value = null;
+            task.IsNoOverwrite = true;
+            await task.ExecuteAsync();
+            Assert.AreEqual("AnotherValue", Environment.GetEnvironmentVariable(task.Variable));
+
+            task.IsNoOverwrite = false;
+            await task.ExecuteAsync();
+            Assert.IsNull(Environment.GetEnvironmentVariable(task.Variable));
+        }
+
+        private static ILogger<T> CreateLogger<T>() => LoggerFactory.CreateLogger<T>();
+        private static readonly ILoggerFactory LoggerFactory = Microsoft.Extensions.Logging.LoggerFactory.Create(l => l.AddDebug());
     }
 }
