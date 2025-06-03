@@ -5,7 +5,9 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using System.Security.Principal;
 using System.Xml.Linq;
+using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
 using Visus.DeploymentToolkit.Unattend;
@@ -116,6 +118,27 @@ namespace Visus.DeploymentToolkit.Test {
             task.IsNoOverwrite = false;
             await task.ExecuteAsync();
             Assert.IsNull(Environment.GetEnvironmentVariable(task.Variable));
+        }
+
+        [TestMethod]
+        public async Task TestSelectInstallDisk() {
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                var state = new State(CreateLogger<State>());
+                var vds = new VdsService(CreateLogger<VdsService>());
+                var task = new SelectInstallDisk(state, vds, CreateLogger<SelectInstallDisk>());
+
+                await task.ExecuteAsync();
+                Assert.IsNotNull(state.InstallationDisk);
+
+                // Make a selection that should yield nothing.
+                task.Steps = [
+                    new() {
+                        Action = DiskSelectionAction.Include,
+                        BuiltInCondition = BuiltInCondition.IsEmpty
+                    }
+                ];
+                await Assert.ThrowsAsync<InvalidOperationException>(task.ExecuteAsync);
+            }
         }
 
         private static ILogger<T> CreateLogger<T>() => LoggerFactory.CreateLogger<T>();

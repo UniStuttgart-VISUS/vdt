@@ -42,6 +42,11 @@ namespace Visus.DeploymentToolkit.Services {
         ImageFileMachine ClrMachine { get; }
 
         /// <summary>
+        /// Gets the type of firmware we are running on.
+        /// </summary>
+        FirmwareType Firmware { get; }
+
+        /// <summary>
         /// Gets the HAL.
         /// </summary>
         string? Hal { get; }

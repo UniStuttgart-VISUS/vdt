@@ -50,10 +50,32 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// Gets or sets the selection steps that are performed in this order to
         /// find out the installation disk.
         /// </summary>
+        /// <remarks>
+        /// The default steps make sure that we do not overwrite a Linux
+        /// installation, we prefer empty and NVMe disks and finally use the
+        /// largest one.
+        /// </remarks>
         public IEnumerable<DiskSelectionStep> Steps {
             get;
             set;
-        } = Enumerable.Empty<DiskSelectionStep>();
+        } = [
+            new() {
+                BuiltInCondition = BuiltInCondition.HasLinuxPartition,
+                Action = DiskSelectionAction.Exclude
+            },
+            new() {
+                Condition = "BusType == \"Nvme\"",
+                Action = DiskSelectionAction.Prefer
+            },
+            new() {
+                BuiltInCondition = BuiltInCondition.IsEmpty,
+                Action = DiskSelectionAction.Prefer
+            },
+            new() {
+                BuiltInCondition = BuiltInCondition.IsLargest,
+                Action = DiskSelectionAction.Include
+            }
+        ];
         #endregion
 
         #region Public methods

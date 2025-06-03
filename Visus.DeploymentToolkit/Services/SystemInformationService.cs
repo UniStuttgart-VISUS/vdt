@@ -16,6 +16,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.SystemInformation;
@@ -76,6 +77,24 @@ namespace Visus.DeploymentToolkit.Services {
 
         /// <inheritdoc />
         public ImageFileMachine ClrMachine { get; }
+
+        /// <inheritdoc />
+        public FirmwareType Firmware {
+            get {
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                    throw new NotImplementedException();
+                }
+
+                // Cf. https://stackoverflow.com/questions/58823493/how-do-i-detect-if-the-current-windows-is-installed-in-uefi-or-legacy-mode
+                GetFirmwareEnvironmentVariable(string.Empty,
+                    Guid.Empty.ToString(),
+                    nint.Zero, 0);
+                return Marshal.GetLastWin32Error() switch {
+                    1 => FirmwareType.Bios,
+                    _ => FirmwareType.Uefi,
+                };
+            }
+        }
 
         /// <inheritdoc />
         public string? Hal => this._hal.Value;
@@ -232,6 +251,13 @@ namespace Visus.DeploymentToolkit.Services {
             path = Environment.ExpandEnvironmentVariables(path);
             return File.Exists(path);
         }
+        #endregion
+
+        #region Private methods
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [SupportedOSPlatform("windows")]
+        private static extern int GetFirmwareEnvironmentVariable(string name,
+            string guid, nint buffer, uint size);
         #endregion
 
         #region Private fields

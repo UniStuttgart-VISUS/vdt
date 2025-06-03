@@ -22,6 +22,35 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// Gets all well-known partition types defined as fields of this class.
         /// </summary>
         public static IEnumerable<PartitionType> All => _all.Value;
+
+        /// <summary>
+        /// Gets all partition types that are known to be used by Linux only.
+        /// </summary>
+        public static IEnumerable<PartitionType> AllLinux {
+            get {
+                yield return LinuxSwap;
+                yield return LinuxFileSystem;
+                yield return LinuxReserved;
+                yield return Linux;
+                yield return Lvm;
+            }
+        }
+
+        /// <summary>
+        /// Gets all partition types that are known to be used by Microsoft
+        /// operating systems.
+        /// </summary>
+        public static IEnumerable<PartitionType> AllMicrosoft {
+            get {
+                yield return MicrosoftBasicData;
+                yield return WindowsEfi;
+                yield return WindowsRe;
+                yield return WindowsLdmData;
+                yield return WindowsLdmMetaData;
+                yield return WindowsStorageSpaces;
+                yield return Windows;
+            }
+        }
         #endregion
 
         #region Public class methods
@@ -185,6 +214,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// well-known partition types or use the GUID as final fallback.</param>
         public PartitionType(Guid guid, string? name = null) {
             this.Gpt = guid;
+            this.Mbr = null;
             this.Name = name
                 ?? FromGpt(guid).FirstOrDefault()?.Name
                 ?? guid.ToString("B");
@@ -199,6 +229,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// well-known partition types or use the partition ID as final
         /// fallback.</param>
         public PartitionType(byte id, string? name = null) {
+            this.Gpt = null;
             this.Mbr = id;
             this.Name = name
                 ?? FromMbr(id).FirstOrDefault()?.Name
@@ -255,7 +286,15 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                 return true;
             }
 
-            return ((this.Gpt == other.Gpt) && (this.Mbr == other.Mbr));
+            if ((this.Gpt is not null) && (other.Gpt is not null)) {
+                return (this.Gpt.Value == other.Gpt.Value);
+            }
+
+            if ((this.Mbr is not null) && (other.Mbr is not null)) {
+                return (this.Mbr.Value == other.Mbr.Value);
+            }
+
+            return false;
         }
 
         /// <inheritdoc />

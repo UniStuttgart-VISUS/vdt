@@ -26,5 +26,11 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// Exclude all matching disks.
         /// </summary>
         Exclude,
+
+        /// <summary>
+        /// Prefer the matching disks, but if there are no matching disks,
+        /// the original selection will be used.
+        /// </summary>
+        Prefer
     }
 }

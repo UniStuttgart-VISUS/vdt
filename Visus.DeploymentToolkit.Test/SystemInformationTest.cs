@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.Logging;
 using Visus.DeploymentToolkit.Services;
+using Visus.DeploymentToolkit.SystemInformation;
 
 
 namespace Visus.DeploymentToolkit.Test {
@@ -52,6 +53,12 @@ namespace Visus.DeploymentToolkit.Test {
         [TestMethod]
         public void PhysicalAddresses() {
             Assert.IsTrue(this._sysInfo.PhysicalAddresses.Any());
+        }
+
+        [TestMethod]
+        public void TestFirmware() {
+            Assert.IsTrue((this._sysInfo.Firmware == FirmwareType.Bios)
+                || (this._sysInfo.Firmware == FirmwareType.Uefi));
         }
 
         private readonly SystemInformationService _sysInfo;

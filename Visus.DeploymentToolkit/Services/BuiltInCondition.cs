@@ -7,8 +7,7 @@
 using Visus.DeploymentToolkit.DiskManagement;
 
 
-namespace Visus.DeploymentToolkit.Services
-{
+namespace Visus.DeploymentToolkit.Services {
 
     /// <summary>
     /// Provides a set of built-in conditions for
@@ -24,6 +23,33 @@ namespace Visus.DeploymentToolkit.Services
         None = 0,
 
         /// <summary>
+        /// Selects disks that have at least one partition with a type known to
+        /// be used by Linux.
+        /// </summary>
+        HasLinuxPartition,
+
+        /// <summary>
+        /// Selects disks that have at least one partition with a type known to
+        /// be used by Microsoft Windows.
+        /// </summary>
+        HasMicrosoftPartition,
+
+        /// <summary>
+        /// Selects disks with a FAT32-formatted EFI boot partition.
+        /// </summary>
+        IsEfiBootDisk,
+
+        /// <summary>
+        /// Selects the disks that have not partitions on them.
+        /// </summary>
+        IsEmpty,
+
+        /// <summary>
+        /// Selects MBR disks with the boot flag set.
+        /// </summary>
+        IsMbrBootDisk,
+
+        /// <summary>
         /// Selects the disk with the largest overall capacity.
         /// </summary>
         IsLargest,
@@ -32,15 +58,5 @@ namespace Visus.DeploymentToolkit.Services
         /// Selects the disk with the smallest overall capacity.
         /// </summary>
         IsSmallest,
-
-        /// <summary>
-        /// Selects disks with a FAT32-formatted EFI boot partition.
-        /// </summary>
-        IsEfiBootDisk,
-
-        /// <summary>
-        /// Selects MBR disks with the boot flag set.
-        /// </summary>
-        IsMbrBootDisk
     }
 }

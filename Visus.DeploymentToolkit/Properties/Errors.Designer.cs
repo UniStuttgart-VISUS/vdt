@@ -88,6 +88,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A disk with ID &quot;{0}&quot; could not be found on the system..
+        /// </summary>
+        internal static string DiskNotFound {
+            get {
+                return ResourceManager.GetString("DiskNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A DISM servicing session has already been opened..
         /// </summary>
         internal static string DuplicateDismSession {
@@ -345,6 +354,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string TypeNotTask {
             get {
                 return ResourceManager.GetString("TypeNotTask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The partition step has no default schema for {0} firmware..
+        /// </summary>
+        internal static string UnexpectedFirmware {
+            get {
+                return ResourceManager.GetString("UnexpectedFirmware", resourceCulture);
             }
         }
         

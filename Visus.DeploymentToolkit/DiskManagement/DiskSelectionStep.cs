@@ -7,7 +7,6 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading;
@@ -82,24 +81,43 @@ namespace Visus.DeploymentToolkit.DiskManagement {
             }
 
             switch (BuiltInCondition) {
-                case BuiltInCondition.IsLargest:
-                    logger.LogInformation("Selecting the largest disk.");
-                    retval = (from d in disks
-                              orderby d.Size descending
-                              select d).Take(1);
+                case BuiltInCondition.HasLinuxPartition:
+                    logger.LogInformation("Selecting disks with a Linux "
+                        + "partition on it.");
+                    retval = from d in disks
+                             where d.Partitions.Any(p => PartitionType.AllLinux.Contains(p.Type))
+                             select d;
                     break;
 
-                case BuiltInCondition.IsSmallest:
-                    logger.LogInformation("Selecting the smallest disk.");
-                    retval = (from d in disks
-                              orderby d.Size ascending
-                              select d).Take(1);
+                case BuiltInCondition.HasMicrosoftPartition:
+                    logger.LogInformation("Selecting disks with a Microsoft "
+                        + "partition on it.");
+                    retval = from d in disks
+                             where d.Partitions.Any(p => PartitionType.AllMicrosoft.Contains(p.Type))
+                             select d;
                     break;
 
                 case BuiltInCondition.IsEfiBootDisk:
                     logger.LogInformation("Selecting a disk with an EFI system "
                         + "partition on it.");
-                    retval = SelectEfiSystemDisks(disks, EfiPartitionType.Any);
+                    retval = from d in disks
+                             where d.Partitions.Any(p => PartitionType.EfiSystem.Equals(p.Type))
+                             select d;
+                    break;
+
+                case BuiltInCondition.IsEmpty:
+                    logger.LogInformation("Selecting disks without "
+                        + "any partition.");
+                    retval = from d in disks
+                             where !d.Partitions.Any()
+                             select d;
+                    break;
+
+                case BuiltInCondition.IsLargest:
+                    logger.LogInformation("Selecting the largest disk.");
+                    retval = (from d in disks
+                              orderby d.Size descending
+                              select d).Take(1);
                     break;
 
                 case BuiltInCondition.IsMbrBootDisk:
@@ -109,17 +127,19 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                              select d;
                     break;
 
+                case BuiltInCondition.IsSmallest:
+                    logger.LogInformation("Selecting the smallest disk.");
+                    retval = (from d in disks
+                              orderby d.Size ascending
+                              select d).Take(1);
+                    break;
+
                 case BuiltInCondition.None:
                 default:
                     logger.LogInformation("Selecting a disk that fulfils the "
                         + "condition \"{Condition}\".",
-                        Condition);
-                    retval = disks.AsQueryable().Where(
-                        new ParsingConfig() {
-
-                            //ResolveTypesBySimpleName = true
-                        },
-                        Condition);
+                        this.Condition);
+                    retval = disks.AsQueryable().Where(this.Condition);
                     break;
             }
 
@@ -130,7 +150,6 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                     if (!retval.Any()) {
                         logger.LogWarning("The disk selection step resulted in "
                             + "an empty set of disks to include.");
-                        retval = disks;
                     }
                     break;
 
@@ -139,8 +158,18 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                         + "disk(s).", retval.Count());
                     retval = disks.AsQueryable().Except(retval);
                     if (!retval.Any()) {
+                        logger.LogWarning("The disk selection step excluded "
+                            + "all available disks.");
+                    }
+                    break;
+
+                case DiskSelectionAction.Prefer:
+                    logger.LogInformation("The selection prefers {Preferred} "
+                        + "disk(s).", retval.Count());
+                    if (!retval.Any()) {
                         logger.LogWarning("The disk selection step resulted in "
-                            + "an empty set of disks to exclude.");
+                            + "an empty set of preferred disks, so the "
+                            + "selection remains unchanged.");
                         retval = disks;
                     }
                     break;
@@ -192,30 +221,6 @@ namespace Visus.DeploymentToolkit.DiskManagement {
             /// non-Microsoft boot loader.
             /// </summary>
             NonMicrosoft
-        }
-        #endregion
-
-        #region Private methods
-        private static IEnumerable<IDisk> SelectEfiSystemDisks(
-                IEnumerable<IDisk> disks, EfiPartitionType type) {
-            Debug.Assert(disks != null);
-            var retval = from d in disks
-                         //where d.PartitionStyle == PartitionStyle.Gpt
-                         where d.Partitions.Any(p => p.Type == PartitionType.EfiSystem)
-                         select d;
-
-            var partitions = from p in disks.SelectMany(d => d.Partitions)
-                             where p.Type == PartitionType.EfiSystem
-                             select p;
-
-            foreach (var p in partitions) {
-            }
-
-            throw new NotImplementedException("We need to find out some stuff I don't know how to get...");
-            // TODO: Need to find out the file system
-            // TODO: Need to assign a letter if necessary.
-
-            return retval;
         }
         #endregion
     }

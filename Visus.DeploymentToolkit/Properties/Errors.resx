@@ -222,4 +222,10 @@
   <data name="InvalidWimHandle" xml:space="preserve">
     <value>The handle for the WIM file is invalid or closed.</value>
   </data>
+  <data name="DiskNotFound" xml:space="preserve">
+    <value>A disk with ID "{0}" could not be found on the system.</value>
+  </data>
+  <data name="UnexpectedFirmware" xml:space="preserve">
+    <value>The partition step has no default schema for {0} firmware.</value>
+  </data>
 </root>

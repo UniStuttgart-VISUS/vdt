@@ -33,15 +33,15 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// </summary>
         public List<IPartition> Partitions { get; set; } = new();
 
+        /// <inheritdoc />
+        IEnumerable<IPartition> IDisk.Partitions => this.Partitions;
+
         /// <summary>
         /// Gets or sets the parition style of the disk, which must be either
         /// <see cref="PartitionStyle.Gpt"/> or <see cref="PartitionStyle.Mbr"/>
         /// when applying the partitioning to a disk.
         /// </summary>
         public PartitionStyle PartitionStyle { get; set; }
-
-        /// <inheritdoc />
-        IEnumerable<IPartition> IDisk.Partitions => Partitions;
 
         /// <inheritdoc />
         public ulong Size => 0;

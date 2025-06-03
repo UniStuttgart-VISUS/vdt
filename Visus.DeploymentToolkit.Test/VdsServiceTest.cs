@@ -67,6 +67,12 @@ namespace Visus.DeploymentToolkit.Test {
                 }
 
                 {
+                    selection.BuiltInCondition = BuiltInCondition.HasMicrosoftPartition;
+                    var selected = await selection.ApplyAsync(disks, service, logger);
+                    Assert.IsTrue(selected.Any());
+                }
+
+                {
                     selection.BuiltInCondition = BuiltInCondition.IsSmallest;
                     var selected = await selection.ApplyAsync(disks, service, logger);
                     Assert.IsTrue(selected.Any());
