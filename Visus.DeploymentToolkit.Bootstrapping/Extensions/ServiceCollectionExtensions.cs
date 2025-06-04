@@ -1,14 +1,14 @@
 ﻿// <copyright file="ServiceCollectionExtensions.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Compliance.Redaction;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
-using Serilog;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -57,14 +57,16 @@ namespace Visus.DeploymentToolkit.Extensions {
         /// Configures our own logging to the console and to a log file (and to
         /// diverse debug outputs).
         /// </summary>
-        /// <param name="services"></param>
-        /// <param name="file"></param>
-        /// <returns></returns>
+        /// <param name="services">The service collection to add logging to.
+        /// </param>
+        /// <param name="config">The logging configuration section.</param>
+        /// <returns><paramref name="services"/> after injection.</returns>
         /// <exception cref="ArgumentNullException"></exception>
         public static IServiceCollection AddLogging(
                 this IServiceCollection services,
-                string? file) {
-            _ = services ?? throw new ArgumentNullException(nameof(services));
+                IConfiguration config) {
+            ArgumentNullException.ThrowIfNull(services);
+            ArgumentNullException.ThrowIfNull(config);
 
             // Configure the log redaction to be enabled in the next step.
             services.AddRedaction(o => {
@@ -80,20 +82,7 @@ namespace Visus.DeploymentToolkit.Extensions {
 #if DEBUG
                 o.AddDebug();
 #endif // DEBUG
-
-                var config = new LoggerConfiguration();
-                
-                if (file != null) {
-                    config.WriteTo.File(file);
-                }
-
-#if DEBUG
-                config.MinimumLevel.Verbose();
-#else // DEBUG
-                config.MinimumLevel.Information();
-#endif // DEBUG
-
-                o.AddSerilog(config.CreateLogger());
+                o.AddFile(config);
                 o.AddSimpleConsole(f => {
                     f.IncludeScopes = false;
                     f.SingleLine = true;
@@ -106,13 +95,15 @@ namespace Visus.DeploymentToolkit.Extensions {
         /// <summary>
         /// Adds logging using the file provided by the given function.
         /// </summary>
-        /// <param name="services"></param>
-        /// <param name="file"></param>
-        /// <returns></returns>
+        /// <param name="services">The service collection to add logging to.
+        /// </param>
+        /// <param name="config">A callback providing the logging configuration.
+        /// </param>
+        /// <returns><paramref name="services"/> after injection.</returns>
         public static IServiceCollection AddLogging(
                 this IServiceCollection services,
-                Func<string> file)
-            => services.AddLogging(file());
+                Func<IConfiguration> config)
+            => services.AddLogging(config());
 
         /// <summary>
         /// Adds <see cref="IState"/> to the service collection.

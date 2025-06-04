@@ -133,6 +133,24 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Install Windows PE.
+        /// </summary>
+        internal static string InstallWindowsPe {
+            get {
+                return ResourceManager.GetString("InstallWindowsPe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A debugging task sequence which will deploy the Windows PE boot image to the local disk..
+        /// </summary>
+        internal static string InstallWindowsPeDescription {
+            get {
+                return ResourceManager.GetString("InstallWindowsPeDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mount a WIM image.
         /// </summary>
         internal static string MountWim {

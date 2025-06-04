@@ -87,10 +87,10 @@ namespace Visus.DeploymentToolkit.Tasks {
                 .WaitForProcess()
                 .Build();
 
-            this._logger.LogInformation("Running command \"{Command}\".", cmd);
+            this._logger.LogInformation("Running command {Command}.", cmd);
             await cmd.ExecuteAndCheckAsync(0, this._logger);
 
-            this._logger.LogInformation("ISO file \"{Path}\" created "
+            this._logger.LogInformation("ISO file {Path} created "
                 + "successfully.", this.Path);
         }
         #endregion

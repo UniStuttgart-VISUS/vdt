@@ -68,7 +68,7 @@ namespace Visus.DeploymentToolkit.Services {
                     var dir = sourceDir ? dest : Path.GetDirectoryName(dest);
                     if ((dir != null) && !Directory.Exists(dir)) {
                         this._logger.LogTrace("Ensuring that the destination "
-                            + "directory \"{Destination}\" exists.",
+                            + "directory {Destination} exists.",
                             dir);
                         await this._directory.CreateAsync(dir);
                     }
@@ -81,7 +81,7 @@ namespace Visus.DeploymentToolkit.Services {
                         : SearchOption.TopDirectoryOnly;
 
                     this._logger.LogTrace("Copying files {Recursively} from "
-                        + "\"{Source}\" to \"{Destination}\".",
+                        + "{Source} to {Destination}.",
                         recursive ? "recursively" : "non-recursively",
                         source, dest);
 
@@ -102,8 +102,8 @@ namespace Visus.DeploymentToolkit.Services {
                         dest = Path.Combine(dest, Path.GetFileName(source));
                     }
 
-                    this._logger.LogTrace("Copying \"{Source}\" to "
-                        + "\"{Destination}\".", source, dest);
+                    this._logger.LogTrace("Copying {Source} to "
+                        + "{Destination}.", source, dest);
 
                     File.Copy(source, dest, (flags & CopyFlags.Overwrite) != 0);
                 }

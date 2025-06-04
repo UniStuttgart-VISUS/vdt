@@ -64,17 +64,17 @@ namespace Visus.DeploymentToolkit.Tasks {
         [SupportedOSPlatform("windows")]
         private void CheckWindowsRole() {
             using var identity = WindowsIdentity.GetCurrent();
-            this._logger.LogTrace("Running as user \"{User}\" with SID {Sid}.",
+            this._logger.LogTrace("Running as user {User} with SID {Sid}.",
                 identity.Name, identity.User);
 
             var principal = new WindowsPrincipal(identity);
             if (!principal.IsInRole(WindowsBuiltInRole.Administrator)) {
-                this._logger.LogError("The user \"{User}\" is not an "
+                this._logger.LogError("The user {User} is not an "
                     + "administrator.", identity.Name);
                 throw new UnauthorizedAccessException(Errors.NotAdministrator);
             }
 
-            this._logger.LogInformation("The process is running as \"{User}\" "
+            this._logger.LogInformation("The process is running as {User} "
                 + "with administrative privileges.", identity.Name);
         }
 

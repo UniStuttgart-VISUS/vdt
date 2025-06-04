@@ -17,6 +17,14 @@ namespace Visus.DeploymentToolkit.DiskManagement {
     /// </summary>
     internal interface IAdvancedDisk : IDisk {
 
+        #region Public properties
+        /// <summary>
+        /// Gets the size of a sector on the disk in bytes.
+        /// </summary>
+        uint SectorSize { get; }
+        #endregion
+
+        #region Public methods
         /// <summary>
         /// Assigns the specified drive letter to the partition at the specified
         /// offset.
@@ -96,6 +104,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// <param name="offset"></param>
         /// <returns></returns>
         char? GetDriveLetter(ulong offset);
+        #endregion
 
     }
 }

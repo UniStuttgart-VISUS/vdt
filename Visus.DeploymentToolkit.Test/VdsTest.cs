@@ -5,10 +5,8 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Vds;
 

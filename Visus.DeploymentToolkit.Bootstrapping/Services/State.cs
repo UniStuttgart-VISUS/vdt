@@ -167,7 +167,7 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public methods
         /// <inheritdoc />
-        public async Task LoadAsync(string? path) {
+        public Task LoadAsync(string? path) {
             if (string.IsNullOrEmpty(path)) {
                 path = this.StateFile;
             }
@@ -175,7 +175,7 @@ namespace Visus.DeploymentToolkit.Services {
 
             // Remember the new state file in case it was changed.
             this._logger.LogTrace("Restoring the deployment state from "
-                + "\"{StateFile}\".", path);
+                + "{StateFile}.", path);
             this.StateFile = path;
 
             // We must make sure to erase any existing session key, because we
@@ -191,17 +191,7 @@ namespace Visus.DeploymentToolkit.Services {
                 .Build()
                 .Bind(this);
 
-            // Decrypt all the sensitive stuff using the restored session key.
-            using (var alg = this.GetEncryptionAlgorithm()) {
-                foreach (var p in Sensitive.Value) {
-                    if (this._values.TryGetStringValue(p, out var value)) {
-                        this._logger.LogTrace("Restoring sensitive state "
-                            + " \"{Property}\".", p);
-                        this._values[p] = await DecryptAsync(alg, value)
-                            .ConfigureAwait(false);
-                    }
-                }
-            }
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc />
@@ -218,34 +208,14 @@ namespace Visus.DeploymentToolkit.Services {
             this.StateFile = path;
 
             this._logger.LogTrace("Persisting the deployment state to "
-                + "\"{StateFile}\".", path);
+                + "{StateFile}.", path);
             using var file = File.Open(path!, FileMode.Create,
                 FileAccess.ReadWrite);
             var opts = new JsonSerializerOptions() {
                 WriteIndented = true,
             };
 
-            // Encrypt all sensitive data in the copy before writing it out. It
-            // is important to do that on a snapshot of the data, because we
-            // do not expect in-memory state to be encrypted.
-            Dictionary<string, object?> values = null!;
-            using (var alg = this.GetEncryptionAlgorithm()) {
-                lock (this._lock) {
-                    values = this._values.ToDictionary(e => e.Key,
-                        e => e.Value);
-                }
-
-                foreach (var p in Sensitive.Value) {
-                    if (values.TryGetStringValue(p, out var value)) {
-                        this._logger.LogTrace("Protecting sensitive state "
-                            + " \"{Property}\".", p);
-                        values[p] = await EncryptAsync(alg, value)
-                            .ConfigureAwait(false);
-                    }
-                }
-            }
-
-            await JsonSerializer.SerializeAsync(file, values, opts)
+            await JsonSerializer.SerializeAsync(file, this._values, opts)
                 .ConfigureAwait(false);
         }
         #endregion
@@ -265,11 +235,11 @@ namespace Visus.DeploymentToolkit.Services {
                     this._values.TryGetValue(key, out var retval);
                     this._values[key] = value;
 
-                    var from = IsSensitive(key) ? retval : "***";
-                    var to = IsSensitive(key) ? retval : "***";
+                    var from = IsSensitive(key) ? "***" : retval;
+                    var to = IsSensitive(key) ? "***" : value;
 
-                    this._logger.LogInformation("Changing state \"{State}\" "
-                        + "from \"{OldValue}\" to \"{NewValue}\".",
+                    this._logger.LogInformation("Changing state {State} "
+                        + "from {OldValue} to {NewValue}.",
                         key, from, to);
                 }
             }
@@ -277,90 +247,6 @@ namespace Visus.DeploymentToolkit.Services {
         #endregion
 
         #region Private methods
-        /// <summary>
-        /// Decrypt the given text and return the result as base64-encoded
-        /// string.
-        /// </summary>
-        /// <param name="alg"></param>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        private async Task<string?> DecryptAsync(SymmetricAlgorithm alg,
-                string? text) {
-            Debug.Assert(alg is not null);
-
-            if (text is null) {
-                return null;
-            }
-
-            using (var ms = new MemoryStream(
-                Convert.FromBase64String(text)))
-            using (var cs = new CryptoStream(ms,
-                alg.CreateDecryptor(),
-                CryptoStreamMode.Read))
-            using (var sr = new StreamReader(cs)) {
-                return await sr.ReadToEndAsync().ConfigureAwait(false);
-            }
-        }
-
-        /// <summary>
-        /// Encrypt the given text and return the result as base64-encoded
-        /// string.
-        /// </summary>
-        /// <param name="alg"></param>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        private async Task<string?> EncryptAsync(SymmetricAlgorithm alg,
-                string? text) {
-            Debug.Assert(alg is not null);
-
-            if (text is null) {
-                return null;
-            }
-
-            using var ms = new MemoryStream();
-
-            using (var cs = new CryptoStream(ms,
-                alg.CreateEncryptor(),
-                CryptoStreamMode.Write))
-            using (var sw = new StreamWriter(cs)) {
-                await sw.WriteAsync(text).ConfigureAwait(false);
-            }
-
-            return Convert.ToBase64String(ms.ToArray());
-        }
-
-        /// <summary>
-        /// Gets a new encryption algorithm for properties marked with the
-        /// <see cref="SensitiveDataAttribute"/> preconfigured with a key
-        /// derived from <see cref="SessionKey"/>.
-        /// </summary>
-        /// <returns>A new instance of a symmetric encryption algorithm.
-        /// </returns>
-        private SymmetricAlgorithm GetEncryptionAlgorithm() {
-            var key = (byte[]) null!;
-            var retval = Aes.Create();
-
-            lock (this._lock) {
-                if (this.SessionKey is null) {
-                    this.SessionKey = RandomNumberGenerator.GetString(
-                        Vocabulary, 256);
-                }
-
-                key = Encoding.Unicode.GetBytes(this.SessionKey);
-            }
-
-            var hash = HashAlgorithmName.SHA256;
-            var rounds = 10000;
-            var salt = key.Select(b => (byte) ~b).ToArray();
-
-            using (var gen = new Rfc2898DeriveBytes(key, salt, rounds, hash)) {
-                retval.Key = gen.GetBytes(32);
-                retval.IV = gen.GetBytes(16);
-            }
-
-            return retval;
-        }
-
         /// <summary>
         /// Answer whether <paramref name="name"/> refers to a property that has
         /// been marked with the <see cref="SensitiveDataAttribute"/>.
@@ -384,12 +270,6 @@ namespace Visus.DeploymentToolkit.Services {
                          select p.Name;
             return retval.ToHashSet();
         });
-
-        /// <summary>
-        /// The vocabulary used to create a random <see cref="SessionKey"/>.
-        /// </summary>
-        private const string Vocabulary = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜabcdefg"
-            + "hijklmnopqrstuvwxyzäöü0123456789+-*/!§$%&/()=?*_:;{}[]#-.,+~@|µ";
         #endregion;
 
         #region Private fields

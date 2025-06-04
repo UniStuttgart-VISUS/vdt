@@ -430,6 +430,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The partition style &quot;{0}&quot; is not supported by the task..
+        /// </summary>
+        internal static string UnsupportedPartitionStyle {
+            get {
+                return ResourceManager.GetString("UnsupportedPartitionStyle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed waiting for Virtual Disk Service to become ready..
         /// </summary>
         internal static string WaitVdsFailed {

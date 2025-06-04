@@ -73,17 +73,17 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             var exists = (this._environment[this.Variable] is not null);
             this._logger.LogTrace("Modifying the {Existence} environment "
-                + "variable \"{Variable}\".",
+                + "variable {Variable}.",
                 exists ? "existing" : "non-existing",
                 this.Variable);
 
             if (this.IsNoOverwrite && exists) {
                 this._logger.LogInformation("Leaving the environment variable "
-                    + "\"{Variable}\" untouched, because it already exists.",
+                    + "{Variable} untouched, because it already exists.",
                     this.Variable);
             } else {
                 this._logger.LogInformation("Setting the environment variable "
-                    + "\"{Variable}\" to \"{Value}\".", this.Variable,
+                    + "{Variable} to {Value}.", this.Variable,
                     this.Value);
                 this._environment[this.Variable] = this.Value;
             }

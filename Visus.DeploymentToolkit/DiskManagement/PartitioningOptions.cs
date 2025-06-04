@@ -23,7 +23,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// Gets or sets the size of the system-reserved parititionn on BIOS
         /// systems in bytes.
         /// </summary>
-        public uint BiosSystemReservedSize { get; set; } = 499 * 1024 * 1024;
+        public ulong BiosSystemReservedSize { get; set; } = 499 * 1024 * 1024;
 
         /// <summary>
         /// Gets the label assigned to the EFI system partition.
@@ -33,7 +33,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// <summary>
         /// Gets or set the size of the EFI system partition in bytes.
         /// </summary>
-        public uint EfiSize { get; set; } = 499 * 1024 * 1024;
+        public ulong EfiSize { get; set; } = 499 * 1024 * 1024;
 
         /// <summary>
         /// Gets or sets the label assigned to the recovery partition.
@@ -43,7 +43,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// <summary>
         /// Gets or sets the size of the recovery partition in bytes.
         /// </summary>
-        public uint RecoverySize { get; set; } = 0;
+        public ulong RecoverySize { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets the label assigned to the system partition.

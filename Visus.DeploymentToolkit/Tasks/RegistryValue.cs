@@ -86,7 +86,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                 case RegistryValueOperation.Add:
                     if (this._registry.KeyExists(this.Key)) {
                         this._logger.LogTrace("Leaving existing registry value "
-                            + "\"{Value}\" in \"{Key}\" untouched.",
+                            + "{Value} in {Key} untouched.",
                             this.ValueName, this.Key);
                         return Task.CompletedTask;
                     }
@@ -94,8 +94,8 @@ namespace Visus.DeploymentToolkit.Tasks {
 
                 case RegistryValueOperation.Change:
                     if (!this._registry.KeyExists(this.Key)) {
-                        this._logger.LogTrace("A registry value \"{Value}\" "
-                            + "does not exist in \"{Key}\".",
+                        this._logger.LogTrace("A registry value {Value} "
+                            + "does not exist in {Key}.",
                             this.ValueName, this.Key);
                         return Task.CompletedTask;
                     }
@@ -103,14 +103,14 @@ namespace Visus.DeploymentToolkit.Tasks {
 
                 case RegistryValueOperation.Delete:
                     this._logger.LogInformation("Deleting registry value "
-                        + "\"{Value}\" in \"{Key}\".",
+                        + "{Value} in {Key}.",
                         this.ValueName, this.Key);
                     this._registry.DeleteValue(this.Key, this.ValueName!);
                     return Task.CompletedTask;
             }
 
-            this._logger.LogInformation("Setting registry value \"{Value}\" in "
-                + "\"{Key}\".", this.ValueName, this.Key);
+            this._logger.LogInformation("Setting registry value {Value} in "
+                + "{Key}.", this.ValueName, this.Key);
             this._registry.SetValue(this.Key,
                 this.ValueName,
                 this.Value!,

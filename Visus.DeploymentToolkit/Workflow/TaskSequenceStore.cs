@@ -44,7 +44,7 @@ namespace Visus.DeploymentToolkit.Workflow {
             }
 
             this._logger.LogInformation("A task sequence store using task "
-                + "sequences from \"{Path}\" was initialised.",
+                + "sequences from {Path} was initialised.",
                 this._options.Path);
         }
         #endregion
@@ -65,7 +65,7 @@ namespace Visus.DeploymentToolkit.Workflow {
                     : Path.Combine(this._options.Path, taskSequence);
                 if (File.Exists(path)) {
                     this._logger.LogTrace("A task sequence was identified via"
-                        + " its path \"{Path}\".", taskSequence);
+                        + " its path {Path}.", taskSequence);
                     return await TaskSequenceDescription.ParseAsync(path)
                         .ConfigureAwait(false);
                 }
@@ -75,13 +75,13 @@ namespace Visus.DeploymentToolkit.Workflow {
             foreach (var t in await this.GetTaskSequencesAsync()) {
                 if (t.ID.Equals(taskSequence, this._options.CompareOption)) {
                     this._logger.LogTrace("A task sequence was identified via"
-                        + " its ID \"{TaskSequence}\".", taskSequence);
+                        + " its ID {TaskSequence}.", taskSequence);
                     return t;
                 }
             }
 
-            this._logger.LogWarning("A task sequence in a file \"{Path}\" or "
-                + "with ID \"{TaskSequence}\" could not be found.",
+            this._logger.LogWarning("A task sequence in a file {Path} or "
+                + "with ID {TaskSequence} could not be found.",
                 taskSequence, taskSequence);
             return null;
         }
@@ -105,14 +105,14 @@ namespace Visus.DeploymentToolkit.Workflow {
 
                     if(desc is null) {
                         this._logger.LogWarning("Parsing the task sequence in "
-                            + "\"{Path}\" succeeded, but the task sequence in "
+                            + "{Path} succeeded, but the task sequence in "
                             + "the file was empty.", path);
                     } else {
                         retval.Add(desc);
                     }
                 } catch (Exception ex) {
                     this._logger.LogWarning(ex, "The task sequence in "
-                        + "\"{Path}\" could not be parsed.", path);
+                        + "{Path} could not be parsed.", path);
                 }
             }
 

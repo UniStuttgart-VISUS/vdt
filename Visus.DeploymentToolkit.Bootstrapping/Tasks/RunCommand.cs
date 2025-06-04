@@ -94,7 +94,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                 .InWorkingDirectory(this.WorkingDirectory)
                 .Build();
 
-            this._logger.LogInformation("Running command \"{Command}\".", cmd);
+            this._logger.LogInformation("Running command {Command}.", cmd);
 
             var exitCode = await cmd.ExecuteAndCheckAsync(
                 this.SucccessExitCodes,

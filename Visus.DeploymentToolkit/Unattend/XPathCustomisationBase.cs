@@ -71,7 +71,7 @@ namespace Visus.DeploymentToolkit.Unattend {
 
             if (this.IsUnique && (cnt != 1)) {
                 Debug.Assert(cnt > 1);
-                this._logger.LogError("The XML element at \"{Path}\" is "
+                this._logger.LogError("The XML element at {Path} is "
                     + "expected to be unique, but the expression matched "
                     + "{Count} elements.", this.Path, cnt);
                 throw new InvalidOperationException(string.Format(

@@ -48,10 +48,10 @@ namespace Visus.DeploymentToolkit.Tasks {
             this.Validate();
             cancellationToken.ThrowIfCancellationRequested();
 
-            this._logger.LogInformation("Removing share \"{Share}\".",
+            this._logger.LogInformation("Removing share {Share}.",
                 this.Share);
             NetApi.Unshare(null, this.Share);
-            this._logger.LogInformation("The \"{Share}\" was removed "
+            this._logger.LogInformation("The {Share} was removed "
                 + "successfully.", this.Share);
 
             return Task.CompletedTask;

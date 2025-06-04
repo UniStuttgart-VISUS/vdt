@@ -94,13 +94,13 @@ namespace Visus.DeploymentToolkit.Unattend {
 
                     if (pass == Unattend.Passes.WindowsPE) {
                         this._logger.LogTrace("There was no existing "
-                            + "localisation block, so we add \"{Component}\".",
+                            + "localisation block, so we add {Component}.",
                             Components.InternationalCoreWinPe);
                         s.Add(this.MakeInternationalCoreWinPE(arch));
 
                     } else {
                         this._logger.LogTrace("There was no existing "
-                            + "localisation block, so we add \"{Component}\".",
+                            + "localisation block, so we add {Component}.",
                             Components.InternationalCore);
                         s.Add(this.MakeInternationalCore(arch));
                     }
@@ -223,33 +223,33 @@ namespace Visus.DeploymentToolkit.Unattend {
             {
                 var profile = ConsolidatedInputProfile;
                 if ((profile is not null) && (input is not null)) {
-                    this._logger.LogTrace("Setting {Element} to \"{Locale}\"",
+                    this._logger.LogTrace("Setting {Element} to {Locale}",
                         input.Name.LocalName, profile);
                     input.SetValue(profile);
                 }
             }
 
             if ((this.SetupLocale is not null) && (setup is not null)) {
-                this._logger.LogTrace("Setting {Element} to \"{Locale}\"",
+                this._logger.LogTrace("Setting {Element} to {Locale}",
                     setup.Name.LocalName, this.SetupLocale.IetfLanguageTag);
                 setup.SetValue(this.SetupLocale.IetfLanguageTag);
             }
 
             if ((this.SystemLocale is not null) && (system is not null)) {
-                this._logger.LogTrace("Setting {Element} to \"{Locale}\"",
+                this._logger.LogTrace("Setting {Element} to {Locale}",
                     system.Name.LocalName, this.SystemLocale.IetfLanguageTag);
                 system.SetValue(this.SystemLocale.IetfLanguageTag);
             }
 
             if ((this.UserInterfaceLanguage is not null) && (ui is not null)) {
-                this._logger.LogTrace("Setting {Element} to \"{Locale}\"",
+                this._logger.LogTrace("Setting {Element} to {Locale}",
                     ui.Name.LocalName,
                     this.UserInterfaceLanguage.IetfLanguageTag);
                 ui.SetValue(this.UserInterfaceLanguage.IetfLanguageTag);
             }
 
             if ((this.UserLocale is not null) && (user is not null)) {
-                this._logger.LogTrace("Setting {Element} to \"{Locale}\"",
+                this._logger.LogTrace("Setting {Element} to {Locale}",
                     user.Name.LocalName, this.UserLocale.IetfLanguageTag);
                 user.SetValue(this.UserLocale.IetfLanguageTag);
             }

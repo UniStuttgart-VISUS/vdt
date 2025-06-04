@@ -40,7 +40,7 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <inheritdoc />
         public ITaskSequenceBuilder Add(ITask task) {
             this.CheckTask(task);
-            this._logger.LogDebug("Adding task \"{Task}\" at the end of the"
+            this._logger.LogDebug("Adding task {Task} at the end of the"
                 + " sequence.", task.Name);
             this._tasks.Add(task);
             return this;
@@ -104,7 +104,7 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <inheritdoc />
         public ITaskSequenceBuilder Insert(int index, ITask task) {
             this.CheckTask(task);
-            this._logger.LogDebug("Inserting task \"{Task}\" at position "
+            this._logger.LogDebug("Inserting task {Task} at position "
                 + "{Index} in the sequence.", task.Name, index);
             this._tasks.Insert(index, task);
             return this;

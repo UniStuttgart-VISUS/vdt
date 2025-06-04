@@ -69,8 +69,8 @@ namespace Visus.DeploymentToolkit.Tasks {
             cancellationToken.ThrowIfCancellationRequested();
 
             return Task.Factory.StartNew(() => {
-                this._logger.LogInformation("Mapping \"{NetworkPath}\" to "
-                    + "\"{MountPoint}\" as {User}.",
+                this._logger.LogInformation("Mapping {NetworkPath} to "
+                    + "{MountPoint} as {User}.",
                     this.Path,
                     this.MountPoint,
                     this.Credential?.UserName ?? Resources.CurrentUser);

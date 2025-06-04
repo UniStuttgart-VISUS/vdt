@@ -42,6 +42,9 @@ namespace Visus.DeploymentToolkit.DiskManagement {
             => (PartitionStyle) _properties.PartitionStyle;
 
         /// <inheritdoc />
+        public uint SectorSize => this._properties.BytesPerSector;
+
+        /// <inheritdoc />
         public ulong Size => _properties.Size;
 
         /// <inheritdoc />

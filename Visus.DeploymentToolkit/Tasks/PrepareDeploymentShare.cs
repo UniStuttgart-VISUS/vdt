@@ -54,7 +54,7 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             if (!Directory.Exists(this.Path)) {
                 this._logger.LogInformation("Creating deployment share at "
-                    + "\"{Path}\".", this.Path);
+                    + "{Path}.", this.Path);
                 await this._directory.CreateAsync(this.Path)
                     .ConfigureAwait(false);
             }
@@ -66,7 +66,7 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             {
                 var p = System.IO.Path.Combine(this.Path, Layout.BinaryPath);
-                this._logger.LogInformation("Creating directory \"{Path}\" for "
+                this._logger.LogInformation("Creating directory {Path} for "
                     + "binaries.", p);
                 await this._directory.CreateAsync(p).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
@@ -74,7 +74,7 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             {
                 var p = System.IO.Path.Combine(this.Path, Layout.BootFilePath);
-                this._logger.LogInformation("Creating directory \"{Path}\" for "
+                this._logger.LogInformation("Creating directory {Path} for "
                     + "boot files.", p);
                 await this._directory.CreateAsync(p).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
@@ -82,7 +82,7 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             {
                 var p = System.IO.Path.Combine(this.Path, Layout.BootstrapperPath);
-                this._logger.LogInformation("Creating directory \"{Path}\" for "
+                this._logger.LogInformation("Creating directory {Path} for "
                     + "bootstrapper binaries.", p);
                 await this._directory.CreateAsync(p).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
@@ -90,7 +90,7 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             {
                 var p = System.IO.Path.Combine(this.Path, Layout.DriverPath);
-                this._logger.LogInformation("Creating directory \"{Path}\" for "
+                this._logger.LogInformation("Creating directory {Path} for "
                     + "drivers.", p);
                 await this._directory.CreateAsync(p).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
@@ -98,7 +98,7 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             {
                 var p = System.IO.Path.Combine(this.Path, Layout.InstallImagePath);
-                this._logger.LogInformation("Creating directory \"{Path}\" for "
+                this._logger.LogInformation("Creating directory {Path} for "
                     + "image files.", p);
                 await this._directory.CreateAsync(p).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
@@ -106,7 +106,7 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             {
                 var p = System.IO.Path.Combine(this.Path, Layout.TaskSequencePath);
-                this._logger.LogInformation("Creating directory \"{Path}\" for "
+                this._logger.LogInformation("Creating directory {Path} for "
                     + "task sequences.", p);
                 await this._directory.CreateAsync(p).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
@@ -114,7 +114,7 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             {
                 var p = System.IO.Path.Combine(this.Path, Layout.TemplatesPath);
-                this._logger.LogInformation("Creating directory \"{Path}\" for "
+                this._logger.LogInformation("Creating directory {Path} for "
                     + "template files.", p);
                 await this._directory.CreateAsync(p).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();

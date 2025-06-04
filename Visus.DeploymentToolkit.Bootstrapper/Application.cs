@@ -6,12 +6,11 @@
 
 using Microsoft.Extensions.Logging;
 using System;
-using System.Globalization;
+using System.IO;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Application;
 using Visus.DeploymentToolkit.Bootstrapper.Properties;
 using Visus.DeploymentToolkit.Services;
-using Visus.DeploymentToolkit.SystemInformation;
 using Visus.DeploymentToolkit.Tasks;
 using Visus.DeploymentToolkit.Workflow;
 
@@ -55,7 +54,16 @@ namespace Visus.DeploymentToolkit.Bootstrapper {
                     t.State = WellKnownStates.WorkingDirectory;
                 })
                 .Add<PersistState>(t => t.Path = this.Options.StatePath)
-                .Add<RunAgent>();
+                .Add<RunAgent>((t, s) => {
+                    ArgumentNullException.ThrowIfNull(s.AgentPath);
+                    ArgumentNullException.ThrowIfNull(s.DeploymentDirectory);
+
+                    if (!Path.IsPathRooted(s.AgentPath)) {
+                        s.AgentPath = Path.Combine(
+                            s.DeploymentDirectory,
+                            s.AgentPath);
+                    }
+                });
             //.Add<CopyFiles>(services, t => t.Source = options.LogFile)
             var taskSequence = builder.Build();
 

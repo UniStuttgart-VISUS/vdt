@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Workflow;
 
@@ -43,12 +44,20 @@ namespace Visus.DeploymentToolkit.Tasks {
                 : base(state, logger) {
             this._tasks = tasks
                 ?? throw new ArgumentNullException(nameof(tasks));
+            this.Name = Resources.InstallWindowsPe;
         }
+        #endregion
+
+        #region Public properties
+        /// <summary>
+        /// Gets or sets a path where the task sequence is optionally saved to.
+        /// </summary>
+        public string? SavePath { get; set; }
         #endregion
 
         #region Public methods
         /// <inheritdoc />
-        public override Task ExecuteAsync(
+        public override async Task ExecuteAsync(
                 CancellationToken cancellationToken) {
             this._logger.LogInformation("Creating a task sequence for "
                 + "installing Windows PE on a system.");
@@ -58,17 +67,24 @@ namespace Visus.DeploymentToolkit.Tasks {
                 .Add<SelectInstallDisk>()
                 .Add<PartitionFormatDisk>()
                 .Add<ApplyImage>((t, s) => {
-                    ArgumentNullException.ThrowIfNull(s.InstallationDisk);
-                    ArgumentNullException.ThrowIfNull(s.WorkingDirectory);
                     t.Image = Path.Combine("sources", "boot.wim");
                     t.ImageIndex = 1;
-                    //t.Path = s.InstallationDisk.Vol
                 })
                 .Add<RestoreBootConfiguration>()
                 .Add<RebootMachine>()
                 .Build();
 
-            return Task.CompletedTask;
+            if (!string.IsNullOrEmpty(this.SavePath)) {
+                this._logger.LogInformation("Saving task sequence to "
+                    + "{Path}.", this.SavePath);
+                var desc = TaskSequenceDescription.FromTaskSequence(
+                    (ITaskSequence) this._state.TaskSequence);
+                desc.ID = "_WINPE";
+                desc.Phase = Phase.Installation;
+                desc.Name = this.Name;
+                desc.Description = Resources.InstallWindowsPeDescription;
+                await desc.SaveAsync(this.SavePath);
+            }
         }
         #endregion
 

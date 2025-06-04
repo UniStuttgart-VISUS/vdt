@@ -114,7 +114,7 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             if (!string.IsNullOrWhiteSpace(this.ImageName)) {
                 this._logger.LogTrace("Searching for an image named "
-                    + "\"{ImageName}\".", this.ImageName);
+                    + "{ImageName}.", this.ImageName);
                 var info = WimgApi.GetImageInformationAsXDocument(wim);
 
                 var p = info.XPathSelectElement(
@@ -124,7 +124,7 @@ namespace Visus.DeploymentToolkit.Tasks {
 
                     if (i is not null) {
                         this.ImageIndex = int.Parse(i);
-                        this._logger.LogTrace("Found image \"{ImageName}\" "
+                        this._logger.LogTrace("Found image {ImageName} "
                             + "at index {ImageIndex}.", this.ImageName,
                             this.ImageIndex);
                     }
@@ -141,7 +141,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// </summary>
         /// <returns>A handle for the WIM image.</returns>
         protected WimHandle OpenFile() {
-            this._logger.LogTrace("Opening WIM image \"{Image}\" "
+            this._logger.LogTrace("Opening WIM image {Image} "
                 + "with access {DesiredAccess}, "
                 + "creation disposition {CreationDisposition}, "
                 + "options {CreateFileOptions}"
@@ -160,8 +160,8 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             if (Directory.Exists(this.TemporaryDirectory)) {
                 this._logger.LogInformation("Setting temporary directory for "
-                    + "WIM operations on \"{Image}\" to"
-                    + " \"{TemporaryDirectory}\".", this.Image,
+                    + "WIM operations on {Image} to"
+                    + " {TemporaryDirectory}.", this.Image,
                     this.TemporaryDirectory);
                 WimgApi.SetTemporaryPath(retval, this.TemporaryDirectory);
             }

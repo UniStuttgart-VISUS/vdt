@@ -70,11 +70,11 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             if (this.OutputPath == null) {
                 this._logger.LogTrace("Setting output path to input path "
-                    +"\"{Path}\".", this.Path);
+                    +"{Path}.", this.Path);
                 this.OutputPath = this.Path;
             }
 
-            this._logger.LogInformation("Opening unattend file \"{Path}\" "
+            this._logger.LogInformation("Opening unattend file {Path} "
                 + "for customisation.", this.Path);
             XDocument doc = null!;
 
@@ -93,7 +93,7 @@ namespace Visus.DeploymentToolkit.Tasks {
             }
 
             this._logger.LogInformation("Saving customised unattend file "
-                + "to \"{OutputPath}\".",
+                + "to {OutputPath}.",
                 System.IO.Path.GetFullPath(this.OutputPath));
             using (var s = File.Open(this.OutputPath, FileMode.Create,
                     FileAccess.Write)) {

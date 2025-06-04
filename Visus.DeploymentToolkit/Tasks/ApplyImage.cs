@@ -66,7 +66,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                 if (this.TemporaryDirectory is null) {
                     this._logger.LogTrace("Setting temporary directory for WIM "
                         + "operations to working curren tdirectory "
-                        + " \"{WorkingDirectory}\".",
+                        + " {WorkingDirectory}.",
                         this._state.WorkingDirectory);
                     this.TemporaryDirectory = this._state.WorkingDirectory;
                 }
@@ -77,8 +77,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                 using var img = this.LoadImage(wim);
 
                 cancellationToken.ThrowIfCancellationRequested();
-                this._logger.LogInformation("Applying \"{Image}\" to"
-                    + " \"{Path}\" with options {Options}.",
+                this._logger.LogInformation("Applying {Image} to"
+                    + " {Path} with options {Options}.",
                     this.Image, this.Path, this.Options);
                 WimgApi.ApplyImage(img, this.Path, this.Options);
             }, cancellationToken);

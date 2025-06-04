@@ -8,7 +8,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.DiskManagement;
@@ -16,6 +19,12 @@ using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.SystemInformation;
+using Visus.DeploymentToolkit.Vds;
+using CreateFunc = System.Func<
+    Visus.DeploymentToolkit.DiskManagement.IAdvancedDisk,
+    Visus.DeploymentToolkit.DiskManagement.PartitionDefinition,
+    System.Threading.CancellationToken,
+    System.Threading.Tasks.Task>;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
@@ -40,6 +49,8 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <param name="systemInformation">The system information service that
         /// allows the task to find out whether we are running UEFI or BIOS.
         /// </param>
+        /// <param name="driveInfo">The drive information service allows the
+        /// task assign temporary drive letters to the partitions.</param>
         /// <param name="options">The partitioning options which define the
         /// default partitions being created if no custom scheme was specified
         /// in the task.</param>
@@ -51,11 +62,14 @@ namespace Visus.DeploymentToolkit.Tasks {
         public PartitionFormatDisk(IState state,
                 IDiskManagement diskManagement,
                 ISystemInformation systemInformation,
+                IDriveInfo driveInfo,
                 IOptions<PartitioningOptions> options,
                 ILogger<PartitionFormatDisk> logger)
                 : base(state, logger) {
             this._diskManagement = diskManagement
                 ?? throw new ArgumentNullException(nameof(diskManagement));
+            this._driveInfo = driveInfo
+                ?? throw new ArgumentNullException(nameof(driveInfo));
             this._options = options?.Value
                 ?? throw new ArgumentNullException(nameof(options));
             this._systemInformation = systemInformation
@@ -65,11 +79,26 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         #region Public properties
         /// <summary>
+        /// Gets or sets the flags that control how the disk is cleaned.
+        /// </summary>
+        public CleanFlags CleanFlags {
+            get;
+            set;
+        } = CleanFlags.Force | CleanFlags.ForceOem | CleanFlags.IgnoreErrors;
+
+        /// <summary>
         /// Gets or sets the disk to work with.
         /// </summary>
         [Required]
         [FromState(WellKnownStates.InstallationDisk)]
         public IDisk Disk { set; get; } = null!;
+
+        /// <summary>
+        /// Gets or sets whether this disk should be treated as the installation
+        /// disk. For the installation disk, the task will report the location
+        /// of the partition to the state.
+        /// </summary>
+        public bool IsInstallationDisk { get; set; } = true;
 
         /// <summary>
         /// Gets or sets the description of the disk partitions to be created,
@@ -102,7 +131,7 @@ namespace Visus.DeploymentToolkit.Tasks {
             }
 
             if (!(this.Disk is IAdvancedDisk disk)) {
-                throw new ArgumentException(Errors.UnsupportedInstallationDisk);
+                throw new ArgumentException(Errors.NoAdvancedDisk);
             }
 
             if (this.PartitionScheme is null) {
@@ -110,8 +139,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                 this._logger.LogInformation("No partition scheme provided, so "
                     + "create the default partitioning scheme.");
                 this.PartitionScheme = this._systemInformation.Firmware switch {
-                    FirmwareType.Bios => this.CreateBiosScheme(this.Disk),
-                    FirmwareType.Uefi => this.CreateUefiScheme(this.Disk),
+                    FirmwareType.Bios => this.CreateBiosScheme(disk),
+                    FirmwareType.Uefi => this.CreateUefiScheme(disk),
                     _ => throw new NotSupportedException(string.Format(
                         Errors.UnexpectedFirmware,
                         this._systemInformation.Firmware))
@@ -119,45 +148,207 @@ namespace Visus.DeploymentToolkit.Tasks {
             }
 
             cancellationToken.ThrowIfCancellationRequested();
+            this._logger.LogInformation("Cleaning disk {DiskID}.",
+                this.Disk.ID);
+            try {
+                await disk.CleanAsync(this.CleanFlags, cancellationToken);
+            } catch (COMException ex) {
+                if (this.CleanFlags.HasFlag(CleanFlags.IgnoreErrors)) {
+                    this._logger.LogWarning(ex, "Cleaning disk {DiskID} failed "
+                        + "with error code {Hresult}. The error will be "
+                        + $"ignored bacause {CleanFlags.IgnoreErrors} is set.",
+                        this.Disk.ID, ex.HResult);
+                } else {
+                    this._logger.LogError(ex, "Cleaning disk {DiskID} failed "
+                        + "with error code {Hresult}.", this.Disk.ID,
+                        ex.HResult);
+                    throw;
+                }
+            }
 
-            //this._diskManagement.
-            throw new NotImplementedException("TODO: implement disk partitioning steps");
+            cancellationToken.ThrowIfCancellationRequested();
+            Debug.Assert(this.PartitionScheme is not null);
+            this._logger.LogInformation("Creating new partitions on disk "
+                + "{DiskID}.", this.Disk.ID);
+            var partitions = from p in this.PartitionScheme.Partitions
+                             orderby p.Offset
+                             select p;
+            CreateFunc create = this.PartitionScheme.PartitionStyle switch {
+                    PartitionStyle.Mbr => this.CreateMbrPartition,
+                    PartitionStyle.Gpt => this.CreateGptPartition,
+                    _ => throw new NotSupportedException(string.Format(
+                        Errors.UnsupportedPartitionStyle,
+                        this.PartitionScheme.PartitionStyle))
+            };
+
+            foreach (var p in partitions) {
+                await create(disk, p, cancellationToken).ConfigureAwait(false);
+
+                // TODO: format!
+
+                foreach (var m in p.Mounts) {
+                    var mountPoint = m.TrimEnd(':',
+                        Path.DirectorySeparatorChar,
+                        Path.AltDirectorySeparatorChar);
+
+                    if (mountPoint.Length == 1) {
+                        this._logger.LogDebug("Assigning drive letter "
+                            + "{MountPoint} to partition {Partition}.",
+                            mountPoint, p.Name);
+                        disk.AssignDriveLetter(p.Offset, mountPoint[0]);
+                    }
+                }
+
+                if (this.IsInstallationDisk) {
+                    this._logger.LogTrace("Propagating mount points of an "
+                        + "installation partition to next tasks.");
+                    if (p.IsUsedFor(PartitionUsage.Boot)) {
+                        this._state.BootDrive = p.Mounts.First();
+                    } else if (p.IsUsedFor(PartitionUsage.Installation)) {
+                        this._state.InstallationDirectory = p.Mounts.First();
+                    }
+                }
+            }
         }
         #endregion
 
-
         #region Private methods
+        /// <summary>
+        /// Adjusts the size of a partition to be a multiple of the sector
+        /// size of the gvien <paramref name="disk"/>.
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="disk"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        private ulong AdjustSize(ulong size, IAdvancedDisk disk) {
+            Debug.Assert(disk is not null);
+            var remainder = size % disk.SectorSize;
+            if (remainder != 0) {
+                this._logger.LogTrace("Adjusting partition size {Size} to "
+                    + "match the sector size {SectorSize}.",
+                    size, disk.SectorSize);
+                size += disk.SectorSize - remainder;
+            }
+            return size;
+        }
+
         /// <summary>
         /// Create the default partitioning scheme for BIOS systems.
         /// </summary>
         /// <param name="disk"></param>
         /// <returns></returns>
-        private DiskPartitioningDefinition CreateBiosScheme(IDisk disk) {
+        private DiskPartitioningDefinition CreateBiosScheme(
+                IAdvancedDisk disk) {
             var retval = new DiskPartitioningDefinition {
                 ID = disk.ID,
                 PartitionStyle = PartitionStyle.Mbr
             };
 
+            var offset = 0UL;
+
+            // If configured, create a sepearate boot partition.
             if (this._options.BiosSystemReservedSize > 0) {
+                var size = this._options.BiosSystemReservedSize;
+                size = this.AdjustSize(size, disk);
                 retval.Partitions.Add(new PartitionDefinition {
-                    Size = this._options.BiosSystemReservedSize,
+                    Offset = offset,
+                    Size = size,
                     Name = this._options.BiosSystemReservedLabel,
                     Label = this._options.BiosSystemReservedLabel,
                     FileSystem = FileSystem.Ntfs,
-                    Type = PartitionType.Ntfs
+                    Type = PartitionType.Ntfs,
+                    Usage = PartitionUsage.Boot
                 });
+                offset += retval.Partitions.Last().Size;
             }
 
-            retval.Partitions.Add(new PartitionDefinition {
-                Offset = this._options.BiosSystemReservedSize,
-                Size = disk.Size - this._options.BiosSystemReservedSize,
-                Name = this._options.SystemLabel,
-                Label = this._options.SystemLabel,
-                FileSystem = FileSystem.Ntfs,
-                Type = PartitionType.Ntfs
-            });
+            {
+                var size = disk.Size - this._options.BiosSystemReservedSize;
+                size = this.AdjustSize(size ,disk);
+                retval.Partitions.Add(new PartitionDefinition {
+                    Offset = offset,
+                    Size = size,
+                    Name = this._options.SystemLabel,
+                    Label = this._options.SystemLabel,
+                    FileSystem = FileSystem.Ntfs,
+                    Type = PartitionType.Ntfs,
+                    Usage = PartitionUsage.Installation
+                });
+            }
+            
 
             return retval;
+        }
+
+        /// <summary>
+        /// Creates the specified GPT partition.
+        /// </summary>
+        /// <param name="partition"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        private async Task CreateGptPartition(IAdvancedDisk disk,
+                PartitionDefinition partition,
+                CancellationToken cancellationToken) {
+            Debug.Assert(disk is not null);
+            Debug.Assert(partition is not null);
+
+            try {
+                var info = new VDS_PARTITION_INFO_GPT {
+                    PartitionType = (Guid) partition.Type.Gpt!,
+                    PartitionId = Guid.NewGuid(),
+                    Name = partition.Name
+                };
+
+                this._logger.LogInformation("Creating GPT partition "
+                    + "{Partition} of type {Type} with ID {ID} and "
+                    + "attributes {Attributes} at offset {Offset} with length "
+                    + "{Size}.", info.Name, info.PartitionType.ToString("B"),
+                    info.PartitionId.ToString("B"), info.Attributes,
+                    partition.Offset, partition.Size);
+                await disk.CreatePartitionAsync(partition.Offset,
+                    partition.Size,
+                    info,
+                    cancellationToken).ConfigureAwait(false);
+            } catch (COMException ex) {
+                this._logger.LogError(ex, "Creating GPT partition {Partition} "
+                    + "failed with error code {Hresult}.", partition.Name,
+                    ex.HResult);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Creates the specified MBR partition.
+        /// </summary>
+        /// <param name="partition"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        private async Task CreateMbrPartition(IAdvancedDisk disk,
+                PartitionDefinition partition,
+                CancellationToken cancellationToken) {
+            Debug.Assert(disk is not null);
+            Debug.Assert(partition is not null);
+            this._logger.LogTrace("Creating GPT partition {Partition} of "
+                + "type {Type} at offset {Offset} with length {Size}.",
+                partition.Name, partition.Type.Name, partition.Offset,
+                partition.Size);
+
+            try {
+                await disk.CreatePartitionAsync(partition.Offset,
+                    partition.Size,
+                    new VDS_PARTITION_INFO_GPT {
+                        PartitionType = (Guid) partition.Type.Gpt!,
+                        PartitionId = Guid.NewGuid(),
+                        Name = partition.Name
+                    },
+                    cancellationToken).ConfigureAwait(false);
+            } catch (COMException ex) {
+                this._logger.LogError(ex, "Creating GPT partition {Partition} "
+                    + "failed with error code {Hresult}.", partition.Name,
+                    ex.HResult);
+                throw;
+            }
         }
 
         /// <summary>
@@ -165,28 +356,46 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// </summary>
         /// <param name="disk"></param>
         /// <returns></returns>
-        private DiskPartitioningDefinition CreateUefiScheme(IDisk disk) {
+        private DiskPartitioningDefinition CreateUefiScheme(
+                IAdvancedDisk disk) {
+            Debug.Assert(disk is not null);
             var retval = new DiskPartitioningDefinition {
                 ID = disk.ID,
                 PartitionStyle = PartitionStyle.Gpt
             };
 
+            var systemDrive = (from d in this._driveInfo.GetFreeDrives()
+                               where d.StartsWith("c", true, null)
+                               select d).FirstOrDefault()
+                              ?? this._driveInfo.GetFreeDrive();
+            var bootDrive = this._driveInfo.GetFreeDrive();
+
             var offset = 0UL;
 
-            retval.Partitions.Add(new PartitionDefinition {
-                Offset = offset,
-                Size = this._options.EfiSize,
-                Name = this._options.EfiLabel,
-                Label = this._options.EfiLabel,
-                FileSystem = FileSystem.Fat32,
-                Type = PartitionType.EfiSystem
-            });
-            offset += retval.Partitions.Last().Size;
-
-            if (this._options.RecoverySize > 0) {
+            // Create the EFI system partition.
+            {
+                var size = this._options.EfiSize;
+                size = this.AdjustSize(size, disk);
                 retval.Partitions.Add(new PartitionDefinition {
                     Offset = offset,
-                    Size = this._options.RecoverySize,
+                    Size = size,
+                    Name = this._options.EfiLabel,
+                    Label = this._options.EfiLabel,
+                    FileSystem = FileSystem.Fat32,
+                    Type = PartitionType.EfiSystem,
+                    Mounts = [bootDrive],
+                    Usage = PartitionUsage.Boot | PartitionUsage.System
+                });
+                offset += retval.Partitions.Last().Size;
+            }
+
+            // Create the Windows recovery partition if configured.
+            if (this._options.RecoverySize > 0) {
+                var size = this._options.RecoverySize;
+                size = this.AdjustSize(size, disk);
+                retval.Partitions.Add(new PartitionDefinition {
+                    Offset = offset,
+                    Size = size,
                     Name = this._options.RecoveryLabel,
                     Label = this._options.RecoveryLabel,
                     Type = PartitionType.WindowsRe
@@ -194,14 +403,21 @@ namespace Visus.DeploymentToolkit.Tasks {
                 offset += retval.Partitions.Last().Size;
             }
 
-            retval.Partitions.Add(new PartitionDefinition {
-                Offset = offset,
-                Size = disk.Size - offset,
-                Name = this._options.SystemLabel,
-                Label = this._options.SystemLabel,
-                FileSystem = FileSystem.Ntfs,
-                Type = PartitionType.MicrosoftBasicData
-            });
+            // Create the OS partition.
+            {
+                var size = disk.Size - offset;
+                size = this.AdjustSize(size, disk);
+                retval.Partitions.Add(new PartitionDefinition {
+                    Offset = offset,
+                    Size = size,
+                    Name = this._options.SystemLabel,
+                    Label = this._options.SystemLabel,
+                    FileSystem = FileSystem.Ntfs,
+                    Type = PartitionType.MicrosoftBasicData,
+                    Mounts = [systemDrive],
+                    Usage = PartitionUsage.Installation
+                });
+            }
 
             return retval;
         }
@@ -209,6 +425,7 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         #region Private fields
         private readonly IDiskManagement _diskManagement;
+        private readonly IDriveInfo _driveInfo;
         private readonly PartitioningOptions _options;
         private readonly ISystemInformation _systemInformation;
         #endregion

@@ -65,7 +65,7 @@ namespace Visus.DeploymentToolkit.Services {
             }
 
             this._logger.LogTrace("Loading the registry hive from the file "
-                + "\"{File}\" into the key \"{MountPoint}\".", path,
+                + "{File} into the key {MountPoint}.", path,
                     Path.Combine(key.Name, keyName));
             return new MountedHive(key, keyName, path);
         }
@@ -130,7 +130,7 @@ namespace Visus.DeploymentToolkit.Services {
             _ = key ?? throw new ArgumentNullException(nameof(key));
 
             this._logger.LogTrace("Parsing the registry hive from the given "
-                + "\"path {RegistryPath}\".", key);
+                + "path {RegistryPath}.", key);
 
             // Out first assumption is that 'key' is the hive itself.
             var hive = key;
@@ -145,9 +145,9 @@ namespace Visus.DeploymentToolkit.Services {
             }
             hive = hive.ToUpperInvariant();
 
-            this._logger.LogTrace("Registry hive is \"{Hive}\".", hive);
+            this._logger.LogTrace("Registry hive is {Hive}.", hive);
             this._logger.LogTrace("The remaining registry path is "
-                + "\"{RegistryPath}\".", path);
+                + "{RegistryPath}.", path);
 
             return hive switch {
                 "HKEY_CLASSES_ROOT" => Registry.ClassesRoot,

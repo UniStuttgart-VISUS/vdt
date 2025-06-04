@@ -22,15 +22,6 @@ namespace Visus.DeploymentToolkit.Agent {
     /// </remarks>
     internal sealed class Options : OptionsBase {
 
-        #region Public constructors
-        /// <summary>
-        /// Initialises a new instance.
-        /// </summary>
-        public Options() {
-            this.LogFile ="deimosagent.log";
-        }
-        #endregion
-
         #region Public properties
         /// <summary>
         /// Gets or sets the phase in which the agent is currently running.

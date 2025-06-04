@@ -33,7 +33,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <inheritdoc />
         public async Task CleanAsync(string path) {
             ArgumentNullException.ThrowIfNull(nameof(path));
-            this._logger.LogTrace("Purging all contents from \"{Path}\".",
+            this._logger.LogTrace("Purging all contents from {Path}.",
                 path);
 
             await Task.Factory.StartNew(async () => {
@@ -49,7 +49,7 @@ namespace Visus.DeploymentToolkit.Services {
 
         /// <inheritdoc />
         public Task<DirectoryInfo> CreateAsync(string path) {
-            this._logger.LogTrace("Creating directory \"{Path}\".", path);
+            this._logger.LogTrace("Creating directory {Path}.", path);
             return Task.FromResult(Directory.CreateDirectory(path));
         }
 
@@ -57,14 +57,14 @@ namespace Visus.DeploymentToolkit.Services {
         public Task DeleteAsync(string path, bool recursive = false) {
             if (recursive) {
                 ArgumentNullException.ThrowIfNull(nameof(path));
-                this._logger.LogTrace("Deleting directory \"{Path}\" and all "
+                this._logger.LogTrace("Deleting directory {Path} and all "
                     + "of its contents.", path);
                 return Task.Factory.StartNew(() => {
                     Directory.Delete(path, recursive);
                 });
 
             } else {
-                this._logger.LogTrace("Deleting directory \"{Path}\".", path);
+                this._logger.LogTrace("Deleting directory {Path}.", path);
                 Directory.Delete(path);
                 return Task.CompletedTask;
             }

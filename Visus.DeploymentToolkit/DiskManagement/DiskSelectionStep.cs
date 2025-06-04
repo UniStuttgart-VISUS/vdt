@@ -138,7 +138,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                 case BuiltInCondition.None:
                 default:
                     logger.LogInformation("Selecting a disk that fulfils the "
-                        + "condition \"{Condition}\".",
+                        + "condition {Condition}.",
                         this.Condition);
                     retval = disks.AsQueryable().Where(this.Condition);
                     break;

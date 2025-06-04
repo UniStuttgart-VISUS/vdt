@@ -103,7 +103,7 @@ namespace Visus.DeploymentToolkit.Tasks {
             if (firmware != FirmwareType.Uefi) {
                 cancellationToken.ThrowIfCancellationRequested();
                 this._logger.LogInformation("Installing a boot sector to"
-                    + " \"{SystemDrive}\".", sysDrive);
+                    + " {SystemDrive}.", sysDrive);
                 await this._bootService.CreateBootsectorAsync(sysDrive,
                     this.Version,
                     firmware);
@@ -117,8 +117,8 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             if (!"nt52".EqualsIgnoreCase(this.Version)) {
                 this._logger.LogInformation("Restoring the BCD store on "
-                    + " \"{SystemDrive}\" for the Windows installation "
-                    + "\"{InstallationDirectory}\".", sysDrive,
+                    + " {SystemDrive} for the Windows installation "
+                    + "{InstallationDirectory}.", sysDrive,
                     this.InstallationDirectory);
                 await this._bootService.CreateBcdStoreAsync(
                     this.InstallationDirectory,
@@ -138,13 +138,13 @@ namespace Visus.DeploymentToolkit.Tasks {
                 CancellationToken cancellationToken) {
             if (Directory.Exists(this.BootDrive)) {
                 this._logger.LogInformation("Using user-provided boot drive "
-                    + "\"{BootDrive}\".", this.BootDrive);
+                    + "{BootDrive}.", this.BootDrive);
                 return this.BootDrive;
             }
 
             if (this._systemInformation.Firmware == FirmwareType.Bios) {
                 var retval = this.GetSystemDrive();
-                this._logger.LogTrace("Using system drive \"{SystemDrive}\" as "
+                this._logger.LogTrace("Using system drive {SystemDrive} as "
                     + "boot drive of a BIOS-based system.", retval);
                 return retval;
 
@@ -161,8 +161,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                     var sysDrive = this.GetSystemDrive();
                     this._logger.LogTrace("There are multiple disks with an "
                         + "EFI system partition in the machine. Search the"
-                        + "one that has \"{InstallationDirectory}\" (volume "
-                        + "\"{SystemDrive}\") on it.",
+                        + "one that has {InstallationDirectory} (volume "
+                        + "{SystemDrive}) on it.",
                         this.InstallationDirectory, sysDrive);
                     disk = (from d in disks
                             where d.Volumes.Any(v => v.Mounts.Any(m => m.EqualsIgnoreCase(sysDrive)))
@@ -210,14 +210,14 @@ namespace Visus.DeploymentToolkit.Tasks {
 
                 } else {
                     this._logger.LogTrace("Checking whether the boot volume "
-                        + "\"{BootVolume}\" has a mount point.", volume.Name);
+                        + "{BootVolume} has a mount point.", volume.Name);
                     retval = volume.Mounts.FirstOrDefault();
                 }
                 Debug.Assert(partition is not null);
 
                 if (retval is null) {
                     this._logger.LogTrace("No mount point was found so far, so "
-                        + "we assign one to the partition \"{BootPartition}\".",
+                        + "we assign one to the partition {BootPartition}.",
                         partition.Name);
                     retval = this._driveInfo.GetFreeDrive();
                     Debug.Assert(retval?.Any() == true);
@@ -225,8 +225,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                 }
 
                 this._logger.LogInformation("The boot drive was identified "
-                    + "as \"{BootDrive}\" on partition \"{BootPartition}\" of "
-                    + "disk \"{BootDisk}\" ({BootDiskName}).", retval,
+                    + "as {BootDrive} on partition {BootPartition} of "
+                    + "disk {BootDisk} ({BootDiskName}).", retval,
                     partition.Name, disk.ID, disk.FriendlyName);
                 return retval;
             }

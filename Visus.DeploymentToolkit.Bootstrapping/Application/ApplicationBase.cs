@@ -68,7 +68,7 @@ namespace Visus.DeploymentToolkit.Application {
             var provider = new ServiceCollection()
                     .Configure<TOptions>(this.Configuration.Bind)
                     .AddBootstrappingServices()
-                    .AddLogging(logFile ?? this.Options.LogFile);
+                    .AddLogging(this.Configuration.GetSection("Logging"));
 
             // If we have one, add the state restored from the state file.
             // Otherwise, add blank state and restore from annotated options.

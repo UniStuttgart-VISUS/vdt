@@ -35,7 +35,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             ArgumentNullException.ThrowIfNull(that);
 
             var retval = await that.ExecuteAsync().ConfigureAwait(false);
-            logger?.LogTrace("Command \"{Command}\" exited with return "
+            logger?.LogTrace("Command {Command} exited with return "
                 + "value {ExitCode}.", that.ToString(), retval);
 
             if (retval == null) {
@@ -44,7 +44,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             }
 
             if (retval != success) {
-                logger?.LogError("The command \"{Command}\" returned the "
+                logger?.LogError("The command {Command} returned the "
                     + "exit code {ExitCode}, which does not indicate "
                     + "success.", that.ToString(), retval.Value);
                 throw new CommandFailedException(that.ToString()!,
@@ -77,7 +77,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             ArgumentNullException.ThrowIfNull(logger);
 
             var retval = await that.ExecuteAsync().ConfigureAwait(false);
-            logger?.LogTrace("Command \"{Command}\" exited with return "
+            logger?.LogTrace("Command {Command} exited with return "
                 + "value {ExitCode}.", that.ToString(), retval);
 
             if (retval == null) {
@@ -86,7 +86,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             }
 
             if (successes?.Any() == true && !successes.Contains(retval.Value)) {
-                logger?.LogError("The command \"{Command}\" returned the "
+                logger?.LogError("The command {Command} returned the "
                     + "exit code {ExitCode}, which does not indicate "
                     + "success.", that.ToString(), retval.Value);
                 throw new CommandFailedException(that.ToString()!,
@@ -94,7 +94,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             }
 
             if (failures?.Any() == true && failures.Contains(retval.Value)) {
-                logger?.LogError("Command \"{Command}\" returned the "
+                logger?.LogError("Command {Command} returned the "
                     + "exit code {ExitCode}, which indicates failure.",
                     that.ToString(), retval.Value);
                 throw new CommandFailedException(that.ToString()!,

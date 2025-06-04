@@ -57,14 +57,14 @@ namespace Visus.DeploymentToolkit.Tasks {
                 return Task.Factory.StartNew(() => {
                     if (this.DiscardImageChanges) {
                         this._logger.LogInformation("Unmounting "
-                            + "\"{MountPoint}\" discarding changes.",
+                            + "{MountPoint} discarding changes.",
                             mount.MountPoint);
                         mount.Dispose();
 
                     } else {
                         this._logger.LogInformation("Unmounting "
-                            + "\"{MountPoint}\" committing changes to "
-                            + "\"{Image}\".",
+                            + "{MountPoint} committing changes to "
+                            + "{Image}.",
                             mount.MountPoint,
                             mount.ImagePath);
                         mount.Commit();

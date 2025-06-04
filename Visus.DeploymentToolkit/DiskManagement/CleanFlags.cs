@@ -11,10 +11,11 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
     /// <summary>
     /// Allows for customising the behaviour of the
-    /// <see cref="IAdvancedDisk.CleanAsync"/>.
+    /// <see cref="Tasks.PartitionFormatDisk"/> task and the
+    /// <see cref="IAdvancedDisk.CleanAsync"/> method.
     /// </summary>
     [Flags]
-    internal enum CleanFlags : uint {
+    public enum CleanFlags : uint {
 
         /// <summary>
         /// Perform a quick clean of non-protected disks.
@@ -41,5 +42,13 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// megabytes on the disk.
         /// </summary>
         FullClean = 0x00000004,
+
+        /// <summary>
+        /// If this flag is set, the <see cref="Tasks.PartitionFormatDisk"/>
+        /// will not consider failing to clean the disk as an error. This flag
+        /// has no effect on the <see cref="IAdvancedDisk.CleanAsync"/>
+        /// method.
+        /// </summary>
+        IgnoreErrors = 0x00000008,
     }
 }

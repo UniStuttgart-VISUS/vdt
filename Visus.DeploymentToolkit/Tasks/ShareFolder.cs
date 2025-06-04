@@ -76,13 +76,13 @@ namespace Visus.DeploymentToolkit.Tasks {
                     this.Share = System.IO.Path.GetFileName(this.Folder);
                 }
 
-                this._logger.LogInformation("Creating share \"{Share}\" for"
-                    + " folder \"{Folder}\".", this.Share, this.Folder);
+                this._logger.LogInformation("Creating share {Share} for"
+                    + " folder {Folder}.", this.Share, this.Folder);
                 NetApi.ShareFolder(null,
                     this.Share,
                     this.Folder,
                     this.MaxUsers);
-                this._logger.LogInformation("The \"{Share}\" was created "
+                this._logger.LogInformation("The {Share} was created "
                     + "successfully.", this.Share);
             }, cancellationToken);
         }

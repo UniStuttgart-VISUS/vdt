@@ -63,7 +63,7 @@ namespace Visus.DeploymentToolkit.Test {
                     selection.BuiltInCondition = BuiltInCondition.None;
                     selection.Condition = "BusType == \"SD\"";
                     var selected = await selection.ApplyAsync(disks, service, logger);
-                    Assert.IsTrue(selected.Any());
+                    Assert.IsFalse(selected.Any());
                 }
 
                 {

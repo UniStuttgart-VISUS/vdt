@@ -56,8 +56,8 @@ namespace Visus.DeploymentToolkit.Services {
         /// <inheritdoc />
         public void ApplyUnattend(string path, bool singleSession) {
             this.CheckSession();
-            this._logger.LogTrace("Applying unattend file \"{Path}\" to "
-                + "image \"{Image}\".", path, this.Name);
+            this._logger.LogTrace("Applying unattend file {Path} to "
+                + "image {Image}.", path, this.Name);
             DismApi.ApplyUnattend(this._session, path, singleSession);
         }
 
@@ -65,7 +65,7 @@ namespace Visus.DeploymentToolkit.Services {
         public void Commit() {
             this.CheckSession();
             this._logger.LogTrace("Committing changes to DISM image "
-                + "\"{Image}\".", this.Name);
+                + "{Image}.", this.Name);
             DismApi.CommitImage(this._session, false);
         }
 
@@ -82,8 +82,8 @@ namespace Visus.DeploymentToolkit.Services {
                 bool recursive = false,
                 bool forceUnsigned = false) {
             this.CheckSession();
-            this._logger.LogTrace("Injecting drivers from \"{Path}\" to "
-                + "image \"{Image}\".", folder, this.Name);
+            this._logger.LogTrace("Injecting drivers from {Path} to "
+                + "image {Image}.", folder, this.Name);
             DismApi.AddDriversEx(this._session,
                 folder,
                 forceUnsigned,
@@ -96,7 +96,7 @@ namespace Visus.DeploymentToolkit.Services {
 
             if ((this._path = path) is not null) {
                 this._logger.LogTrace("Opening an offline servicing session "
-                    + "for \"{Image}\".", this._path);
+                    + "for {Image}.", this._path);
                 this._session = DismApi.OpenOfflineSessionEx(this._path);
 
             } else {
@@ -111,7 +111,7 @@ namespace Visus.DeploymentToolkit.Services {
         public void RollBack() {
             this.CheckSession();
             this._logger.LogTrace("Reverting changes to DISM image "
-                + "\"{Image}\".", this.Name);
+                + "{Image}.", this.Name);
             DismApi.CommitImage(this._session, true);
         }
         #endregion

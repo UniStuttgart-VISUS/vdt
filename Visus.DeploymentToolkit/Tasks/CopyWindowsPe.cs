@@ -112,13 +112,13 @@ namespace Visus.DeploymentToolkit.Tasks {
             this.Validate();
 
             this._logger.LogInformation("Creating Windows PE working directory "
-                + "\"{WorkingDirectory}\".", this.WorkingDirectory);
+                + "{WorkingDirectory}.", this.WorkingDirectory);
             await this._directory.CreateAsync(this.WorkingDirectory)
                 .ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
 
             this._logger.LogTrace("Preparing directory structure in "
-                + "\"{WorkingDirectory}\".", this.WorkingDirectory);
+                + "{WorkingDirectory}.", this.WorkingDirectory);
             await this._directory.CreateAsync(this.FirmwareDirectory)
                 .ConfigureAwait(false);
             await this._directory.CreateAsync(this.MediaDirectory)

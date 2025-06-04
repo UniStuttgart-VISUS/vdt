@@ -58,7 +58,7 @@ namespace Visus.DeploymentToolkit.Test {
         [TestMethod]
         public async Task TestNull() {
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => {
-                await new CommandBuilder(null)
+                await new CommandBuilder(null!)
                     .Build()
                     .ExecuteAsync();
             });

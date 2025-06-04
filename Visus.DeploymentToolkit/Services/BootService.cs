@@ -36,32 +36,31 @@ namespace Visus.DeploymentToolkit.Services {
             ArgumentException.ThrowIfNullOrWhiteSpace(drive);
             ArgumentException.ThrowIfNullOrWhiteSpace(version);
             this._logger.LogTrace("Cleaning boot configuration on drive "
-                + "\"{Drive}\", assuming version {Version} and firmware "
-                + "{Type}.",
-                drive, version, firmware);
+                + "{Drive}, assuming version {Version} and firmware "
+                + "{Type}.", drive, version, firmware);
 
             if ("nt52".EqualsIgnoreCase(version)) {
                 {
                     var path = Path.Combine(drive, "Boot");
-                    this._logger.LogTrace("Deleting \"{Path}\".", path);
+                    this._logger.LogTrace("Deleting {Path}.", path);
                     await this._directory.DeleteAsync(path, true);
                 }
 
                 {
                     var path = Path.Combine(drive, "BootMgr");
-                    this._logger.LogTrace("Deleting \"{Path}\".", path);
+                    this._logger.LogTrace("Deleting {Path}.", path);
                     File.Delete(path);
                 }
 
             } else if (firmware == FirmwareType.Bios) {
                 var path = Path.Combine(drive, "boot", "bcd");
-                this._logger.LogTrace("Deleting \"{Path}\".", path);
+                this._logger.LogTrace("Deleting {Path}.", path);
                 File.Delete(path);
 
             } else {
                 var path = Path.Combine(drive, "efi", "microsoft", "boot",
                     "bcd");
-                this._logger.LogTrace("Deleting \"{Path}\".", path);
+                this._logger.LogTrace("Deleting {Path}.", path);
                 File.Delete(path);
             }
         }
@@ -72,7 +71,7 @@ namespace Visus.DeploymentToolkit.Services {
                 FirmwareType firmware) {
             ArgumentException.ThrowIfNullOrWhiteSpace(windowsPath);
             this._logger.LogTrace("Creating BCD store for Windows installation "
-                + " \"{WindowsPath}\" and boot drive \"{BootDrive}\", "
+                + " {WindowsPath} and boot drive {BootDrive}, "
                 + "assuming firmware {Type}.", windowsPath, bootDrive,
                 firmware);
 
@@ -94,7 +93,7 @@ namespace Visus.DeploymentToolkit.Services {
                 FirmwareType firmware) {
             ArgumentException.ThrowIfNullOrWhiteSpace(drive);
             ArgumentException.ThrowIfNullOrWhiteSpace(version);
-            this._logger.LogTrace("Creating bootsector on drive \"{Drive}\", "
+            this._logger.LogTrace("Creating bootsector on drive {Drive}, "
                 + "assuming version {Version} and firmware {Type}.",
                 drive, version, firmware);
             var mbr = firmware switch {
@@ -115,7 +114,7 @@ namespace Visus.DeploymentToolkit.Services {
 
                 } else {
                     // Similar to LTIApply.wsf in MDT.
-                    this._logger.LogWarning("The command \"{Command}\" may not "
+                    this._logger.LogWarning("The command {Command} may not "
                         + "support the /mbr switch. Retrying without it.", cmd);
                     cmd.WithArguments($"/{version} {drive}");
                     await cmd.Build().ExecuteAndCheckAsync(0, this._logger);

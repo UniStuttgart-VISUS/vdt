@@ -4,7 +4,6 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Visus.DeploymentToolkit.DiskManagement;
@@ -46,6 +45,22 @@ namespace Visus.DeploymentToolkit.Extensions {
             }
 
             return types.Any(t => t.Equals(that.Type));
+        }
+
+        /// <summary>
+        /// Answer whether <paramref name="that"/> has the specified usage flags
+        /// set.
+        /// </summary>
+        /// <param name="that"></param>
+        /// <param name="usage"></param>
+        /// <returns></returns>
+        public static bool IsUsedFor(this PartitionDefinition that,
+                PartitionUsage usage) {
+            if (that is null) {
+                return false;
+            }
+
+            return ((that.Usage & usage) == usage);
         }
     }
 }

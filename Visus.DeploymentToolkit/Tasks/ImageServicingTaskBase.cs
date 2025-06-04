@@ -69,7 +69,7 @@ namespace Visus.DeploymentToolkit.Tasks {
 
                 if (this.InstallationPath is not null) {
                     this._logger.LogTrace("Using user-provided installation "
-                        + "path \"{Path}\".", this.InstallationPath);
+                        + "path {Path}.", this.InstallationPath);
                     return this.InstallationPath;
                 }
 
@@ -101,10 +101,10 @@ namespace Visus.DeploymentToolkit.Tasks {
         protected void Close() {
             if (this.IsCommit) {
                 this._logger.LogTrace("Committing changes to the image "
-                    + "\"{Image}\".", this._imageServicing.Name);
+                    + "{Image}.", this._imageServicing.Name);
                 this._imageServicing.Commit();
             } else {
-                this._logger.LogTrace("Keeping imaging session \"{Image}\""
+                this._logger.LogTrace("Keeping imaging session {Image}"
                     + "alive.", this._imageServicing.Name);
             }
         }
@@ -118,7 +118,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         protected IImageServicing Open() {
             if (this._imageServicing.IsOpen) {
                 this._logger.LogTrace("An active image servicing session for" +
-                    " \"{Image}\" was found and will be reused.",
+                    " {Image} was found and will be reused.",
                     this._imageServicing.Name);
             } else {
                 this._imageServicing.Open(this.EffectiveInstallationPath);

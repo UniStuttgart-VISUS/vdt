@@ -55,7 +55,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                     this.Duration);
             } else {
                 this._logger.LogInformation("Delaying for {Duration} because "
-                    + "\"{Reason}\".", this.Duration, this.Reason);
+                    + "{Reason}.", this.Duration, this.Reason);
             }
 
             return Task.Delay(this.Duration, cancellationToken);

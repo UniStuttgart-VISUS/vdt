@@ -74,7 +74,7 @@ namespace Visus.DeploymentToolkit.Services {
                 }
 
                 this._logger.LogInformation("Changing environment variable "
-                    + "\"{EnvironmentVariable}\" to \"{Value}\".", name, value);
+                    + "{EnvironmentVariable} to {Value}.", name, value);
             }
         }
         #endregion

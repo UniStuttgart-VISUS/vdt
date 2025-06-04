@@ -86,8 +86,8 @@ namespace Visus.DeploymentToolkit.Tasks {
             this.Validate();
             cancellationToken.ThrowIfCancellationRequested();
 
-            this._logger.LogInformation("Mounting \"{Image}\" at "
-                + "\"{MountPoint}\".", this.ImagePath, this.MountPoint);
+            this._logger.LogInformation("Mounting {Image} at "
+                + "{MountPoint}.", this.ImagePath, this.MountPoint);
             return Task.Factory.StartNew(() => {
                 if (string.IsNullOrEmpty(this.ImageName)) {
                     this._logger.LogInformation("Mounting image index "
@@ -98,17 +98,17 @@ namespace Visus.DeploymentToolkit.Tasks {
                         this.MountPoint);
                 } else {
                     this._logger.LogInformation("Mounting image name "
-                        + "\"{ImageName}\".", this.ImageName);
+                        + "{ImageName}.", this.ImageName);
                     this._state.WimMount = new DismMount(this._dism,
                         this.ImagePath,
                         this.ImageName,
                         this.MountPoint);
                 }
 
-                this._logger.LogInformation("The \"{Image}\" has been mounted "
-                + "at \"{MountPoint}\". Should the need arise to unmount this "
+                this._logger.LogInformation("The {Image} has been mounted "
+                + "at {MountPoint}. Should the need arise to unmount this "
                 + "image manually, you can do so by invoking "
-                + "dism /Unmount-Image /MountDir:\"{MountPoint}\" /Discard",
+                + "dism /Unmount-Image /MountDir:{MountPoint} /Discard",
                 this.ImagePath, this.MountPoint, this.MountPoint);
             });
         }

@@ -53,12 +53,12 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             if ((this.InputLocale is not null) && OperatingSystem.IsWindows()) {
                 this._logger.LogInformation("Changing input locale to "
-                    + "\"{InputLocale}\".", this.InputLocale);
+                    + "{InputLocale}.", this.InputLocale);
                 var hkl = LoadKeyboardLayout(this.InputLocale, 0);
                 if (hkl == nint.Zero) {
                     var error = Marshal.GetLastWin32Error();
                     this._logger.LogError("Failed to load keyboard layout "
-                        + "\"{InputLocale}\" with error {Error}.",
+                        + "{InputLocale} with error {Error}.",
                         this.InputLocale, error);
                     throw new Win32Exception(error);
                 }
@@ -69,7 +69,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                             0, ref hkl, 0)) {
                         var error = Marshal.GetLastWin32Error();
                         this._logger.LogError("Failed to set keyboard layout "
-                            + "to \"{InputLocale}\" with error {Error}.",
+                            + "to {InputLocale} with error {Error}.",
                             this.InputLocale, error);
                         throw new Win32Exception(error);
                     }

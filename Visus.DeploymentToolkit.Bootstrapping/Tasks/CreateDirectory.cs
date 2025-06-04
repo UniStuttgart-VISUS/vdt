@@ -76,7 +76,7 @@ namespace Visus.DeploymentToolkit.Tasks {
             this.Validate();
             cancellationToken.ThrowIfCancellationRequested();
 
-            this._logger.LogInformation("Creating a directory at \"{Path}\".",
+            this._logger.LogInformation("Creating a directory at {Path}.",
                 this.Path);
             this.Path = (await this._directoryService.CreateAsync(this.Path)
                 .ConfigureAwait(false))
@@ -84,14 +84,14 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             if (this.Clean) {
                 cancellationToken.ThrowIfCancellationRequested();
-                this._logger.LogTrace("Making sure that \"{Path}\" is empty.",
+                this._logger.LogTrace("Making sure that {Path} is empty.",
                     this.Path);
                 await this._directoryService.CleanAsync(this.Path)
                     .ConfigureAwait(false);
             }
 
             if (!string.IsNullOrWhiteSpace(this.State)) {
-                this._logger.LogTrace("Storing directory path to \"{State}\".",
+                this._logger.LogTrace("Storing directory path to {State}.",
                     this.State);
                 this._state[this.State] = this.Path;
             }

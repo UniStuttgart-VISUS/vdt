@@ -29,8 +29,8 @@ namespace Visus.DeploymentToolkit.Services {
                 ?? throw new ArgumentNullException(nameof(logger));
             Options = options?.Value ?? new();
 
-            this._logger.LogTrace("Initialising DISM with \"{LogFile}\" as "
-                + "log file and \"{ScratchDirectory}\" as scratch directory.",
+            this._logger.LogTrace("Initialising DISM with {LogFile} as "
+                + "log file and {ScratchDirectory} as scratch directory.",
                 Options.LogFile, Options.ScratchDirectory);
             DismApi.Initialize(DismLogLevel.LogErrorsWarningsInfo,
                 Options.LogFile,

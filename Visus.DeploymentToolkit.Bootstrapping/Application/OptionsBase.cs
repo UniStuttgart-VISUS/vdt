@@ -30,11 +30,6 @@ namespace Visus.DeploymentToolkit.Application {
         public string DeploymentShare { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets the path where the application should log to.
-        /// </summary>
-        public string? LogFile { get; set; }
-
-        /// <summary>
         /// Gets or sets the path to the state file where the bootstrapper
         /// persists the current <see cref="Services.IState"/> before calling
         /// into the agent.

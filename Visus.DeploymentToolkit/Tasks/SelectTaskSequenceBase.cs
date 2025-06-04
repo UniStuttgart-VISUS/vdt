@@ -85,7 +85,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <returns></returns>
         protected Task<ITaskSequenceDescription?> GetTaskSequenceAsync(
                 string id) {
-            this._logger.LogInformation($"Searching task sequence \"{id}\".");
+            this._logger.LogInformation("Searching task sequence {ID}.", id);
             return (this._store == null)
                 ? Task.FromResult<ITaskSequenceDescription?>(null)
                 : this._store.GetTaskSequenceAsync(id);

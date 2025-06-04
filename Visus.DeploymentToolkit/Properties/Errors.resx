@@ -243,4 +243,7 @@
   <data name="NoAdvancedDisk" xml:space="preserve">
     <value>The operation cannot be performed, because the underlying disk descriptor is not an advanced one.</value>
   </data>
+  <data name="UnsupportedPartitionStyle" xml:space="preserve">
+    <value>The partition style "{0}" is not supported by the task.</value>
+  </data>
 </root>

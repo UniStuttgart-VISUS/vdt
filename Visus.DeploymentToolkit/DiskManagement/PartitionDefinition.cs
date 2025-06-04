@@ -77,5 +77,10 @@ namespace Visus.DeploymentToolkit.DiskManagement {
             get;
             set;
         } = PartitionType.MicrosoftBasicData;
+
+        /// <summary>
+        /// Gets or sets how the partition will be used.
+        /// </summary>
+        public PartitionUsage Usage { get; set; } = PartitionUsage.Other;
     }
 }

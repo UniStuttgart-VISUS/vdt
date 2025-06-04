@@ -28,7 +28,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
         /// <inheritdoc />
         public string? Name => Style == PartitionStyle.Gpt
-            ? this._properties.Gpt.name
+            ? this._properties.Gpt.Name
             : null;
 
         /// <inheritdoc />

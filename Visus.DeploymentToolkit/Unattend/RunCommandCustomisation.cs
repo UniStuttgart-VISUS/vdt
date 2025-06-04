@@ -66,8 +66,8 @@ namespace Visus.DeploymentToolkit.Unattend {
                 ? "RunAsynchronous"
                 : "RunSynchronous";
             var groupFilter = $"//u:{groupName}";
-            this._logger.LogTrace("The command group is \"{Group}\" and will "
-                + "be selected using the XPath expression \"{Filter}\".",
+            this._logger.LogTrace("The command group is {Group} and will "
+                + "be selected using the XPath expression {Filter}.",
                 groupName, groupFilter);
 
             foreach (var s in settings) {
@@ -82,9 +82,9 @@ namespace Visus.DeploymentToolkit.Unattend {
                     var component = s.XPathSelectElement(componentFilter,
                         resolver);
                     if (component is null) {
-                        this._logger.LogError("The component \"{Component}\" " 
+                        this._logger.LogError("The component {Component} " 
                            + "containing the command was not found using the "
-                           + "XPath expression \"{Filter}\", so we add it now.",
+                           + "XPath expression {Filter}, so we add it now.",
                            Components.WindowsSetup, componentFilter);
                         component = this._builder.MakeComponent(
                             Components.WindowsSetup, null);
@@ -92,8 +92,8 @@ namespace Visus.DeploymentToolkit.Unattend {
                     }
                     Debug.Assert(component is not null);
 
-                    this._logger.LogTrace("The command group \"{Group}\" was "
-                        + "not found using the XPath expression \"{Filter}\", "
+                    this._logger.LogTrace("The command group {Group} was "
+                        + "not found using the XPath expression {Filter}, "
                         + " so we add it now.", groupName, groupFilter);
                     group = new XElement(this._builder.MakeName(groupName));
                     component.Add(group);
@@ -108,9 +108,9 @@ namespace Visus.DeploymentToolkit.Unattend {
                     Debug.Assert(duplicate is not null);
                     var path = duplicate.Descendant(PathElement)?.Value;
 
-                    this._logger.LogWarning("A duplicate command \"{Command}\" "
+                    this._logger.LogWarning("A duplicate command {Command} "
                         + "was identified using the XPath expression "
-                        + "\"{Filter}\". This command will be replaced. If "
+                        + "{Filter}. This command will be replaced. If "
                         + "both commands are expected to run, assign different "
                         + "orders to them.", path, dupeFilter);
                     duplicate.Remove();
@@ -118,7 +118,7 @@ namespace Visus.DeploymentToolkit.Unattend {
                 Debug.Assert(group.XPathSelectElement(dupeFilter, resolver)
                     is null);
 
-                this._logger.LogTrace("Adding {Command} running \"{Path}\".",
+                this._logger.LogTrace("Adding {Command} running {Path}.",
                     commandName, this.Path);
                 var command = new XElement(this._builder.MakeName(commandName),
                     new XElement(this._builder.MakeName(DescriptionElement),

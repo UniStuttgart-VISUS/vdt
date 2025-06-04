@@ -62,7 +62,7 @@ namespace Visus.DeploymentToolkit.Services {
         public ManagementClass GetClass(string name,
                 ManagementScope? scope,
                 ObjectGetOptions? objectGetOptions) {
-            this._logger.LogTrace("Getting management class \"{Path}\".",
+            this._logger.LogTrace("Getting management class {Path}.",
                 name);
             return new ManagementClass(scope ?? this.DefaultScope,
                 new ManagementPath(name),
@@ -81,7 +81,7 @@ namespace Visus.DeploymentToolkit.Services {
                 ObjectGetOptions? objectGetOptions) {
             ArgumentNullException.ThrowIfNull(path);
             this._logger.LogTrace("Selecting a WMI object via its path "
-                + "\"{Path}\".", path);
+                + "{Path}.", path);
             return new ManagementObject(scope ?? this.DefaultScope,
                 new ManagementPath(path),
                 objectGetOptions);
@@ -90,7 +90,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <inheritdoc />
         public IEnumerable<ManagementObject> Query(string query,
                 ManagementScope? scope) {
-            this._logger.LogTrace("Issuing WMI query \"{Query}\".", query);
+            this._logger.LogTrace("Issuing WMI query {Query}.", query);
             var search = new ManagementObjectSearcher(
                 scope ?? this.DefaultScope,
                 new ObjectQuery(query));

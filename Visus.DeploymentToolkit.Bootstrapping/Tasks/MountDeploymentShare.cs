@@ -81,7 +81,6 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Gets or sets the password used to connect to the deployment share.
         /// </summary>
-        [FromState(WellKnownStates.DeploymentSharePassword)]
         public string? Password { get; set; }
 
         /// <summary>
@@ -109,6 +108,12 @@ namespace Visus.DeploymentToolkit.Tasks {
         public override async Task ExecuteAsync(
                 CancellationToken cancellationToken) {
             this.CopyFrom(this._state);
+
+            if ((this.Password is null) && !string.IsNullOrEmpty(
+                    this._state.DeploymentSharePassword)) {
+                this.Password = this._sessionSecurity.DecryptString(
+                    this._state.DeploymentSharePassword);
+            }
 
             if (string.IsNullOrWhiteSpace(this.MountPoint)) {
                 var drives = this._driveInfo.GetFreeDrives();
@@ -143,6 +148,8 @@ namespace Visus.DeploymentToolkit.Tasks {
             await this._mount.ExecuteAsync(cancellationToken);
             this._logger.LogInformation("Connection to deployment share "
                 + "succeeded.");
+
+            this._state.DeploymentDirectory = this.MountPoint;
 
             if (this.PreserveConnection) {
                 this._logger.LogInformation("Preserving the settings in the "

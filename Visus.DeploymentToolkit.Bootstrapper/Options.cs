@@ -21,15 +21,6 @@ namespace Visus.DeploymentToolkit {
     /// </summary>
     public sealed class Options : OptionsBase {
 
-        #region Public constructors
-        /// <summary>
-        /// Initialises a new instance.
-        /// </summary>
-        public Options() {
-            this.LogFile = "deimosbootstrapper.log";
-        }
-        #endregion
-
         #region Public properties
         /// <summary>
         /// Gets or sets the path to the agent.

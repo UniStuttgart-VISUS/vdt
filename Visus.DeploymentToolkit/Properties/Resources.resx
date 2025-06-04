@@ -141,6 +141,12 @@
   <data name="InjectDrivers" xml:space="preserve">
     <value>Inject drivers</value>
   </data>
+  <data name="InstallWindowsPe" xml:space="preserve">
+    <value>Install Windows PE</value>
+  </data>
+  <data name="InstallWindowsPeDescription" xml:space="preserve">
+    <value>A debugging task sequence which will deploy the Windows PE boot image to the local disk.</value>
+  </data>
   <data name="MountWim" xml:space="preserve">
     <value>Mount a WIM image</value>
   </data>

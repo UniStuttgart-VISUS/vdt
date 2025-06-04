@@ -47,19 +47,19 @@ namespace Visus.DeploymentToolkit.Workflow {
                 var task = this._tasks[state.Progress];
 
                 try {
-                    this._logger.LogInformation("Task #{Progress} \"{Task}\" "
+                    this._logger.LogInformation("Task #{Progress} {Task} "
                         + "is starting.", state.Progress, task.Name);
 
                     await task.ExecuteAsync().ConfigureAwait(false);
 
-                    this._logger.LogInformation("Task #{Progress} \"{Task}\" "
+                    this._logger.LogInformation("Task #{Progress} {Task} "
                         + "completed successfully.", state.Progress, task.Name);
                 } catch (Exception ex) {
-                    this._logger.LogError(ex, "Task #{Progress} \"{Task}\" "
+                    this._logger.LogError(ex, "Task #{Progress} {Task} "
                         + "failed.", state.Progress, task.Name);
 
                     if (task.IsCritical) {
-                        this._logger.LogError(ex, "Task #{Progress} \"{Task}\" "
+                        this._logger.LogError(ex, "Task #{Progress} {Task} "
                             + "is critical for the task sequence, which means "
                             + "that it cannot continue.", state.Progress,
                             task.Name);

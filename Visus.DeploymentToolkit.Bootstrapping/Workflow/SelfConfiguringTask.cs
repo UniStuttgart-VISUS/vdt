@@ -54,7 +54,7 @@ namespace Visus.DeploymentToolkit.Workflow {
             Debug.Assert(this._services != null);
             var state = this._services.GetRequiredService<IState>();
 
-            this._logger.LogTrace("Configuring task \"{Task}\".",
+            this._logger.LogTrace("Configuring task {Task}.",
                 this._task.Name);
             this._configure(this._task, state);
 

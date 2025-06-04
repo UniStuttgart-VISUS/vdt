@@ -148,28 +148,28 @@ namespace Visus.DeploymentToolkit.Tasks {
                     this.Destination,
                     DefaultFileName);
                 this._logger.LogTrace("Destination is a directory. Using "
-                    + "\"{Destination}\" as file name.", this.Destination);
+                    + "{Destination} as file name.", this.Destination);
 
             } else if (!Path.HasExtension(this.Destination)) {
                 this._logger.LogTrace("Creating destination directory "
-                    + "\"{Destination}\".", this.Destination);
+                    + "{Destination}.", this.Destination);
                 await this._directory.CreateAsync(this.Destination!)
                     .ConfigureAwait(false);
                 this.Destination = Path.Combine(
                     this.Destination!,
                     DefaultFileName);
                 this._logger.LogTrace("Destination is a new directory. Using "
-                    + "\"{Destination}\" as file name.", this.Destination);
+                    + "{Destination} as file name.", this.Destination);
             }
 
             this._logger.LogInformation("Copying unattend file from "
-                + "\"{Source}\" to \"{Destination}\".", this.Source,
+                + "{Source} to {Destination}.", this.Source,
                 this.Destination);
             await this._copy.CopyAsync(this.Source,
                 this.Destination,
                 CopyFlags.Required);
             this._logger.LogInformation("The unattend file was copied to "
-                + "\"{Destination}\".", this.Destination);
+                + "{Destination}.", this.Destination);
         }
         #endregion
 
@@ -179,7 +179,7 @@ namespace Visus.DeploymentToolkit.Tasks {
             Debug.Assert(path is not null);
 
             if (File.Exists(path)) {
-                this._logger.LogTrace("File \"{Source}\" exists in the "
+                this._logger.LogTrace("File {Source} exists in the "
                     + "specified form.", path);
                 return path;
             }
@@ -213,21 +213,21 @@ namespace Visus.DeploymentToolkit.Tasks {
                 foreach (var a in architectures) {
                     var retval = path.Insert(index, a);
                     this._logger.LogTrace("Checking unattend candidate "
-                        + "\"{Source}\".", retval);
+                        + "{Source}.", retval);
                     if (Path.Exists(retval)) {
                         return retval;
                     }
 
                     retval = path.Insert(index, '_' + a);
                     this._logger.LogTrace("Checking unattend candidate "
-                        + "\"{Source}\".", retval);
+                        + "{Source}.", retval);
                     if (Path.Exists(retval)) {
                         return retval;
                     }
 
                     retval = path.Insert(index, '-' + a);
                     this._logger.LogTrace("Checking unattend candidate "
-                        + "\"{Source}\".", retval);
+                        + "{Source}.", retval);
                     if (Path.Exists(retval)) {
                         return retval;
                     }
@@ -239,28 +239,28 @@ namespace Visus.DeploymentToolkit.Tasks {
                 foreach (var a in architectures) {
                     var retval = path + ext;
                     this._logger.LogTrace("Checking unattend candidate "
-                        + "\"{Source}\".", retval);
+                        + "{Source}.", retval);
                     if (Path.Exists(retval)) {
                         return retval;
                     }
 
                     retval = path + a + ext;
                     this._logger.LogTrace("Checking unattend candidate "
-                        + "\"{Source}\".", retval);
+                        + "{Source}.", retval);
                     if (Path.Exists(retval)) {
                         return retval;
                     }
 
                     retval = path + '_' + a + ext;
                     this._logger.LogTrace("Checking unattend candidate "
-                        + "\"{Source}\".", retval);
+                        + "{Source}.", retval);
                     if (Path.Exists(retval)) {
                         return retval;
                     }
 
                     retval = path + '-' + a + ext;
                     this._logger.LogTrace("Checking unattend candidate "
-                        + "\"{Source}\".", retval);
+                        + "{Source}.", retval);
                     if (Path.Exists(retval)) {
                         return retval;
                     }

@@ -43,6 +43,6 @@ namespace Visus.DeploymentToolkit.Vds {
         /// </summary>
         [FieldOffset(40)]
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 36)]
-        public string name;
+        public string Name;
     }
 }
