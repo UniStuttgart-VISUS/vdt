@@ -67,14 +67,14 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// <param name="logger"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public Task<IEnumerable<IDisk>> ApplyAsync(IEnumerable<IDisk>? disks,
                 IDiskManagement diskManagement,
                 ILogger logger,
                 CancellationToken cancellationToken) {
-            _ = diskManagement
-                ?? throw new ArgumentNullException(nameof(diskManagement));
-            _ = logger
-                ?? throw new ArgumentNullException(nameof(logger));
+            ArgumentNullException.ThrowIfNull(disks);
+            ArgumentNullException.ThrowIfNull(diskManagement);
+            ArgumentNullException.ThrowIfNull(logger);
 
             var retval = Enumerable.Empty<IDisk>();
             if (disks == null) {
@@ -84,7 +84,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
             switch (BuiltInCondition) {
                 case BuiltInCondition.HasLinuxPartition:
                     logger.LogInformation("Selecting disks with a Linux "
-                        + "partition on it.");
+                        + "partition on it for action {Action}.", this.Action);
                     retval = from d in disks
                              where d.Partitions.Any(p => p.IsType(PartitionType.AllLinux))
                              select d;
@@ -92,15 +92,23 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
                 case BuiltInCondition.HasMicrosoftPartition:
                     logger.LogInformation("Selecting disks with a Microsoft "
-                        + "partition on it.");
+                        + "partition on it for action {Action}.", this.Action);
                     retval = from d in disks
                              where d.Partitions.Any(p => p.IsType(PartitionType.AllMicrosoft))
                              select d;
                     break;
 
+                case BuiltInCondition.IsConvertible:
+                    logger.LogInformation("Selecting convertible disks for "
+                        + "action {Action}.", this.Action);
+                    retval = from d in disks
+                             where d.Flags.HasFlag(DiskFlags.StyleConvertible)
+                             select d;
+                    break;
+
                 case BuiltInCondition.IsEfiSystemDisk:
                     logger.LogInformation("Selecting a disk with an EFI system "
-                        + "partition on it.");
+                        + "partition on it for action {Action}.", this.Action);
                     retval = from d in disks
                              where d.Partitions.Any(p => p.IsType(PartitionType.EfiSystem))
                              select d;
@@ -108,46 +116,69 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
                 case BuiltInCondition.IsEmpty:
                     logger.LogInformation("Selecting disks without "
-                        + "any partition.");
+                        + "any partition for action {Action}.", this.Action);
                     retval = from d in disks
                              where !d.Partitions.Any()
                              select d;
                     break;
 
                 case BuiltInCondition.IsLargest:
-                    logger.LogInformation("Selecting the largest disk.");
+                    logger.LogInformation("Selecting the largest disk for "
+                        + "action {Action}.", this.Action);
                     retval = (from d in disks
                               orderby d.Size descending
                               select d).Take(1);
                     break;
 
                 case BuiltInCondition.IsMbrBootDisk:
-                    logger.LogInformation("Selecting a disk with a MBR on it.");
+                    logger.LogInformation("Selecting a disk with a MBR on it "
+                        + " for action {Action}.", this.Action);
                     retval = from d in disks
                              where d.Partitions.Any(p => p.IsBoot)
                              select d;
                     break;
 
+                case BuiltInCondition.IsReadOnly:
+                    logger.LogInformation("Selecting read-only disks for "
+                        + "action {Action}.", this.Action);
+                    retval = from d in disks
+                             where d.Flags.HasFlag(DiskFlags.ReadOnly)
+                             select d;
+                    break;
+
                 case BuiltInCondition.IsSmallest:
-                    logger.LogInformation("Selecting the smallest disk.");
+                    logger.LogInformation("Selecting the smallest disk for "
+                        + "action {Action}.", this.Action);
                     retval = (from d in disks
                               orderby d.Size ascending
                               select d).Take(1);
                     break;
 
+                case BuiltInCondition.IsUninitialised:
+                    logger.LogInformation("Selecting uninitialised disks for "
+                        + "action {Action}.", this.Action);
+                    retval = from d in disks
+                             where d.Flags.HasFlag(DiskFlags.Uninitialised)
+                             select d;
+                    break;
+
                 case BuiltInCondition.None:
                 default:
                     logger.LogInformation("Selecting a disk that fulfils the "
-                        + "condition {Condition}.",
-                        this.Condition);
+                        + "condition {Condition} for action {Action}.",
+                        this.Condition, this.Action);
                     retval = disks.AsQueryable().Where(this.Condition);
                     break;
             }
 
+            var cntSelected = retval.Count();
+            var selection = string.Join(", ",
+                retval.Select(d => d.FriendlyName));
+
             switch (Action) {
                 case DiskSelectionAction.Include:
                     logger.LogInformation("The selection includes {Included} "
-                        + "disk(s).", retval.Count());
+                        + "disk(s): {Selection}", cntSelected, selection);
                     if (!retval.Any()) {
                         logger.LogWarning("The disk selection step resulted in "
                             + "an empty set of disks to include.");
@@ -156,7 +187,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
                 case DiskSelectionAction.Exclude:
                     logger.LogInformation("The selection excludes {Excluded} "
-                        + "disk(s).", retval.Count());
+                        + "disk(s): {Selection}", cntSelected, selection);
                     retval = disks.AsQueryable().Except(retval);
                     if (!retval.Any()) {
                         logger.LogWarning("The disk selection step excluded "
@@ -166,7 +197,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
                 case DiskSelectionAction.Prefer:
                     logger.LogInformation("The selection prefers {Preferred} "
-                        + "disk(s).", retval.Count());
+                        + "disk(s): {Selection}", cntSelected, selection);
                     if (!retval.Any()) {
                         logger.LogWarning("The disk selection step resulted in "
                             + "an empty set of preferred disks, so the "

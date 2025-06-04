@@ -60,8 +60,12 @@ namespace Visus.DeploymentToolkit.Tasks {
             set;
         } = [
             new() {
-                BuiltInCondition = BuiltInCondition.HasLinuxPartition,
+                BuiltInCondition = BuiltInCondition.IsReadOnly,
                 Action = DiskSelectionAction.Exclude
+            },
+            new() {
+                BuiltInCondition = BuiltInCondition.IsUninitialised,
+                Action = DiskSelectionAction.Prefer
             },
             new() {
                 Condition = "BusType == \"Nvme\"",
@@ -82,10 +86,16 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <inheritdoc />
         public override async Task ExecuteAsync(
                 CancellationToken cancellationToken) {
+            this._logger.LogInformation("Retrieving disks that are potential "
+                + "candidates for installation.");
             var disks = await this._diskManagement
                 .GetDisksAsync(cancellationToken)
                 .ConfigureAwait(false);
 
+            this._logger.LogInformation("Found {DiskCount} disk(s) in the "
+                + "system which are now filtered in {Steps} step(s): {Disks}",
+                disks.Count(), this.Steps.Count(),
+                string.Join(", ", disks.Select(d => d.FriendlyName)));
             foreach (var s in this.Steps) {
                 disks = await s.ApplyAsync(disks,
                     this._diskManagement,

@@ -114,7 +114,7 @@ namespace Visus.DeploymentToolkit.Services {
 
             // First of all, make sure that the VDS is ready.
             {
-                this._logger.LogInformation("Waiting for the Virtual Disk "
+                this._logger.LogTrace("Waiting for the Virtual Disk "
                     + "Service to become ready.");
                 var status = _service.WaitForServiceReady();
                 if (status != 0) {
@@ -133,16 +133,29 @@ namespace Visus.DeploymentToolkit.Services {
                 cancellation.ThrowIfCancellationRequested();
 
                 if (unknown is IVdsSwProvider sw && sw != null) {
-                    // This is the default software provider in Windows.
+                    this._logger.LogTrace("Querying disks from the Microsoft "
+                        + "software provider.");
                     foreach (var d in GetDisks(sw, cancellation)) {
                         yield return d;
                     }
 
                 } else if (unknown is IVdsVdProvider vd && vd != null) {
-                    // Get virtual disks attached to the system.
+                    this._logger.LogTrace("Querying virtual disks attached to "
+                        + "the system.");
                     foreach (var d in GetDisks(vd, cancellation)) {
                         yield return d;
                     }
+                }
+            }
+
+            // Unallocated disks need the be enumerated separately. These
+            // are the most important ones for our scenario.
+            {
+                this._logger.LogTrace("Querying unallocated disks.");
+                this._service.QueryUnallocatedDisks(out var enumerator);
+                foreach (var d in enumerator.Enumerate<IVdsDisk>()) {
+                    cancellation.ThrowIfCancellationRequested();
+                    yield return new VdsDisk(d, DiskFlags.Uninitialised);
                 }
             }
         }
@@ -172,6 +185,13 @@ namespace Visus.DeploymentToolkit.Services {
             }
         }
 
+        /// <summary>
+        /// Enumerates all disks from the specified virtual disk provider.
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <param name="cancellation"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         private IEnumerable<IDisk> GetDisks(
                 IVdsVdProvider provider,
                 CancellationToken cancellation) {

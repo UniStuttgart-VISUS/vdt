@@ -22,6 +22,9 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         public StorageBusType BusType => StorageBusType.Unknown;
 
         /// <inheritdoc />
+        public DiskFlags Flags => DiskFlags.None;
+
+        /// <inheritdoc />
         public string FriendlyName => string.Empty;
 
         /// <summary>

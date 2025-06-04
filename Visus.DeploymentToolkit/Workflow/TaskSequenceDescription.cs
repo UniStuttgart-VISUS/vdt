@@ -48,10 +48,10 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static ValueTask<TaskSequenceDescription?> ParseAsync(
+        public static async ValueTask<TaskSequenceDescription?> ParseAsync(
                 string path) {
-            using var file = File.OpenRead(path);
-            return JsonSerializer.DeserializeAsync<TaskSequenceDescription>(
+            using (var file = File.OpenRead(path))
+            return await JsonSerializer.DeserializeAsync<TaskSequenceDescription>(
                 file, JsonOptions);
         }
         #endregion

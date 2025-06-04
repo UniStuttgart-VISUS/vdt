@@ -137,7 +137,8 @@ namespace Visus.DeploymentToolkit.Tasks {
             if (this.PartitionScheme is null) {
                 cancellationToken.ThrowIfCancellationRequested();
                 this._logger.LogInformation("No partition scheme provided, so "
-                    + "create the default partitioning scheme.");
+                    + "create the default partitioning scheme for {Firmware}.",
+                    this._systemInformation.Firmware);
                 this.PartitionScheme = this._systemInformation.Firmware switch {
                     FirmwareType.Bios => this.CreateBiosScheme(disk),
                     FirmwareType.Uefi => this.CreateUefiScheme(disk),
@@ -148,22 +149,38 @@ namespace Visus.DeploymentToolkit.Tasks {
             }
 
             cancellationToken.ThrowIfCancellationRequested();
-            this._logger.LogInformation("Cleaning disk {DiskID}.",
-                this.Disk.ID);
+            this._logger.LogInformation("Preparing {DiskID} ({Name}) for "
+                + "deployment by cleaning everything on it.",
+                this.Disk.ID, this.Disk.FriendlyName);
             try {
                 await disk.CleanAsync(this.CleanFlags, cancellationToken);
             } catch (COMException ex) {
                 if (this.CleanFlags.HasFlag(CleanFlags.IgnoreErrors)) {
                     this._logger.LogWarning(ex, "Cleaning disk {DiskID} failed "
                         + "with error code {Hresult}. The error will be "
-                        + $"ignored bacause {CleanFlags.IgnoreErrors} is set.",
+                        + $"ignored because {CleanFlags.IgnoreErrors} is set.",
                         this.Disk.ID, ex.HResult);
                 } else {
                     this._logger.LogError(ex, "Cleaning disk {DiskID} failed "
-                        + "with error code {Hresult}.", this.Disk.ID,
-                        ex.HResult);
+                        + "with error code {Hresult}. Make sure that the "
+                        + "selected disk is not a read-only device.",
+                        this.Disk.ID, ex.HResult);
                     throw;
                 }
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+            this._logger.LogInformation("Making sure that disk {DiskID} has "
+                + "the partition style {RequiredPartitionStyle} (is "
+                + "currently {CurrentPartitionStyle}).", this.Disk.ID,
+                this.PartitionScheme.PartitionStyle, this.Disk.PartitionStyle);
+            try {
+                await disk.ConvertAsync(this.PartitionScheme.PartitionStyle);
+            } catch (COMException ex) when (ex.HResult == VDS_E_DISK_NOT_CONVERTIBLE) {
+                this._logger.LogError(ex, "Disk {DiskID} is not convertible. "
+                    + "Make sure that the selected disk is not a read-only "
+                    + "device.", this.Disk.ID);
+                throw;
             }
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -303,9 +320,9 @@ namespace Visus.DeploymentToolkit.Tasks {
                 this._logger.LogInformation("Creating GPT partition "
                     + "{Partition} of type {Type} with ID {ID} and "
                     + "attributes {Attributes} at offset {Offset} with length "
-                    + "{Size}.", info.Name, info.PartitionType.ToString("B"),
-                    info.PartitionId.ToString("B"), info.Attributes,
-                    partition.Offset, partition.Size);
+                    + "{Size}.", info.Name, info.PartitionType,
+                    info.PartitionId, info.Attributes, partition.Offset,
+                    partition.Size);
                 await disk.CreatePartitionAsync(partition.Offset,
                     partition.Size,
                     info,
@@ -421,6 +438,15 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             return retval;
         }
+        #endregion
+
+        #region Private constants
+        /// <summary>
+        /// The specified disk is not convertible. CDROMs and DVDs  are examples
+        /// of disks that are not convertible.
+        /// </summary>
+        private const int VDS_E_DISK_NOT_CONVERTIBLE
+            = unchecked((int) 0x80042559);
         #endregion
 
         #region Private fields

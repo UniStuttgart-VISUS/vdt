@@ -89,6 +89,9 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <inheritdoc />
         public async Task<IEnumerable<ITaskSequenceDescription>>
                 GetTaskSequencesAsync() {
+            this._logger.LogTrace("Retrieving all task sequences in "
+                + "{Path} using the filter {Filter}.", this._options.Path,
+                this._options.Filter);
             var files = Directory.GetFiles(this._options.Path,
                 this._options.Filter,
                 this._options.SearchOption);
@@ -96,10 +99,14 @@ namespace Visus.DeploymentToolkit.Workflow {
                 Capacity = files.Length
             };
 
+            this._logger.LogTrace("Found {Count} potential task sequences.",
+                files.Length);
             foreach (var f in files) {
                 var path = Path.Combine(this._options.Path, f);
 
                 try {
+                    this._logger.LogTrace("Parsing task sequence {Path}.",
+                        path);
                     var desc = await TaskSequenceDescription.ParseAsync(path)
                         .ConfigureAwait(false);
 

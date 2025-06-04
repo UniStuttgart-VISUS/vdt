@@ -26,26 +26,29 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         #region Public properties
         /// <inheritdoc />
         public StorageBusType BusType
-            => (StorageBusType) _properties.BusType;
+            => (StorageBusType) this._properties.BusType;
 
         /// <inheritdoc />
-        public string FriendlyName => _properties.FriendlyName;
+        public DiskFlags Flags { get; }
+
+        /// <inheritdoc />
+        public string FriendlyName => this._properties.FriendlyName;
 
         /// <inheritdoc />
         public Guid ID => _properties.Id;
 
         /// <inheritdoc />
-        public IEnumerable<IPartition> Partitions => _partitions.Value;
+        public IEnumerable<IPartition> Partitions => this._partitions.Value;
 
         /// <inheritdoc />
         public PartitionStyle PartitionStyle
-            => (PartitionStyle) _properties.PartitionStyle;
+            => (PartitionStyle) this._properties.PartitionStyle;
 
         /// <inheritdoc />
         public uint SectorSize => this._properties.BytesPerSector;
 
         /// <inheritdoc />
-        public ulong Size => _properties.Size;
+        public ulong Size => this._properties.Size;
 
         /// <inheritdoc />
         public IEnumerable<Tuple<IVolume, IPartition>> VolumePartitions {
@@ -194,23 +197,24 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                 return null;
             }
         }
+
+        /// <inheritdoc />
+        public override string ToString() => $"{this.FriendlyName} ({this.ID})";
         #endregion
 
         #region Internal constructors
-        internal VdsDisk(IVdsDisk disk) {
+        internal VdsDisk(IVdsDisk disk, DiskFlags flags = DiskFlags.None) {
             this._disk = disk ?? throw new ArgumentNullException(nameof(disk));
             this._disk.GetProperties(out _properties);
             this._partitions = new(() => {
                 if (this._disk is IVdsAdvancedDisk disk) {
-                    disk.QueryPartitions(out var props, out var _);
-                    this._disk.QueryExtents(out var exts, out var _);
-
-                    return from p in props
-                           //let e = exts.Where(ee => ee.Offset == p.Offset).Single()
-                           select new VdsPartition(p);
-                } else {
-                    return Enumerable.Empty<VdsPartition>();
+                    try {
+                        disk.QueryPartitions(out var props, out var _);
+                        return props.Select(p => new VdsPartition(p));
+                    } catch { /* We can ignore this for unit'd disks. */ }
                 }
+
+                return Enumerable.Empty<VdsPartition>();
             });
             this._volumes = new(() => {
                 disk.GetPack(out var pack);
@@ -218,6 +222,22 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                 return enumerator.Enumerate<IVdsVolume>()
                     .Select(v => new VdsVolume(v));
             });
+
+
+            this.Flags = flags;
+            if (this._properties.Flags.HasFlag(VDS_DISK_FLAG.READ_ONLY)) {
+                this.Flags |= DiskFlags.ReadOnly;
+            }
+            if (this._properties.Flags.HasFlag(VDS_DISK_FLAG.CURRENT_READ_ONLY)) {
+                this.Flags |= DiskFlags.ReadOnly;
+            }
+            if (this._properties.Flags.HasFlag(VDS_DISK_FLAG.AUDIO_CD)) {
+                this.Flags |= DiskFlags.ReadOnly;
+                this.Flags |= DiskFlags.Removable;
+            }
+            if (this._properties.Flags.HasFlag(VDS_DISK_FLAG.STYLE_CONVERTIBLE)) {
+                this.Flags |= DiskFlags.StyleConvertible;
+            }
         }
         #endregion
 

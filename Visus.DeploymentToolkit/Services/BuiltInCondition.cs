@@ -35,6 +35,11 @@ namespace Visus.DeploymentToolkit.Services {
         HasMicrosoftPartition,
 
         /// <summary>
+        /// Selects disks that are marked as convertible between MBR and GPT.
+        /// </summary>
+        IsConvertible,
+
+        /// <summary>
         /// Selects disks with a FAT32-formatted EFI boot partition.
         /// </summary>
         IsEfiSystemDisk,
@@ -45,18 +50,28 @@ namespace Visus.DeploymentToolkit.Services {
         IsEmpty,
 
         /// <summary>
-        /// Selects MBR disks with the boot flag set.
-        /// </summary>
-        IsMbrBootDisk,
-
-        /// <summary>
         /// Selects the disk with the largest overall capacity.
         /// </summary>
         IsLargest,
 
         /// <summary>
+        /// Selects MBR disks with the boot flag set.
+        /// </summary>
+        IsMbrBootDisk,
+
+        /// <summary>
+        /// Selects all read-only devices.
+        /// </summary>
+        IsReadOnly,
+
+        /// <summary>
         /// Selects the disk with the smallest overall capacity.
         /// </summary>
         IsSmallest,
+
+        /// <summary>
+        /// Selects uninitialised disks.
+        /// </summary>
+        IsUninitialised,
     }
 }

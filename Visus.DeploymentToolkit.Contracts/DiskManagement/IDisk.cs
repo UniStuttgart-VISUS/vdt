@@ -24,6 +24,11 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         StorageBusType BusType { get; }
 
         /// <summary>
+        /// Gets some properties about of the disk.
+        /// </summary>
+        DiskFlags Flags { get; }
+
+        /// <summary>
         /// Gets the friendly name of the disk.
         /// </summary>
         string FriendlyName { get; }

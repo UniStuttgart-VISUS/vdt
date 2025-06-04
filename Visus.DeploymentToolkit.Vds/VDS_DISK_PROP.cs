@@ -36,7 +36,7 @@ namespace Visus.DeploymentToolkit.Vds {
 
         public uint TracksPerCylinder;
 
-        public uint Flags;
+        public VDS_DISK_FLAG Flags;
 
         public VDS_STORAGE_BUS_TYPE BusType;
 
