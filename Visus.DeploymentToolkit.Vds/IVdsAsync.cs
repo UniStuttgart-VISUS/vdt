@@ -38,7 +38,7 @@ namespace Visus.DeploymentToolkit.Vds {
         /// </summary>
         /// <param name="hr"></param>
         /// <param name="async"></param>
-        void Wait(out uint hr, out VDS_ASYNC_OUTPUT async);
+        void Wait(out int hr, out VDS_ASYNC_OUTPUT async);
 
         /// <summary>
         /// Returns when the asynchronous operation is in progress, or has either
@@ -46,6 +46,6 @@ namespace Visus.DeploymentToolkit.Vds {
         /// </summary>
         /// <param name="hr"></param>
         /// <param name="percentCompleted"></param>
-        void QueryStatus(out uint hr, out uint percentCompleted);
+        void QueryStatus(out int hr, out uint percentCompleted);
     }
 }

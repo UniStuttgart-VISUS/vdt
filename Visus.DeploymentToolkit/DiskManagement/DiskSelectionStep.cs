@@ -11,6 +11,7 @@ using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Services;
 
 
@@ -85,7 +86,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                     logger.LogInformation("Selecting disks with a Linux "
                         + "partition on it.");
                     retval = from d in disks
-                             where d.Partitions.Any(p => PartitionType.AllLinux.Contains(p.Type))
+                             where d.Partitions.Any(p => p.IsType(PartitionType.AllLinux))
                              select d;
                     break;
 
@@ -93,15 +94,15 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                     logger.LogInformation("Selecting disks with a Microsoft "
                         + "partition on it.");
                     retval = from d in disks
-                             where d.Partitions.Any(p => PartitionType.AllMicrosoft.Contains(p.Type))
+                             where d.Partitions.Any(p => p.IsType(PartitionType.AllMicrosoft))
                              select d;
                     break;
 
-                case BuiltInCondition.IsEfiBootDisk:
+                case BuiltInCondition.IsEfiSystemDisk:
                     logger.LogInformation("Selecting a disk with an EFI system "
                         + "partition on it.");
                     retval = from d in disks
-                             where d.Partitions.Any(p => PartitionType.EfiSystem.Equals(p.Type))
+                             where d.Partitions.Any(p => p.IsType(PartitionType.EfiSystem))
                              select d;
                     break;
 

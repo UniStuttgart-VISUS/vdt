@@ -8,7 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
+using System.Threading;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Vds;
 
@@ -19,7 +21,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
     /// A <see cref="IDisk"/> as enumerated by the <see cref="VdsService"/>.
     /// </summary>
     [SupportedOSPlatform("windows")]
-    internal sealed class VdsDisk : IDisk {
+    internal sealed class VdsDisk : IAdvancedDisk {
 
         #region Public properties
         /// <inheritdoc />
@@ -43,10 +45,49 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         public ulong Size => _properties.Size;
 
         /// <inheritdoc />
+        public IEnumerable<Tuple<IVolume, IPartition>> VolumePartitions {
+            get {
+                var partitions = this._partitions.Value.ToArray();
+                foreach (var v in this._volumes.Value) {
+                    var sdn = v.StorageDeviceNumber;
+                    if (sdn.PartitionNumber < partitions.Length) {
+                        yield return new(v, partitions[sdn.PartitionNumber]);
+                    }
+                }
+            }
+        }
+
+        /// <inheritdoc />
         public IEnumerable<IVolume> Volumes => _volumes.Value;
         #endregion
 
         #region Public methods
+        /// <inheritdoc />
+        public void AssignDriveLetter(ulong offset, char letter) {
+            if (this._disk is not IVdsAdvancedDisk disk) {
+                throw new InvalidOperationException(Errors.NoAdvancedDisk);
+            }
+
+            disk.AssignDriveLetter(offset, letter);
+        }
+
+        /// <inheritdoc />
+        public Task<VDS_ASYNC_OUTPUT> CleanAsync(CleanFlags flags,
+                CancellationToken cancellationToken) {
+            if (this._disk is not IVdsAdvancedDisk disk) {
+                throw new InvalidOperationException(Errors.NoAdvancedDisk);
+            }
+
+            var force = ((flags & CleanFlags.Force) != 0);
+            var forceOem = ((flags & CleanFlags.ForceOem) != 0);
+            var fullClean = ((flags & CleanFlags.FullClean) != 0);
+
+            cancellationToken.ThrowIfCancellationRequested();
+            disk.Clean(force, forceOem, fullClean, out var async);
+
+            return async.WaitAsync(cancellationToken);
+        }
+
         /// <inheritdoc />
         public Task ConvertAsync(PartitionStyle style) {
             switch (style) {
@@ -60,6 +101,94 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
                 default:
                     throw new ArgumentException();
+            }
+        }
+
+        /// <inheritdoc />
+        public Task<VDS_ASYNC_OUTPUT> CreatePartitionAsync(ulong offset,
+                ulong size,
+                MbrPartitionParameters parameters,
+                CancellationToken cancellationToken) {
+            if (this._disk is not IVdsAdvancedDisk disk) {
+                throw new InvalidOperationException(Errors.NoAdvancedDisk);
+            }
+
+            CREATE_PARTITION_PARAMETERS cpp = new() {
+                Style = VDS_PARTITION_STYLE.MBR,
+                MbrPartInfo = parameters
+            };
+
+            cancellationToken.ThrowIfCancellationRequested();
+            disk.CreatePartition(offset, size, ref cpp, out var async);
+            return async.WaitAsync(cancellationToken);
+        }
+
+        /// <inheritdoc />
+        public Task<VDS_ASYNC_OUTPUT> CreatePartitionAsync(ulong offset,
+                ulong size,
+                VDS_PARTITION_INFO_GPT parameters,
+                CancellationToken cancellationToken) {
+            if (this._disk is not IVdsAdvancedDisk disk) {
+                throw new InvalidOperationException(Errors.NoAdvancedDisk);
+            }
+
+            CREATE_PARTITION_PARAMETERS cpp = new() {
+                Style = VDS_PARTITION_STYLE.GPT,
+                GptPartInfo = parameters
+            };
+
+            cancellationToken.ThrowIfCancellationRequested();
+            disk.CreatePartition(offset, size, ref cpp, out var async);
+            return async.WaitAsync(cancellationToken);
+        }
+
+        /// <inheritdoc />
+        public void DeleteDriveLetter(ulong offset, char letter) {
+            if (this._disk is not IVdsAdvancedDisk disk) {
+                throw new InvalidOperationException(Errors.NoAdvancedDisk);
+            }
+
+            disk.DeleteDriveLetter(offset, letter);
+        }
+
+        /// <inheritdoc />
+        public Task<VDS_ASYNC_OUTPUT> FormatPartitionAsync(ulong offset,
+                VDS_FILE_SYSTEM_TYPE type,
+                string label,
+                uint unitAllocationSize,
+                FormatFlags flags,
+                CancellationToken cancellationToken) {
+            if (this._disk is not IVdsAdvancedDisk disk) {
+                throw new InvalidOperationException(Errors.NoAdvancedDisk);
+            }
+
+            bool force = ((flags & FormatFlags.Force) != 0);
+            bool quick = ((flags & FormatFlags.Quick) != 0);
+            bool compress = ((flags & FormatFlags.EnableCompression) != 0);
+
+            cancellationToken.ThrowIfCancellationRequested();
+            disk.FormatPartition(offset,
+                type,
+                label,
+                unitAllocationSize,
+                force,
+                quick,
+                compress,
+                out var async);
+            return async.WaitAsync(cancellationToken);
+        }
+
+        /// <inheritdoc />
+        public char? GetDriveLetter(ulong offset) {
+            if (this._disk is not IVdsAdvancedDisk disk) {
+                return null;
+            }
+
+            try {
+                disk.GetDriveLetter(offset, out var retval);
+                return retval;
+            } catch {
+                return null;
             }
         }
         #endregion
@@ -77,7 +206,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                            //let e = exts.Where(ee => ee.Offset == p.Offset).Single()
                            select new VdsPartition(p);
                 } else {
-                    return Enumerable.Empty<IPartition>();
+                    return Enumerable.Empty<VdsPartition>();
                 }
             });
             this._volumes = new(() => {
@@ -91,9 +220,9 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
         #region Private fields
         private readonly IVdsDisk _disk;
-        private readonly Lazy<IEnumerable<IPartition>> _partitions;
+        private readonly Lazy<IEnumerable<VdsPartition>> _partitions;
         private readonly VDS_DISK_PROP _properties;
-        private readonly Lazy<IEnumerable<IVolume>> _volumes;
+        private readonly Lazy<IEnumerable<VdsVolume>> _volumes;
         #endregion
     }
 }

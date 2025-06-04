@@ -162,6 +162,9 @@
   <data name="RegistryValue" xml:space="preserve">
     <value>Modify a registry value</value>
   </data>
+  <data name="RestoreBootConfiguration" xml:space="preserve">
+    <value>Configure boot sector</value>
+  </data>
   <data name="RunDeimosBootstrapper" xml:space="preserve">
     <value>Runs the installation bootstrapper copying the required files from the network and starts the agent.</value>
   </data>

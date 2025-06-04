@@ -111,15 +111,13 @@ namespace Visus.DeploymentToolkit.Extensions {
         /// Copies (if <paramref name="force"/> is set <see langword="false"/>
         /// only unsed) public settable properties annotated with
         /// <see cref="FromEnvironmentAttribute"/> of <paramref name="dst"/>
-        /// from the specified environment variable
+        /// from the annotated environment variables.
         /// </summary>
         /// <param name="dst"></param>
-        /// <param name="variable"></param>
         /// <param name="force"></param>
         /// <exception cref="ArgumentNullException">If <paramref name="dst"/>
         /// is <see langword="null"/>.</exception>
         public static void CopyFromEnvironment(this object dst,
-                string variable,
                 bool force = false) {
             ArgumentNullException.ThrowIfNull(dst);
 

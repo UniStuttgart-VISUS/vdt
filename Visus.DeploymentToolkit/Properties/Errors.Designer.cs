@@ -259,6 +259,24 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The operation cannot be performed, because the underlying disk descriptor is not an advanced one..
+        /// </summary>
+        internal static string NoAdvancedDisk {
+            get {
+                return ResourceManager.GetString("NoAdvancedDisk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The boot drive could not be determined..
+        /// </summary>
+        internal static string NoBootDrive {
+            get {
+                return ResourceManager.GetString("NoBootDrive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A DISM image needs to be opened before this operation can be performed..
         /// </summary>
         internal static string NoDismSession {
@@ -286,6 +304,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The system drive could not be determined..
+        /// </summary>
+        internal static string NoSystemDrive {
+            get {
+                return ResourceManager.GetString("NoSystemDrive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The task sequence requires elevation, but the process is not running as administrator..
         /// </summary>
         internal static string NotAdministrator {
@@ -300,6 +327,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string NoVdsServiceLoader {
             get {
                 return ResourceManager.GetString("NoVdsServiceLoader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to It was not possible to determine any device path for the volume..
+        /// </summary>
+        internal static string NoVolumePath {
+            get {
+                return ResourceManager.GetString("NoVolumePath", resourceCulture);
             }
         }
         
@@ -381,6 +417,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string UnexpectedPhase {
             get {
                 return ResourceManager.GetString("UnexpectedPhase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The installation disk provided is not of a supported type..
+        /// </summary>
+        internal static string UnsupportedInstallationDisk {
+            get {
+                return ResourceManager.GetString("UnsupportedInstallationDisk", resourceCulture);
             }
         }
         

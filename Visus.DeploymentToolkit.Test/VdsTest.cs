@@ -5,8 +5,10 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Vds;
 
@@ -34,13 +36,14 @@ namespace Visus.DeploymentToolkit.Test {
         }
 
         [TestMethod]
-        public void TestMarshalling() {
-            Assert.AreEqual(8, Marshal.SizeOf<VDS_PARTITION_INFO_MBR>(), "VDS_PARTITION_INFO_MBR");
-            Assert.AreEqual(112, Marshal.SizeOf<VDS_PARTITION_INFO_GPT>(), "VDS_PARTITION_INFO_GPT");
-            Assert.AreEqual(144, Marshal.SizeOf<VDS_PARTITION_PROP>(), "VDS_PARTITION_PROP");
-            Assert.AreEqual(2, Marshal.SizeOf<MbrPartitionParameters>(), "MbrPartitionParameters");
-            Assert.AreEqual(120, Marshal.SizeOf<CREATE_PARTITION_PARAMETERS>(), "CREATE_PARTITION_PARAMETERS");
-            Assert.AreEqual(32, Marshal.SizeOf<VDS_ASYNC_OUTPUT>(), "VDS_ASYNC_OUTPUT");
+        public async Task DisksFromVdsService() {
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                var vds = new VdsService(this._loggerFactory.CreateLogger<VdsService>());
+                var disks = await vds.GetDisksAsync(CancellationToken.None);
+                Assert.IsTrue(disks.Any());
+                Assert.IsTrue(disks.Any(d => d.Partitions.Any()));
+                Assert.IsTrue(disks.Any(d => d.Volumes.Any()));
+            }
         }
 
         [TestMethod]
@@ -157,35 +160,6 @@ namespace Visus.DeploymentToolkit.Test {
         }
 
         [TestMethod]
-        public async Task DisksFromVdsService() {
-            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
-                var vds = new VdsService(this._loggerFactory.CreateLogger<VdsService>());
-                var disks = await vds.GetDisksAsync(CancellationToken.None);
-                Assert.IsTrue(disks.Any());
-            }
-        }
-
-        [TestMethod]
-        public void FileSystemTypes() {
-            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
-                var loader = new VdsServiceLoader() as IVdsServiceLoader;
-                Assert.IsNotNull(loader, "Have IVdsServiceLoader");
-
-                IVdsService service;
-                loader.LoadService(null, out service);
-                Assert.IsNotNull(service, "Have IVdsService");
-
-                {
-                    var status = service.WaitForServiceReady();
-                    Assert.AreEqual(0u, status, "WaitForServiceReady succeeded");
-                }
-
-                var fstp = service.QueryFileSystemTypes();
-                Assert.IsTrue(fstp.Any());
-            }
-        }
-
-        [TestMethod]
         public void EnumerateVolumes() {
             if (WindowsIdentity.GetCurrent().IsAdministrator()) {
                 var loader = new VdsServiceLoader() as IVdsServiceLoader;
@@ -264,6 +238,54 @@ namespace Visus.DeploymentToolkit.Test {
                             var reparsePoints = volumeMF.QueryReparsePoints();
                             Assert.IsNotNull(reparsePoints);
                         }
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
+        public void FileSystemTypes() {
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                var loader = new VdsServiceLoader() as IVdsServiceLoader;
+                Assert.IsNotNull(loader, "Have IVdsServiceLoader");
+
+                IVdsService service;
+                loader.LoadService(null, out service);
+                Assert.IsNotNull(service, "Have IVdsService");
+
+                {
+                    var status = service.WaitForServiceReady();
+                    Assert.AreEqual(0u, status, "WaitForServiceReady succeeded");
+                }
+
+                var fstp = service.QueryFileSystemTypes();
+                Assert.IsTrue(fstp.Any());
+            }
+        }
+
+
+        [TestMethod]
+        public void TestMarshalling() {
+            Assert.AreEqual(8, Marshal.SizeOf<VDS_PARTITION_INFO_MBR>(), "VDS_PARTITION_INFO_MBR");
+            Assert.AreEqual(112, Marshal.SizeOf<VDS_PARTITION_INFO_GPT>(), "VDS_PARTITION_INFO_GPT");
+            Assert.AreEqual(144, Marshal.SizeOf<VDS_PARTITION_PROP>(), "VDS_PARTITION_PROP");
+            Assert.AreEqual(2, Marshal.SizeOf<MbrPartitionParameters>(), "MbrPartitionParameters");
+            Assert.AreEqual(120, Marshal.SizeOf<CREATE_PARTITION_PARAMETERS>(), "CREATE_PARTITION_PARAMETERS");
+            Assert.AreEqual(32, Marshal.SizeOf<VDS_ASYNC_OUTPUT>(), "VDS_ASYNC_OUTPUT");
+        }
+
+        [TestMethod]
+        public async Task PartitionForVolume() {
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                var vds = new VdsService(this._loggerFactory.CreateLogger<VdsService>());
+                var disks = await vds.GetDisksAsync(CancellationToken.None);
+                Assert.IsTrue(disks.Any());
+                Assert.IsTrue(disks.Any(d => d.VolumePartitions.Any()));
+
+                foreach (var d in disks) {
+                    foreach (var v in d.VolumePartitions) {
+                        Assert.IsNotNull(v.Item1);
+                        Assert.IsNotNull(v.Item2);
                     }
                 }
             }

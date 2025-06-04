@@ -4,9 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using System.Management;
 using System.Threading.Tasks;
-using Visus.DeploymentToolkit.Bcd;
 using Visus.DeploymentToolkit.SystemInformation;
 
 
@@ -39,7 +37,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <param name="firmware">The firmware for which to install the boot
         /// setctor.</param>
         /// <returns>A task for waiting on the operation to complete.</returns>
-        Task CreateBcdStore(string windowsPath, string? bootDrive,
+        Task CreateBcdStoreAsync(string windowsPath, string? bootDrive,
             FirmwareType firmware);
 
         /// <summary>
@@ -53,7 +51,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <param name="firmware">The firmware for which to install the boot
         /// setctor.</param>
         /// <returns>A task for waiting on the operation to complete.</returns>
-        Task CreateBootsector(string drive, string version,
+        Task CreateBootsectorAsync(string drive, string version,
             FirmwareType firmware);
 
     }

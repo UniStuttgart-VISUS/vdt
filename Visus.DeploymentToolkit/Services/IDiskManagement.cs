@@ -39,5 +39,21 @@ namespace Visus.DeploymentToolkit.Services {
         /// <returns>The list of disks in the system.</returns>
         Task<IEnumerable<IDisk>> GetDisksAsync(
             CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Gets all disks that have at least one partition of the specified
+        /// type.
+        /// </summary>
+        /// <param name="partitionType">The type of partition to be searched.
+        /// </param>
+        /// <param name="cancellationToken">A cancellation token for aborting
+        /// the operation.</param>
+        /// <returns>A list of disks with matching partitions.</returns>
+        /// <exception cref="ArgumentNullException">If the
+        /// <paramref name="partitionType"/> is <see langword="null"/>.
+        /// </exception>
+        Task<IEnumerable<IDisk>> GetDisksAsync(
+            PartitionType partitionType,
+            CancellationToken cancellationToken);
     }
 }

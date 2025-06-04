@@ -85,7 +85,7 @@ namespace Visus.DeploymentToolkit.Test {
                 }
 
                 {
-                    selection.BuiltInCondition = BuiltInCondition.IsEfiBootDisk;
+                    selection.BuiltInCondition = BuiltInCondition.IsEfiSystemDisk;
                     var selected = await selection.ApplyAsync(disks, service, logger);
                     Assert.IsTrue(selected.Any());
                 }

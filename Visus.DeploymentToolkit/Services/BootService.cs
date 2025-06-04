@@ -67,7 +67,7 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         /// <inheritdoc />
-        public async Task CreateBcdStore(string windowsPath,
+        public async Task CreateBcdStoreAsync(string windowsPath,
                 string? bootDrive,
                 FirmwareType firmware) {
             ArgumentException.ThrowIfNullOrWhiteSpace(windowsPath);
@@ -89,7 +89,7 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         /// <inheritdoc />
-        public async Task CreateBootsector(string drive,
+        public async Task CreateBootsectorAsync(string drive,
                 string version,
                 FirmwareType firmware) {
             ArgumentException.ThrowIfNullOrWhiteSpace(drive);

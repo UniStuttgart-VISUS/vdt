@@ -37,7 +37,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <summary>
         /// Selects disks with a FAT32-formatted EFI boot partition.
         /// </summary>
-        IsEfiBootDisk,
+        IsEfiSystemDisk,
 
         /// <summary>
         /// Selects the disks that have not partitions on them.

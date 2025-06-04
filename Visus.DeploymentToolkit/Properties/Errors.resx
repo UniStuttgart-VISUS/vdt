@@ -228,4 +228,19 @@
   <data name="UnexpectedFirmware" xml:space="preserve">
     <value>The partition step has no default schema for {0} firmware.</value>
   </data>
+  <data name="NoSystemDrive" xml:space="preserve">
+    <value>The system drive could not be determined.</value>
+  </data>
+  <data name="NoBootDrive" xml:space="preserve">
+    <value>The boot drive could not be determined.</value>
+  </data>
+  <data name="UnsupportedInstallationDisk" xml:space="preserve">
+    <value>The installation disk provided is not of a supported type.</value>
+  </data>
+  <data name="NoVolumePath" xml:space="preserve">
+    <value>It was not possible to determine any device path for the volume.</value>
+  </data>
+  <data name="NoAdvancedDisk" xml:space="preserve">
+    <value>The operation cannot be performed, because the underlying disk descriptor is not an advanced one.</value>
+  </data>
 </root>

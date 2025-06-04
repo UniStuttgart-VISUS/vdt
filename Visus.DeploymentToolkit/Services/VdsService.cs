@@ -52,7 +52,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <inheritdoc />
         public async Task<IDisk?> GetDiskAsync(Guid id,
                 CancellationToken cancellationToken) {
-            var disks = await GetDisksAsync(cancellationToken)
+            var disks = await this.GetDisksAsync(cancellationToken)
                 .ConfigureAwait(false);
             return disks.Where(d => d.ID == id).SingleOrDefault();
         }
@@ -62,6 +62,17 @@ namespace Visus.DeploymentToolkit.Services {
                 CancellationToken cancellationToken) {
             return Task<IEnumerable<IDisk>>.Factory.StartNew(
                 () => GetDisks(cancellationToken));
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<IDisk>> GetDisksAsync(
+                PartitionType partitionType,
+                CancellationToken cancellationToken) {
+            ArgumentNullException.ThrowIfNull(partitionType);
+            var disks = await this.GetDisksAsync(cancellationToken)
+                .ConfigureAwait(false);
+            return disks.Where(d => d.Partitions.Any(
+                p => partitionType.Equals(p.Type)));
         }
         #endregion
 

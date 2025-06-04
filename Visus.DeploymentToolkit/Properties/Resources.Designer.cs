@@ -196,6 +196,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configure boot sector.
+        /// </summary>
+        internal static string RestoreBootConfiguration {
+            get {
+                return ResourceManager.GetString("RestoreBootConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Runs the installation bootstrapper copying the required files from the network and starts the agent..
         /// </summary>
         internal static string RunDeimosBootstrapper {

@@ -62,10 +62,10 @@ namespace Visus.DeploymentToolkit.Tasks {
                     ArgumentNullException.ThrowIfNull(s.WorkingDirectory);
                     t.Image = Path.Combine("sources", "boot.wim");
                     t.ImageIndex = 1;
-                    t.TemporaryDirectory = s.WorkingDirectory;
-                    //t.Path = s.
+                    //t.Path = s.InstallationDisk.Vol
                 })
-                //.Add<Bootse>
+                .Add<RestoreBootConfiguration>()
+                .Add<RebootMachine>()
                 .Build();
 
             return Task.CompletedTask;

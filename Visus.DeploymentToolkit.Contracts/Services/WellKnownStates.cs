@@ -24,6 +24,11 @@ namespace Visus.DeploymentToolkit.Services {
         public const string AgentPath = nameof(IState.AgentPath);
 
         /// <summary>
+        /// The path where the boot drive is mounted.
+        /// </summary>
+        public const string BootDrive = nameof(IState.BootDrive);
+
+        /// <summary>
         /// The directory where the deployment share is mounted.
         /// </summary>
         public const string DeploymentDirectory

@@ -43,6 +43,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         [Required]
         [DirectoryExists]
         [FromState(WellKnownStates.InstallationDirectory)]
+        [FromEnvironment("DEIMOS_INSTALLATION_DIRECTORY")]
         public string Path { get; set; } = null!;
 
         /// <summary>
@@ -58,9 +59,18 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <inheritdoc />
         public override Task ExecuteAsync(CancellationToken cancellationToken) {
             this.CopyFrom(this._state);
+            this.CopyFromEnvironment();
             this.Validate();
 
             return Task.Run(() => {
+                if (this.TemporaryDirectory is null) {
+                    this._logger.LogTrace("Setting temporary directory for WIM "
+                        + "operations to working curren tdirectory "
+                        + " \"{WorkingDirectory}\".",
+                        this._state.WorkingDirectory);
+                    this.TemporaryDirectory = this._state.WorkingDirectory;
+                }
+
                 using var wim = this.OpenFile();
 
                 cancellationToken.ThrowIfCancellationRequested();

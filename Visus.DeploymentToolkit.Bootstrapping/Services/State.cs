@@ -55,6 +55,12 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         /// <inheritdoc />
+        public string? BootDrive {
+            get => this[WellKnownStates.BootDrive] as string;
+            set => this[WellKnownStates.BootDrive] = value;
+        }
+
+        /// <inheritdoc />
         public string? DeploymentDirectory {
             get => this[WellKnownStates.DeploymentDirectory] as string;
             set => this[WellKnownStates.DeploymentDirectory] = value;

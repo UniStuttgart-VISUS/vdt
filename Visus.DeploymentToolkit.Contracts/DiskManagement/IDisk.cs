@@ -53,6 +53,11 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         ulong Size { get; }
 
         /// <summary>
+        /// Gets all partitions that can be mapped to a volume.
+        /// </summary>
+        IEnumerable<Tuple<IVolume, IPartition>> VolumePartitions { get; }
+
+        /// <summary>
         /// Gets the volumes on the disk.
         /// </summary>
         IEnumerable<IVolume> Volumes { get; }

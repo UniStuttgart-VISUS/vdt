@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 
@@ -31,7 +32,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// <summary>
         /// Gets or sets the partitions to be created on the disk.
         /// </summary>
-        public List<IPartition> Partitions { get; set; } = new();
+        public List<PartitionDefinition> Partitions { get; set; } = new();
 
         /// <inheritdoc />
         IEnumerable<IPartition> IDisk.Partitions => this.Partitions;
@@ -46,13 +47,12 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// <inheritdoc />
         public ulong Size => 0;
 
-        /// <summary>
-        /// Gets or sets the volumes to be created on the disk.
-        /// </summary>
-        public List<IVolume> Volumes { get; set; } = new();
+        /// <inheritdoc />
+        public IEnumerable<Tuple<IVolume, IPartition>> VolumePartitions
+            => this.Partitions.Select(p => new Tuple<IVolume, IPartition>(p, p));
 
         /// <inheritdoc />
-        IEnumerable<IVolume> IDisk.Volumes => Volumes;
+        public IEnumerable<IVolume> Volumes => this.Partitions;
         #endregion
 
         #region Public methods

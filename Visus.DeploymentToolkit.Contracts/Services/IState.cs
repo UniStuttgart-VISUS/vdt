@@ -39,6 +39,11 @@ namespace Visus.DeploymentToolkit.Services {
         string? AgentPath { get; set; }
 
         /// <summary>
+        /// Gets or sets the path where the boot drive is mounted.
+        /// </summary>
+        string? BootDrive { get; set; }
+
+        /// <summary>
         /// Gets or sets the path to the mount point where the
         /// <see cref="DeploymentShare"/> is mounted.
         /// </summary>

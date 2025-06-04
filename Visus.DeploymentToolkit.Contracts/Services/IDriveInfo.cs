@@ -19,7 +19,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// Gets the first free drive letter.
         /// </summary>
         /// <returns>The first free drive letter.</returns>
-        string GetFreeDrive() => this.GetLogicalDrives().First();
+        string GetFreeDrive() => this.GetFreeDrives().First();
 
         /// <summary>
         /// Gets all free drive letters.

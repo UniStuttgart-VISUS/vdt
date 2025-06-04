@@ -23,6 +23,12 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// <summary>
     /// This task partitions and formats disks.
     /// </summary>
+    /// <remarks>
+    /// <para>Once the task sequence completed successfully, it will report the
+    /// location where the system disk is mounted as
+    /// <see cref="IState.InstallationDirectory"/> and in case of an EFI system
+    /// the system partition as <see cref="IState.BootDrive"/>.</para>
+    /// </remarks>
     public sealed class PartitionFormatDisk : TaskBase {
 
         /// <summary>
@@ -88,13 +94,19 @@ namespace Visus.DeploymentToolkit.Tasks {
                     .GetDisksAsync(cancellationToken)
                     .ConfigureAwait(false);
 
-                this.Disk = disks.FirstOrDefault(d => d.ID == definition.ID)
+                this.Disk = await this._diskManagement.GetDiskAsync(
+                    this.Disk.ID, cancellationToken)
                     ?? throw new ArgumentException(
                         string.Format(Errors.DiskNotFound, definition.ID),
                         nameof(this.Disk));
             }
 
+            if (!(this.Disk is IAdvancedDisk disk)) {
+                throw new ArgumentException(Errors.UnsupportedInstallationDisk);
+            }
+
             if (this.PartitionScheme is null) {
+                cancellationToken.ThrowIfCancellationRequested();
                 this._logger.LogInformation("No partition scheme provided, so "
                     + "create the default partitioning scheme.");
                 this.PartitionScheme = this._systemInformation.Firmware switch {
@@ -105,6 +117,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                         this._systemInformation.Firmware))
                 };
             }
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             //this._diskManagement.
             throw new NotImplementedException("TODO: implement disk partitioning steps");

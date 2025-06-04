@@ -56,15 +56,17 @@ namespace Visus.DeploymentToolkit.Vds {
         /// Deletes a partition from a basic disk.
         /// </summary>
         /// <param name="offset">The partition offset.</param>
-        /// <param name="force">If this parameter is set to <c>true</c>, VDS
-        /// deletes all partitions unconditionally (excluding OEM, ESP or MSR).
-        /// If it is set to <c>false</c>, the operation fails if the partition
+        /// <param name="force">If this parameter is set to
+        /// <see langword="true"/>, VDS deletes all partitions unconditionally
+        /// (excluding OEM, ESP or MSR). If it is set to
+        /// <see langword="false"/>, the operation fails if the partition
         /// is in use. A partition is considered to be in use if calls to lock
         /// or dismount the volume fail.</param>
         /// <param name="forceProtected">If this parameter is set to
-        /// <c>true</c>, VDS deletes all protected partitions (including OEM,
-        /// ESP and MSR) unconditionally. If it is set to <c>false</c>, the 
-        /// operation fails if the partition is protected.</param>
+        /// <see langword="true"/>, VDS deletes all protected partitions
+        /// (including OEM, ESP and MSR) unconditionally. If it is set to
+        /// <see langword="false"/>, the operation fails if the partition is
+        /// protected.</param>
         void DeletePartition(ulong offset, bool force, bool forceProtected);
 
         [Obsolete("This method is not correctly mapped, because we did not yet "
@@ -98,18 +100,21 @@ namespace Visus.DeploymentToolkit.Vds {
             bool enableCompression, out IVdsAsync vdsAsync);
 
         /// <summary>
-        /// Removes partition information and uninitializes basic or dynamic disks.
+        /// Removes partition information and uninitializes basic or dynamic
+        /// disks.
         /// </summary>
-        /// <param name="force">If <c>true</c>, cleans a disk containing data
-        /// volumes or ESP partitions.</param>
-        /// <param name="forceOem">If <c>true</c>, cleans a MBR-based disk
-        /// containing the known OEM partitions in the following table or cleans
-        /// a GPT-based disk containing any OEM partition. An OEM partition has
-        /// the <see cref="GptPartitionAttributes.PlatformRequired"/> flag set on
-        /// a GPT-based disk.</param>
-        /// <param name="fullClean">If <c>true</c>, cleans the entire disk by
-        /// replacing the data on each sector with zeros; otherwise, this method
-        /// cleans only the first and the last megabytes on the disk.</param>
+        /// <param name="force">If <see langword="true"/>, cleans a disk
+        /// containing data volumes or ESP partitions.</param>
+        /// <param name="forceOem">If <see langword="true"/>, cleans an
+        /// MBR-based disk containing the known OEM partitions in the following
+        /// table or cleans a GPT-based disk containing any OEM partition. An
+        /// OEM partition has the
+        /// <see cref="GptPartitionAttributes.PlatformRequired"/> flag set on a
+        /// GPT-based disk.</param>
+        /// <param name="fullClean">If <see langword="true"/>, cleans the entire
+        /// disk by replacing the data on each sector with zeros; otherwise,
+        /// this method cleans only the first and the last megabytes on the disk.
+        /// </param>
         /// <param name="vdsAsync"></param>
         void Clean(bool force, bool forceOem, bool fullClean,
             out IVdsAsync vdsAsync);
