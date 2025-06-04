@@ -74,6 +74,58 @@ namespace Visus.DeploymentToolkit.Services {
             return disks.Where(d => d.Partitions.Any(
                 p => partitionType.Equals(p.Type)));
         }
+
+        /// <summary>
+        /// Gets all packs registered with the software providers.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public Task<IEnumerable<IVdsPack>> GetPacksAsync(
+                CancellationToken cancellationToken) {
+            return Task.Run(() => {
+                cancellationToken.ThrowIfCancellationRequested();
+                this.WaitForVds();
+
+                cancellationToken.ThrowIfCancellationRequested();
+                var retval = new List<IVdsPack>();
+                var types = VDS_QUERY_PROVIDER_FLAG.SOFTWARE_PROVIDERS;
+
+                this._logger.LogTrace("Querying all sofware providers.");
+                foreach (var unknown in this._service.QueryProviders(types)) {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    if ((unknown is IVdsSwProvider sw) && (sw != null)) {
+                        this._logger.LogTrace("Querying packs from provider "
+                            + "{Provider}", sw);
+                        retval.AddRange(sw.QueryPacks());
+                    }
+                }
+
+                return retval.AsEnumerable();
+            });
+        }
+
+        /// <summary>
+        /// Refresh disk ownership and layout information.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public Task RefreshAsync(bool reenumerate,
+                CancellationToken cancellationToken) 
+            => Task.Run(() => {
+                cancellationToken.ThrowIfCancellationRequested();
+                this.WaitForVds();
+
+                cancellationToken.ThrowIfCancellationRequested();
+                this._logger.LogTrace("Refreshing the VDS service.");
+                this._service.Refresh();
+
+                if (reenumerate) {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    this._logger.LogTrace("Re-enumerating the disks.");
+                    this._service.Reenumerate();
+                }
+            }, cancellationToken);
         #endregion
 
         #region Private class methods
@@ -113,14 +165,7 @@ namespace Visus.DeploymentToolkit.Services {
             cancellation.ThrowIfCancellationRequested();
 
             // First of all, make sure that the VDS is ready.
-            {
-                this._logger.LogTrace("Waiting for the Virtual Disk "
-                    + "Service to become ready.");
-                var status = _service.WaitForServiceReady();
-                if (status != 0) {
-                    throw new COMException(Errors.WaitVdsFailed, (int) status);
-                }
-            }
+            this.WaitForVds();
 
             cancellation.ThrowIfCancellationRequested();
 
@@ -200,6 +245,21 @@ namespace Visus.DeploymentToolkit.Services {
             foreach (var d in  provider.QueryVDisks()) {
                 cancellation.ThrowIfCancellationRequested();
                 yield return new VdsDisk(d);
+            }
+        }
+
+        /// <summary>
+        /// Blocks the calling thread until the Virtual Disk Service is ready.
+        /// </summary>
+        /// <exception cref="COMException"></exception>
+        private void WaitForVds() {
+            this._logger.LogTrace("Waiting for the Virtual Disk "
+                + "Service to become ready.");
+            var status = this._service.WaitForServiceReady();
+            if (status != 0) {
+                this._logger.LogWarning("The Virtual Disk Service did not "
+                    + "become ready with status: {Status}", status);
+                throw new COMException(Errors.WaitVdsFailed, (int) status);
             }
         }
         #endregion

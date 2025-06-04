@@ -88,6 +88,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to While refreshing the disks in the system, the disk with ID {0} did get lost..
+        /// </summary>
+        internal static string DiskLost {
+            get {
+                return ResourceManager.GetString("DiskLost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A disk with ID &quot;{0}&quot; could not be found on the system..
         /// </summary>
         internal static string DiskNotFound {
@@ -291,6 +300,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string NonUniqueXPath {
             get {
                 return ResourceManager.GetString("NonUniqueXPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The disk management uses VDS, but the provider did not have any pack, which is required to initialise a disk..
+        /// </summary>
+        internal static string NoPack {
+            get {
+                return ResourceManager.GetString("NoPack", resourceCulture);
             }
         }
         

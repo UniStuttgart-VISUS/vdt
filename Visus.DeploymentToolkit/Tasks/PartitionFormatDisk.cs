@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.DiskManagement;
@@ -105,10 +106,18 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// which is basically a description of the desired state of the disk.
         /// </summary>
         public DiskPartitioningDefinition? PartitionScheme { get; set; }
+
+        /// <summary>
+        /// Gets the desired partition style to be established on the disk.
+        /// </summary>
+        public PartitionStyle PartitionStyle
+            => this.PartitionScheme?.PartitionStyle
+            ?? PartitionStyle.Unknown;
         #endregion
 
         #region Public methods
         /// <inheritdoc />
+        [SupportedOSPlatform("windows")]
         public override async Task ExecuteAsync(
                 CancellationToken cancellationToken) {
             this.CopyFrom(this._state);
@@ -169,6 +178,45 @@ namespace Visus.DeploymentToolkit.Tasks {
                 }
             }
 
+            // The documentation at https://learn.microsoft.com/en-us/windows/win32/api/vds/nf-vds-ivdspack-adddisk
+            // suggests implicitly that an uninitialised disk cannot be used
+            // unless it has been added to a pack: "To undo the effect of this
+            // method — that is, to remove the partitioning format and cause
+            // the disk to be a raw disk that is owned by the VDS service — use
+            // the IVdsAdvancedDisk::Clean method."
+            if (this._diskManagement is VdsService vds) {
+                cancellationToken.ThrowIfCancellationRequested();
+                this._logger.LogInformation("Adding disk {DiskID} to the VDS "
+                    + "service.", this.Disk.ID);
+                var packs = await vds.GetPacksAsync(cancellationToken);
+
+                foreach (var p in packs) {
+                    try {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        p.AddDisk(this.Disk.ID,
+                            (VDS_PARTITION_STYLE) this.PartitionStyle,
+                            false);
+                        break;  // We are done if the above succeeded.
+                    } catch (COMException ex) {
+                        this._logger.LogWarning(ex, "The disk {DiskID} could "
+                            + "not be added to a pack. This might be "
+                            + "acceptable if the disk can be added to another "
+                            + "pack or is already part of a pack and can be "
+                            + "converted to the desired partition style in the "
+                            + "next step.", this.Disk.ID);
+
+                        if (ex.HResult == VDS_E_CACHE_CORRUPT) {
+                            await vds.RefreshAsync(true, cancellationToken);
+                            var id = this.Disk.ID;
+                            this.Disk = await this._diskManagement.GetDiskAsync(
+                                id, cancellationToken)
+                                ?? throw new InvalidOperationException(
+                                    string.Format(Errors.DiskLost, id));
+                        }
+                    }
+                } /* foreach (var p in packs) */
+            } /* if (this._diskManagement is VdsService vds) */
+
             cancellationToken.ThrowIfCancellationRequested();
             this._logger.LogInformation("Making sure that disk {DiskID} has "
                 + "the partition style {RequiredPartitionStyle} (is "
@@ -177,8 +225,7 @@ namespace Visus.DeploymentToolkit.Tasks {
             try {
                 await disk.ConvertAsync(this.PartitionScheme.PartitionStyle);
             } catch (COMException ex) when (ex.HResult == VDS_E_DISK_NOT_CONVERTIBLE) {
-                if (this.PartitionScheme.PartitionStyle
-                        != this.Disk.PartitionStyle) {
+                if (this.PartitionStyle != this.Disk.PartitionStyle) {
                     this._logger.LogError(ex, "Disk {DiskID} is not "
                         + "convertible. Make sure that the selected disk is "
                         + "not a read-only device. The task cannot continue "
@@ -200,12 +247,11 @@ namespace Visus.DeploymentToolkit.Tasks {
             var partitions = from p in this.PartitionScheme.Partitions
                              orderby p.Offset
                              select p;
-            CreateFunc create = this.PartitionScheme.PartitionStyle switch {
+            CreateFunc create = this.PartitionStyle switch {
                     PartitionStyle.Mbr => this.CreateMbrPartition,
                     PartitionStyle.Gpt => this.CreateGptPartition,
                     _ => throw new NotSupportedException(string.Format(
-                        Errors.UnsupportedPartitionStyle,
-                        this.PartitionScheme.PartitionStyle))
+                        Errors.UnsupportedPartitionStyle, this.PartitionStyle))
             };
 
             foreach (var p in partitions) {
@@ -451,6 +497,11 @@ namespace Visus.DeploymentToolkit.Tasks {
         #endregion
 
         #region Private constants
+        /// <summary>
+        /// The service's cache has become corrupt.
+        /// </summary>
+        private const int VDS_E_CACHE_CORRUPT = unchecked((int) 0x80042556);
+
         /// <summary>
         /// The specified disk is not convertible. CDROMs and DVDs  are examples
         /// of disks that are not convertible.

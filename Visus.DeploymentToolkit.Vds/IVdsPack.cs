@@ -29,7 +29,7 @@ namespace Visus.DeploymentToolkit.Vds {
         void GetProperties(out VDS_PACK_PROP packProp);
 
         [Obsolete("This method is not correctly mapped, because we did not yet "
-            + "need it. However, the method still needs to be there fore the "
+            + "need it. However, the method still needs to be there for the "
             + "interface to work. Callers must fix the sigature before using "
             + "this method or the call will most likely crash the application.")]
         void GetProvider(/* [out] __RPC__deref_out_opt IVdsProvider **ppProvider*/ );
@@ -39,7 +39,7 @@ namespace Visus.DeploymentToolkit.Vds {
         void  QueryDisks(out IEnumVdsObject enumerator);
 
         [Obsolete("This method is not correctly mapped, because we did not yet "
-            + "need it. However, the method still needs to be there fore the "
+            + "need it. However, the method still needs to be there for the "
             + "interface to work. Callers must fix the sigature before using "
             + "this method or the call will most likely crash the application.")]
         void CreateVolume(VDS_VOLUME_TYPE type,
@@ -53,7 +53,7 @@ namespace Visus.DeploymentToolkit.Vds {
             bool asHotSpare);
 
         [Obsolete("This method is not correctly mapped, because we did not yet "
-            + "need it. However, the method still needs to be there fore the "
+            + "need it. However, the method still needs to be there for the "
             + "interface to work. Callers must fix the sigature before using "
             + "this method or the call will most likely crash the application.")]
         void MigrateDisks(
@@ -66,14 +66,14 @@ namespace Visus.DeploymentToolkit.Vds {
             /* [out]  __RPC__out BOOL *pbRebootNeeded*/);
 
         [Obsolete("This method is not correctly mapped, because we did not yet "
-            + "need it. However, the method still needs to be there fore the "
+            + "need it. However, the method still needs to be there for the "
             + "interface to work. Callers must fix the sigature before using "
             + "this method or the call will most likely crash the application.")]
         void ReplaceDisk(
             /* [in]  Guid OldDiskId,
             /* [in] Guid NewDiskId,
             /* [out] __RPC__deref_out_opt IVdsAsync **ppAsync*/);
-        
+
         void RemoveMissingDisk(Guid diskId);
 
         void Recover(out IVdsAsync vdsAsync);

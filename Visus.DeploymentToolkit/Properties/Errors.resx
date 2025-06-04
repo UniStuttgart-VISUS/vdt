@@ -246,4 +246,10 @@
   <data name="UnsupportedPartitionStyle" xml:space="preserve">
     <value>The partition style "{0}" is not supported by the task.</value>
   </data>
+  <data name="NoPack" xml:space="preserve">
+    <value>The disk management uses VDS, but the provider did not have any pack, which is required to initialise a disk.</value>
+  </data>
+  <data name="DiskLost" xml:space="preserve">
+    <value>While refreshing the disks in the system, the disk with ID {0} did get lost.</value>
+  </data>
 </root>
