@@ -192,11 +192,32 @@ namespace Visus.DeploymentToolkit.Tasks {
 
                 foreach (var p in packs) {
                     try {
+                        // TODO: the service complains about corrupted cache data, but refreshing it like this does not help ...
+                        //await vds.RefreshAsync(true, cancellationToken);
+                        //var id = this.Disk.ID;
+                        //this.Disk = await this._diskManagement.GetDiskAsync(
+                        //    id, cancellationToken)
+                        //    ?? throw new InvalidOperationException(
+                        //        string.Format(Errors.DiskLost, id));
+
+                        // Find out whether the pack we have here is acceptable,
+                        // which means that it is online...
                         cancellationToken.ThrowIfCancellationRequested();
+                        p.GetProperties(out var props);
+                        this._logger.LogTrace("Considering pack {PackID}.",
+                            props.Id);
+                        if (props.Status != VDS_PACK_STATUS.ONLINE) {
+                            this._logger.LogTrace("Pack {PackID} is not "
+                                + "online.", props.Id);
+                            continue;
+                        }
+
+                        // Try adding the disk to the pack. If that succeeded,
+                        // we are done. Otherwise, we will take note of the
+                        // failure and continue with the next pack.
                         p.AddDisk(this.Disk.ID,
                             (VDS_PARTITION_STYLE) this.PartitionStyle,
                             false);
-                        break;  // We are done if the above succeeded.
                     } catch (COMException ex) {
                         this._logger.LogWarning(ex, "The disk {DiskID} could "
                             + "not be added to a pack. This might be "
@@ -204,15 +225,6 @@ namespace Visus.DeploymentToolkit.Tasks {
                             + "pack or is already part of a pack and can be "
                             + "converted to the desired partition style in the "
                             + "next step.", this.Disk.ID);
-
-                        if (ex.HResult == VDS_E_CACHE_CORRUPT) {
-                            await vds.RefreshAsync(true, cancellationToken);
-                            var id = this.Disk.ID;
-                            this.Disk = await this._diskManagement.GetDiskAsync(
-                                id, cancellationToken)
-                                ?? throw new InvalidOperationException(
-                                    string.Format(Errors.DiskLost, id));
-                        }
                     }
                 } /* foreach (var p in packs) */
             } /* if (this._diskManagement is VdsService vds) */
