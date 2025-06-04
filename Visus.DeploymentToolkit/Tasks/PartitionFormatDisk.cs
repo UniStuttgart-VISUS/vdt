@@ -177,10 +177,20 @@ namespace Visus.DeploymentToolkit.Tasks {
             try {
                 await disk.ConvertAsync(this.PartitionScheme.PartitionStyle);
             } catch (COMException ex) when (ex.HResult == VDS_E_DISK_NOT_CONVERTIBLE) {
-                this._logger.LogError(ex, "Disk {DiskID} is not convertible. "
-                    + "Make sure that the selected disk is not a read-only "
-                    + "device.", this.Disk.ID);
-                throw;
+                if (this.PartitionScheme.PartitionStyle
+                        != this.Disk.PartitionStyle) {
+                    this._logger.LogError(ex, "Disk {DiskID} is not "
+                        + "convertible. Make sure that the selected disk is "
+                        + "not a read-only device. The task cannot continue "
+                        + "because the disk does not yet already have the "
+                        + "required partition style {RequiredPartitionStyle}."
+                        , this.Disk.ID, this.PartitionScheme.PartitionStyle);
+                    throw;
+                } else {
+                    this._logger.LogWarning(ex, "Disk {DiskID} is not "
+                        + "convertible, however the disk already had the "
+                        + "required partition style.", this.Disk.ID);
+                }
             }
 
             cancellationToken.ThrowIfCancellationRequested();
