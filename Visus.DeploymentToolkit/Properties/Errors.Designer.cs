@@ -133,6 +133,24 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A GPT partition requires a name to be specified.
+        /// </summary>
+        internal static string GptPartitionNameMissing {
+            get {
+                return ResourceManager.GetString("GptPartitionNameMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A GPT partition requires a partition type specified as GUID..
+        /// </summary>
+        internal static string GptPartitionTypeMissing {
+            get {
+                return ResourceManager.GetString("GptPartitionTypeMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The system could not determine the type of the HAL..
         /// </summary>
         internal static string HalNotFound {
@@ -228,6 +246,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string InvalidWindowsPeDirectory {
             get {
                 return ResourceManager.GetString("InvalidWindowsPeDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An MBR partition requires a partition type to be specified..
+        /// </summary>
+        internal static string MbrPartitionTypeMissing {
+            get {
+                return ResourceManager.GetString("MbrPartitionTypeMissing", resourceCulture);
             }
         }
         
@@ -340,6 +367,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified disk was not obtained from the VDS disk management service..
+        /// </summary>
+        internal static string NoVdsDisk {
+            get {
+                return ResourceManager.GetString("NoVdsDisk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The service loader for the Virtual Disk Services does not implement the expected interface..
         /// </summary>
         internal static string NoVdsServiceLoader {
@@ -417,6 +453,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string UnexpectedFirmware {
             get {
                 return ResourceManager.GetString("UnexpectedFirmware", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An object of class &quot;{0}&quot; was expected, but one of class &quot;{1}&quot; was provided..
+        /// </summary>
+        internal static string UnexpectedManagementClass {
+            get {
+                return ResourceManager.GetString("UnexpectedManagementClass", resourceCulture);
             }
         }
         

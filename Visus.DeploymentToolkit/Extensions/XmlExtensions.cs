@@ -18,9 +18,9 @@ using Visus.DeploymentToolkit.Properties;
 namespace Visus.DeploymentToolkit.Extensions {
 
     /// <summary>
-    /// Provides XML-reladed extension methods.
+    /// Provides XML-related extension methods.
     /// </summary>
-    internal static class XmlExtensions {
+    public static class XmlExtensions {
 
         /// <summary>
         /// Gets the first decendant with the specified name.

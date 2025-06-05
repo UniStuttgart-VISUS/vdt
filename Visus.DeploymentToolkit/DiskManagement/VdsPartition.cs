@@ -19,15 +19,15 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         public uint Index => this._properties.PartitionNumber;
 
         /// <inheritdoc />
-        public bool IsBoot => Style == PartitionStyle.Mbr
+        public bool IsBoot => (this.Style == PartitionStyle.Mbr)
             ? this._properties.Mbr.BootIndicator
             : false;
 
         /// <inheritdoc />
-        public bool IsSystem => (_properties.Flags & 1u) == 1u;
+        public bool IsSystem => ((this._properties.Flags & 1u) == 1u);
 
         /// <inheritdoc />
-        public string? Name => Style == PartitionStyle.Gpt
+        public string? Name => (this.Style == PartitionStyle.Gpt)
             ? this._properties.Gpt.Name
             : null;
 
@@ -44,7 +44,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// <inheritdoc />
         public PartitionType Type {
             get {
-                if (Style == PartitionStyle.Gpt) {
+                if (this.Style == PartitionStyle.Gpt) {
                     var id = _properties.Gpt.PartitionType;
                     return new PartitionType(id);
 

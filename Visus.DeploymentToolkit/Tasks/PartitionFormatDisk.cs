@@ -21,11 +21,6 @@ using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.SystemInformation;
 using Visus.DeploymentToolkit.Vds;
-using CreateFunc = System.Func<
-    Visus.DeploymentToolkit.DiskManagement.IAdvancedDisk,
-    Visus.DeploymentToolkit.DiskManagement.PartitionDefinition,
-    System.Threading.CancellationToken,
-    System.Threading.Tasks.Task>;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
@@ -41,6 +36,7 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// </remarks>
     public sealed class PartitionFormatDisk : TaskBase {
 
+        #region Public constructors
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
@@ -77,6 +73,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                 ?? throw new ArgumentNullException(nameof(systemInformation));
             this.Name = Resources.PartitionFormatDisk;
         }
+        #endregion
 
         #region Public properties
         /// <summary>
@@ -109,6 +106,7 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         /// <summary>
         /// Gets the desired partition style to be established on the disk.
+        /// This information is obtained from the <see cref="PartitionScheme"/>.
         /// </summary>
         public PartitionStyle PartitionStyle
             => this.PartitionScheme?.PartitionStyle
@@ -139,18 +137,14 @@ namespace Visus.DeploymentToolkit.Tasks {
                         nameof(this.Disk));
             }
 
-            if (!(this.Disk is IAdvancedDisk disk)) {
-                throw new ArgumentException(Errors.NoAdvancedDisk);
-            }
-
             if (this.PartitionScheme is null) {
                 cancellationToken.ThrowIfCancellationRequested();
                 this._logger.LogInformation("No partition scheme provided, so "
                     + "create the default partitioning scheme for {Firmware}.",
                     this._systemInformation.Firmware);
                 this.PartitionScheme = this._systemInformation.Firmware switch {
-                    FirmwareType.Bios => this.CreateBiosScheme(disk),
-                    FirmwareType.Uefi => this.CreateUefiScheme(disk),
+                    FirmwareType.Bios => this.CreateBiosScheme(),
+                    FirmwareType.Uefi => this.CreateUefiScheme(),
                     _ => throw new NotSupportedException(string.Format(
                         Errors.UnexpectedFirmware,
                         this._systemInformation.Firmware))
@@ -162,7 +156,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                 + "deployment by cleaning everything on it.",
                 this.Disk.ID, this.Disk.FriendlyName);
             try {
-                await disk.CleanAsync(this.CleanFlags, cancellationToken);
+                await this._diskManagement.CleanAsync(this.Disk,
+                    this.CleanFlags, cancellationToken);
             } catch (COMException ex) {
                 if (this.CleanFlags.HasFlag(CleanFlags.IgnoreErrors)) {
                     this._logger.LogWarning(ex, "Cleaning disk {DiskID} failed "
@@ -178,79 +173,79 @@ namespace Visus.DeploymentToolkit.Tasks {
                 }
             }
 
-            // The documentation at https://learn.microsoft.com/en-us/windows/win32/api/vds/nf-vds-ivdspack-adddisk
-            // suggests implicitly that an uninitialised disk cannot be used
-            // unless it has been added to a pack: "To undo the effect of this
-            // method — that is, to remove the partitioning format and cause
-            // the disk to be a raw disk that is owned by the VDS service — use
-            // the IVdsAdvancedDisk::Clean method."
-            if (this._diskManagement is VdsService vds) {
-                cancellationToken.ThrowIfCancellationRequested();
-                this._logger.LogInformation("Adding disk {DiskID} to the VDS "
-                    + "service.", this.Disk.ID);
-                var packs = await vds.GetPacksAsync(cancellationToken);
+            //// The documentation at https://learn.microsoft.com/en-us/windows/win32/api/vds/nf-vds-ivdspack-adddisk
+            //// suggests implicitly that an uninitialised disk cannot be used
+            //// unless it has been added to a pack: "To undo the effect of this
+            //// method — that is, to remove the partitioning format and cause
+            //// the disk to be a raw disk that is owned by the VDS service — use
+            //// the IVdsAdvancedDisk::Clean method."
+            //if (this._diskManagement is VdsService vds) {
+            //    cancellationToken.ThrowIfCancellationRequested();
+            //    this._logger.LogInformation("Adding disk {DiskID} to the VDS "
+            //        + "service.", this.Disk.ID);
+            //    var packs = await vds.GetPacksAsync(cancellationToken);
 
-                foreach (var p in packs) {
-                    try {
-                        // TODO: the service complains about corrupted cache data, but refreshing it like this does not help ...
-                        //await vds.RefreshAsync(true, cancellationToken);
-                        //var id = this.Disk.ID;
-                        //this.Disk = await this._diskManagement.GetDiskAsync(
-                        //    id, cancellationToken)
-                        //    ?? throw new InvalidOperationException(
-                        //        string.Format(Errors.DiskLost, id));
+            //    foreach (var p in packs) {
+            //        try {
+            //            // TODO: the service complains about corrupted cache data, but refreshing it like this does not help ...
+            //            //await vds.RefreshAsync(true, cancellationToken);
+            //            //var id = this.Disk.ID;
+            //            //this.Disk = await this._diskManagement.GetDiskAsync(
+            //            //    id, cancellationToken)
+            //            //    ?? throw new InvalidOperationException(
+            //            //        string.Format(Errors.DiskLost, id));
 
-                        // Find out whether the pack we have here is acceptable,
-                        // which means that it is online...
-                        cancellationToken.ThrowIfCancellationRequested();
-                        p.GetProperties(out var props);
-                        this._logger.LogTrace("Considering pack {PackID}.",
-                            props.Id);
-                        if (props.Status != VDS_PACK_STATUS.ONLINE) {
-                            this._logger.LogTrace("Pack {PackID} is not "
-                                + "online.", props.Id);
-                            continue;
-                        }
+            //            // Find out whether the pack we have here is acceptable,
+            //            // which means that it is online...
+            //            cancellationToken.ThrowIfCancellationRequested();
+            //            p.GetProperties(out var props);
+            //            this._logger.LogTrace("Considering pack {PackID}.",
+            //                props.Id);
+            //            if (props.Status != VDS_PACK_STATUS.ONLINE) {
+            //                this._logger.LogTrace("Pack {PackID} is not "
+            //                    + "online.", props.Id);
+            //                continue;
+            //            }
 
-                        // Try adding the disk to the pack. If that succeeded,
-                        // we are done. Otherwise, we will take note of the
-                        // failure and continue with the next pack.
-                        p.AddDisk(this.Disk.ID,
-                            (VDS_PARTITION_STYLE) this.PartitionStyle,
-                            false);
-                    } catch (COMException ex) {
-                        this._logger.LogWarning(ex, "The disk {DiskID} could "
-                            + "not be added to a pack. This might be "
-                            + "acceptable if the disk can be added to another "
-                            + "pack or is already part of a pack and can be "
-                            + "converted to the desired partition style in the "
-                            + "next step.", this.Disk.ID);
-                    }
-                } /* foreach (var p in packs) */
-            } /* if (this._diskManagement is VdsService vds) */
+            //            // Try adding the disk to the pack. If that succeeded,
+            //            // we are done. Otherwise, we will take note of the
+            //            // failure and continue with the next pack.
+            //            p.AddDisk(this.Disk.ID,
+            //                (VDS_PARTITION_STYLE) this.PartitionStyle,
+            //                false);
+            //        } catch (COMException ex) {
+            //            this._logger.LogWarning(ex, "The disk {DiskID} could "
+            //                + "not be added to a pack. This might be "
+            //                + "acceptable if the disk can be added to another "
+            //                + "pack or is already part of a pack and can be "
+            //                + "converted to the desired partition style in the "
+            //                + "next step.", this.Disk.ID);
+            //        }
+            //    } /* foreach (var p in packs) */
+            //} /* if (this._diskManagement is VdsService vds) */
 
-            cancellationToken.ThrowIfCancellationRequested();
-            this._logger.LogInformation("Making sure that disk {DiskID} has "
-                + "the partition style {RequiredPartitionStyle} (is "
-                + "currently {CurrentPartitionStyle}).", this.Disk.ID,
-                this.PartitionScheme.PartitionStyle, this.Disk.PartitionStyle);
-            try {
-                await disk.ConvertAsync(this.PartitionScheme.PartitionStyle);
-            } catch (COMException ex) when (ex.HResult == VDS_E_DISK_NOT_CONVERTIBLE) {
-                if (this.PartitionStyle != this.Disk.PartitionStyle) {
-                    this._logger.LogError(ex, "Disk {DiskID} is not "
-                        + "convertible. Make sure that the selected disk is "
-                        + "not a read-only device. The task cannot continue "
-                        + "because the disk does not yet already have the "
-                        + "required partition style {RequiredPartitionStyle}."
-                        , this.Disk.ID, this.PartitionScheme.PartitionStyle);
-                    throw;
-                } else {
-                    this._logger.LogWarning(ex, "Disk {DiskID} is not "
-                        + "convertible, however the disk already had the "
-                        + "required partition style.", this.Disk.ID);
-                }
-            }
+            //cancellationToken.ThrowIfCancellationRequested();
+            //this._logger.LogInformation("Making sure that disk {DiskID} has "
+            //    + "the partition style {RequiredPartitionStyle} (is "
+            //    + "currently {CurrentPartitionStyle}).", this.Disk.ID,
+            //    this.PartitionScheme.PartitionStyle, this.Disk.PartitionStyle);
+            //try {
+            //    await disk.ConvertAsync(this.PartitionScheme.PartitionStyle);
+            //} catch (COMException ex) when (ex.HResult == VDS_E_DISK_NOT_CONVERTIBLE) {
+            //    if (this.PartitionStyle != this.Disk.PartitionStyle) {
+            //        this._logger.LogError(ex, "Disk {DiskID} is not "
+            //            + "convertible. Make sure that the selected disk is "
+            //            + "not a read-only device. The task cannot continue "
+            //            + "because the disk does not yet already have the "
+            //            + "required partition style {RequiredPartitionStyle}."
+            //            , this.Disk.ID, this.PartitionScheme.PartitionStyle);
+            //        throw;
+            //    } else {
+            //        this._logger.LogWarning(ex, "Disk {DiskID} is not "
+            //            + "convertible, however the disk already had the "
+            //            + "required partition style.", this.Disk.ID);
+            //    }
+            //}
 
             cancellationToken.ThrowIfCancellationRequested();
             Debug.Assert(this.PartitionScheme is not null);
@@ -259,15 +254,9 @@ namespace Visus.DeploymentToolkit.Tasks {
             var partitions = from p in this.PartitionScheme.Partitions
                              orderby p.Offset
                              select p;
-            CreateFunc create = this.PartitionStyle switch {
-                    PartitionStyle.Mbr => this.CreateMbrPartition,
-                    PartitionStyle.Gpt => this.CreateGptPartition,
-                    _ => throw new NotSupportedException(string.Format(
-                        Errors.UnsupportedPartitionStyle, this.PartitionStyle))
-            };
-
             foreach (var p in partitions) {
-                await create(disk, p, cancellationToken).ConfigureAwait(false);
+                await this._diskManagement.CreatePartitionAsync(this.Disk,
+                    p, cancellationToken);
 
                 // TODO: format!
 
@@ -276,12 +265,12 @@ namespace Visus.DeploymentToolkit.Tasks {
                         Path.DirectorySeparatorChar,
                         Path.AltDirectorySeparatorChar);
 
-                    if (mountPoint.Length == 1) {
-                        this._logger.LogDebug("Assigning drive letter "
-                            + "{MountPoint} to partition {Partition}.",
-                            mountPoint, p.Name);
-                        disk.AssignDriveLetter(p.Offset, mountPoint[0]);
-                    }
+                    //if (mountPoint.Length == 1) {
+                    //    this._logger.LogDebug("Assigning drive letter "
+                    //        + "{MountPoint} to partition {Partition}.",
+                    //        mountPoint, p.Name);
+                    //    disk.AssignDriveLetter(p.Offset, mountPoint[0]);
+                    //}
                 }
 
                 if (this.IsInstallationDisk) {
@@ -300,20 +289,19 @@ namespace Visus.DeploymentToolkit.Tasks {
         #region Private methods
         /// <summary>
         /// Adjusts the size of a partition to be a multiple of the sector
-        /// size of the gvien <paramref name="disk"/>.
+        /// size of the configured <see cref="Disk"/>.
         /// </summary>
         /// <param name="size"></param>
-        /// <param name="disk"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        private ulong AdjustSize(ulong size, IAdvancedDisk disk) {
-            Debug.Assert(disk is not null);
-            var remainder = size % disk.SectorSize;
+        private ulong AdjustSize(ulong size) {
+            Debug.Assert(this.Disk is not null);
+            var remainder = size % this.Disk.SectorSize;
             if (remainder != 0) {
                 this._logger.LogTrace("Adjusting partition size {Size} to "
                     + "match the sector size {SectorSize}.",
-                    size, disk.SectorSize);
-                size += disk.SectorSize - remainder;
+                    size, this.Disk.SectorSize);
+                size += this.Disk.SectorSize - remainder;
             }
             return size;
         }
@@ -321,12 +309,10 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Create the default partitioning scheme for BIOS systems.
         /// </summary>
-        /// <param name="disk"></param>
         /// <returns></returns>
-        private DiskPartitioningDefinition CreateBiosScheme(
-                IAdvancedDisk disk) {
+        private DiskPartitioningDefinition CreateBiosScheme() {
             var retval = new DiskPartitioningDefinition {
-                ID = disk.ID,
+                ID = this.Disk.ID,
                 PartitionStyle = PartitionStyle.Mbr
             };
 
@@ -335,7 +321,7 @@ namespace Visus.DeploymentToolkit.Tasks {
             // If configured, create a sepearate boot partition.
             if (this._options.BiosSystemReservedSize > 0) {
                 var size = this._options.BiosSystemReservedSize;
-                size = this.AdjustSize(size, disk);
+                size = this.AdjustSize(size);
                 retval.Partitions.Add(new PartitionDefinition {
                     Offset = offset,
                     Size = size,
@@ -349,8 +335,9 @@ namespace Visus.DeploymentToolkit.Tasks {
             }
 
             {
-                var size = disk.Size - this._options.BiosSystemReservedSize;
-                size = this.AdjustSize(size ,disk);
+                var size = this.Disk.Size
+                    - this._options.BiosSystemReservedSize;
+                size = this.AdjustSize(size);
                 retval.Partitions.Add(new PartitionDefinition {
                     Offset = offset,
                     Size = size,
@@ -367,85 +354,13 @@ namespace Visus.DeploymentToolkit.Tasks {
         }
 
         /// <summary>
-        /// Creates the specified GPT partition.
-        /// </summary>
-        /// <param name="partition"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        private async Task CreateGptPartition(IAdvancedDisk disk,
-                PartitionDefinition partition,
-                CancellationToken cancellationToken) {
-            Debug.Assert(disk is not null);
-            Debug.Assert(partition is not null);
-
-            try {
-                var info = new VDS_PARTITION_INFO_GPT {
-                    PartitionType = (Guid) partition.Type.Gpt!,
-                    PartitionId = Guid.NewGuid(),
-                    Name = partition.Name
-                };
-
-                this._logger.LogInformation("Creating GPT partition "
-                    + "{Partition} of type {Type} with ID {ID} and "
-                    + "attributes {Attributes} at offset {Offset} with length "
-                    + "{Size}.", info.Name, info.PartitionType,
-                    info.PartitionId, info.Attributes, partition.Offset,
-                    partition.Size);
-                await disk.CreatePartitionAsync(partition.Offset,
-                    partition.Size,
-                    info,
-                    cancellationToken).ConfigureAwait(false);
-            } catch (COMException ex) {
-                this._logger.LogError(ex, "Creating GPT partition {Partition} "
-                    + "failed with error code {Hresult}.", partition.Name,
-                    ex.HResult);
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Creates the specified MBR partition.
-        /// </summary>
-        /// <param name="partition"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        private async Task CreateMbrPartition(IAdvancedDisk disk,
-                PartitionDefinition partition,
-                CancellationToken cancellationToken) {
-            Debug.Assert(disk is not null);
-            Debug.Assert(partition is not null);
-            this._logger.LogTrace("Creating GPT partition {Partition} of "
-                + "type {Type} at offset {Offset} with length {Size}.",
-                partition.Name, partition.Type.Name, partition.Offset,
-                partition.Size);
-
-            try {
-                await disk.CreatePartitionAsync(partition.Offset,
-                    partition.Size,
-                    new VDS_PARTITION_INFO_GPT {
-                        PartitionType = (Guid) partition.Type.Gpt!,
-                        PartitionId = Guid.NewGuid(),
-                        Name = partition.Name
-                    },
-                    cancellationToken).ConfigureAwait(false);
-            } catch (COMException ex) {
-                this._logger.LogError(ex, "Creating GPT partition {Partition} "
-                    + "failed with error code {Hresult}.", partition.Name,
-                    ex.HResult);
-                throw;
-            }
-        }
-
-        /// <summary>
         /// Create the default partitioning scheme for UEFI systems.
         /// </summary>
-        /// <param name="disk"></param>
         /// <returns></returns>
-        private DiskPartitioningDefinition CreateUefiScheme(
-                IAdvancedDisk disk) {
-            Debug.Assert(disk is not null);
+        private DiskPartitioningDefinition CreateUefiScheme() {
+            Debug.Assert(this.Disk is not null);
             var retval = new DiskPartitioningDefinition {
-                ID = disk.ID,
+                ID = this.Disk  .ID,
                 PartitionStyle = PartitionStyle.Gpt
             };
 
@@ -460,7 +375,7 @@ namespace Visus.DeploymentToolkit.Tasks {
             // Create the EFI system partition.
             {
                 var size = this._options.EfiSize;
-                size = this.AdjustSize(size, disk);
+                size = this.AdjustSize(size);
                 retval.Partitions.Add(new PartitionDefinition {
                     Offset = offset,
                     Size = size,
@@ -477,7 +392,7 @@ namespace Visus.DeploymentToolkit.Tasks {
             // Create the Windows recovery partition if configured.
             if (this._options.RecoverySize > 0) {
                 var size = this._options.RecoverySize;
-                size = this.AdjustSize(size, disk);
+                size = this.AdjustSize(size);
                 retval.Partitions.Add(new PartitionDefinition {
                     Offset = offset,
                     Size = size,
@@ -490,8 +405,8 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             // Create the OS partition.
             {
-                var size = disk.Size - offset;
-                size = this.AdjustSize(size, disk);
+                var size = this.Disk.Size - offset;
+                size = this.AdjustSize(size);
                 retval.Partitions.Add(new PartitionDefinition {
                     Offset = offset,
                     Size = size,

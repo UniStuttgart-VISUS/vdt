@@ -11,10 +11,10 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
     /// <summary>
     /// Allows for customising the behaviour of the
-    /// <see cref="IAdvancedDisk.FormatPartitionAsync"/>.
+    /// <see cref="Services.IDiskManagement.FormatAsync"/>.
     /// </summary>
     [Flags]
-    internal enum FormatFlags : uint {
+    public enum FormatFlags : uint {
 
         /// <summary>
         /// Perform a standard format.

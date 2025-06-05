@@ -140,7 +140,7 @@ namespace Visus.DeploymentToolkit.Extensions {
         }
 
         /// <summary>
-        /// Adds the <see cref="VdsService"/> to <paramref name="services"/>.
+        /// Adds a <see cref="IDiskManagement"/> to <paramref name="services"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -149,7 +149,8 @@ namespace Visus.DeploymentToolkit.Extensions {
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-                services.AddSingleton<IDiskManagement, VdsService>();
+                //services.AddSingleton<IDiskManagement, VdsService>();
+                services.AddSingleton<IDiskManagement, WmiDiskService>();
             }
             return services;
         }

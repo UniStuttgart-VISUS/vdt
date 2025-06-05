@@ -252,4 +252,19 @@
   <data name="DiskLost" xml:space="preserve">
     <value>While refreshing the disks in the system, the disk with ID {0} did get lost.</value>
   </data>
+  <data name="NoVdsDisk" xml:space="preserve">
+    <value>The specified disk was not obtained from the VDS disk management service.</value>
+  </data>
+  <data name="GptPartitionNameMissing" xml:space="preserve">
+    <value>A GPT partition requires a name to be specified</value>
+  </data>
+  <data name="GptPartitionTypeMissing" xml:space="preserve">
+    <value>A GPT partition requires a partition type specified as GUID.</value>
+  </data>
+  <data name="MbrPartitionTypeMissing" xml:space="preserve">
+    <value>An MBR partition requires a partition type to be specified.</value>
+  </data>
+  <data name="UnexpectedManagementClass" xml:space="preserve">
+    <value>An object of class "{0}" was expected, but one of class "{1}" was provided.</value>
+  </data>
 </root>

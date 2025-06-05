@@ -48,6 +48,9 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         public PartitionStyle PartitionStyle { get; set; }
 
         /// <inheritdoc />
+        public uint SectorSize => 0;
+
+        /// <inheritdoc />
         public ulong Size => 0;
 
         /// <inheritdoc />

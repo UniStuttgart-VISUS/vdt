@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.DiskManagement;
+using Visus.DeploymentToolkit.Vds;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -21,15 +22,85 @@ namespace Visus.DeploymentToolkit.Services {
     /// </summary>
     public interface IDiskManagement {
 
+        ///// <summary>
+        ///// Assigns the specified drive letter to the partition at the specified
+        ///// offset.
+        ///// </summary>
+        ///// <param name="offset"></param>
+        ///// <param name="letter"></param>
+        //void AssignDriveLetter(ulong offset, char letter);
+
+        ///// <summary>
+        ///// Removes the specified drive letter from the partition at the
+        ///// specified offset.
+        ///// </summary>
+        ///// <param name="offset"></param>
+        ///// <param name="letter"></param>
+        //void DeleteDriveLetter(ulong offset, char letter);
+
+        ///// <summary>
+        ///// Gets the drive letter assignet to the partition at the specified
+        ///// offset.
+        ///// </summary>
+        ///// <param name="offset"></param>
+        ///// <returns></returns>
+        //char? GetDriveLetter(ulong offset);
+
+
         /// <summary>
-        /// Gets the disk with the specified unique ID.
+        /// Removes partition information and uninitializes basic or dynamic disks.
         /// </summary>
-        /// <param name="id">The unique ID of the disk to retrieve.</param>
+        /// <param name="disk">The disk to be cleaned.</param>
+        /// <param name="flags">The flags customising the behaviour of the
+        /// operation.</param>
         /// <param name="cancellationToken">A cancellation token for aborting
         /// the operation.</param>
-        /// <returns>An object representing the requested disk or <c>null</c>
-        /// if no such disk was found.</returns>
-        Task<IDisk?> GetDiskAsync(Guid id, CancellationToken cancellationToken);
+        /// <returns>A task for waiting on the operation to complete.</returns>
+        Task CleanAsync(IDisk disk,
+            CleanFlags flags,
+            CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Converts the partition style of the disk to the specified value.
+        /// </summary>
+        /// <param name="disk">The disk to be converted.</param>
+        /// <param name="style">The new partition style of the disk.</param>
+        /// <param name="cancellationToken">A cancellation token for aborting
+        /// the operation.</param>
+        /// <returns>A task to wait for the operation to complete.</returns>
+        Task ConvertAsync(IDisk disk,
+            PartitionStyle style,
+            CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Create a new partition on the disk.
+        /// </summary>
+        /// <param name="disk"></param>
+        /// <param name="partition"></param>
+        /// <param name="cancellationToken">A cancellation token for aborting
+        /// the operation.</param>
+        /// <returns>A task for waiting on the operation to complete.</returns>
+        Task CreatePartitionAsync(IDisk disk,
+            IPartition partition,
+            CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Formats the given <paramref name="partition"/> with the specified
+        /// <paramref name="fileSystem"/>.
+        /// </summary>
+        /// <param name="partition"></param>
+        /// <param name="fileSystem"></param>
+        /// <param name="label"></param>
+        /// <param name="allocationUnitSize"></param>
+        /// <param name="flags"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task FormatAsync(IPartition partition,
+            FileSystem fileSystem,
+            string label,
+            uint allocationUnitSize,
+            FormatFlags flags,
+            CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets a list of all known disks in the system.
@@ -40,20 +111,5 @@ namespace Visus.DeploymentToolkit.Services {
         Task<IEnumerable<IDisk>> GetDisksAsync(
             CancellationToken cancellationToken);
 
-        /// <summary>
-        /// Gets all disks that have at least one partition of the specified
-        /// type.
-        /// </summary>
-        /// <param name="partitionType">The type of partition to be searched.
-        /// </param>
-        /// <param name="cancellationToken">A cancellation token for aborting
-        /// the operation.</param>
-        /// <returns>A list of disks with matching partitions.</returns>
-        /// <exception cref="ArgumentNullException">If the
-        /// <paramref name="partitionType"/> is <see langword="null"/>.
-        /// </exception>
-        Task<IEnumerable<IDisk>> GetDisksAsync(
-            PartitionType partitionType,
-            CancellationToken cancellationToken);
     }
 }

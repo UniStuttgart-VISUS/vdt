@@ -21,12 +21,24 @@ namespace Visus.DeploymentToolkit.DiskManagement {
     /// A <see cref="IDisk"/> as enumerated by the <see cref="VdsService"/>.
     /// </summary>
     [SupportedOSPlatform("windows")]
-    internal sealed class VdsDisk : IAdvancedDisk {
+    internal sealed class VdsDisk : IDisk {
 
         #region Public properties
+        /// <summary>
+        /// Gets the underlying advanced disk interface that allows the
+        /// <see cref="VdsService"/> perform changes to the disk.
+        /// </summary>
+        public IVdsAdvancedDisk AdvancedDisk => (IVdsAdvancedDisk) this._disk;
+
         /// <inheritdoc />
         public StorageBusType BusType
             => (StorageBusType) this._properties.BusType;
+
+        /// <summary>
+        /// Gets the underlying disk interface that allows the
+        /// <see cref="VdsService"/> perform changes to the disk.
+        /// </summary>
+        public IVdsDisk Disk => this._disk;
 
         /// <inheritdoc />
         public DiskFlags Flags { get; }
@@ -64,7 +76,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         }
 
         /// <inheritdoc />
-        public IEnumerable<IVolume> Volumes => _volumes.Value;
+        public IEnumerable<IVolume> Volumes => this._volumes.Value;
         #endregion
 
         #region Public methods
@@ -75,77 +87,6 @@ namespace Visus.DeploymentToolkit.DiskManagement {
             }
 
             disk.AssignDriveLetter(offset, letter);
-        }
-
-        /// <inheritdoc />
-        public Task<VDS_ASYNC_OUTPUT> CleanAsync(CleanFlags flags,
-                CancellationToken cancellationToken) {
-            if (this._disk is not IVdsAdvancedDisk disk) {
-                throw new InvalidOperationException(Errors.NoAdvancedDisk);
-            }
-
-            var force = ((flags & CleanFlags.Force) != 0);
-            var forceOem = ((flags & CleanFlags.ForceOem) != 0);
-            var fullClean = ((flags & CleanFlags.FullClean) != 0);
-
-            cancellationToken.ThrowIfCancellationRequested();
-            disk.Clean(force, forceOem, fullClean, out var async);
-
-            return async.WaitAsync(cancellationToken);
-        }
-
-        /// <inheritdoc />
-        public Task ConvertAsync(PartitionStyle style) {
-            switch (style) {
-                case PartitionStyle.Gpt:
-                    this._disk.ConvertStyle(VDS_PARTITION_STYLE.GPT);
-                    return Task.CompletedTask;
-
-                case PartitionStyle.Mbr:
-                    this._disk.ConvertStyle(VDS_PARTITION_STYLE.MBR);
-                    return Task.CompletedTask;
-
-                default:
-                    throw new ArgumentException();
-            }
-        }
-
-        /// <inheritdoc />
-        public Task<VDS_ASYNC_OUTPUT> CreatePartitionAsync(ulong offset,
-                ulong size,
-                MbrPartitionParameters parameters,
-                CancellationToken cancellationToken) {
-            if (this._disk is not IVdsAdvancedDisk disk) {
-                throw new InvalidOperationException(Errors.NoAdvancedDisk);
-            }
-
-            CREATE_PARTITION_PARAMETERS cpp = new() {
-                Style = VDS_PARTITION_STYLE.MBR,
-                MbrPartInfo = parameters
-            };
-
-            cancellationToken.ThrowIfCancellationRequested();
-            disk.CreatePartition(offset, size, ref cpp, out var async);
-            return async.WaitAsync(cancellationToken);
-        }
-
-        /// <inheritdoc />
-        public Task<VDS_ASYNC_OUTPUT> CreatePartitionAsync(ulong offset,
-                ulong size,
-                VDS_PARTITION_INFO_GPT parameters,
-                CancellationToken cancellationToken) {
-            if (this._disk is not IVdsAdvancedDisk disk) {
-                throw new InvalidOperationException(Errors.NoAdvancedDisk);
-            }
-
-            CREATE_PARTITION_PARAMETERS cpp = new() {
-                Style = VDS_PARTITION_STYLE.GPT,
-                GptPartInfo = parameters
-            };
-
-            cancellationToken.ThrowIfCancellationRequested();
-            disk.CreatePartition(offset, size, ref cpp, out var async);
-            return async.WaitAsync(cancellationToken);
         }
 
         /// <inheritdoc />
@@ -223,7 +164,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                     .Select(v => new VdsVolume(v));
             });
 
-
+            // Determine the properties of the disk.
             this.Flags = flags;
             if (this._properties.Flags.HasFlag(VDS_DISK_FLAG.READ_ONLY)) {
                 this.Flags |= DiskFlags.ReadOnly;
@@ -237,6 +178,12 @@ namespace Visus.DeploymentToolkit.DiskManagement {
             }
             if (this._properties.Flags.HasFlag(VDS_DISK_FLAG.STYLE_CONVERTIBLE)) {
                 this.Flags |= DiskFlags.StyleConvertible;
+            }
+            try {
+                this._disk.GetPack(out var pack);
+            } catch {
+                // If we cannot get the pack, we assume the disk is uninitalised.
+                this.Flags |= DiskFlags.Uninitialised;
             }
         }
         #endregion

@@ -26,16 +26,16 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
         #region Public properties
         /// <inheritdoc />
-        public FileSystem FileSystem => (FileSystem) _fileSystem.Type;
+        public FileSystem FileSystem => (FileSystem) this._fileSystem.Type;
 
         /// <inheritdoc />
-        public string? Label => _fileSystem.Label;
+        public string? Label => this._fileSystem.Label;
 
         /// <inheritdoc />
-        public IEnumerable<string> Mounts => _mounts.Value;
+        public IEnumerable<string> Mounts => this._mounts.Value;
 
         /// <inheritdoc />
-        public string Name => _properties.Name;
+        public string Name => this._properties.Name;
 
         /// <summary>
         /// Gets the device paths of the volume.
@@ -43,7 +43,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         public IEnumerable<string> Paths { get; } = [ ];
 
         /// <inheritdoc />
-        public ulong Size => _properties.Size;
+        public ulong Size => this._properties.Size;
 
         /// <summary>
         /// Gets the <see cref="STORAGE_DEVICE_NUMBER"/> for the volume, which
@@ -51,7 +51,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// contains the volume.
         /// </summary>
         public STORAGE_DEVICE_NUMBER StorageDeviceNumber
-            => _storageDeviceNumber.Value;
+            => this._storageDeviceNumber.Value;
         #endregion
 
         #region Internal contructors

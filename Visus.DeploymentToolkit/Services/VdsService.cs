@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Threading;
@@ -25,6 +26,7 @@ namespace Visus.DeploymentToolkit.Services {
     [SupportedOSPlatform("windows")]
     internal sealed class VdsService : IDiskManagement {
 
+        #region Public constructors
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
@@ -47,14 +49,136 @@ namespace Visus.DeploymentToolkit.Services {
                 throw;
             }
         }
+        #endregion
 
         #region Public methods
         /// <inheritdoc />
-        public async Task<IDisk?> GetDiskAsync(Guid id,
+        public Task CleanAsync(IDisk disk,
+                CleanFlags flags,
                 CancellationToken cancellationToken) {
-            var disks = await this.GetDisksAsync(cancellationToken)
-                .ConfigureAwait(false);
-            return disks.Where(d => d.ID == id).SingleOrDefault();
+            ArgumentNullException.ThrowIfNull(disk);
+            if (disk is not VdsDisk vds) {
+                throw new InvalidOperationException(Errors.NoVdsDisk);
+            }
+
+            var force = ((flags & CleanFlags.Force) != 0);
+            var forceOem = ((flags & CleanFlags.ForceOem) != 0);
+            var fullClean = ((flags & CleanFlags.FullClean) != 0);
+
+            cancellationToken.ThrowIfCancellationRequested();
+            vds.AdvancedDisk.Clean(force, forceOem, fullClean, out var async);
+
+            return async.WaitAsync(cancellationToken);
+        }
+
+        /// <inheritdoc />
+        public Task CreatePartitionAsync(IDisk disk,
+                IPartition partition,
+                CancellationToken cancellationToken) {
+            ArgumentNullException.ThrowIfNull(disk);
+            ArgumentNullException.ThrowIfNull(partition);
+            if (disk is not VdsDisk vds) {
+                throw new ArgumentException(Errors.NoVdsDisk);
+            }
+
+            CREATE_PARTITION_PARAMETERS cpp = new() {
+                Style = (VDS_PARTITION_STYLE) disk.PartitionStyle,
+            };
+
+            switch (cpp.Style) {
+                case VDS_PARTITION_STYLE.MBR:
+                    if (partition.Type.Mbr is null) {
+                        throw new ArgumentException(
+                            Errors.GptPartitionTypeMissing);
+                    }
+
+                    cpp.MbrPartInfo = new() {
+                        BootIndicator = partition.IsBoot,
+                        PartitionType = (MbrPartitionTypes) partition.Type.Mbr
+                    };
+
+                    this._logger.LogTrace("Creating MBR partition with type "
+                        + "{Type} and boot indicator {Boot}.",
+                        cpp.MbrPartInfo.PartitionType,
+                        cpp.MbrPartInfo.BootIndicator);
+                    break;
+
+                case VDS_PARTITION_STYLE.GPT:
+                    if (partition.Name is null) {
+                        throw new ArgumentException(
+                            Errors.GptPartitionNameMissing);
+                    }
+                    if (partition.Type.Gpt is null) {
+                        throw new ArgumentException(
+                            Errors.GptPartitionTypeMissing);
+                    }
+
+                    cpp.GptPartInfo = new() {
+                        PartitionType = partition.Type.Gpt.Value,
+                        PartitionId = Guid.NewGuid(),
+                        Name = partition.Name
+                    };
+
+                    this._logger.LogTrace("Creating GPT partition {Name} "
+                        + "({ID}) with type {Type}.", cpp.GptPartInfo.Name,
+                        cpp.GptPartInfo.PartitionId,
+                        cpp.GptPartInfo.PartitionType);
+                    break;
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+            this._logger.LogTrace("Creating a partition on disk {Disk} at "
+                + "offset {Offset} with size {Size}.", disk.ID,
+                partition.Offset, partition.Size);
+            vds.AdvancedDisk.CreatePartition(partition.Offset,
+                partition.Size,
+                ref cpp,
+                out var async);
+            return async.WaitAsync(cancellationToken);
+        }
+
+        /// <inheritdoc />
+        public Task FormatAsync(IPartition partition,
+                FileSystem fileSystem,
+                string label,
+                uint allocationUnitSize,
+                FormatFlags flags,
+                CancellationToken cancellationToken) {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public Task ConvertAsync(IDisk disk,
+                PartitionStyle style,
+                CancellationToken cancellationToken) {
+            ArgumentNullException.ThrowIfNull(disk);
+            if (disk is not VdsDisk vds) {
+                throw new InvalidOperationException(Errors.NoVdsDisk);
+            }
+
+            try {
+                vds.Disk.GetPack(out var _);
+            } catch {
+                this._logger.LogTrace("Disk {Disk} is not part of a pack, "
+                    + "so we need to intialise it first.", disk.ID);
+                // TODO: I really have no idea how to initialise the disk using VDS ...
+            }
+
+            this._logger.LogTrace("Converting disk {Disk} to partition style "
+                + "from {OldStyle} to {NewStyle}.", disk.ID,
+                disk.PartitionStyle, style);
+            switch (style) {
+                case PartitionStyle.Gpt:
+                    vds.Disk.ConvertStyle(VDS_PARTITION_STYLE.GPT);
+                    return Task.CompletedTask;
+
+                case PartitionStyle.Mbr:
+                    vds.Disk.ConvertStyle(VDS_PARTITION_STYLE.MBR);
+                    return Task.CompletedTask;
+
+                default:
+                    throw new ArgumentException();
+            }
         }
 
         /// <inheritdoc />
@@ -62,17 +186,6 @@ namespace Visus.DeploymentToolkit.Services {
                 CancellationToken cancellationToken) {
             return Task<IEnumerable<IDisk>>.Factory.StartNew(
                 () => GetDisks(cancellationToken));
-        }
-
-        /// <inheritdoc />
-        public async Task<IEnumerable<IDisk>> GetDisksAsync(
-                PartitionType partitionType,
-                CancellationToken cancellationToken) {
-            ArgumentNullException.ThrowIfNull(partitionType);
-            var disks = await this.GetDisksAsync(cancellationToken)
-                .ConfigureAwait(false);
-            return disks.Where(d => d.Partitions.Any(
-                p => partitionType.Equals(p.Type)));
         }
 
         /// <summary>
@@ -111,7 +224,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public Task RefreshAsync(bool reenumerate,
-                CancellationToken cancellationToken) 
+                CancellationToken cancellationToken)
             => Task.Run(() => {
                 cancellationToken.ThrowIfCancellationRequested();
                 this.WaitForVds();
@@ -178,15 +291,15 @@ namespace Visus.DeploymentToolkit.Services {
                 cancellation.ThrowIfCancellationRequested();
 
                 if (unknown is IVdsSwProvider sw && sw != null) {
-                    this._logger.LogTrace("Querying disks from the Microsoft "
-                        + "software provider.");
+                    this._logger.LogTrace("Querying disks from provider "
+                        + "{Provider}", sw);
                     foreach (var d in GetDisks(sw, cancellation)) {
                         yield return d;
                     }
 
                 } else if (unknown is IVdsVdProvider vd && vd != null) {
-                    this._logger.LogTrace("Querying virtual disks attached to "
-                        + "the system.");
+                    this._logger.LogTrace("Querying virtual disksfrom provider "
+                        + "{Provider}", vd);
                     foreach (var d in GetDisks(vd, cancellation)) {
                         yield return d;
                     }
@@ -223,6 +336,11 @@ namespace Visus.DeploymentToolkit.Services {
             foreach (var pack in provider.QueryPacks()) {
                 cancellation.ThrowIfCancellationRequested();
 
+                pack.GetProperties(out var properties);
+                this._logger.LogTrace("Querying disks from pack {Pack} "
+                    + "({PackID}, status {Status}, flags {Flags}).",
+                    properties.Name, properties.Id, properties.Status,
+                    properties.Flags);
                 foreach (var d in GetDisks(pack, cancellation)) {
                     cancellation.ThrowIfCancellationRequested();
                     yield return d;

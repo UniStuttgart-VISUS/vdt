@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Runtime.Versioning;
+using Visus.DeploymentToolkit.Extensions;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -71,9 +72,8 @@ namespace Visus.DeploymentToolkit.Services {
 
         /// <inheritdoc />
         public IEnumerable<ManagementObject> GetInstancesOf(string @class,
-                ManagementScope? scope) {
-            return this.Query($"SELECT * FROM {@class}", scope);
-        }
+                ManagementScope? scope)
+            => (scope ?? this.DefaultScope).GetInstancesOf(@class);
 
         /// <inheritdoc />
         public ManagementObject GetObject(string path,
@@ -91,10 +91,7 @@ namespace Visus.DeploymentToolkit.Services {
         public IEnumerable<ManagementObject> Query(string query,
                 ManagementScope? scope) {
             this._logger.LogTrace("Issuing WMI query {Query}.", query);
-            var search = new ManagementObjectSearcher(
-                scope ?? this.DefaultScope,
-                new ObjectQuery(query));
-            return search.Get().Cast<ManagementObject>();
+            return (scope ?? this.DefaultScope).QueryObjects(query);
         }
         #endregion
 

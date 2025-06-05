@@ -29,10 +29,10 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         public uint Index => 0;
 
         /// <inheritdoc />
-        public bool IsBoot => false;
+        public bool IsBoot { get; set; }
 
         /// <inheritdoc />
-        public bool IsSystem => false;
+        public bool IsSystem { get; set; }
 
         /// <summary>
         /// Gets or sets the optional volume label to be assigned to

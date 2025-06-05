@@ -186,12 +186,6 @@ namespace Visus.DeploymentToolkit.Tasks {
                 }
                 Debug.Assert(disk is not null);
 
-                // From here we poentially need an advanced disk, which should
-                // always be the case using the current implementation.
-                if (disk is not IAdvancedDisk advDisk) {
-                    throw new InvalidOperationException(Errors.NoAdvancedDisk);
-                }
-
                 var retval = (string) null!;
                 var (volume, partition) = disk.VolumePartitions.FirstOrDefault(
                     v => v.Item2.IsType(PartitionType.EfiSystem))
@@ -203,10 +197,10 @@ namespace Visus.DeploymentToolkit.Tasks {
                         p => p.IsType(PartitionType.EfiSystem));
                     Debug.Assert(partition is not null);
 
-                    var letter = advDisk.GetDriveLetter(partition.Offset);
-                    if (letter is not null) {
-                        retval = letter.ToString();
-                    }
+                    //var letter = advDisk.GetDriveLetter(partition.Offset);
+                    //if (letter is not null) {
+                    //    retval = letter.ToString();
+                    //}
 
                 } else {
                     this._logger.LogTrace("Checking whether the boot volume "
@@ -221,7 +215,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                         partition.Name);
                     retval = this._driveInfo.GetFreeDrive();
                     Debug.Assert(retval?.Any() == true);
-                    advDisk.AssignDriveLetter(partition.Offset, retval[0]);
+                    //advDisk.AssignDriveLetter(partition.Offset, retval[0]);
                 }
 
                 this._logger.LogInformation("The boot drive was identified "

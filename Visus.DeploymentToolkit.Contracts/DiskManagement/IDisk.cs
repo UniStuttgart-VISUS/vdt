@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 
 namespace Visus.DeploymentToolkit.DiskManagement {
@@ -15,6 +14,13 @@ namespace Visus.DeploymentToolkit.DiskManagement {
     /// The interface of a disk that can be used to install the operating system
     /// on.
     /// </summary>
+    /// <remarks>
+    /// This interface is used by the disk management service to provide
+    /// management objects of disks. It is also used by a definition
+    /// implementation that allows callers to describe the desired state of a
+    /// disk. The latter might not implement all of the interface as it
+    /// reasonably cannot know physical properties of the actual disk.
+    /// </remarks>
     public interface IDisk {
 
         #region Public properties
@@ -53,6 +59,11 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         PartitionStyle PartitionStyle { get; }
 
         /// <summary>
+        /// Gets the size of a sector on the disk in bytes.
+        /// </summary>
+        uint SectorSize { get; }
+
+        /// <summary>
         /// Gets the overall size of the disk in bytes.
         /// </summary>
         ulong Size { get; }
@@ -66,15 +77,6 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// Gets the volumes on the disk.
         /// </summary>
         IEnumerable<IVolume> Volumes { get; }
-        #endregion
-
-        #region Public methods
-        /// <summary>
-        /// Converts the partition style of the disk to the specified value.
-        /// </summary>
-        /// <param name="style">The new partition style of the disk.</param>
-        /// <returns>A task to wait for the operation to complete.</returns>
-        Task ConvertAsync(PartitionStyle style);
         #endregion
     }
 }
