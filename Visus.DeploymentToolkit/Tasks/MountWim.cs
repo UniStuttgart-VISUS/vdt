@@ -108,7 +108,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                 this._logger.LogInformation("The {Image} has been mounted "
                 + "at {MountPoint}. Should the need arise to unmount this "
                 + "image manually, you can do so by invoking "
-                + "dism /Unmount-Image /MountDir:{MountPoint} /Discard",
+                + "dism /Unmount-Image /MountDir:\"{MountPoint}\" /Discard",
                 this.ImagePath, this.MountPoint, this.MountPoint);
             });
         }

@@ -66,13 +66,15 @@ namespace Visus.DeploymentToolkit.Services {
             var fullClean = ((flags & CleanFlags.FullClean) != 0);
 
             cancellationToken.ThrowIfCancellationRequested();
+            this._logger.LogInformation("Clearing disk {Disk} ({Name}) "
+                + "with flags {Flags}.", disk.ID, disk.FriendlyName, flags);
             vds.AdvancedDisk.Clean(force, forceOem, fullClean, out var async);
 
             return async.WaitAsync(cancellationToken);
         }
 
         /// <inheritdoc />
-        public Task CreatePartitionAsync(IDisk disk,
+        public async Task<IPartition> CreatePartitionAsync(IDisk disk,
                 IPartition partition,
                 CancellationToken cancellationToken) {
             ArgumentNullException.ThrowIfNull(disk);
@@ -93,7 +95,7 @@ namespace Visus.DeploymentToolkit.Services {
                     }
 
                     cpp.MbrPartInfo = new() {
-                        BootIndicator = partition.IsBoot,
+                        BootIndicator = partition.Flags.HasFlag(PartitionFlags.Boot),
                         PartitionType = (MbrPartitionTypes) partition.Type.Mbr
                     };
 
@@ -134,7 +136,14 @@ namespace Visus.DeploymentToolkit.Services {
                 partition.Size,
                 ref cpp,
                 out var async);
-            return async.WaitAsync(cancellationToken);
+            await async.WaitAsync(cancellationToken);
+
+            cancellationToken.ThrowIfCancellationRequested();
+            this._logger.LogTrace("Getting partition properties for the newly "
+                + "created partition at offset {Offset}.", partition.Offset);
+            vds.AdvancedDisk.GetPartitionProperties(partition.Offset,
+                out var properties);
+            return new VdsPartition(properties);
         }
 
         /// <inheritdoc />

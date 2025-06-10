@@ -188,8 +188,7 @@ namespace Visus.DeploymentToolkit.Tasks {
 
                 var retval = (string) null!;
                 var (volume, partition) = disk.VolumePartitions.FirstOrDefault(
-                    v => v.Item2.IsType(PartitionType.EfiSystem))
-                    ?? new(null, null);
+                    v => v.Item2.IsType(PartitionType.EfiSystem));
                 if (volume is null) {
                     this._logger.LogTrace("The boot volume could not be "
                         + "identified via the built-in association.");

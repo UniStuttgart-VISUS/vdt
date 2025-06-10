@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
+using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Vds;
 
@@ -26,7 +27,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
         #region Public properties
         /// <inheritdoc />
-        public FileSystem FileSystem => (FileSystem) this._fileSystem.Type;
+        public FileSystem FileSystem { get; } = FileSystem.Unknown;
 
         /// <inheritdoc />
         public string? Label => this._fileSystem.Label;
@@ -66,6 +67,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
             if (this._volume is IVdsVolumeMF mf) {
                 mf.GetFileSystemProperties(out _fileSystem);
+                this.FileSystem = this._fileSystem.Type.FromVds();
             }
 
             this._mounts = new(() => {

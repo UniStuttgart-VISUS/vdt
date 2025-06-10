@@ -26,18 +26,14 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         Uninitialised = 0x00000001,
 
         /// <summary>
+        /// The disk is offline.
+        /// </summary>
+        Offline = 0x00000002,
+
+        /// <summary>
         /// The disk is read-only.
         /// </summary>
-        ReadOnly = 0x00000002,
+        ReadOnly = 0x00000004,
 
-        /// <summary>
-        /// The disk is a removable device.
-        /// </summary>
-        Removable = 0x00000004,
-
-        /// <summary>
-        /// The disk supports conversion between MBR and GPT partition styles.
-        /// </summary>
-        StyleConvertible = 0x00000008,
     }
 }

@@ -32,6 +32,9 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// </summary>
         public Guid ID { get; set; } = Guid.Empty;
 
+        /// <inheritdoc />
+        public string Path => string.Empty;
+
         /// <summary>
         /// Gets or sets the partitions to be created on the disk.
         /// </summary>
@@ -54,8 +57,8 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         public ulong Size => 0;
 
         /// <inheritdoc />
-        public IEnumerable<Tuple<IVolume, IPartition>> VolumePartitions
-            => this.Partitions.Select(p => new Tuple<IVolume, IPartition>(p, p));
+        public IEnumerable<(IVolume, IPartition)> VolumePartitions
+            => this.Partitions.Select(p => ((IVolume) p, (IPartition) p));
 
         /// <inheritdoc />
         public IEnumerable<IVolume> Volumes => this.Partitions;

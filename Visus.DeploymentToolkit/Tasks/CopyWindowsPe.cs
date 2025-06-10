@@ -157,10 +157,13 @@ namespace Visus.DeploymentToolkit.Tasks {
                 .ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
 
+            // Tell subsequent tasks which kind of architecture we have copied.
+            this._state.Architecture = this.Architecture;
+
             // Persist the working directory for subsequent tasks.
             this._state.WorkingDirectory = this.WorkingDirectory;
 
-            // Persist the information required for mountingt he image.
+            // Persist the information required for mounting the image.
             this._state[nameof(MountWim.ImagePath)] = this.WimPath;
             this._state[nameof(MountWim.MountPoint)] = this.MountDirectory;
         }

@@ -123,5 +123,30 @@ namespace Visus.DeploymentToolkit.Waik {
         public static string GetWinPePath(string basePath)
             => Path.Combine(basePath, "Windows Preinstallation Environment");
 
+        /// <summary>
+        /// Gets the path where the optional components for Windows PE are
+        /// located.
+        /// </summary>
+        /// <param name="basePath">The installation path of the WAIK.</param>
+        /// <param name="architecture">The platform architecture to get the
+        /// optional components for.</param>
+        /// <returns>The path to the optional components.</returns>
+        public static string GetWinPeOptionalComponentsPath(string basePath,
+                Architecture architecture)
+            => Path.Combine(GetWinPePath(basePath),
+                architecture.GetFolder(),
+                "WinPE_OCs");
+
+        /// <summary>
+        /// Gets the path where the optional components for Windows PE are
+        /// located.
+        /// </summary>
+        /// <param name="architecture">The platform architecture to get the
+        /// optional components for.</param>
+        /// <returns>The path to the optional components.</returns>
+        public static string GetWinPeOptionalComponentsPath(
+                Architecture architecture)
+            => GetWinPeOptionalComponentsPath(Defaults.BasePath, architecture);
+
     }
 }

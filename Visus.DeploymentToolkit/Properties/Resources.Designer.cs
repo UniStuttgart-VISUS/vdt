@@ -61,6 +61,24 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add a cab or msu package.
+        /// </summary>
+        internal static string AddPackage {
+            get {
+                return ResourceManager.GetString("AddPackage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add a cab or msu package to Windows PE.
+        /// </summary>
+        internal static string AddWindowsPePackage {
+            get {
+                return ResourceManager.GetString("AddWindowsPePackage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Apply WIM image.
         /// </summary>
         internal static string ApplyImage {
@@ -120,6 +138,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string CustomiseUnattend {
             get {
                 return ResourceManager.GetString("CustomiseUnattend", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable a Windows feature.
+        /// </summary>
+        internal static string EnableFeature {
+            get {
+                return ResourceManager.GetString("EnableFeature", resourceCulture);
             }
         }
         

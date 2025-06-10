@@ -35,6 +35,19 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public methods
         /// <summary>
+        /// Adds a single .cab or .msu file to an image.
+        /// </summary>
+        /// <param name="path">A relative or absolute path to the .cab or .msu
+        /// file being added or a folder containing the expanded files of a
+        /// single .cab file.</param>
+        /// <param name="ignoreCheck">Specifies whether to ignore the internal
+        /// applicability checks that are done when a package is added.</param>
+        /// <param name="preventPending">Specifies whether to add a package if
+        /// it has pending online actions.</param>
+        void AddPackage(string path, bool ignoreCheck = false,
+            bool preventPending = true);
+
+        /// <summary>
         /// Applies the specified unattend.xml file to the image.
         /// </summary>
         /// <param name="path">A relative or absolute path to the answer file
@@ -48,6 +61,21 @@ namespace Visus.DeploymentToolkit.Services {
         /// Commits all changes to the image.
         /// </summary>
         void Commit();
+
+        /// <summary>
+        /// Enables a feature from from its name,
+        /// </summary>
+        /// <param name="feature">The name of the feature that is being enabled.
+        /// To enable more than one feature, separate each feature name with a
+        /// semicolon.</param>
+        /// <param name="limitAccess">Specifies whether Windows Update should be
+        /// contacted as a source location for downloading files if none are
+        /// found in other specified locations.</param>
+        /// <param name="enableAll">Specifies whether to enable all dependencies
+        /// of the feature. If the specified feature or any one of its
+        /// dependencies cannot be enabled, none of them will be changed from
+        /// their existing state.</param>
+        void EnableFeature(string feature, bool limitAccess, bool enableAll);
 
         /// <summary>
         /// Injects all drivers in the specified folder into the image.

@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Compliance;
 using Visus.DeploymentToolkit.DiskManagement;
@@ -27,6 +28,11 @@ namespace Visus.DeploymentToolkit.Services {
     public interface IState {
 
         #region Public properties
+        /// <summary>
+        /// Gets or sets the architecture of the system that is being serviced.
+        /// </summary>
+        Architecture Architecture { get; set; }
+
         /// <summary>
         /// Gets or sets the path to the deployment agent.
         /// </summary>

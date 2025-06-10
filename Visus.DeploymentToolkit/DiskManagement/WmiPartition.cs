@@ -24,7 +24,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// Converts a <see cref="WmiPartition"/> to the underlying WMI object.
         /// </summary>
         /// <param name="partition"></param>
-        public static explicit operator ManagementObject(
+        public static explicit operator ManagementBaseObject(
             WmiPartition partition) => partition?._partition!;
         #endregion
 
@@ -37,26 +37,13 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
         #region Public properties
         /// <inheritdoc />
+        public PartitionFlags Flags { get; }
+
+        /// <inheritdoc />
         public uint Index {
             get {
                 ObjectDisposedException.ThrowIf(this._partition is null, this);
                 return (uint) this._partition["PartitionNumber"];
-            }
-        }
-
-        /// <inheritdoc />
-        public bool IsBoot {
-            get {
-                ObjectDisposedException.ThrowIf(this._partition is null, this);
-                return (bool) this._partition["IsBoot"];
-            }
-        }
-
-        /// <inheritdoc />
-        public bool IsSystem {
-            get {
-                ObjectDisposedException.ThrowIf(this._partition is null, this);
-                return (bool) this._partition["IsSystem"];
             }
         }
 
@@ -71,7 +58,12 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         }
 
         /// <inheritdoc />
-        public ulong Offset => throw new NotImplementedException();
+        public ulong Offset {
+            get {
+                ObjectDisposedException.ThrowIf(this._partition is null, this);
+                return (ulong) this._partition["Offset"];
+            }
+        }
 
         /// <inheritdoc />
         public ulong Size {
@@ -104,7 +96,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// partition.</param>
         /// <param name="style">The partition style of the disk the partition
         /// belongs to.</param>
-        internal WmiPartition(ManagementObject partition,
+        internal WmiPartition(ManagementBaseObject partition,
                 PartitionStyle style) {
             this._partition = partition
                 ?? throw new ArgumentNullException(nameof(partition));
@@ -114,12 +106,25 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                     Class,
                     this._partition.ClassPath.ClassName));
             }
+
             this.Style = style;
             this.Type = this.Style switch {
                 PartitionStyle.Gpt => new(Guid.Parse((string) this._partition["GptType"])),
-                PartitionStyle.Mbr => new((byte) this._partition["MbrType"]),
+                PartitionStyle.Mbr => new((byte) (ushort) this._partition["MbrType"]),
                 _ => throw new ArgumentException()
             };
+
+            if ((bool) this._partition["IsActive"]) {
+                this.Flags |= PartitionFlags.Active;
+            }
+
+            if ((bool) this._partition["IsBoot"]) {
+                this.Flags |= PartitionFlags.Boot;
+            }
+
+            if ((bool) this._partition["IsSystem"]) {
+                this.Flags |= PartitionFlags.System;
+            }
         }
         #endregion
 
@@ -133,7 +138,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         #endregion
 
         #region Private fields
-        private ManagementObject _partition;
+        private ManagementBaseObject _partition;
         #endregion
     }
 }

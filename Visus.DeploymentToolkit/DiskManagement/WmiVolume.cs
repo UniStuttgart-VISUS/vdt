@@ -41,7 +41,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
         #region Public properties
         /// <inheritdoc />
-        public FileSystem FileSystem { get; }
+        public FileSystem FileSystem { get; } = FileSystem.Unknown;
 
         /// <inheritdoc />
         public string? Label => (string) this._volume["FileSystemLabel"];
@@ -80,8 +80,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                     this._volume.ClassPath.ClassName));
             }
 
-            var fs = (ushort) this._volume["FileSystemType"];
-            this.FileSystem = (FileSystem) fs;
+            this.FileSystem = ((ushort) this._volume["FileSystemType"]).FromWmi();
 
             this._mounts = new Lazy<IEnumerable<string>>(() => {
                 ObjectDisposedException.ThrowIf(this._volume is null, this);

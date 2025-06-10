@@ -128,6 +128,72 @@ namespace Visus.DeploymentToolkit.Tasks {
                         t.IsRequired = true;
                         t.IsCritical = true;
                     })
+                    // Inject WMI for manipulating disks from WinPE.
+                    .Add<AddPackage>((t, s) => {
+                        ArgumentNullException.ThrowIfNull(s.WimMount);
+                        t.InstallationPath = s.WimMount.MountPoint;
+                        t.Path = "WinPE-WMI";
+                        t.IsCommit = false;
+
+                        if (string.IsNullOrEmpty(t.BasePath)) {
+                            t.BasePath = Waik.Tools.GetWinPeOptionalComponentsPath(
+                                s.Architecture);
+                        }
+                    })
+                    .Add<AddPackage>((t, s) => {
+                        ArgumentNullException.ThrowIfNull(s.WimMount);
+                        t.InstallationPath = s.WimMount.MountPoint;
+                        t.Path = "WinPE-NetFx";
+                        t.IsCommit = false;
+
+                        if (string.IsNullOrEmpty(t.BasePath)) {
+                            t.BasePath = Waik.Tools.GetWinPeOptionalComponentsPath(
+                                s.Architecture);
+                        }
+                    })
+                    .Add<AddPackage>((t, s) => {
+                        ArgumentNullException.ThrowIfNull(s.WimMount);
+                        t.InstallationPath = s.WimMount.MountPoint;
+                        t.Path = "WinPE-Scripting";
+                        t.IsCommit = false;
+
+                        if (string.IsNullOrEmpty(t.BasePath)) {
+                            t.BasePath = Waik.Tools.GetWinPeOptionalComponentsPath(
+                                s.Architecture);
+                        }
+                    })
+                    .Add<AddPackage>((t, s) => {
+                        ArgumentNullException.ThrowIfNull(s.WimMount);
+                        t.InstallationPath = s.WimMount.MountPoint;
+                        t.Path = "WinPE-PowerShell";
+                        t.IsCommit = false;
+
+                        if (string.IsNullOrEmpty(t.BasePath)) {
+                            t.BasePath = Waik.Tools.GetWinPeOptionalComponentsPath(
+                                s.Architecture);
+                        }
+                    })
+                    .Add<AddPackage>((t, s) => {
+                        ArgumentNullException.ThrowIfNull(s.WimMount);
+                        t.InstallationPath = s.WimMount.MountPoint;
+                        t.Path = "WinPE-StorageWMI";
+                        t.IsCommit = true;
+
+                        if (string.IsNullOrEmpty(t.BasePath)) {
+                            t.BasePath = Waik.Tools.GetWinPeOptionalComponentsPath(
+                                s.Architecture);
+                        }
+                    })
+                    //.Add<AddPackage>((t, s) => {
+                    //    ArgumentNullException.ThrowIfNull(s.WimMount);
+                    //    t.InstallationPath = s.WimMount.MountPoint;
+                    //    t.Path = "de-de/lp.cab";
+
+                    //    if (string.IsNullOrEmpty(t.BasePath)) {
+                    //        t.BasePath = Waik.Tools.GetWinPeOptionalComponentsPath(
+                    //            s.Architecture);
+                    //    }
+                    //})
                     //.Add<ApplyUnattend>((t, s) => {
                     //    ArgumentNullException.ThrowIfNull(s.WimMount);
                     //    t.InstallationPath = s.WimMount.MountPoint;

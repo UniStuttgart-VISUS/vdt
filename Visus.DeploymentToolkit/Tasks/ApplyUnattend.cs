@@ -4,7 +4,6 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using Microsoft.Dism;
 using Microsoft.Extensions.Logging;
 using System.Threading;
 using System.Threading.Tasks;
@@ -53,7 +52,13 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             return Task.Run(() => {
                 try {
+                    this._logger.LogInformation("Applying unattend file {Path} "
+                        + "to {Image}.", this.UnattendFile,
+                        this.EffectiveInstallationPath);
                     this.Open().ApplyUnattend(this.UnattendFile);
+                    this._logger.LogInformation("Unattend file {Path} "
+                        + "applied successfully to image {Image}.",
+                        this.UnattendFile, this.EffectiveInstallationPath);
                 } finally {
                     this.Close();
                 }

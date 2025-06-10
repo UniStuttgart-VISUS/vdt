@@ -21,7 +21,7 @@ namespace Visus.DeploymentToolkit.Test {
         [TestMethod]
         public void GetDisks() {
             if (WindowsIdentity.GetCurrent().IsAdministrator()) {
-                var service = new VdsService(this._loggerFactory.CreateLogger<VdsService>());
+                var service = new VdsService(CreateLogger<VdsService>());
                 Assert.IsNotNull(service);
 
                 var task = service.GetDisksAsync(CancellationToken.None);
@@ -39,7 +39,7 @@ namespace Visus.DeploymentToolkit.Test {
         [TestMethod]
         public async Task SelectDisks() {
             if (WindowsIdentity.GetCurrent().IsAdministrator()) {
-                var logger = this._loggerFactory.CreateLogger<VdsService>();
+                var logger = CreateLogger<VdsService>();
                 var service = new VdsService(logger);
                 Assert.IsNotNull(service);
 
@@ -99,6 +99,7 @@ namespace Visus.DeploymentToolkit.Test {
             }
         }
 
-        private readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(l => l.AddDebug());
+        private ILogger<T> CreateLogger<T>()=> Loggers.CreateLogger<T>();
+        private static readonly ILoggerFactory Loggers = LoggerFactory.Create(l => l.AddDebug());
     }
 }

@@ -35,11 +35,6 @@ namespace Visus.DeploymentToolkit.Services {
         HasMicrosoftPartition,
 
         /// <summary>
-        /// Selects disks that are marked as convertible between MBR and GPT.
-        /// </summary>
-        IsConvertible,
-
-        /// <summary>
         /// Selects disks with a FAT32-formatted EFI boot partition.
         /// </summary>
         IsEfiSystemDisk,

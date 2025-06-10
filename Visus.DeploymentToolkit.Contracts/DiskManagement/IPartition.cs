@@ -13,23 +13,14 @@ namespace Visus.DeploymentToolkit.DiskManagement {
     public interface IPartition {
 
         /// <summary>
+        /// Gets the flags of the partition.
+        /// </summary>
+        PartitionFlags Flags { get; }
+
+        /// <summary>
         /// Gets the ordinal assigned to the partition.
         /// </summary>
         uint Index { get; }
-
-        /// <summary>
-        /// Gets whether the boot flag is set for the partition.
-        /// </summary>
-        /// <remarks>
-        /// This property is only relevant for <see cref="PartitionStyle.Mbr"/>.
-        /// For GPT disks, it is always <c>false</c>.
-        /// </remarks>
-        bool IsBoot { get; }
-
-        /// <summary>
-        /// Answer whether the partition is a system partition.
-        /// </summary>
-        bool IsSystem { get; }
 
         /// <summary>
         /// Gets the name of the partition.
@@ -42,11 +33,20 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// <summary>
         /// Gets the offset of the partition in bytes.
         /// </summary>
+        /// <remarks>
+        /// When this property is used to create a partition, a value of zero
+        /// indicates that the partition should start right after the last
+        /// existing one.
+        /// </remarks>
         ulong Offset { get; }
 
         /// <summary>
         /// Gets the size of the partition in bytes.
         /// </summary>
+        /// <remarks>
+        /// When this property is used to create a partition, a value of zero
+        /// indicates that the partition should use all remaining space.
+        /// </remarks>
         ulong Size { get; }
 
         /// <summary>

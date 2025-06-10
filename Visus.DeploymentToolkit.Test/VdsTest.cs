@@ -7,7 +7,6 @@
 using Microsoft.Extensions.Logging;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Vds;
 
 
@@ -30,17 +29,6 @@ namespace Visus.DeploymentToolkit.Test {
                     var status = service.WaitForServiceReady();
                     Assert.AreEqual(0u, status, "WaitForServiceReady succeeded");
                 }
-            }
-        }
-
-        [TestMethod]
-        public async Task DisksFromVdsService() {
-            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
-                var vds = new VdsService(this._loggerFactory.CreateLogger<VdsService>());
-                var disks = await vds.GetDisksAsync(CancellationToken.None);
-                Assert.IsTrue(disks.Any());
-                Assert.IsTrue(disks.Any(d => d.Partitions.Any()));
-                Assert.IsTrue(disks.Any(d => d.Volumes.Any()));
             }
         }
 
@@ -270,23 +258,6 @@ namespace Visus.DeploymentToolkit.Test {
             Assert.AreEqual(2, Marshal.SizeOf<MbrPartitionParameters>(), "MbrPartitionParameters");
             Assert.AreEqual(120, Marshal.SizeOf<CREATE_PARTITION_PARAMETERS>(), "CREATE_PARTITION_PARAMETERS");
             Assert.AreEqual(32, Marshal.SizeOf<VDS_ASYNC_OUTPUT>(), "VDS_ASYNC_OUTPUT");
-        }
-
-        [TestMethod]
-        public async Task PartitionForVolume() {
-            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
-                var vds = new VdsService(this._loggerFactory.CreateLogger<VdsService>());
-                var disks = await vds.GetDisksAsync(CancellationToken.None);
-                Assert.IsTrue(disks.Any());
-                Assert.IsTrue(disks.Any(d => d.VolumePartitions.Any()));
-
-                foreach (var d in disks) {
-                    foreach (var v in d.VolumePartitions) {
-                        Assert.IsNotNull(v.Item1);
-                        Assert.IsNotNull(v.Item2);
-                    }
-                }
-            }
         }
 
         private readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(l => l.AddDebug());

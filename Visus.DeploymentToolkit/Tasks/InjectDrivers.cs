@@ -64,8 +64,14 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             return Task.Run(() => {
                 try {
+                    this._logger.LogInformation("Injecting drivers from {Path} "
+                        + "to {Image}.", this.Path,
+                        this.EffectiveInstallationPath);
                     this.Open().InjectDrivers(this.Path, this.IsRecursive,
                         this.IsUnsigned);
+                    this._logger.LogInformation("Drivers from {Path} "
+                        + "successfully added to image {Image}.", this.Path,
+                        this.EffectiveInstallationPath);
                 } finally {
                     this.Close();
                 }

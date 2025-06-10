@@ -174,4 +174,7 @@
   <data name="RequiredEnvironmentNotSet" xml:space="preserve">
     <value>The property {0} of {1} is required, was not set and can also not be set from any of the task sequence states "{2}".</value>
   </data>
+  <data name="InvalidEnumValue" xml:space="preserve">
+    <value>The specified value {0} is not a well-known enumeration value of type {1}.</value>
+  </data>
 </root>

@@ -8,17 +8,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Compliance;
 using Visus.DeploymentToolkit.DiskManagement;
-using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Workflow;
 
@@ -48,6 +45,13 @@ namespace Visus.DeploymentToolkit.Services {
         #endregion
 
         #region Public properties
+        /// <inheritdoc />
+        public Architecture Architecture {
+            get => this[WellKnownStates.Architecture] as Architecture?
+                ?? RuntimeInformation.ProcessArchitecture;
+            set => this[WellKnownStates.Architecture] = value;
+        }
+
         /// <inheritdoc />
         public string? AgentPath {
             get => this[WellKnownStates.AgentPath] as string;

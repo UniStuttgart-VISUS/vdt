@@ -20,7 +20,6 @@ using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.SystemInformation;
-using Visus.DeploymentToolkit.Vds;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
@@ -150,8 +149,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                         this._systemInformation.Firmware))
                 };
             }
+            Debug.Assert(this.PartitionScheme is not null);
 
-            cancellationToken.ThrowIfCancellationRequested();
             this._logger.LogInformation("Preparing {DiskID} ({Name}) for "
                 + "deployment by cleaning everything on it.",
                 this.Disk.ID, this.Disk.FriendlyName);
@@ -173,88 +172,41 @@ namespace Visus.DeploymentToolkit.Tasks {
                 }
             }
 
-            //// The documentation at https://learn.microsoft.com/en-us/windows/win32/api/vds/nf-vds-ivdspack-adddisk
-            //// suggests implicitly that an uninitialised disk cannot be used
-            //// unless it has been added to a pack: "To undo the effect of this
-            //// method — that is, to remove the partitioning format and cause
-            //// the disk to be a raw disk that is owned by the VDS service — use
-            //// the IVdsAdvancedDisk::Clean method."
-            //if (this._diskManagement is VdsService vds) {
-            //    cancellationToken.ThrowIfCancellationRequested();
-            //    this._logger.LogInformation("Adding disk {DiskID} to the VDS "
-            //        + "service.", this.Disk.ID);
-            //    var packs = await vds.GetPacksAsync(cancellationToken);
+            this._logger.LogTrace("Refreshing disk {DiskID} information after "
+                + "cleaning.", this.Disk.ID);
+            this.Disk = await this._diskManagement.GetDiskAsync(this.Disk.ID,
+                cancellationToken)
+                ?? throw new InvalidOperationException(Errors.DiskRefreshFail);
 
-            //    foreach (var p in packs) {
-            //        try {
-            //            // TODO: the service complains about corrupted cache data, but refreshing it like this does not help ...
-            //            //await vds.RefreshAsync(true, cancellationToken);
-            //            //var id = this.Disk.ID;
-            //            //this.Disk = await this._diskManagement.GetDiskAsync(
-            //            //    id, cancellationToken)
-            //            //    ?? throw new InvalidOperationException(
-            //            //        string.Format(Errors.DiskLost, id));
+            if (this.Disk.PartitionStyle
+                    != this.PartitionScheme.PartitionStyle) {
+                this._logger.LogInformation("Making sure that disk {DiskID} has "
+                    + "the partition style {RequiredPartitionStyle} (is "
+                    + "currently {CurrentPartitionStyle}).", this.Disk.ID,
+                    this.PartitionScheme.PartitionStyle, this.Disk.PartitionStyle);
+                await this._diskManagement.ConvertAsync(this.Disk,
+                    this.PartitionScheme.PartitionStyle,
+                    cancellationToken);
+            } else {
+                this._logger.LogInformation("Disk {DiskID} already has the "
+                    + "required partition style {PartitionStyle}.",
+                    this.Disk.ID, this.PartitionScheme.PartitionStyle);
+            }
 
-            //            // Find out whether the pack we have here is acceptable,
-            //            // which means that it is online...
-            //            cancellationToken.ThrowIfCancellationRequested();
-            //            p.GetProperties(out var props);
-            //            this._logger.LogTrace("Considering pack {PackID}.",
-            //                props.Id);
-            //            if (props.Status != VDS_PACK_STATUS.ONLINE) {
-            //                this._logger.LogTrace("Pack {PackID} is not "
-            //                    + "online.", props.Id);
-            //                continue;
-            //            }
+            this._logger.LogTrace("Refreshing disk {DiskID} information after "
+                + "enforcing partition style {PartitionStyle}.", this.Disk.ID,
+                this.PartitionScheme.PartitionStyle);
+            this.Disk = await this._diskManagement.GetDiskAsync(this.Disk.ID,
+                cancellationToken)
+                ?? throw new InvalidOperationException(Errors.DiskRefreshFail);
 
-            //            // Try adding the disk to the pack. If that succeeded,
-            //            // we are done. Otherwise, we will take note of the
-            //            // failure and continue with the next pack.
-            //            p.AddDisk(this.Disk.ID,
-            //                (VDS_PARTITION_STYLE) this.PartitionStyle,
-            //                false);
-            //        } catch (COMException ex) {
-            //            this._logger.LogWarning(ex, "The disk {DiskID} could "
-            //                + "not be added to a pack. This might be "
-            //                + "acceptable if the disk can be added to another "
-            //                + "pack or is already part of a pack and can be "
-            //                + "converted to the desired partition style in the "
-            //                + "next step.", this.Disk.ID);
-            //        }
-            //    } /* foreach (var p in packs) */
-            //} /* if (this._diskManagement is VdsService vds) */
-
-            //cancellationToken.ThrowIfCancellationRequested();
-            //this._logger.LogInformation("Making sure that disk {DiskID} has "
-            //    + "the partition style {RequiredPartitionStyle} (is "
-            //    + "currently {CurrentPartitionStyle}).", this.Disk.ID,
-            //    this.PartitionScheme.PartitionStyle, this.Disk.PartitionStyle);
-            //try {
-            //    await disk.ConvertAsync(this.PartitionScheme.PartitionStyle);
-            //} catch (COMException ex) when (ex.HResult == VDS_E_DISK_NOT_CONVERTIBLE) {
-            //    if (this.PartitionStyle != this.Disk.PartitionStyle) {
-            //        this._logger.LogError(ex, "Disk {DiskID} is not "
-            //            + "convertible. Make sure that the selected disk is "
-            //            + "not a read-only device. The task cannot continue "
-            //            + "because the disk does not yet already have the "
-            //            + "required partition style {RequiredPartitionStyle}."
-            //            , this.Disk.ID, this.PartitionScheme.PartitionStyle);
-            //        throw;
-            //    } else {
-            //        this._logger.LogWarning(ex, "Disk {DiskID} is not "
-            //            + "convertible, however the disk already had the "
-            //            + "required partition style.", this.Disk.ID);
-            //    }
-            //}
-
-            cancellationToken.ThrowIfCancellationRequested();
-            Debug.Assert(this.PartitionScheme is not null);
             this._logger.LogInformation("Creating new partitions on disk "
                 + "{DiskID}.", this.Disk.ID);
             var partitions = from p in this.PartitionScheme.Partitions
                              orderby p.Offset
                              select p;
             foreach (var p in partitions) {
+                cancellationToken.ThrowIfCancellationRequested();
                 await this._diskManagement.CreatePartitionAsync(this.Disk,
                     p, cancellationToken);
 
@@ -288,25 +240,6 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         #region Private methods
         /// <summary>
-        /// Adjusts the size of a partition to be a multiple of the sector
-        /// size of the configured <see cref="Disk"/>.
-        /// </summary>
-        /// <param name="size"></param>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        private ulong AdjustSize(ulong size) {
-            Debug.Assert(this.Disk is not null);
-            var remainder = size % this.Disk.SectorSize;
-            if (remainder != 0) {
-                this._logger.LogTrace("Adjusting partition size {Size} to "
-                    + "match the sector size {SectorSize}.",
-                    size, this.Disk.SectorSize);
-                size += this.Disk.SectorSize - remainder;
-            }
-            return size;
-        }
-
-        /// <summary>
         /// Create the default partitioning scheme for BIOS systems.
         /// </summary>
         /// <returns></returns>
@@ -316,31 +249,23 @@ namespace Visus.DeploymentToolkit.Tasks {
                 PartitionStyle = PartitionStyle.Mbr
             };
 
-            var offset = 0UL;
-
             // If configured, create a sepearate boot partition.
             if (this._options.BiosSystemReservedSize > 0) {
-                var size = this._options.BiosSystemReservedSize;
-                size = this.AdjustSize(size);
                 retval.Partitions.Add(new PartitionDefinition {
-                    Offset = offset,
-                    Size = size,
+                    Offset = 0,
+                    Size = this._options.BiosSystemReservedSize,
                     Name = this._options.BiosSystemReservedLabel,
                     Label = this._options.BiosSystemReservedLabel,
                     FileSystem = FileSystem.Ntfs,
                     Type = PartitionType.Ntfs,
                     Usage = PartitionUsage.Boot
                 });
-                offset += retval.Partitions.Last().Size;
             }
 
             {
-                var size = this.Disk.Size
-                    - this._options.BiosSystemReservedSize;
-                size = this.AdjustSize(size);
                 retval.Partitions.Add(new PartitionDefinition {
-                    Offset = offset,
-                    Size = size,
+                    Offset = 0,
+                    Size = 0,
                     Name = this._options.SystemLabel,
                     Label = this._options.SystemLabel,
                     FileSystem = FileSystem.Ntfs,
@@ -370,15 +295,11 @@ namespace Visus.DeploymentToolkit.Tasks {
                               ?? this._driveInfo.GetFreeDrive();
             var bootDrive = this._driveInfo.GetFreeDrive();
 
-            var offset = 0UL;
-
             // Create the EFI system partition.
             {
-                var size = this._options.EfiSize;
-                size = this.AdjustSize(size);
                 retval.Partitions.Add(new PartitionDefinition {
-                    Offset = offset,
-                    Size = size,
+                    Offset = 0,
+                    Size = this._options.EfiSize,
                     Name = this._options.EfiLabel,
                     Label = this._options.EfiLabel,
                     FileSystem = FileSystem.Fat32,
@@ -386,30 +307,24 @@ namespace Visus.DeploymentToolkit.Tasks {
                     Mounts = [bootDrive],
                     Usage = PartitionUsage.Boot | PartitionUsage.System
                 });
-                offset += retval.Partitions.Last().Size;
             }
 
             // Create the Windows recovery partition if configured.
             if (this._options.RecoverySize > 0) {
-                var size = this._options.RecoverySize;
-                size = this.AdjustSize(size);
                 retval.Partitions.Add(new PartitionDefinition {
-                    Offset = offset,
-                    Size = size,
+                    Offset = 0,
+                    Size = this._options.RecoverySize,
                     Name = this._options.RecoveryLabel,
                     Label = this._options.RecoveryLabel,
                     Type = PartitionType.WindowsRe
                 });
-                offset += retval.Partitions.Last().Size;
             }
 
             // Create the OS partition.
             {
-                var size = this.Disk.Size - offset;
-                size = this.AdjustSize(size);
                 retval.Partitions.Add(new PartitionDefinition {
-                    Offset = offset,
-                    Size = size,
+                    Offset = 0,
+                    Size = 0,
                     Name = this._options.SystemLabel,
                     Label = this._options.SystemLabel,
                     FileSystem = FileSystem.Ntfs,

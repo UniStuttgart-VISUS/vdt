@@ -106,6 +106,24 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A disk with path &quot;{0}&quot; was not found in the system..
+        /// </summary>
+        internal static string DiskPathNotFound {
+            get {
+                return ResourceManager.GetString("DiskPathNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to refresh disk..
+        /// </summary>
+        internal static string DiskRefreshFail {
+            get {
+                return ResourceManager.GetString("DiskRefreshFail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A DISM servicing session has already been opened..
         /// </summary>
         internal static string DuplicateDismSession {
@@ -376,6 +394,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The file system {0} has no VDS equivalent..
+        /// </summary>
+        internal static string NoVdsFileSystem {
+            get {
+                return ResourceManager.GetString("NoVdsFileSystem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The service loader for the Virtual Disk Services does not implement the expected interface..
         /// </summary>
         internal static string NoVdsServiceLoader {
@@ -390,6 +417,33 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string NoVolumePath {
             get {
                 return ResourceManager.GetString("NoVolumePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The disk implementation is not based on WMI..
+        /// </summary>
+        internal static string NoWmiDisk {
+            get {
+                return ResourceManager.GetString("NoWmiDisk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file system {0} has no WMI equivalent..
+        /// </summary>
+        internal static string NoWmiFileSystem {
+            get {
+                return ResourceManager.GetString("NoWmiFileSystem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The partition implementation is not based on WMI..
+        /// </summary>
+        internal static string NoWmiPartition {
+            get {
+                return ResourceManager.GetString("NoWmiPartition", resourceCulture);
             }
         }
         

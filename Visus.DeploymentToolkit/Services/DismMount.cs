@@ -85,9 +85,7 @@ namespace Visus.DeploymentToolkit.Services {
         #region Public methods
         /// <inheritdoc />
         public void Commit() {
-            if (this._dism == null) {
-                throw new InvalidOperationException();
-            }
+            ObjectDisposedException.ThrowIf(this._dism is null, this);
 
             // Unmount the image and commit all changes.
             DismApi.UnmountImage(this.MountPoint, true);

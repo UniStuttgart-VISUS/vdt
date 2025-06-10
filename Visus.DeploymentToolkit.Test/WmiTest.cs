@@ -16,7 +16,7 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public void TestBcdStore() {
-            var wmi = new ManagementService(this._loggerFactory.CreateLogger<ManagementService>());
+            var wmi = new ManagementService(CreateLogger<ManagementService>());
 
             if (WindowsIdentity.GetCurrent().IsAdministrator()) {
                 var result = wmi.GetObject("BcdStore.FilePath=''", wmi.WmiScope, default);
@@ -30,19 +30,21 @@ namespace Visus.DeploymentToolkit.Test {
         }
 
         [TestMethod]
-        public void TestGetDisks() {
-            var wmi = new ManagementService(this._loggerFactory.CreateLogger<ManagementService>());
+        public async Task TestGetDisksAsync() {
+            var wmi = new ManagementService(CreateLogger<ManagementService>());
             var result = wmi.Query("SELECT * FROM Win32_DiskDrive", null);
             Assert.IsTrue(result.Any());
 
-            //if (WindowsIdentity.GetCurrent().IsAdministrator()) {
-            //    var vds = new VdsService(this._loggerFactory.CreateLogger<VdsService>());
-            //    var disks = await vds.GetDisksAsync(CancellationToken.None);
-            //    Assert.AreEqual(disks.Count(), result.Count());
-            //}
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                var vds = new VdsService(CreateLogger<VdsService>());
+                var wmid = new WmiDiskService(wmi, vds, CreateLogger<WmiDiskService>());
+                var disks = await wmid.GetDisksAsync(CancellationToken.None);
+                Assert.AreEqual(disks.Count(), result.Count());
+            }
         }
 
-        private readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(l => l.AddDebug());
+        private static ILogger<T> CreateLogger<T>() => Loggers.CreateLogger<T>();
+        private static readonly ILoggerFactory Loggers = LoggerFactory.Create(l => l.AddDebug());
 
     }
 }

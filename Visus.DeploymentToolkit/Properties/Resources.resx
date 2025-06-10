@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddPackage" xml:space="preserve">
+    <value>Add a cab or msu package</value>
+  </data>
+  <data name="AddWindowsPePackage" xml:space="preserve">
+    <value>Add a cab or msu package to Windows PE</value>
+  </data>
   <data name="ApplyImage" xml:space="preserve">
     <value>Apply WIM image</value>
   </data>
@@ -137,6 +143,9 @@
   </data>
   <data name="CustomiseUnattend" xml:space="preserve">
     <value>Customise unattend.xml</value>
+  </data>
+  <data name="EnableFeature" xml:space="preserve">
+    <value>Enable a Windows feature</value>
   </data>
   <data name="InjectDrivers" xml:space="preserve">
     <value>Inject drivers</value>

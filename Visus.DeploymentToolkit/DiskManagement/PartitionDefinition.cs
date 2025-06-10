@@ -20,19 +20,16 @@ namespace Visus.DeploymentToolkit.DiskManagement {
     /// </remarks>
     public sealed class PartitionDefinition : IPartition, IVolume {
 
+        /// <inheritdoc />
+        public uint Index => 0;
+
         /// <summary>
         /// Gets or sets the file system used to format the parititon.
         /// </summary>
         public FileSystem FileSystem { get; set; } = FileSystem.Unknown;
 
         /// <inheritdoc />
-        public uint Index => 0;
-
-        /// <inheritdoc />
-        public bool IsBoot { get; set; }
-
-        /// <inheritdoc />
-        public bool IsSystem { get; set; }
+        public PartitionFlags Flags { get; set; } = PartitionFlags.None;
 
         /// <summary>
         /// Gets or sets the optional volume label to be assigned to

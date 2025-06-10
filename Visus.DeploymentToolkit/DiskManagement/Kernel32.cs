@@ -5,7 +5,6 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Win32.SafeHandles;
-using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
@@ -17,6 +16,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
     /// </summary>
     internal static class Kernel32 {
 
+        #region Public constants
         /// <summary>
         /// The I/O control code for retrieving the disk extents of a volume.
         /// </summary>
@@ -29,6 +29,21 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// </summary>
         public const uint IOCTL_STORAGE_GET_DEVICE_NUMBER
             = (((0x0000002d) << 16) | ((0) << 14) | ((0x0420) << 2) | (0));
+
+        /// <summary>
+        /// Retrieves information for each entry in the partition tables for a
+        /// disk.
+        /// </summary>
+        public const uint IOCTL_DISK_GET_DRIVE_LAYOUT
+            = (((0x00000007) << 16) | ((0x01) << 14) | ((0x03) << 2) | (0));
+
+        /// <summary>
+        /// Partitions a disk as specified by drive layout and partition
+        /// information data.
+        /// </summary>
+        public const uint IOCTL_DISK_SET_DRIVE_LAYOUT
+            = (((0x00000007) << 16) | ((0x01 | (0x02)) << 14) | (0x04 << 2) | (0));
+        #endregion
 
         /// <summary>
         /// Sends a control code directly to a specified device driver, allowing

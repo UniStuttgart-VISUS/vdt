@@ -100,12 +100,14 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// </summary>
         protected void Close() {
             if (this.IsCommit) {
-                this._logger.LogTrace("Committing changes to the image "
-                    + "{Image}.", this._imageServicing.Name);
+                this._logger.LogTrace("Closing image servicing session "
+                    + "committing changes to {Image}.",
+                    this._imageServicing.Name);
                 this._imageServicing.Commit();
             } else {
-                this._logger.LogTrace("Keeping imaging session {Image}"
-                    + "alive.", this._imageServicing.Name);
+                this._logger.LogTrace("Keeping imaging session {Image} "
+                    + "alive. Changes must be committed in bulk by a "
+                    + "subsequent task.", this._imageServicing.Name);
             }
         }
 
@@ -117,10 +119,13 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// </returns>
         protected IImageServicing Open() {
             if (this._imageServicing.IsOpen) {
-                this._logger.LogTrace("An active image servicing session for" +
-                    " {Image} was found and will be reused.",
+                this._logger.LogTrace("An active image servicing session for "
+                    +"{Image} was found and will be reused.",
                     this._imageServicing.Name);
             } else {
+                this._logger.LogTrace("No active image servicing session was "
+                    + "found. Opening one for {Image}.",
+                    this._imageServicing.Name);
                 this._imageServicing.Open(this.EffectiveInstallationPath);
             }
 

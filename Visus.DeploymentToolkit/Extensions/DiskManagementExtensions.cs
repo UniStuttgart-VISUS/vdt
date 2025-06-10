@@ -7,9 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.DiskManagement;
+using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 
 
@@ -44,6 +46,27 @@ namespace Visus.DeploymentToolkit.Extensions {
         }
 
         /// <summary>
+        /// Gets a disk based on its path.
+        /// </summary>
+        /// <param name="that"></param>
+        /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public static async Task<IDisk?> GetDiskFromPathAsync(
+                this IDiskManagement that,
+                string path,
+                CancellationToken cancellationToken) {
+            if (that is null) {
+                return null;
+            }
+
+            var disks = await that.GetDisksAsync(cancellationToken)
+                .ConfigureAwait(false);
+            return disks.Where(d => d.Path.EqualsIgnoreCase(path))
+                .SingleOrDefault();
+        }
+
+        /// <summary>
         /// Gets all disks that have at least one partition of the specified
         /// type.
         /// </summary>
@@ -71,5 +94,47 @@ namespace Visus.DeploymentToolkit.Extensions {
             return disks.Where(d => d.Partitions.Any(
                 p => partitionType.Equals(p.Type)));
         }
+
+        #region Internal methods
+        /// <summary>
+        /// Gets the given <paramref name="disk"/> from the VDS provider using
+        /// its path.
+        /// </summary>
+        /// <param name="that"></param>
+        /// <param name="disk"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [SupportedOSPlatform("windows")]
+        internal static async Task<IDisk> GetDiskAsync(
+                this VdsService that,
+                IDisk disk,
+                CancellationToken cancellationToken) {
+            ArgumentNullException.ThrowIfNull(that);
+            ArgumentNullException.ThrowIfNull(disk);
+            var disks = await that.GetDisksAsync(cancellationToken)
+                .ConfigureAwait(false);
+            return disks.Where(d => d.Path == disk.Path).Single();
+        }
+
+        /// <summary>
+        /// Gets the given <paramref name="disk"/> from the WMI provider using
+        /// its path.
+        /// </summary>
+        /// <param name="that"></param>
+        /// <param name="disk"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [SupportedOSPlatform("windows")]
+        internal static async Task<IDisk> GetDiskAsync(
+                this WmiDiskService that,
+                IDisk disk,
+                CancellationToken cancellationToken) {
+            ArgumentNullException.ThrowIfNull(that);
+            ArgumentNullException.ThrowIfNull(disk);
+            var disks = await that.GetDisksAsync(cancellationToken)
+                .ConfigureAwait(false);
+            return disks.Where(d => d.Path == disk.Path).Single();
+        }
+        #endregion
     }
 }

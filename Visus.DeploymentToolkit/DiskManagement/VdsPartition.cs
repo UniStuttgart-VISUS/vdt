@@ -1,5 +1,5 @@
 ﻿// <copyright file="VdsPartition.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
@@ -19,12 +19,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         public uint Index => this._properties.PartitionNumber;
 
         /// <inheritdoc />
-        public bool IsBoot => (this.Style == PartitionStyle.Mbr)
-            ? this._properties.Mbr.BootIndicator
-            : false;
-
-        /// <inheritdoc />
-        public bool IsSystem => ((this._properties.Flags & 1u) == 1u);
+        public PartitionFlags Flags { get; }
 
         /// <inheritdoc />
         public string? Name => (this.Style == PartitionStyle.Gpt)
@@ -63,6 +58,15 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// <param name="properties"></param>
         internal VdsPartition(VDS_PARTITION_PROP properties) {
             this._properties = properties;
+
+            if ((this.Style == PartitionStyle.Mbr)
+                    && this._properties.Mbr.BootIndicator) {
+                this.Flags |= PartitionFlags.Boot;
+            }
+
+            if ((this._properties.Flags & 1u) == 1u) {
+                this.Flags |= PartitionFlags.System;
+            }
         }
         #endregion
 

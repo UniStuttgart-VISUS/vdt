@@ -54,10 +54,22 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public metods
         /// <inheritdoc />
+        public void AddPackage(string path, bool ignoreCheck,
+                bool preventPending) {
+            this.CheckSession();
+            this._logger.LogTrace("Adding component {Path} to image {Image}. "
+                + "Ignore check is {IgnoreCheck}, prevent pending is "
+                + "{PreventPending}", path, this.Name, ignoreCheck,
+                preventPending);
+            DismApi.AddPackage(this._session, path, ignoreCheck, preventPending);
+        }
+
+        /// <inheritdoc />
         public void ApplyUnattend(string path, bool singleSession) {
             this.CheckSession();
             this._logger.LogTrace("Applying unattend file {Path} to "
-                + "image {Image}.", path, this.Name);
+                + "image {Image}. Single session is {SingleSession}.",
+                path, this.Name, singleSession);
             DismApi.ApplyUnattend(this._session, path, singleSession);
         }
 
@@ -67,6 +79,7 @@ namespace Visus.DeploymentToolkit.Services {
             this._logger.LogTrace("Committing changes to DISM image "
                 + "{Image}.", this.Name);
             DismApi.CommitImage(this._session, false);
+            this.Close();
         }
 
         /// <inheritdoc />
@@ -78,12 +91,24 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         /// <inheritdoc />
-        public void InjectDrivers(string folder,
-                bool recursive = false,
-                bool forceUnsigned = false) {
+        public void EnableFeature(string feature, bool limitAccess,
+                bool enableAll) {
+            this.CheckSession();
+            this._logger.LogTrace("Enabling feature {Feature} on image "
+                + "{Image}. Limit access is {LimitAccess}, enable all is "
+                + "{EnableAll}", feature, this.Name, limitAccess, enableAll);
+            DismApi.EnableFeature(this._session, feature, limitAccess,
+                enableAll);
+        }
+
+        /// <inheritdoc />
+        public void InjectDrivers(string folder, bool recursive,
+                bool forceUnsigned) {
             this.CheckSession();
             this._logger.LogTrace("Injecting drivers from {Path} to "
-                + "image {Image}.", folder, this.Name);
+                + "image {Image}. Recursive is {Recursive}, force unsigned "
+                + "is {ForceUnsigned}.", folder, this.Name, recursive,
+                forceUnsigned);
             DismApi.AddDriversEx(this._session,
                 folder,
                 forceUnsigned,
@@ -113,6 +138,7 @@ namespace Visus.DeploymentToolkit.Services {
             this._logger.LogTrace("Reverting changes to DISM image "
                 + "{Image}.", this.Name);
             DismApi.CommitImage(this._session, true);
+            this.Close();
         }
         #endregion
 
@@ -129,6 +155,12 @@ namespace Visus.DeploymentToolkit.Services {
         [MemberNotNull(nameof(_session))]
         private void CheckSession() => _ = this._session
             ?? throw new InvalidOperationException(Errors.NoDismSession);
+
+        private void Close() {
+            this._logger.LogTrace("Disposing session handle.");
+            this._session?.Dispose();
+            this._session = null;
+        }
         #endregion
 
         #region Private fields

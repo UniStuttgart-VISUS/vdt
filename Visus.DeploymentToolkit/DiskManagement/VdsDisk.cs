@@ -1,5 +1,5 @@
 ﻿// <copyright file="VdsDisk.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
@@ -30,6 +30,13 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// </summary>
         public IVdsAdvancedDisk AdvancedDisk => (IVdsAdvancedDisk) this._disk;
 
+        /// <summary>
+        /// Gets the underlying advanced disk interface that allows for changing
+        /// the type of a partition.
+        /// </summary>
+        public IVdsAdvancedDisk2 AdvancedDisk2
+            => (IVdsAdvancedDisk2) this._disk;
+
         /// <inheritdoc />
         public StorageBusType BusType
             => (StorageBusType) this._properties.BusType;
@@ -50,6 +57,9 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         public Guid ID => _properties.Id;
 
         /// <inheritdoc />
+        public string Path => this._properties.DevicePath;
+
+        /// <inheritdoc />
         public IEnumerable<IPartition> Partitions => this._partitions.Value;
 
         /// <inheritdoc />
@@ -63,13 +73,13 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         public ulong Size => this._properties.Size;
 
         /// <inheritdoc />
-        public IEnumerable<Tuple<IVolume, IPartition>> VolumePartitions {
+        public IEnumerable<(IVolume, IPartition)> VolumePartitions {
             get {
                 var partitions = this._partitions.Value.ToArray();
                 foreach (var v in this._volumes.Value) {
                     var sdn = v.StorageDeviceNumber;
                     if (sdn.PartitionNumber < partitions.Length) {
-                        yield return new(v, partitions[sdn.PartitionNumber]);
+                        yield return (v, partitions[sdn.PartitionNumber]);
                     }
                 }
             }
@@ -174,11 +184,11 @@ namespace Visus.DeploymentToolkit.DiskManagement {
             }
             if (this._properties.Flags.HasFlag(VDS_DISK_FLAG.AUDIO_CD)) {
                 this.Flags |= DiskFlags.ReadOnly;
-                this.Flags |= DiskFlags.Removable;
+                //this.Flags |= DiskFlags.Removable;
             }
-            if (this._properties.Flags.HasFlag(VDS_DISK_FLAG.STYLE_CONVERTIBLE)) {
-                this.Flags |= DiskFlags.StyleConvertible;
-            }
+            //if (this._properties.Flags.HasFlag(VDS_DISK_FLAG.STYLE_CONVERTIBLE)) {
+            //    this.Flags |= DiskFlags.StyleConvertible;
+            //}
             try {
                 this._disk.GetPack(out var pack);
             } catch {

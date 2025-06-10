@@ -1,5 +1,5 @@
 ﻿// <copyright file="FileSystem.cs" company="Visualisierungsinstitut der Universität Stuttgart">
-// Copyright © 2024 Visualisierungsinstitut der Universität Stuttgart.
+// Copyright © 2024 - 2025 Visualisierungsinstitut der Universität Stuttgart.
 // Licensed under the MIT licence. See LICENCE file for details.
 // </copyright>
 // <author>Christoph Müller</author>
@@ -10,59 +10,132 @@ namespace Visus.DeploymentToolkit.DiskManagement {
     /// <summary>
     /// Enumerates all known types of file systems.
     /// </summary>
-    /// <remarks>
-    /// This enumeration is value-compatible with <c>VDS_FILE_SYSTEM_TYPE</c>.
-    /// </remarks>
     public enum FileSystem : uint {
 
         /// <summary>
-        /// The file system is not known.
+        /// The Apple File System (AFS).
         /// </summary>
-        Unknown = 0,
+        [WmiFileSystem(10)]
+        Afs,
 
         /// <summary>
-        /// The file system is an unformatted raw partition.
+        /// The file system of CD-ROMs.
         /// </summary>
-        Raw,
+        [VdsFileSystem(5)]
+        Csfs,
+
+        /// <summary>
+        /// Cluster-shared volume based on NTFS.
+        /// </summary>
+        [VdsFileSystem(8), WmiFileSystem(0x8000)]
+        CsvfsNtfs,
+
+        /// <summary>
+        /// Cluster-shared volume based on NTFS.
+        /// </summary>
+        [VdsFileSystem(8), WmiFileSystem(0x8001)]
+        CsvfsRefs,
+
+        /// <summary>
+        /// The FAT32 successor exFAT.
+        /// </summary>
+        [VdsFileSystem(7)]
+        ExFat,
+
+        /// <summary>
+        /// EXT2 file system (Linux).
+        /// </summary>
+        [WmiFileSystem(11)]
+        Ext2,
+
+        /// <summary>
+        /// EXT3 file system (Linux).
+        /// </summary>
+        [WmiFileSystem(12)]
+        Ext3,
 
         /// <summary>
         /// FAT.
         /// </summary>
+        [VdsFileSystem(2), WmiFileSystem(4)]
         Fat,
 
         /// <summary>
-        /// 32-bit FA:
+        /// FAT-16.
         /// </summary>
+        [WmiFileSystem(5)]
+        Fat16,
+
+        /// <summary>
+        /// 32-bit FAT
+        /// </summary>
+        [VdsFileSystem(3), WmiFileSystem(6)]
         Fat32,
 
         /// <summary>
-        /// NTFS.
+        /// The file system is a Hierarchical File System (HFS).
         /// </summary>
+        [WmiFileSystem(3)]
+        Hfs,
+
+        /// <summary>
+        /// The Windows NT file system (NTFS).
+        /// </summary>
+        [VdsFileSystem(4), WmiFileSystem(14)]
         Ntfs,
 
         /// <summary>
-        /// CDFS.
+        /// NTFS v4.
         /// </summary>
-        Cdfs,
+        [WmiFileSystem(7)]
+        Ntfs4,
 
         /// <summary>
-        /// Universal Disk Format (DVD).
+        /// NTFS v5.
         /// </summary>
+        [WmiFileSystem(8)]
+        Ntfs5,
+
+        /// <summary>
+        /// The file system is an unformatted raw partition.
+        /// </summary>
+        [VdsFileSystem(1), WmiFileSystem(1)]
+        Raw,
+
+        /// <summary>
+        /// Resilient file system (ReFS).
+        /// </summary>
+        [VdsFileSystem(9), WmiFileSystem(15)]
+        Refs,
+
+        /// <summary>
+        /// Reiser file system (Linux).
+        /// </summary>
+        [WmiFileSystem(13)]
+        ReiserFs,
+
+        /// <summary>
+        /// The universal disk format (UDF) file system used by DVDs.
+        /// </summary>
+        [VdsFileSystem(6)]
         Udf,
 
         /// <summary>
-        /// Extended FAT.
+        /// The file system is a Unix file system (UFS).
         /// </summary>
-        ExFat,
+        [WmiFileSystem(2)]
+        Ufs,
 
         /// <summary>
-        /// Windows cluster file system.
+        /// The file system is not known.
         /// </summary>
-        Csvfs,
+        [VdsFileSystem(0), WmiFileSystem(0)]
+        Unknown,
 
         /// <summary>
-        /// Resilient file system.
+        /// XFS (Linux).
         /// </summary>
-        Refs
+        [WmiFileSystem(9)]
+        Xfs
     }
 }

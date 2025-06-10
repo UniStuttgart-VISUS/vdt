@@ -11,7 +11,6 @@ using System.Management;
 using System.Runtime.Versioning;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
-using Visus.DeploymentToolkit.Services;
 
 
 namespace Visus.DeploymentToolkit.DiskManagement {
@@ -40,12 +39,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
         #region Public properties
         /// <inheritdoc />
-        public StorageBusType BusType {
-            get {
-                ObjectDisposedException.ThrowIf(this._disk is null, this);
-                return (StorageBusType) this._disk["BusType"];
-            }
-        }
+        public StorageBusType BusType { get; }
 
         /// <inheritdoc />
         public DiskFlags Flags { get; }
@@ -60,6 +54,14 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
         /// <inheritdoc />
         public Guid ID { get; }
+
+        /// <inheritdoc />
+        public string Path {
+            get {
+                ObjectDisposedException.ThrowIf(this._disk is null, this);
+                return (string) this._disk["Path"];
+            }
+        }
 
         /// <inheritdoc />
         public IEnumerable<IPartition> Partitions => this._partitions.Value;
@@ -84,18 +86,8 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         }
 
         /// <inheritdoc />
-        public IEnumerable<Tuple<IVolume, IPartition>> VolumePartitions {
-            get {
-                //var partitions = this._partitions.Value.ToArray();
-                //foreach (var v in this._volumes.Value) {
-                //    var sdn = v.StorageDeviceNumber;
-                //    if (sdn.PartitionNumber < partitions.Length) {
-                //        yield return new(v, partitions[sdn.PartitionNumber]);
-                //    }
-                //}
-                throw new NotImplementedException("TODO");
-            }
-        }
+        public IEnumerable<(IVolume, IPartition)> VolumePartitions
+            => this._volumePartitions.Value.Cast<(IVolume, IPartition)>();
 
         /// <inheritdoc />
         public IEnumerable<IVolume> Volumes => this._volumes.Value;
@@ -106,6 +98,20 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         public void Dispose() {
             this.Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Gets all partitions on the disk without relying on cached data.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<WmiPartition> GetPartitions() {
+            ObjectDisposedException.ThrowIf(this._disk is null, this);
+            var id = (string) this._disk["ObjectId"];
+            var retval = this._disk.Scope.QueryObjects("ASSOCIATORS OF "
+                + $@"{{{Class}.ObjectId=""{id.EscapeWql()}""}} "
+                + "WHERE AssocClass = MSFT_DiskToPartition")
+                .Select(p => new WmiPartition(p, this.PartitionStyle));
+            return retval;
         }
 
         /// <inheritdoc />
@@ -127,19 +133,50 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                     this._disk.ClassPath.ClassName));
             }
 
-            this.ID = Guid.Parse((string) this._disk["Guid"]);
+            var busType = (ushort) this._disk["BusType"];
+            this.BusType = (StorageBusType) busType;
+
+            try {
+                this.ID = Guid.Parse((string) this._disk["UniqueId"]);
+            } catch {
+                this.ID = Guid.Empty;
+            }
+
+            var loc = this._disk["Location"];
+            var pa = this._disk["Path"];
 
             var style = (ushort) this._disk["PartitionStyle"];
             this.PartitionStyle = (PartitionStyle) style;
 
-            this._partitions = new(() => {
-                ObjectDisposedException.ThrowIf(this._disk is null, this);
+            this._partitions = new(this.GetPartitions);
+
+            this._volumePartitions = new(() => {
+               ObjectDisposedException.ThrowIf(this._disk is null, this);
                 var id = (string) this._disk["ObjectId"];
-                var retval = this._disk.Scope.QueryObjects("ASSOCIATORS OF "
+                var partitions = this._disk.Scope.QueryObjects("ASSOCIATORS OF "
                     + $@"{{{Class}.ObjectId=""{id.EscapeWql()}""}} "
-                    + "WHERE AssocClass = MSFT_DiskToPartition")
-                    .Select(p => new WmiPartition(p, this.PartitionStyle));
-                return retval;
+                    + "WHERE AssocClass = MSFT_DiskToPartition");
+
+                var volumes = partitions.Select(p => {
+                    var id = (string) p["ObjectId"];
+                    var v = this._disk.Scope.QueryObjects("ASSOCIATORS "
+                        + $@"OF {{{WmiPartition.Class}.ObjectId="
+                        + $@"""{id.EscapeWql()}""}} "
+                        + "WHERE AssocClass = MSFT_PartitionToVolume")
+                        .SingleOrDefault();
+                    if (v is null) {
+                        p.Dispose();
+                        return (null!, null!);
+                    } else {
+                        var volume = new WmiVolume(v);
+                        var partition = new WmiPartition(p, this.PartitionStyle);
+                        return (volume, partition);
+                    }
+                });
+
+                return from v in volumes
+                       where v.volume is not null
+                       select (v.volume, v.partition);
             });
 
             this._volumes = new(() => {
@@ -156,27 +193,29 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                 }).Where(v => v != null).Cast<WmiVolume>();
             });
 
-            //    // Determine the properties of the disk.
-            //    this.Flags = flags;
-            //    if (this._properties.Flags.HasFlag(VDS_DISK_FLAG.READ_ONLY)) {
-            //        this.Flags |= DiskFlags.ReadOnly;
-            //    }
-            //    if (this._properties.Flags.HasFlag(VDS_DISK_FLAG.CURRENT_READ_ONLY)) {
-            //        this.Flags |= DiskFlags.ReadOnly;
-            //    }
-            //    if (this._properties.Flags.HasFlag(VDS_DISK_FLAG.AUDIO_CD)) {
-            //        this.Flags |= DiskFlags.ReadOnly;
-            //        this.Flags |= DiskFlags.Removable;
-            //    }
-            //    if (this._properties.Flags.HasFlag(VDS_DISK_FLAG.STYLE_CONVERTIBLE)) {
-            //        this.Flags |= DiskFlags.StyleConvertible;
-            //    }
-            //    try {
-            //        this._disk.GetPack(out var pack);
-            //    } catch {
-            //        // If we cannot get the pack, we assume the disk is uninitalised.
-            //        this.Flags |= DiskFlags.Uninitialised;
-            //    }
+            // Determine the properties of the disk.
+            this.Flags = flags;
+            if ((bool) this._disk["IsReadOnly"]) {
+                this.Flags |= DiskFlags.ReadOnly;
+            }
+
+            if ((bool) this._disk["IsOffline"]) {
+                this.Flags |= DiskFlags.Offline;
+            }
+
+            // For some really weird reason, I sometimes got an array instead of
+            // the documented ushort, so we check for that.
+            var status = this._disk["OperationalStatus"] switch {
+                ushort[] a when (a.Length > 0) => a[0],
+                ushort s => s,
+                _ => 0
+            };
+
+            switch (status) {
+                case 0xD013: // Offline
+                    this.Flags |= DiskFlags.Uninitialised;
+                    break;
+            }
         }
         #endregion
 
@@ -192,6 +231,13 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                     }
                 }
 
+                if (this._volumePartitions.IsValueCreated) {
+                    foreach (var vp in this._volumePartitions.Value) {
+                        vp.Item1.Dispose();
+                        vp.Item2.Dispose();
+                    }
+                }
+
                 if (this._volumes.IsValueCreated) {
                     foreach (var v in this._volumes.Value) {
                         v.Dispose();
@@ -204,6 +250,8 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         #region Private fields
         private ManagementObject _disk;
         private readonly Lazy<IEnumerable<WmiPartition>> _partitions;
+        private readonly Lazy<IEnumerable<(WmiVolume, WmiPartition)>>
+            _volumePartitions;
         private readonly Lazy<IEnumerable<WmiVolume>> _volumes;
         #endregion
     }

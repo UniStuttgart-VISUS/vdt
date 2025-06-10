@@ -4,12 +4,10 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.DiskManagement;
-using Visus.DeploymentToolkit.Vds;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -61,7 +59,8 @@ namespace Visus.DeploymentToolkit.Services {
             CancellationToken cancellationToken);
 
         /// <summary>
-        /// Converts the partition style of the disk to the specified value.
+        /// Converts the partition style of the disk to the specified value. If
+        /// necessary, the disk will be initialised to the specified style.
         /// </summary>
         /// <param name="disk">The disk to be converted.</param>
         /// <param name="style">The new partition style of the disk.</param>
@@ -80,7 +79,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <param name="cancellationToken">A cancellation token for aborting
         /// the operation.</param>
         /// <returns>A task for waiting on the operation to complete.</returns>
-        Task CreatePartitionAsync(IDisk disk,
+        Task<IPartition> CreatePartitionAsync(IDisk disk,
             IPartition partition,
             CancellationToken cancellationToken);
 

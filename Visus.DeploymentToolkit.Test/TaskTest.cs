@@ -125,7 +125,9 @@ namespace Visus.DeploymentToolkit.Test {
             if (WindowsIdentity.GetCurrent().IsAdministrator()) {
                 var state = new State(CreateLogger<State>());
                 var vds = new VdsService(CreateLogger<VdsService>());
-                var task = new SelectInstallDisk(state, vds, CreateLogger<SelectInstallDisk>());
+                var wmi = new ManagementService(CreateLogger<ManagementService>());
+                var diskMgmt = new WmiDiskService(wmi, vds, CreateLogger<WmiDiskService>());
+                var task = new SelectInstallDisk(state, diskMgmt, CreateLogger<SelectInstallDisk>());
 
                 await task.ExecuteAsync();
                 Assert.IsNotNull(state.InstallationDisk);

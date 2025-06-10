@@ -19,6 +19,11 @@ namespace Visus.DeploymentToolkit.Services {
     public static class WellKnownStates {
 
         /// <summary>
+        /// The architecture of the system that is being serviced.
+        /// </summary>
+        public const string Architecture = nameof(IState.Architecture);
+
+        /// <summary>
         /// The path to the binary of the deployment agent.
         /// </summary>
         public const string AgentPath = nameof(IState.AgentPath);

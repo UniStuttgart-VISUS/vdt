@@ -98,14 +98,6 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                              select d;
                     break;
 
-                case BuiltInCondition.IsConvertible:
-                    logger.LogInformation("Selecting convertible disks for "
-                        + "action {Action}.", this.Action);
-                    retval = from d in disks
-                             where d.Flags.HasFlag(DiskFlags.StyleConvertible)
-                             select d;
-                    break;
-
                 case BuiltInCondition.IsEfiSystemDisk:
                     logger.LogInformation("Selecting a disk with an EFI system "
                         + "partition on it for action {Action}.", this.Action);
@@ -134,7 +126,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                     logger.LogInformation("Selecting a disk with a MBR on it "
                         + " for action {Action}.", this.Action);
                     retval = from d in disks
-                             where d.Partitions.Any(p => p.IsBoot)
+                             where d.Partitions.Any(p => p.Flags.HasFlag(PartitionFlags.Boot))
                              select d;
                     break;
 

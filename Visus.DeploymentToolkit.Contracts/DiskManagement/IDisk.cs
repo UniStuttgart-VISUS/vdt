@@ -45,6 +45,12 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         Guid ID { get; }
 
         /// <summary>
+        /// A path that can be used to open an operating system handle to the
+        /// disk device.
+        /// </summary>
+        string Path { get; }
+
+        /// <summary>
         /// Gets the partitions on the disk.
         /// </summary>
         /// <remarks>
@@ -71,7 +77,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// <summary>
         /// Gets all partitions that can be mapped to a volume.
         /// </summary>
-        IEnumerable<Tuple<IVolume, IPartition>> VolumePartitions { get; }
+        IEnumerable<(IVolume, IPartition)> VolumePartitions { get; }
 
         /// <summary>
         /// Gets the volumes on the disk.

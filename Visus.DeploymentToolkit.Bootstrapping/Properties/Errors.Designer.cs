@@ -133,6 +133,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified value {0} is not a well-known enumeration value of type {1}..
+        /// </summary>
+        internal static string InvalidEnumValue {
+            get {
+                return ResourceManager.GetString("InvalidEnumValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The path to the working directory must be set. Make sure that the task is configured accordinly or that the working directory has been configured in the state passed to the task..
         /// </summary>
         internal static string InvalidWorkingDirectory {
