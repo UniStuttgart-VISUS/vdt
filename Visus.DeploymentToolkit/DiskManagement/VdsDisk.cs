@@ -39,7 +39,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
         /// <inheritdoc />
         public StorageBusType BusType
-            => (StorageBusType) this._properties.BusType;
+            => (StorageBusType) this.Properties.BusType;
 
         /// <summary>
         /// Gets the underlying disk interface that allows the
@@ -51,26 +51,31 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         public DiskFlags Flags { get; }
 
         /// <inheritdoc />
-        public string FriendlyName => this._properties.FriendlyName;
+        public string FriendlyName => this.Properties.FriendlyName;
 
         /// <inheritdoc />
-        public Guid ID => _properties.Id;
+        public Guid ID => Properties.Id;
 
         /// <inheritdoc />
-        public string Path => this._properties.DevicePath;
+        public string Path => this.Properties.DevicePath;
 
         /// <inheritdoc />
         public IEnumerable<IPartition> Partitions => this._partitions.Value;
 
         /// <inheritdoc />
         public PartitionStyle PartitionStyle
-            => (PartitionStyle) this._properties.PartitionStyle;
+            => (PartitionStyle) this.Properties.PartitionStyle;
+
+        /// <summary>
+        /// Gets the disk properties.
+        /// </summary>
+        public VDS_DISK_PROP Properties { get; }
 
         /// <inheritdoc />
-        public uint SectorSize => this._properties.BytesPerSector;
+        public uint SectorSize => this.Properties.BytesPerSector;
 
         /// <inheritdoc />
-        public ulong Size => this._properties.Size;
+        public ulong Size => this.Properties.Size;
 
         /// <inheritdoc />
         public IEnumerable<(IVolume, IPartition)> VolumePartitions {
@@ -156,33 +161,20 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         #region Internal constructors
         internal VdsDisk(IVdsDisk disk, DiskFlags flags = DiskFlags.None) {
             this._disk = disk ?? throw new ArgumentNullException(nameof(disk));
-            this._disk.GetProperties(out _properties);
-            this._partitions = new(() => {
-                if (this._disk is IVdsAdvancedDisk disk) {
-                    try {
-                        disk.QueryPartitions(out var props, out var _);
-                        return props.Select(p => new VdsPartition(p));
-                    } catch { /* We can ignore this for unit'd disks. */ }
-                }
-
-                return Enumerable.Empty<VdsPartition>();
-            });
-            this._volumes = new(() => {
-                disk.GetPack(out var pack);
-                pack.QueryVolumes(out var enumerator);
-                return enumerator.Enumerate<IVdsVolume>()
-                    .Select(v => new VdsVolume(v));
-            });
+            this._disk.GetProperties(out var props);
+            this.Properties = props;
+            this._partitions = new(this.GetPartitions);
+            this._volumes = new(this.GetVolumes);
 
             // Determine the properties of the disk.
             this.Flags = flags;
-            if (this._properties.Flags.HasFlag(VDS_DISK_FLAG.READ_ONLY)) {
+            if (this.Properties.Flags.HasFlag(VDS_DISK_FLAG.READ_ONLY)) {
                 this.Flags |= DiskFlags.ReadOnly;
             }
-            if (this._properties.Flags.HasFlag(VDS_DISK_FLAG.CURRENT_READ_ONLY)) {
+            if (this.Properties.Flags.HasFlag(VDS_DISK_FLAG.CURRENT_READ_ONLY)) {
                 this.Flags |= DiskFlags.ReadOnly;
             }
-            if (this._properties.Flags.HasFlag(VDS_DISK_FLAG.AUDIO_CD)) {
+            if (this.Properties.Flags.HasFlag(VDS_DISK_FLAG.AUDIO_CD)) {
                 this.Flags |= DiskFlags.ReadOnly;
                 //this.Flags |= DiskFlags.Removable;
             }
@@ -198,10 +190,36 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         }
         #endregion
 
+        #region Internal methods
+        /// <summary>
+        /// Queries the partitions on the disk without accessing the cache.
+        /// </summary>
+        /// <returns></returns>
+        internal IEnumerable<VdsPartition> GetPartitions() {
+            if (this._disk is IVdsAdvancedDisk disk) {
+                try {
+                    disk.QueryPartitions(out var props, out var _);
+                    return props.Select(p => new VdsPartition(this, p));
+                } catch { /* We can ignore this for unit'd disks. */ }
+            }
+            return Enumerable.Empty<VdsPartition>();
+        }
+
+        /// <summary>
+        /// Queries the volumes on the disk without accessing the cache.
+        /// </summary>
+        /// <returns></returns>
+        internal IEnumerable<VdsVolume> GetVolumes() {
+            this._disk.GetPack(out var pack);
+            pack.QueryVolumes(out var enumerator);
+            return enumerator.Enumerate<IVdsVolume>()
+                .Select(v => new VdsVolume(v));
+        }
+        #endregion
+
         #region Private fields
         private readonly IVdsDisk _disk;
         private readonly Lazy<IEnumerable<VdsPartition>> _partitions;
-        private readonly VDS_DISK_PROP _properties;
         private readonly Lazy<IEnumerable<VdsVolume>> _volumes;
         #endregion
     }

@@ -149,9 +149,9 @@ namespace Visus.DeploymentToolkit.Extensions {
                 this IServiceCollection services) {
             _ = services ?? throw new ArgumentNullException(nameof(services));
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-                services.AddKeyedSingleton<IDiskManagement, VdsService>("VDS");
-                services.AddKeyedSingleton<IDiskManagement, WmiDiskService>("WMI");
-                services.AddSingleton<IDiskManagement, WmiDiskService>();
+                services.AddSingleton<VdsService, VdsService>();
+                services.AddSingleton<WmiDiskService, WmiDiskService>();
+                services.AddSingleton<IDiskManagement, VdsService>();
             }
             return services;
         }

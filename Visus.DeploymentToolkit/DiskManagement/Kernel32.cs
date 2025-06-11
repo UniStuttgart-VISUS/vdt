@@ -18,6 +18,13 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
         #region Public constants
         /// <summary>
+        /// The FSCTL_IS_VOLUME_DIRTY control code determines whether the
+        /// specified volume is dirty.
+        /// </summary>
+        public const uint FSCTL_IS_VOLUME_DIRTY
+            = (((0x00000009) << 16) | ((0) << 14) | ((30) << 2) | (0));
+
+        /// <summary>
         /// The I/O control code for retrieving the disk extents of a volume.
         /// </summary>
         public const uint IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS

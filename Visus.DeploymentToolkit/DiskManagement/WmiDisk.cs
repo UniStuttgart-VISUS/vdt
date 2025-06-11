@@ -182,13 +182,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
             this._volumes = new(() => {
                 ObjectDisposedException.ThrowIf(this._disk is null, this);
                 return this.Partitions.Select(p => {
-                    var obj = (ManagementObject) (WmiPartition) p;
-                    var id = (string) obj["ObjectId"];
-                    var volume = this._disk.Scope.QueryObjects("ASSOCIATORS "
-                        + $@"OF {{{WmiPartition.Class}.ObjectId="
-                        + $@"""{id.EscapeWql()}""}} "
-                        + "WHERE AssocClass = MSFT_PartitionToVolume")
-                        .SingleOrDefault();
+                    var volume = ((WmiPartition) p).Volume;
                     return (volume is not null) ? new WmiVolume(volume) : null;
                 }).Where(v => v != null).Cast<WmiVolume>();
             });

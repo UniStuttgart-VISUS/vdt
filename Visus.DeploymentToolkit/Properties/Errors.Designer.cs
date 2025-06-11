@@ -250,6 +250,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disks cannot be converted to style {0}..
+        /// </summary>
+        internal static string InvalidPartitionStyle {
+            get {
+                return ResourceManager.GetString("InvalidPartitionStyle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The handle for the WIM file is invalid or closed..
         /// </summary>
         internal static string InvalidWimHandle {
@@ -318,6 +327,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string NoAdvancedDisk {
             get {
                 return ResourceManager.GetString("NoAdvancedDisk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The basic software provider was not found..
+        /// </summary>
+        internal static string NoBasicSwProvider {
+            get {
+                return ResourceManager.GetString("NoBasicSwProvider", resourceCulture);
             }
         }
         
@@ -403,11 +421,29 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified partition was not obtained from the VDS disk management service..
+        /// </summary>
+        internal static string NoVdsPartition {
+            get {
+                return ResourceManager.GetString("NoVdsPartition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The service loader for the Virtual Disk Services does not implement the expected interface..
         /// </summary>
         internal static string NoVdsServiceLoader {
             get {
                 return ResourceManager.GetString("NoVdsServiceLoader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is no volume associated with the partition {0}..
+        /// </summary>
+        internal static string NoVolume {
+            get {
+                return ResourceManager.GetString("NoVolume", resourceCulture);
             }
         }
         

@@ -27,6 +27,11 @@ namespace Visus.DeploymentToolkit.Vds {
         /// Parameters for a Master Boot Record (MBR) disk. Used if
         /// <see cref="Style"/> is <see cref="VDS_PARTITION_STYLE.MBR"/>.
         /// </summary>
+        /// <remarks>
+        /// Alignment of 8 bytes comes from Intellisense in C++. It is not clear
+        /// how reliable this is, but using a 4-byte alignment causes the type
+        /// loader to fail for this structure.
+        /// </remarks>
         [FieldOffset(8)]
         public MbrPartitionParameters MbrPartInfo;
 
@@ -34,6 +39,11 @@ namespace Visus.DeploymentToolkit.Vds {
         /// Parameters for a GUID Partition Table (GPT) disk. Used if
         /// <see cref="Style"/> is <see cref="VDS_PARTITION_STYLE.GPT"/>.
         /// </summary>
+        /// <remarks>
+        /// Alignment of 8 bytes comes from Intellisense in C++. It is not clear
+        /// how reliable this is, but using a 4-byte alignment causes the type
+        /// loader to fail for this structure.
+        /// </remarks>
         [FieldOffset(8)]
         public VDS_PARTITION_INFO_GPT GptPartInfo;
 

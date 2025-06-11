@@ -7,14 +7,12 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Management;
-using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using System.Text;
 using System.Threading;
@@ -39,7 +37,7 @@ namespace Visus.DeploymentToolkit.Services {
     [SupportedOSPlatform("windows")]
     internal sealed class WmiDiskService(
             IManagementService wmi,
-            [FromKeyedServices("VDS")] IDiskManagement vds,
+            VdsService vds,
             ILogger<WmiDiskService> logger)
             : IDiskManagement {
 
@@ -79,8 +77,15 @@ namespace Visus.DeploymentToolkit.Services {
                 + "succeeds, but does not do anything. If anyone finds out why "
                 + "this is the case, please fix this to use WMI only.", disk.ID,
                 disk.FriendlyName);
-            var vds = await this._vds.GetDiskAsync(disk, cancellationToken)
+            var vds = await this._vds.GetDiskByPathAsync(disk, cancellationToken)
                 .ConfigureAwait(false);
+            if (vds is null) {
+                this._logger.LogError("The disk {Disk} ({Name}) could not be "
+                    + "found by VDS using path {Path}.", disk.ID,
+                    disk.FriendlyName, disk.Path);
+                throw new InvalidOperationException(string.Format(
+                    Errors.DiskNotFound, disk.ID));
+            }
             this._logger.LogTrace("Disk {Disk} ({Name}) was found by VDS using "
                 + "path {Path}.", vds.ID, vds.FriendlyName, vds.Path);
             await this._vds.CleanAsync(vds, flags, cancellationToken);
@@ -222,7 +227,7 @@ namespace Visus.DeploymentToolkit.Services {
             var retval = new WmiPartition(mo, wmi.PartitionStyle);
 
             // Use VDS to change the partition type.
-            var vds = await this._vds.GetDiskAsync(disk, cancellationToken)
+            var vds = await this._vds.GetDiskByPathAsync(disk, cancellationToken)
                 .ConfigureAwait(false);
             this._logger.LogTrace("Disk {Disk} ({Name}) was found by VDS using "
                 + "path {Path}.", vds.ID, vds.FriendlyName, vds.Path);
@@ -266,12 +271,39 @@ namespace Visus.DeploymentToolkit.Services {
                 throw new InvalidOperationException(Errors.NoWmiDisk);
             }
 
-            var p = (ManagementObject) wmi;
-            var fs = fileSystem.ToWmi();
+            this._logger.LogTrace("Obtaining volume assoicated with partition "
+                + "{Partition} for formatting.", partition.Name);
+            var volume = (ManagementObject?) wmi.Volume;
+            if (volume is null) {
+                throw new InvalidOperationException(string.Format(
+                    Errors.NoVolume, wmi.Name));
+            }
 
+            dynamic args = new ExpandoObject();
 
+            args.FileSystem = fileSystem switch {
+                FileSystem.ExFat => "ExFAT",
+                FileSystem.Fat => "FAT",
+                FileSystem.Fat32 => "FAT32",
+                FileSystem.Ntfs => "NTFS",
+                FileSystem.Ntfs4 => "NTFS",
+                FileSystem.Ntfs5 => "NTFS",
+                FileSystem.Refs => "ReFS",
+                _ => throw new ArgumentException("TODO")
+            };
 
-            throw new NotImplementedException("TODO");
+            args.FileSystemLabel = label;
+            args.AllocationUnitSize = allocationUnitSize;
+            args.Full = !flags.HasFlag(FormatFlags.Quick);
+            args.Force = flags.HasFlag(FormatFlags.Force);
+            args.Compress = flags.HasFlag(FormatFlags.EnableCompression);
+            //args.ShortFileNameSupport = flags.HasFlag(FormatFlags.EnableShortFileNameSupport);
+            //args.SetIntegrityStreams = true;
+            //args.UseLargeFRS = false;
+            //args.DisableHeatGathering = false;
+
+            CheckResult(volume.Invoke("Format", (ExpandoObject) args));
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc />
@@ -284,26 +316,26 @@ namespace Visus.DeploymentToolkit.Services {
                     .GetInstancesOf(WmiDisk.Class, this._wmi.WindowsStorageScope)
                     .Select(d => new WmiDisk(d));
 
-                var sb = new StringBuilder("Disks found: ");
-                foreach (var d in retval) {
-                    sb.AppendLine()
-                        .Append(d.ID)
-                        .Append(" (")
-                        .Append(d.FriendlyName)
-                        .AppendLine("):");
+                //var sb = new StringBuilder("Disks found: ");
+                //foreach (var d in retval) {
+                //    sb.AppendLine()
+                //        .Append(d.ID)
+                //        .Append(" (")
+                //        .Append(d.FriendlyName)
+                //        .AppendLine("):");
 
-                    foreach (var p in ((ManagementObject) d).Properties) {
-                        sb.Append(p.Name);
-                        sb.Append(" = ");
-                        sb.Append(p.Value);
-                        sb.AppendLine();
-                    }
-                }
-                this._logger.LogTrace(sb.ToString());
+                //    foreach (var p in ((ManagementObject) d).Properties) {
+                //        sb.Append(p.Name);
+                //        sb.Append(" = ");
+                //        sb.Append(p.Value);
+                //        sb.AppendLine();
+                //    }
+                //}
+                //this._logger.LogTrace(sb.ToString());
 
                 return retval.AsEnumerable<IDisk>();
             }, cancellationToken);
-#endregion
+        #endregion
 
         #region Private methods
         /// <summary>
@@ -349,7 +381,7 @@ namespace Visus.DeploymentToolkit.Services {
             ?? throw new ArgumentNullException(nameof(logger));
         private readonly IManagementService _wmi = wmi
             ?? throw new ArgumentNullException(nameof(wmi));
-        private readonly VdsService _vds = vds as VdsService
+        private readonly VdsService _vds = vds
             ?? throw new ArgumentNullException(nameof(vds));
         #endregion
     }

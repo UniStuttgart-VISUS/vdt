@@ -9,7 +9,6 @@ using Microsoft.Extensions.Options;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
@@ -129,7 +128,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                     .GetDisksAsync(cancellationToken)
                     .ConfigureAwait(false);
 
-                this.Disk = await this._diskManagement.GetDiskAsync(
+                this.Disk = await this._diskManagement.GetDiskByIDAsync(
                     this.Disk.ID, cancellationToken)
                     ?? throw new ArgumentException(
                         string.Format(Errors.DiskNotFound, definition.ID),
@@ -152,8 +151,8 @@ namespace Visus.DeploymentToolkit.Tasks {
             Debug.Assert(this.PartitionScheme is not null);
 
             this._logger.LogInformation("Preparing {DiskID} ({Name}) for "
-                + "deployment by cleaning everything on it.",
-                this.Disk.ID, this.Disk.FriendlyName);
+                + "deployment by all {Size} bytes on it.",
+                this.Disk.ID, this.Disk.FriendlyName, this.Disk.Size);
             try {
                 await this._diskManagement.CleanAsync(this.Disk,
                     this.CleanFlags, cancellationToken);
@@ -172,10 +171,21 @@ namespace Visus.DeploymentToolkit.Tasks {
                 }
             }
 
-            this._logger.LogTrace("Refreshing disk {DiskID} information after "
-                + "cleaning.", this.Disk.ID);
-            this.Disk = await this._diskManagement.GetDiskAsync(this.Disk.ID,
-                cancellationToken)
+            //{
+            //    if (this._diskManagement is VdsService vds) {
+            //        this._logger.LogTrace("Refreshing VDS data after cleaning "
+            //            + "disk {DiskID}.", this.Disk.ID);
+            //        await vds.RefreshAsync(true, cancellationToken)
+            //            .ConfigureAwait(false);
+            //    }
+            //}
+
+            this._logger.LogTrace("Refreshing disk {DiskID} ({Path}) "
+                + "information after enforcing partition style "
+                + "{PartitionStyle}.", this.Disk.ID, this.Disk.Path,
+                this.PartitionScheme.PartitionStyle);
+            this.Disk = await this._diskManagement.GetDiskByPathAsync(
+                this.Disk, cancellationToken)
                 ?? throw new InvalidOperationException(Errors.DiskRefreshFail);
 
             if (this.Disk.PartitionStyle
@@ -193,11 +203,21 @@ namespace Visus.DeploymentToolkit.Tasks {
                     this.Disk.ID, this.PartitionScheme.PartitionStyle);
             }
 
-            this._logger.LogTrace("Refreshing disk {DiskID} information after "
-                + "enforcing partition style {PartitionStyle}.", this.Disk.ID,
+            //{
+            //    if (this._diskManagement is VdsService vds) {
+            //        this._logger.LogTrace("Refreshing VDS data after changing "
+            //            + "the partition style.");
+            //        await vds.RefreshAsync(true, cancellationToken)
+            //            .ConfigureAwait(false);
+            //    }
+            //}
+
+            this._logger.LogTrace("Refreshing disk {DiskID} ({Path}) "
+                + "information after enforcing partition style "
+                + "{PartitionStyle}.", this.Disk.ID, this.Disk.Path,
                 this.PartitionScheme.PartitionStyle);
-            this.Disk = await this._diskManagement.GetDiskAsync(this.Disk.ID,
-                cancellationToken)
+            this.Disk = await this._diskManagement.GetDiskByPathAsync(
+                this.Disk, cancellationToken)
                 ?? throw new InvalidOperationException(Errors.DiskRefreshFail);
 
             this._logger.LogInformation("Creating new partitions on disk "
@@ -207,23 +227,28 @@ namespace Visus.DeploymentToolkit.Tasks {
                              select p;
             foreach (var p in partitions) {
                 cancellationToken.ThrowIfCancellationRequested();
-                await this._diskManagement.CreatePartitionAsync(this.Disk,
-                    p, cancellationToken);
+                var partition = await this._diskManagement.CreatePartitionAsync(
+                    this.Disk, p, cancellationToken);
 
-                // TODO: format!
+                await this._diskManagement.FormatAsync(partition,
+                    p.FileSystem,
+                    p.Label ?? p.Name,
+                    0,
+                    FormatFlags.Quick | FormatFlags.Force,
+                    cancellationToken);
 
-                foreach (var m in p.Mounts) {
-                    var mountPoint = m.TrimEnd(':',
-                        Path.DirectorySeparatorChar,
-                        Path.AltDirectorySeparatorChar);
+                //foreach (var m in p.Mounts) {
+                //    var mountPoint = m.TrimEnd(':',
+                //        Path.DirectorySeparatorChar,
+                //        Path.AltDirectorySeparatorChar);
 
-                    //if (mountPoint.Length == 1) {
-                    //    this._logger.LogDebug("Assigning drive letter "
-                    //        + "{MountPoint} to partition {Partition}.",
-                    //        mountPoint, p.Name);
-                    //    disk.AssignDriveLetter(p.Offset, mountPoint[0]);
-                    //}
-                }
+                //    //if (mountPoint.Length == 1) {
+                //    //    this._logger.LogDebug("Assigning drive letter "
+                //    //        + "{MountPoint} to partition {Partition}.",
+                //    //        mountPoint, p.Name);
+                //    //    disk.AssignDriveLetter(p.Offset, mountPoint[0]);
+                //    //}
+                //}
 
                 if (this.IsInstallationDisk) {
                     this._logger.LogTrace("Propagating mount points of an "

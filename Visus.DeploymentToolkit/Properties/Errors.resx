@@ -285,4 +285,16 @@
   <data name="DiskPathNotFound" xml:space="preserve">
     <value>A disk with path "{0}" was not found in the system.</value>
   </data>
+  <data name="NoVolume" xml:space="preserve">
+    <value>There is no volume associated with the partition {0}.</value>
+  </data>
+  <data name="InvalidPartitionStyle" xml:space="preserve">
+    <value>Disks cannot be converted to style {0}.</value>
+  </data>
+  <data name="NoBasicSwProvider" xml:space="preserve">
+    <value>The basic software provider was not found.</value>
+  </data>
+  <data name="NoVdsPartition" xml:space="preserve">
+    <value>The specified partition was not obtained from the VDS disk management service.</value>
+  </data>
 </root>

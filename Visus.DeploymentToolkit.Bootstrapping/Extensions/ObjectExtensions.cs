@@ -166,11 +166,15 @@ namespace Visus.DeploymentToolkit.Extensions {
         /// <param name="src">The object which of the annotated properties are
         /// to be persisted in the <see cref="IState"/>.</param>
         /// <param name="dst">The state object receiving the data.</param>
-        /// <paramref name="dst"/> or <paramref name="src"/> is
+        /// <param name="force">If <see langword="true"/>, the values in
+        /// <paramref name="src"/> will be applied even if they are
+        /// <see langword="null"/>.</param>
         /// <exception cref="ArgumentNullException">If either
         /// <paramref name="dst"/> or <paramref name="src"/> is
         /// <see langword="null"/>.</exception>
-        public static void CopyTo(this object src, IState dst) {
+        public static void CopyTo(this object src,
+                IState dst,
+                bool force = false) {
             ArgumentNullException.ThrowIfNull(src);
             ArgumentNullException.ThrowIfNull(dst);
 
@@ -180,7 +184,11 @@ namespace Visus.DeploymentToolkit.Extensions {
                         select (p, a.Property ?? p.Name);
 
             foreach (var (p, n) in props) {
-                dst[n] = p.GetValue(src);
+                var value = p.GetValue(src);
+
+                if ((value == default) || force) {
+                    dst[n] = value;
+                }
             }
         }
     }

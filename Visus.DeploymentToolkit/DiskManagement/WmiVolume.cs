@@ -28,7 +28,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// Converts a <see cref="WmiVolume"/> to the underlying WMI object.
         /// </summary>
         /// <param name="volume">The volume to be converted.</param>
-        public static explicit operator ManagementObject(
+        public static explicit operator ManagementBaseObject(
             WmiVolume volume) => volume?._volume!;
         #endregion
 
@@ -70,7 +70,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// </summary>
         /// <param name="volume"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        internal WmiVolume(ManagementObject volume) {
+        internal WmiVolume(ManagementBaseObject volume) {
             this._volume = volume
                 ?? throw new ArgumentNullException(nameof(volume));
             if (!this._volume.ClassPath.ClassName.EqualsIgnoreCase(Class)) {
@@ -85,7 +85,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
             this._mounts = new Lazy<IEnumerable<string>>(() => {
                 ObjectDisposedException.ThrowIf(this._volume is null, this);
                 var id = (string) this._volume["ObjectId"];
-                var partition = this._volume.Scope.QueryObjects("ASSOCIATORS OF "
+                var partition = this._volume.QueryObjects("ASSOCIATORS OF "
                     + $@"{{{Class}.ObjectId=""{id.EscapeWql()}""}} "
                     + "WHERE AssocClass = MSFT_PartitionToVolume").Single();
                 return partition["AccessPaths"] as string[]
@@ -105,7 +105,7 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
         #region Private fields
         private readonly Lazy<IEnumerable<string>> _mounts;
-        private ManagementObject _volume;
+        private ManagementBaseObject _volume;
         #endregion
     }
 }

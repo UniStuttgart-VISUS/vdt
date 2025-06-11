@@ -31,6 +31,12 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// Prefer the matching disks, but if there are no matching disks,
         /// the original selection will be used.
         /// </summary>
-        Prefer
+        Prefer,
+
+        /// <summary>
+        /// Avoid matching disks, but if there are no other disks available,
+        /// keep the original selection.
+        /// </summary>
+        Avoid
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Services;
@@ -70,6 +71,13 @@ namespace Visus.DeploymentToolkit.Application {
                     .AddBootstrappingServices()
                     .AddLogging(this.Configuration.GetSection("Logging"));
 
+            // If we have a state file from the command line and the actual
+            // constructor parameter does not override it, use it.
+            if (File.Exists(this.Options.StateFile)
+                    && !File.Exists(stateFile)) {
+                stateFile = this.Options.StateFile;
+            }
+
             // If we have one, add the state restored from the state file.
             // Otherwise, add blank state and restore from annotated options.
             if (stateFile != null) {
@@ -91,6 +99,8 @@ namespace Visus.DeploymentToolkit.Application {
             if (stateFile == null) {
                 var state = this.Services.GetRequiredService<IState>();
                 // TODO: should we always do that and allow for override like in the other direction?
+                this.Logger.LogInformation("Applying command line options to "
+                    + "state.");
                 this.Options.CopyTo(state);
             }
         }

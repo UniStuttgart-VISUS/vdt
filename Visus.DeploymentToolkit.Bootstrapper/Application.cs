@@ -58,10 +58,8 @@ namespace Visus.DeploymentToolkit.Bootstrapper {
                     ArgumentNullException.ThrowIfNull(s.AgentPath);
                     ArgumentNullException.ThrowIfNull(s.DeploymentDirectory);
 
-                    if (!Path.IsPathRooted(s.AgentPath)) {
-                        s.AgentPath = Path.Combine(
-                            s.DeploymentDirectory,
-                            s.AgentPath);
+                    if (!string.IsNullOrEmpty(this.Options.TaskSequenceStore)) {
+                        t.TaskSequenceStore = this.Options.TaskSequenceStore;
                     }
                 });
             //.Add<CopyFiles>(services, t => t.Source = options.LogFile)

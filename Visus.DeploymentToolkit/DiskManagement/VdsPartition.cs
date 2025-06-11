@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System;
 using Visus.DeploymentToolkit.Vds;
 
 
@@ -15,6 +16,11 @@ namespace Visus.DeploymentToolkit.DiskManagement {
     internal sealed class VdsPartition : IPartition {
 
         #region Public properties
+        /// <summary>
+        /// Gets the disk the partition is on.
+        /// </summary>
+        public VdsDisk Disk { get; }
+
         /// <inheritdoc />
         public uint Index => this._properties.PartitionNumber;
 
@@ -55,8 +61,10 @@ namespace Visus.DeploymentToolkit.DiskManagement {
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
-        /// <param name="properties"></param>
-        internal VdsPartition(VDS_PARTITION_PROP properties) {
+        /// <param name="disk">The disk the partition is on.</param>
+        /// <param name="properties">The properties of the partition.</param>
+        internal VdsPartition(VdsDisk disk, VDS_PARTITION_PROP properties) {
+            this.Disk = disk ?? throw new ArgumentNullException(nameof(disk));
             this._properties = properties;
 
             if ((this.Style == PartitionStyle.Mbr)

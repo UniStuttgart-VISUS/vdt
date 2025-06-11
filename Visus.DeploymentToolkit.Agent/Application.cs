@@ -28,7 +28,7 @@ namespace Visus.DeploymentToolkit.Agent {
                 this.Logger.LogInformation("Project Deimos agent is starting.");
 
                 this.Logger.LogInformation("Assigning user-provided state.");
-                this.Options.CopyTo(this.State);
+                this.Options.CopyTo(this.State, true);
 
                 // Find out what task sequence we are running. If there is none
                 // specified in the startup options, we ask the user to provide

@@ -7,6 +7,7 @@
 using System.Globalization;
 using System.IO;
 using Visus.DeploymentToolkit.Application;
+using Visus.DeploymentToolkit.DeploymentShare;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.SystemInformation;
@@ -83,6 +84,12 @@ namespace Visus.DeploymentToolkit {
         public string StatePath {
             get => Path.Combine(this.WorkingDirectory, this.StateFile);
         }
+
+        /// <summary>
+        /// Gets or sets the path to the task sequence store that is passed on
+        /// to the agent.
+        /// </summary>
+        public string TaskSequenceStore { get; set; } = Layout.TaskSequencePath;
 
         /// <summary>
         /// Gets or sets the name of the user to connect to the deployment

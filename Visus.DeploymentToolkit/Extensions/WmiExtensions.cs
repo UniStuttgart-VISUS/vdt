@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -188,6 +189,28 @@ namespace Visus.DeploymentToolkit.Extensions {
         /// <returns></returns>
         public static IEnumerable<ManagementObject> QueryObjects(
                 this ManagementScope that, string query)
+            => that.QueryObjects(new ObjectQuery(query));
+
+        /// <summary>
+        /// Queries the namespace scope of the given object.
+        /// </summary>
+        /// <param name="that"></param>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static IEnumerable<ManagementObject> QueryObjects(
+                this ManagementBaseObject that, ObjectQuery query) {
+            var scope = new ManagementScope(that.ClassPath.NamespacePath);
+            return scope.QueryObjects(query);
+        }
+
+        /// <summary>
+        /// Queries the namespace scope of the given object.
+        /// </summary>
+        /// <param name="that"></param>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static IEnumerable<ManagementObject> QueryObjects(
+                this ManagementBaseObject that, string query)
             => that.QueryObjects(new ObjectQuery(query));
 
         /// <summary>

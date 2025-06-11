@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using System;
+using System.Linq;
 using System.Management;
 using System.Runtime.Versioning;
 using Visus.DeploymentToolkit.Extensions;
@@ -124,6 +125,22 @@ namespace Visus.DeploymentToolkit.DiskManagement {
 
             if ((bool) this._partition["IsSystem"]) {
                 this.Flags |= PartitionFlags.System;
+            }
+        }
+        #endregion
+
+        #region Internal properties
+        /// <summary>
+        /// Gets, if any, the volume associated with the partition.
+        /// </summary>
+        internal ManagementBaseObject? Volume {
+            get {
+                var id = (string) this._partition["ObjectId"];
+                return this._partition.QueryObjects("ASSOCIATORS "
+                    + $@"OF {{{Class}.ObjectId="
+                    + $@"""{id.EscapeWql()}""}} "
+                    + "WHERE AssocClass = MSFT_PartitionToVolume")
+                    .SingleOrDefault();
             }
         }
         #endregion

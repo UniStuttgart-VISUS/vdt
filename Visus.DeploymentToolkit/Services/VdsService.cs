@@ -7,13 +7,14 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.DiskManagement;
+using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Vds;
 
@@ -129,21 +130,61 @@ namespace Visus.DeploymentToolkit.Services {
             }
 
             cancellationToken.ThrowIfCancellationRequested();
+            this._logger.LogTrace("User-provided partition offset is {Offset} "
+                + "bytes.", partition.Offset);
+            var offset = partition.Offset.CeilingAlign(vds.GetBytesPerTrack());
+
+            if (offset <= 0) {
+                offset = (from p in vds.GetPartitions()
+                          orderby p.Offset descending
+                          select p.Offset + p.Size).FirstOrDefault();
+                this._logger.LogTrace("Appending at an offset of {Offset} "
+                    + "bytes.", offset);
+                // https://github.com/pbatard/rufus/blob/688f011f317492225ded10b51edc19b39d62fbd4/src/drive.c#L2290-L2306
+                if ((offset == 0)
+                        && (vds.PartitionStyle == PartitionStyle.Gpt)) {
+                    offset = 1 * 1024 * 1024;
+                    this._logger.LogTrace("Adjusting offset of first partition "
+                        + "to {Offset}.", offset);
+                }
+            }
+
+            // Align to track and cluster size.
+            // https://github.com/pbatard/rufus/blob/688f011f317492225ded10b51edc19b39d62fbd4/src/drive.c#L2317C2-L2321
+            offset = offset.CeilingAlign(vds.GetBytesPerTrack());
+            if (vds.GetNtfsClusterSize() % vds.SectorSize == 0) { 
+                offset = offset.FloorAlign(vds.GetNtfsClusterSize());
+            }
+            this._logger.LogTrace("Aligned offset of partition is at {Offset} "
+                + "bytes.", offset);
+
+            var size = partition.Size;
+            this._logger.LogTrace("User-provided partition size is {Size} "
+                + "bytes.", size);
+            if (size <= 0) {
+                size = disk.Size - offset;
+                this._logger.LogTrace("Adjusting partition size to be the "
+                    + "remaining {Size} of {TotalSize} bytes.", size,
+                    disk.Size);
+            }
+
+            size = size.FloorAlign(vds.GetBytesPerTrack());
+            this._logger.LogTrace("Aligned partition size is {Size} bytes.",
+                size);
+
+            cancellationToken.ThrowIfCancellationRequested();
             this._logger.LogTrace("Creating a partition on disk {Disk} at "
-                + "offset {Offset} with size {Size}.", disk.ID,
-                partition.Offset, partition.Size);
-            vds.AdvancedDisk.CreatePartition(partition.Offset,
-                partition.Size,
-                ref cpp,
+                + "offset {Offset} with size {Size}.", disk.ID, offset, size);
+            vds.AdvancedDisk.CreatePartition(offset, size, ref cpp,
                 out var async);
-            await async.WaitAsync(cancellationToken);
+            await async.WaitAsync(cancellationToken).ConfigureAwait(false);
 
             cancellationToken.ThrowIfCancellationRequested();
             this._logger.LogTrace("Getting partition properties for the newly "
-                + "created partition at offset {Offset}.", partition.Offset);
-            vds.AdvancedDisk.GetPartitionProperties(partition.Offset,
-                out var properties);
-            return new VdsPartition(properties);
+                + "created partition at offset {Offset}.", offset);
+            await this.RefreshAsync(false, cancellationToken);
+            vds.AdvancedDisk.GetPartitionProperties(offset, out var properties);
+            return new VdsPartition(vds, properties);
         }
 
         /// <inheritdoc />
@@ -153,7 +194,29 @@ namespace Visus.DeploymentToolkit.Services {
                 uint allocationUnitSize,
                 FormatFlags flags,
                 CancellationToken cancellationToken) {
-            throw new NotImplementedException();
+            ArgumentNullException.ThrowIfNull(partition);
+            if (partition is not VdsPartition vds) {
+                throw new ArgumentException(Errors.NoVdsPartition);
+            }
+
+            var disk = vds.Disk.AdvancedDisk;
+            Debug.Assert(disk is not null);
+
+            this._logger.LogTrace("Formatting partition {Partition} "
+                + "on disk {Disk} with file system {FileSystem}, label "
+                + "{Label}, allocation unit size {AllocationUnitSize} "
+                + "and flags {Flags}.", partition.Index, vds.Disk.ID,
+                fileSystem, label, allocationUnitSize, flags);
+            disk.FormatPartition(vds.Offset,
+                fileSystem.ToVds(),
+                label,
+                allocationUnitSize,
+                flags.HasFlag(FormatFlags.Force),
+                flags.HasFlag(FormatFlags.Quick),
+                flags.HasFlag(FormatFlags.EnableCompression),
+                out var async);
+
+            return async.WaitAsync(cancellationToken);
         }
 
         /// <inheritdoc />
@@ -166,28 +229,38 @@ namespace Visus.DeploymentToolkit.Services {
             }
 
             try {
-                vds.Disk.GetPack(out var _);
+                vds.Disk.GetPack(out var pack);
+                pack.GetProperties(out var props);
+                this._logger.LogTrace("Converting disk {Disk} (pack {Pack}) to "
+                    + "partition style from {OldStyle} to {NewStyle}.", disk.ID,
+                    props.Name, disk.PartitionStyle, style);
+                switch (style) {
+                    case PartitionStyle.Gpt:
+                        vds.Disk.ConvertStyle(VDS_PARTITION_STYLE.GPT);
+                        return Task.CompletedTask;
+
+                    case PartitionStyle.Mbr:
+                        vds.Disk.ConvertStyle(VDS_PARTITION_STYLE.MBR);
+                        return Task.CompletedTask;
+
+                    default:
+                        throw new ArgumentException(string.Format(
+                            Errors.InvalidPartitionStyle, style));
+                }
             } catch {
                 this._logger.LogTrace("Disk {Disk} is not part of a pack, "
                     + "so we need to intialise it first.", disk.ID);
-                // TODO: I really have no idea how to initialise the disk using VDS ...
+                var prov = this.GetBasicSoftwareProvider();
+                prov.CreatePack(out var pack);
+                pack.GetProperties(out var props);
+
+                this._logger.LogTrace("Adding disk {Disk} to a newly created "
+                    + "pack {Pack} with partition style {Style}.", disk.ID,
+                    props.Name, style);
+                pack.AddDisk(disk.ID, (VDS_PARTITION_STYLE) style, false);
             }
 
-            this._logger.LogTrace("Converting disk {Disk} to partition style "
-                + "from {OldStyle} to {NewStyle}.", disk.ID,
-                disk.PartitionStyle, style);
-            switch (style) {
-                case PartitionStyle.Gpt:
-                    vds.Disk.ConvertStyle(VDS_PARTITION_STYLE.GPT);
-                    return Task.CompletedTask;
-
-                case PartitionStyle.Mbr:
-                    vds.Disk.ConvertStyle(VDS_PARTITION_STYLE.MBR);
-                    return Task.CompletedTask;
-
-                default:
-                    throw new ArgumentException();
-            }
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc />
@@ -195,36 +268,6 @@ namespace Visus.DeploymentToolkit.Services {
                 CancellationToken cancellationToken) {
             return Task<IEnumerable<IDisk>>.Factory.StartNew(
                 () => GetDisks(cancellationToken));
-        }
-
-        /// <summary>
-        /// Gets all packs registered with the software providers.
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public Task<IEnumerable<IVdsPack>> GetPacksAsync(
-                CancellationToken cancellationToken) {
-            return Task.Run(() => {
-                cancellationToken.ThrowIfCancellationRequested();
-                this.WaitForVds();
-
-                cancellationToken.ThrowIfCancellationRequested();
-                var retval = new List<IVdsPack>();
-                var types = VDS_QUERY_PROVIDER_FLAG.SOFTWARE_PROVIDERS;
-
-                this._logger.LogTrace("Querying all sofware providers.");
-                foreach (var unknown in this._service.QueryProviders(types)) {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    if ((unknown is IVdsSwProvider sw) && (sw != null)) {
-                        this._logger.LogTrace("Querying packs from provider "
-                            + "{Provider}", sw);
-                        retval.AddRange(sw.QueryPacks());
-                    }
-                }
-
-                return retval.AsEnumerable();
-            });
         }
 
         /// <summary>
@@ -250,7 +293,7 @@ namespace Visus.DeploymentToolkit.Services {
             }, cancellationToken);
         #endregion
 
-        #region Private class methods
+        #region Private methods
         /// <summary>
         /// Enumerate all disks in the given <paramref name="pack"/>.
         /// </summary>
@@ -259,12 +302,10 @@ namespace Visus.DeploymentToolkit.Services {
         /// <param name="cancellation"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        private IEnumerable<IDisk> GetDisks(
+        private IEnumerable<VdsDisk> GetDisks(
                 IVdsPack pack,
                 CancellationToken cancellation) {
-            _ = pack ?? throw new ArgumentNullException(nameof(pack));
-            cancellation.ThrowIfCancellationRequested();
-
+            ArgumentNullException.ThrowIfNull(pack);
             foreach (var d in pack.QueryDisks()) {
                 cancellation.ThrowIfCancellationRequested();
                 yield return new VdsDisk(d);
@@ -282,7 +323,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="COMException"></exception>
-        private IEnumerable<IDisk> GetDisks(
+        private IEnumerable<VdsDisk> GetDisks(
                 CancellationToken cancellation) {
             cancellation.ThrowIfCancellationRequested();
 
@@ -291,24 +332,23 @@ namespace Visus.DeploymentToolkit.Services {
 
             cancellation.ThrowIfCancellationRequested();
 
-            // Enumerate all disk providers.
-            var types = VDS_QUERY_PROVIDER_FLAG.SOFTWARE_PROVIDERS
-                //| VDS_QUERY_PROVIDER_FLAG.HARDWARE_PROVIDERS
-                | VDS_QUERY_PROVIDER_FLAG.VIRTUALDISK_PROVIDERS;
-
-            foreach (var unknown in this._service.QueryProviders(types)) {
+            foreach (var p in this.GetProviders()) {
                 cancellation.ThrowIfCancellationRequested();
+                p.GetProperties(out var props);
+                //this._logger.LogTrace("Provider {Provider} ({ID}) has type "
+                //    + "{Type} and flags {Flags}.", props.Name, props.ID,
+                //    props.Type, props.Flags);
 
-                if (unknown is IVdsSwProvider sw && sw != null) {
+                if ((p is IVdsSwProvider sw) && (sw != null)) {
                     this._logger.LogTrace("Querying disks from provider "
-                        + "{Provider}", sw);
+                        + "{Provider}", props.Name);
                     foreach (var d in GetDisks(sw, cancellation)) {
                         yield return d;
                     }
 
-                } else if (unknown is IVdsVdProvider vd && vd != null) {
-                    this._logger.LogTrace("Querying virtual disksfrom provider "
-                        + "{Provider}", vd);
+                } else if ((p is IVdsVdProvider vd) && (vd != null)) {
+                    this._logger.LogTrace("Querying virtual disks from "
+                        + "provider {Provider}", props.Name);
                     foreach (var d in GetDisks(vd, cancellation)) {
                         yield return d;
                     }
@@ -336,7 +376,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <exception cref="ArgumentNullException">If
         /// <paramref name="provider"/> is <c>null</c>, or if
         /// <paramref name="logger"/> is <c>null</c>.</exception>
-        private IEnumerable<IDisk> GetDisks(
+        private IEnumerable<VdsDisk> GetDisks(
                 IVdsSwProvider provider,
                 CancellationToken cancellation) {
             _ = provider ?? throw new ArgumentNullException(nameof(provider));
@@ -345,11 +385,11 @@ namespace Visus.DeploymentToolkit.Services {
             foreach (var pack in provider.QueryPacks()) {
                 cancellation.ThrowIfCancellationRequested();
 
-                pack.GetProperties(out var properties);
-                this._logger.LogTrace("Querying disks from pack {Pack} "
-                    + "({PackID}, status {Status}, flags {Flags}).",
-                    properties.Name, properties.Id, properties.Status,
-                    properties.Flags);
+                //pack.GetProperties(out var properties);
+                //this._logger.LogTrace("Querying disks from pack {Pack} "
+                //    + "({PackID}, status {Status}, flags {Flags}).",
+                //    properties.Name, properties.Id, properties.Status,
+                //    properties.Flags);
                 foreach (var d in GetDisks(pack, cancellation)) {
                     cancellation.ThrowIfCancellationRequested();
                     yield return d;
@@ -364,7 +404,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <param name="cancellation"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        private IEnumerable<IDisk> GetDisks(
+        private IEnumerable<VdsDisk> GetDisks(
                 IVdsVdProvider provider,
                 CancellationToken cancellation) {
             _ = provider ?? throw new ArgumentNullException(nameof(provider));
@@ -372,6 +412,42 @@ namespace Visus.DeploymentToolkit.Services {
             foreach (var d in  provider.QueryVDisks()) {
                 cancellation.ThrowIfCancellationRequested();
                 yield return new VdsDisk(d);
+            }
+        }
+
+        /// <summary>
+        /// Answer the basic software provider.
+        /// </summary>
+        /// <returns></returns>
+        private IVdsSwProvider GetBasicSoftwareProvider() {
+            foreach (var p in this.GetProviders()) {
+                p.GetProperties(out var props);
+                if (props.Type != VDS_PROVIDER_TYPE.Software) {
+                    continue;
+                }
+                if (props.Flags.HasFlag(VDS_PROVIDER_FLAG.Dynamic)) {
+                    continue;
+                }
+
+                return (IVdsSwProvider) p;
+            }
+
+            throw new InvalidOperationException(Errors.NoBasicSwProvider);
+        }
+
+        /// <summary>
+        /// Enumerates all providers.
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerable<IVdsProvider> GetProviders() {
+            var types = VDS_QUERY_PROVIDER_FLAG.SOFTWARE_PROVIDERS
+                | VDS_QUERY_PROVIDER_FLAG.HARDWARE_PROVIDERS
+                | VDS_QUERY_PROVIDER_FLAG.VIRTUALDISK_PROVIDERS;
+
+            foreach (var unknown in this._service.QueryProviders(types)) {
+                if ((unknown is IVdsProvider p) && (p is not null)) {
+                    yield return p;
+                }
             }
         }
 

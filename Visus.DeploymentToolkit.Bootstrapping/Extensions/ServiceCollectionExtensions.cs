@@ -137,7 +137,6 @@ namespace Visus.DeploymentToolkit.Extensions {
 
             services.AddSingleton<IState>(s => {
                 var logger = s.GetRequiredService<ILogger<State>>();
-                logger.LogTrace(Resources.RestoringState, stateFile);
                 var state = new State(logger);
 
                 try {

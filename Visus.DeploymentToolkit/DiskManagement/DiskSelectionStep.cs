@@ -168,6 +168,18 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                 retval.Select(d => d.FriendlyName));
 
             switch (Action) {
+                case DiskSelectionAction.Avoid:
+                    logger.LogInformation("The selection should avoid {Avoid} "
+                        + "disk(s): {Selection}", cntSelected, selection);
+                    retval = disks.AsQueryable().Except(retval);
+                    if (!retval.Any()) {
+                        logger.LogInformation("The disk selection step would "
+                            + "avoid all available disks, so the selection "
+                            + "remains unchanged.");
+                        retval = disks;
+                    }
+                    break;
+
                 case DiskSelectionAction.Include:
                     logger.LogInformation("The selection includes {Included} "
                         + "disk(s): {Selection}", cntSelected, selection);
@@ -183,7 +195,8 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                     retval = disks.AsQueryable().Except(retval);
                     if (!retval.Any()) {
                         logger.LogWarning("The disk selection step excluded "
-                            + "all available disks.");
+                            + "all available disks. Use the Avoid action to "
+                            + "avoid this situation.");
                     }
                     break;
 
@@ -191,8 +204,8 @@ namespace Visus.DeploymentToolkit.DiskManagement {
                     logger.LogInformation("The selection prefers {Preferred} "
                         + "disk(s): {Selection}", cntSelected, selection);
                     if (!retval.Any()) {
-                        logger.LogWarning("The disk selection step resulted in "
-                            + "an empty set of preferred disks, so the "
+                        logger.LogInformation("The disk selection step resulted "
+                            + "in an empty set of preferred disks, so the "
                             + "selection remains unchanged.");
                         retval = disks;
                     }

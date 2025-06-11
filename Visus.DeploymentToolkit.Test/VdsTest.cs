@@ -258,6 +258,7 @@ namespace Visus.DeploymentToolkit.Test {
             Assert.AreEqual(2, Marshal.SizeOf<MbrPartitionParameters>(), "MbrPartitionParameters");
             Assert.AreEqual(120, Marshal.SizeOf<CREATE_PARTITION_PARAMETERS>(), "CREATE_PARTITION_PARAMETERS");
             Assert.AreEqual(32, Marshal.SizeOf<VDS_ASYNC_OUTPUT>(), "VDS_ASYNC_OUTPUT");
+            Assert.AreEqual(128, Marshal.SizeOf<VDS_DISK_PROP>(), "VDS_DISK_PROP");
         }
 
         private readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(l => l.AddDebug());
