@@ -7,6 +7,7 @@
 using Microsoft.Dism;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -52,7 +53,7 @@ namespace Visus.DeploymentToolkit.Services {
         public string? Path => this._path;
         #endregion
 
-        #region Public metods
+        #region Public methods
         /// <inheritdoc />
         public void AddPackage(string path, bool ignoreCheck,
                 bool preventPending) {
@@ -65,6 +66,21 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         /// <inheritdoc />
+        public void AddProvisionedAppxPackage(string appPath,
+                List<string>? dependencyPackages,
+                string? licencePath,
+                string? customDataPath) {
+            this.CheckSession();
+            this._logger.LogTrace("Adding provisioned appx package {Package} "
+                + "to image {Image}.", appPath, this.Name);
+            DismApi.AddProvisionedAppxPackage(this._session,
+                appPath,
+                dependencyPackages,
+                licencePath,
+                customDataPath!);
+        }
+
+        /// <inheritdoc />
         public void ApplyUnattend(string path, bool singleSession) {
             this.CheckSession();
             this._logger.LogTrace("Applying unattend file {Path} to "
@@ -74,11 +90,26 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         /// <inheritdoc />
+        public IEnumerable<DismAppxPackage> GetProvisionedAppxPackages() {
+            this.CheckSession();
+            this._logger.LogTrace("Retrieving provisioned appx packages for "
+                + "image {Image}.", this.Name);
+            return DismApi.GetProvisionedAppxPackages(this._session);
+        }
+
+        /// <inheritdoc />
         public void Commit() {
             this.CheckSession();
-            this._logger.LogTrace("Committing changes to DISM image "
-                + "{Image}.", this.Name);
-            DismApi.CommitImage(this._session, false);
+            if (this._path is not null) {
+                this._logger.LogTrace("Committing changes to DISM image "
+                    + "{Image}.", this.Name);
+                DismApi.CommitImage(this._session, false);
+            } else {
+                this._logger.LogTrace("Changes to the current Windows in an "
+                    + "online session are effective immediately and do not "
+                    + "need to be committed.");
+            }
+
             this.Close();
         }
 
@@ -133,6 +164,14 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         /// <inheritdoc />
+        public void RemoveProvisionedAppxPackage(string packageName) {
+            this.CheckSession();
+            this._logger.LogTrace("Removing provisioned appx package {Package} "
+                + "from image {Image}.", packageName, this.Name);
+            DismApi.RemoveProvisionedAppxPackage(this._session, packageName);
+        }
+
+        /// <inheritdoc />
         public void RollBack() {
             this.CheckSession();
             this._logger.LogTrace("Reverting changes to DISM image "
@@ -160,6 +199,8 @@ namespace Visus.DeploymentToolkit.Services {
             this._logger.LogTrace("Disposing session handle.");
             this._session?.Dispose();
             this._session = null;
+            //DismApi.GetProvisionedAppxPackages()
+
         }
         #endregion
 

@@ -250,6 +250,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove provisioned appx packages.
+        /// </summary>
+        internal static string RemoveAppxPackage {
+            get {
+                return ResourceManager.GetString("RemoveAppxPackage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configure boot sector.
         /// </summary>
         internal static string RestoreBootConfiguration {

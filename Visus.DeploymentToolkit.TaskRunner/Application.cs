@@ -73,7 +73,7 @@ namespace Visus.DeploymentToolkit.TaskRunner {
                 this.Logger.LogInformation("Applying parameters to " +
                     "{Task} ...", task.Name);
                 var parameters = this.Configuration.GetSection("Parameters");
-                task.CopyFrom(parameters, true);
+                task.CopyFrom(parameters);
 
                 this.Logger.LogInformation("Running {Task} ...", task.Name);
                 await task.ExecuteAsync();

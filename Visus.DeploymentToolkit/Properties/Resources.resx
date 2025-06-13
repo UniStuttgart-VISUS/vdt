@@ -180,6 +180,9 @@
   <data name="RegistryValue" xml:space="preserve">
     <value>Modify a registry value</value>
   </data>
+  <data name="RemoveAppxPackage" xml:space="preserve">
+    <value>Remove provisioned appx packages</value>
+  </data>
   <data name="RestoreBootConfiguration" xml:space="preserve">
     <value>Configure boot sector</value>
   </data>

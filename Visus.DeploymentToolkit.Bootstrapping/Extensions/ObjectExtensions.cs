@@ -65,24 +65,27 @@ namespace Visus.DeploymentToolkit.Extensions {
                         p.Name,
                         dst.GetType().FullName,
                         string.Join(", ", ss));
-                    throw new InvalidOperationException(msg);
+                    throw new ArgumentException(msg);
                 }
             }
         }
 
         /// <summary>
-        /// Copies (if <paramref name="force"/> is <see langword="false"/> only
-        /// unset) public settable properties from <paramref name="src"/> to
-        /// <paramref name="dst"/> based on their name.
+        /// Copies public settable properties from <paramref name="src"/> to
+        /// <paramref name="dst"/> based on their name (basically a bind of
+        /// the configuration to <paramref name="dst"/>).
         /// </summary>
         /// <param name="dst"></param>
         /// <param name="src"></param>
-        /// <param name="force"></param>
+        /// <exception cref="ArgumentException">If any of the required
+        /// properties in <paramref name="dst"/> is not set once the method
+        /// exits.</exception>
         public static void CopyFrom(this object dst,
-                IConfiguration src,
-                bool force = false) {
+                IConfiguration src) {
             ArgumentNullException.ThrowIfNull(dst);
             ArgumentNullException.ThrowIfNull(src);
+
+            src.Bind(dst);
 
             var flags = BindingFlags.Public | BindingFlags.Instance;
             var props = from p in dst.GetType().GetProperties(flags)
@@ -92,17 +95,10 @@ namespace Visus.DeploymentToolkit.Extensions {
 
             foreach (var (p, s, r) in props) {
                 var v = p.GetValue(dst);
-
-                if ((v == default) || force) {
-                    if ((v = src[s]) != null) {
-                        p.SetValue(dst, v);
-                    }
-                }
-
                 if (r && (v == null)) {
                     var msg = Errors.RequiredPropertyNotSet;
                     msg = string.Format(msg, p.Name, dst.GetType().FullName, s);
-                    throw new InvalidOperationException(msg);
+                    throw new ArgumentException(msg);
                 }
             }
         }
@@ -154,7 +150,7 @@ namespace Visus.DeploymentToolkit.Extensions {
                         p.Name,
                         dst.GetType().FullName,
                         string.Join(", ", vars));
-                    throw new InvalidOperationException(msg);
+                    throw new ArgumentException(msg);
                 }
             }
         }
@@ -187,6 +183,7 @@ namespace Visus.DeploymentToolkit.Extensions {
                 var value = p.GetValue(src);
 
                 if ((value != default) || force) {
+                    // Have a value or force to erase the property.
                     dst[n] = value;
                 }
             }

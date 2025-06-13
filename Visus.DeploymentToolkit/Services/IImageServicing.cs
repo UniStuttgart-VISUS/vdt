@@ -4,7 +4,9 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using Microsoft.Dism;
 using System;
+using System.Collections.Generic;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -48,6 +50,24 @@ namespace Visus.DeploymentToolkit.Services {
             bool preventPending = true);
 
         /// <summary>
+        /// Adds an appx package that will install for each new user to a Windows
+        /// image.
+        /// </summary>
+        /// <param name="appPath">Specifies the location of the appx package.
+        /// </param>
+        /// <param name="dependencyPackages">Specifies the location of
+        /// dependency packages.</param>
+        /// <param name="licencePath">Specifies the location of the .xml file
+        /// containing your application licence.</param>
+        /// <param name="customDataPath">Specifies the location of a custom data
+        /// file. The custom data file will be renamed custom.data and saved in
+        /// the app data store.</param>
+        void AddProvisionedAppxPackage(string appPath,
+            List<string>? dependencyPackages = null,
+            string? licencePath = null,
+            string? customDataPath = null);
+
+        /// <summary>
         /// Applies the specified unattend.xml file to the image.
         /// </summary>
         /// <param name="path">A relative or absolute path to the answer file
@@ -78,6 +98,13 @@ namespace Visus.DeploymentToolkit.Services {
         void EnableFeature(string feature, bool limitAccess, bool enableAll);
 
         /// <summary>
+        /// Gets information about appx packages that will be installed for each
+        /// new user.
+        /// </summary>
+        /// <returns>The list of provisioned appx packages.</returns>
+        IEnumerable<DismAppxPackage> GetProvisionedAppxPackages();
+
+        /// <summary>
         /// Injects all drivers in the specified folder into the image.
         /// </summary>
         /// <param name="folder"></param>
@@ -94,6 +121,13 @@ namespace Visus.DeploymentToolkit.Services {
         /// <c>null</c> to service the current Windows we are running on.
         /// </param>
         void Open(string? path);
+
+        /// <summary>
+        /// Removes an appx package from a Windows image.
+        /// </summary>
+        /// <param name="packageName">Specifies the name of the appx package to
+        /// remove.</param>
+        void RemoveProvisionedAppxPackage(string packageName);
 
         /// <summary>
         /// Rolls back all changes.

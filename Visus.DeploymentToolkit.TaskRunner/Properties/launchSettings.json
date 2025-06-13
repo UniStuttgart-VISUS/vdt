@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Visus.DeploymentToolkit.TaskRunner": {
-      "commandName": "Project",
-      "commandLineArgs": "/Task=LockScreen"
+      "commandName": "Project"
     }
   }
 }
