@@ -121,6 +121,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                         folder,
                         Layout.TemplatesPath,
                         this.Source);
+                    this._logger.LogTrace("Checking for unattend file in the "
+                        + "deployment share {Source}.", source);
                     source = this.CheckArchitecture(source, this.Architecture);
                 }
 
@@ -130,6 +132,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                         folder,
                         Layout.TemplatesPath,
                         this.Source);
+                    this._logger.LogTrace("Checking for unattend file in the "
+                        + "deployment directory {Source}.", source);
                     source = this.CheckArchitecture(source, this.Architecture);
                 }
 
@@ -185,7 +189,7 @@ namespace Visus.DeploymentToolkit.Tasks {
             }
 
             this._logger.LogTrace("Checking for unattend files for "
-                + "architecture is {Architecture}.", architecture);
+                + "architecture {Architecture}.", architecture);
 
             switch (architecture) {
                 case Architecture.X86:

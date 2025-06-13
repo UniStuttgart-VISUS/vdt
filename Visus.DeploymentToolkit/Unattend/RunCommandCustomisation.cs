@@ -79,22 +79,15 @@ namespace Visus.DeploymentToolkit.Unattend {
                 if (group is null) {
                     var componentFilter = GetComponentFilter(
                         Components.WindowsSetup);
-                    var component = s.XPathSelectElement(componentFilter,
-                        resolver);
-                    if (component is null) {
-                        this._logger.LogError("The component {Component} " 
-                           + "containing the command was not found using the "
-                           + "XPath expression {Filter}, so we add it now.",
-                           Components.WindowsSetup, componentFilter);
-                        component = this._builder.MakeComponent(
-                            Components.WindowsSetup, null);
-                        s.Add(component);
-                    }
+                    var component = this.GetComponent(s,
+                        Components.WindowsSetup,
+                        resolver,
+                        this._builder);
                     Debug.Assert(component is not null);
 
                     this._logger.LogTrace("The command group {Group} was "
                         + "not found using the XPath expression {Filter}, "
-                        + " so we add it now.", groupName, groupFilter);
+                        + "so we add it now.", groupName, groupFilter);
                     group = new XElement(this._builder.MakeName(groupName));
                     component.Add(group);
                 } /* if (group is null) */

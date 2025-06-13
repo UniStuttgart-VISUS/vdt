@@ -186,7 +186,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             foreach (var (p, n) in props) {
                 var value = p.GetValue(src);
 
-                if ((value == default) || force) {
+                if ((value != default) || force) {
                     dst[n] = value;
                 }
             }

@@ -7,6 +7,8 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -14,6 +16,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Visus.DeploymentToolkit.Extensions;
+using Visus.DeploymentToolkit.Services;
 
 
 namespace Visus.DeploymentToolkit.Unattend {
@@ -111,6 +114,51 @@ namespace Visus.DeploymentToolkit.Unattend {
 
         //    }
         //}
+
+        /// <summary>
+        /// Gets the component with the specified name from the given
+        /// <paramref name="element"/>, or if a <paramref name="builder"/> is
+        /// given, adds if it does not exist yet.
+        /// </summary>
+        /// <param name="element">The element where the component should be
+        /// located.</param>
+        /// <param name="component">The name of the component. A filter for this
+        /// component will be created using
+        /// <see cref="GetComponentFilter(string)"/>.</param>
+        /// <param name="resolver">A namespace resolver for the XPath
+        /// expression. Albeit being an optional parameter, the unattend schema
+        /// does not work without it.</param>
+        /// <param name="builder">An optional <see cref="IUnattendBuilder"/>
+        /// that is used to add the component if it does not exist. If this
+        /// parameter is <see langword="null"/>, missing components will not be
+        /// added.</param>
+        /// <param name="architecture">The architecture to be used when creating
+        /// a new component. If <see langword="null"/>, the architecture of the
+        /// calling process will be used.</param>
+        /// <returns></returns>
+        [return: NotNullIfNotNull(nameof(builder))]
+        protected XElement? GetComponent(XElement element,
+                string component,
+                IXmlNamespaceResolver? resolver,
+                IUnattendBuilder? builder = null,
+                string? architecture = null) {
+            ArgumentNullException.ThrowIfNull(element);
+            ArgumentException.ThrowIfNullOrEmpty(component);
+
+            var filter = GetComponentFilter(component);
+            this._logger.LogTrace("Searching component {Component} using "
+                + "the XPath expression {Filter}.", component, filter);
+            var retval = element.XPathSelectElement(filter, resolver);
+
+            if ((retval is null) && (builder is not null)) {
+                this._logger.LogTrace("Creating the missing component "
+                    + "{Component}.", component);
+                retval = builder.MakeComponent(component, architecture);
+                element.Add(retval);
+            }
+
+            return retval;
+        }
         #endregion
 
         #region Protected fields
