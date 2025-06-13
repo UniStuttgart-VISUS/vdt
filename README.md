@@ -28,6 +28,27 @@ For instance, one can create a deployment share via the `Visus.DeploymentToolkit
 Visus.DeploymentToolkit.TaskRunner.exe /Task=PrepareDeploymentShare /Parameters:Path=d:\DeploymentShare
 ```
 
+## Installation
+We do not have an installer yet, so the application needs to be built from source and deployed manually. Everything is expected to reside in a "deployment share", which is a shared folder the machines to be installed will access, with the following subfolders:
+
+### Bin
+The binary folder holds the exectutable files of the agent. Publish the [`Visus.DeploymentToolkit.Agent`](Visus.DeploymentToolkit.Agent) project to this folder. Make sure to publish it in a self-contained way, because the WinPE image will not have the .NET runtime installed.
+
+### Bootstrapper
+This folder holds the binaries of the bootstrapper that is embedded in the WinPE image. Publish the [`Visus.DeploymentToolkit.Bootstrapper`](Visus.DeploymentToolkit.Bootstrapper) project to this folder. Make sure to publish it in a self-contained way, because the WinPE image will not have the .NET runtime installed.
+
+### Drivers
+This folder holds the drivers that can be injected into the WinPE image and the installed operating system. You can use subfolders to organise the drivers.
+
+### Images
+This folder holds the operating system images. Typically, these are WIM files captured from a gold machine.
+
+### Task Sequences
+This folder holds the JSON files with the installation task sequences.
+
+### Templates
+This folder holds template files, most importantly for the unattend.xml file that is used to configure the operating system.
+
 ## Development
 ### Tasks
 All steps that can be executed by Project Deimos must implement the [`Visus.DeploymentToolkit.ITask`](Visus.DeploymentToolkit.Contracts/Tasks/ITask.cs) interface. Typically, this is achieved by inheriting from [`Visus.DeploymentToolkit.Tasks.TaskBase`](Visus.DeploymentToolkit.Bootstrapping/Tasks/TaskBase.cs). Tasks are configured via their public properties. The actual work is performed within `ExecuteAsync`.
