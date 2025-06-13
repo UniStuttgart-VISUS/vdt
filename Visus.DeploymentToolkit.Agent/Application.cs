@@ -62,6 +62,7 @@ namespace Visus.DeploymentToolkit.Agent {
                 IConfiguration config) {
             services.ConfigureDism(config);
             services.ConfigureTaskSequenceStore(config);
+            services.ConfigureVds(config);
             services.AddDeploymentServices();
         }
         #endregion

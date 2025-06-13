@@ -5,7 +5,9 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Security.Principal;
+using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Services;
 
 
@@ -36,7 +38,7 @@ namespace Visus.DeploymentToolkit.Test {
             Assert.IsTrue(result.Any());
 
             if (WindowsIdentity.GetCurrent().IsAdministrator()) {
-                var vds = new VdsService(CreateLogger<VdsService>());
+                var vds = new VdsService(Options.Create(new VdsOptions()), CreateLogger<VdsService>());
                 var wmid = new WmiDiskService(wmi, vds, CreateLogger<WmiDiskService>());
                 var disks = await wmid.GetDisksAsync(CancellationToken.None);
                 Assert.AreEqual(disks.Count(), result.Count());

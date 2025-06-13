@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Security.Principal;
 using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Services;
@@ -21,7 +22,7 @@ namespace Visus.DeploymentToolkit.Test {
         [TestMethod]
         public void GetDisks() {
             if (WindowsIdentity.GetCurrent().IsAdministrator()) {
-                var service = new VdsService(CreateLogger<VdsService>());
+                var service = new VdsService(Options.Create(new VdsOptions()), CreateLogger<VdsService>());
                 Assert.IsNotNull(service);
 
                 var task = service.GetDisksAsync(CancellationToken.None);
@@ -40,7 +41,7 @@ namespace Visus.DeploymentToolkit.Test {
         public async Task SelectDisks() {
             if (WindowsIdentity.GetCurrent().IsAdministrator()) {
                 var logger = CreateLogger<VdsService>();
-                var service = new VdsService(logger);
+                var service = new VdsService(Options.Create(new VdsOptions()), logger);
                 Assert.IsNotNull(service);
 
                 var task = service.GetDisksAsync(CancellationToken.None);

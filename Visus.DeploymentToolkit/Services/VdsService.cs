@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -37,8 +38,11 @@ namespace Visus.DeploymentToolkit.Services {
         /// <exception cref="Exception">If the <see cref="VdsServiceLoader"/>
         /// does nto implement <see cref="IVdsServiceLoader"/>, which should
         /// never happen.</exception>
-        public VdsService(ILogger<VdsService> logger) {
-            _logger = logger
+        public VdsService(IOptions<VdsOptions> options,
+                ILogger<VdsService> logger) {
+            this._options = options?.Value
+                ?? throw new ArgumentNullException(nameof(options));
+            this._logger = logger
                 ?? throw new ArgumentNullException(nameof(logger));
 
             try {
@@ -46,7 +50,7 @@ namespace Visus.DeploymentToolkit.Services {
                     ?? throw new Exception(Errors.NoVdsServiceLoader);
                 loader.LoadService(null, out _service);
             } catch (Exception ex) {
-                _logger.LogError(ex.Message, ex);
+                this._logger.LogError(ex.Message, ex);
                 throw;
             }
         }
@@ -182,9 +186,44 @@ namespace Visus.DeploymentToolkit.Services {
             cancellationToken.ThrowIfCancellationRequested();
             this._logger.LogTrace("Getting partition properties for the newly "
                 + "created partition at offset {Offset}.", offset);
-            await this.RefreshAsync(false, cancellationToken);
-            vds.AdvancedDisk.GetPartitionProperties(offset, out var properties);
-            return new VdsPartition(vds, properties);
+            try {
+                vds.AdvancedDisk.GetPartitionProperties(offset,
+                    out var properties);
+                return new VdsPartition(vds, properties);
+
+            } catch (Exception ex) {
+                this._logger.LogWarning(ex, "Failed to get partition "
+                    + "properties for newly created partition at offset "
+                    + "{Offset}. Trying harder in in {Delay}.", offset,
+                    this._options.RetryTimeout);
+                await this.RefreshAsync(true, cancellationToken);
+
+                this._logger.LogTrace("Refreshing disk {Disk} before searching "
+                    + "a partition at offset {Offset}.", disk.Path, offset);
+                vds = this.GetDiskByPath(disk.Path, cancellationToken)
+                    ?? throw new InvalidOperationException(Errors.NoVdsDisk);
+
+                foreach (var p in vds.GetPartitions()) {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    this._logger.LogTrace("Found partition at offset {Offset} "
+                        + "on disk {Disk}.", p.Offset, disk.ID);
+                    var dist = Math.Max(p.Offset, offset);
+                    dist -= Math.Min(p.Offset, offset);
+
+                    if (dist < vds.GetBytesPerTrack()) {
+                        this._logger.LogTrace("The offset {ActualOffset} is "
+                            + "within {Distance} bytes of {Offset}, which is "
+                            + "less than the track size of {Track}.",
+                            p.Offset, dist, offset, vds.GetBytesPerTrack());
+                        return p;
+                    }
+                }
+
+                this._logger.LogError("None of the partitions on disk {Disk} "
+                    + "matched the offset {Offset} of the newly created "
+                    + "partition.", disk.ID, offset);
+                throw;
+            }
         }
 
         /// <inheritdoc />
@@ -295,6 +334,146 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Private methods
         /// <summary>
+        /// Searches the disk with the given device <paramref name="path"/> in
+        /// <paramref name="pack"/>.
+        /// </summary>
+        /// <remarks>
+        /// This method can be used to refresh a disk that we already know of.
+        /// </remarks>
+        /// <param name="pack"></param>
+        /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        private VdsDisk? GetDiskByPath(IVdsPack pack,
+                string path,
+                CancellationToken cancellationToken) {
+            ArgumentNullException.ThrowIfNull(pack);
+            ArgumentNullException.ThrowIfNull(path);
+
+            foreach (var d in pack.QueryDisks()) {
+                cancellationToken.ThrowIfCancellationRequested();
+                d.GetProperties(out var properties);
+                if (properties.DevicePath == path) {
+                    return new(d);
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Searches the disk with the given device <paramref name="path"/> in
+        /// <paramref name="provider"/>.
+        /// </summary>
+        /// <remarks>
+        /// This method can be used to refresh a disk that we already know of.
+        /// </remarks>
+        /// <param name="provider"></param>
+        /// <param name="path"></param>
+        /// <param name="cancellation"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        private VdsDisk? GetDiskByPath(
+                IVdsSwProvider provider,
+                string path,
+                CancellationToken cancellation) {
+            _ = provider ?? throw new ArgumentNullException(nameof(provider));
+
+            foreach (var pack in provider.QueryPacks()) {
+                cancellation.ThrowIfCancellationRequested();
+                var retval = this.GetDiskByPath(pack, path, cancellation);
+                if (retval is not null) {
+                    return retval;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Searches the disk with the given device <paramref name="path"/> in
+        /// <paramref name="provider"/>.
+        /// </summary>
+        /// <remarks>
+        /// This method can be used to refresh a disk that we already know of.
+        /// </remarks>
+        /// <param name="provider"></param>
+        /// <param name="path"></param>
+        /// <param name="cancellation"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        private VdsDisk? GetDiskByPath(
+                IVdsVdProvider provider,
+                string path,
+                CancellationToken cancellation) {
+            ArgumentNullException.ThrowIfNull(provider);
+
+            foreach (var d in provider.QueryVDisks()) {
+                cancellation.ThrowIfCancellationRequested();
+                d.GetProperties(out var properties);
+                if (properties.DevicePath == path) {
+                    return new(d);
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Searchres the disk with the given device <paramref name="path"/>.
+        /// </summary>
+        /// <remarks>
+        /// This method can be used to refresh a disk that we already know of.
+        /// </remarks>
+        /// <param name="path"></param>
+        /// <param name="cancellation"></param>
+        /// <returns></returns>
+        private VdsDisk? GetDiskByPath(
+                string path,
+                CancellationToken cancellation) {
+            // Checking the disk providers.
+            foreach (var p in this.GetProviders()) {
+                cancellation.ThrowIfCancellationRequested();
+                p.GetProperties(out var props);
+
+                if ((p is IVdsSwProvider sw) && (sw != null)) {
+                    this._logger.LogTrace("Querying disk {Path} from provider "
+                        + "{Provider}", path, props.Name);
+                    var retval = this.GetDiskByPath(sw, path, cancellation);
+                    if (retval is not null) {
+                        return retval;
+                    }
+
+                } else if ((p is IVdsVdProvider vd) && (vd != null)) {
+                    this._logger.LogTrace("Querying virtual disk {Path} from "
+                        + "provider {Provider}", path, props.Name);
+                    var retval = this.GetDiskByPath(vd, path, cancellation);
+                    if (retval is not null) {
+                        return retval;
+                    }
+                }
+            }
+
+            // Check whether the dis is an unallocated one.
+            {
+                this._logger.LogTrace("Searching {Path} among unallocated "
+                    + "disks.", path);
+                this._service.QueryUnallocatedDisks(out var enumerator);
+                foreach (var d in enumerator.Enumerate<IVdsDisk>()) {
+                    cancellation.ThrowIfCancellationRequested();
+                    d.GetProperties(out var properties);
+                    if (properties.DevicePath == path) {
+                        return new(d);
+                    }
+                }
+            }
+
+            this._logger.LogWarning("A disk with path {Path} was not found.",
+                path);
+            return null;
+        }
+
+        /// <summary>
         /// Enumerate all disks in the given <paramref name="pack"/>.
         /// </summary>
         /// <param name="pack"></param>
@@ -307,6 +486,52 @@ namespace Visus.DeploymentToolkit.Services {
                 CancellationToken cancellation) {
             ArgumentNullException.ThrowIfNull(pack);
             foreach (var d in pack.QueryDisks()) {
+                cancellation.ThrowIfCancellationRequested();
+                yield return new VdsDisk(d);
+            }
+        }
+
+        /// <summary>
+        /// Gets all disks from the specified software provider.
+        /// </summary>
+        /// <param name="provider">The software provider for disks.</param>
+        /// <param name="cancellation"></param>
+        /// <returns>All disks managed by the provider.</returns>
+        /// <exception cref="ArgumentNullException">If
+        /// <paramref name="provider"/> is <c>null</c>, or if
+        /// <paramref name="logger"/> is <c>null</c>.</exception>
+        private IEnumerable<VdsDisk> GetDisks(
+                IVdsSwProvider provider,
+                CancellationToken cancellation) {
+            ArgumentNullException.ThrowIfNull(provider);
+
+            foreach (var pack in provider.QueryPacks()) {
+                cancellation.ThrowIfCancellationRequested();
+
+                //pack.GetProperties(out var properties);
+                //this._logger.LogTrace("Querying disks from pack {Pack} "
+                //    + "({PackID}, status {Status}, flags {Flags}).",
+                //    properties.Name, properties.Id, properties.Status,
+                //    properties.Flags);
+                foreach (var d in this.GetDisks(pack, cancellation)) {
+                    cancellation.ThrowIfCancellationRequested();
+                    yield return d;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Enumerates all disks from the specified virtual disk provider.
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <param name="cancellation"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        private IEnumerable<VdsDisk> GetDisks(
+                IVdsVdProvider provider,
+                CancellationToken cancellation) {
+            ArgumentNullException.ThrowIfNull(provider);
+            foreach (var d in provider.QueryVDisks()) {
                 cancellation.ThrowIfCancellationRequested();
                 yield return new VdsDisk(d);
             }
@@ -342,14 +567,14 @@ namespace Visus.DeploymentToolkit.Services {
                 if ((p is IVdsSwProvider sw) && (sw != null)) {
                     this._logger.LogTrace("Querying disks from provider "
                         + "{Provider}", props.Name);
-                    foreach (var d in GetDisks(sw, cancellation)) {
+                    foreach (var d in this.GetDisks(sw, cancellation)) {
                         yield return d;
                     }
 
                 } else if ((p is IVdsVdProvider vd) && (vd != null)) {
                     this._logger.LogTrace("Querying virtual disks from "
                         + "provider {Provider}", props.Name);
-                    foreach (var d in GetDisks(vd, cancellation)) {
+                    foreach (var d in this.GetDisks(vd, cancellation)) {
                         yield return d;
                     }
                 }
@@ -364,54 +589,6 @@ namespace Visus.DeploymentToolkit.Services {
                     cancellation.ThrowIfCancellationRequested();
                     yield return new VdsDisk(d, DiskFlags.Uninitialised);
                 }
-            }
-        }
-
-        /// <summary>
-        /// Gets all disks from the specified software provider.
-        /// </summary>
-        /// <param name="provider">The software provider for disks.</param>
-        /// <param name="cancellation"></param>
-        /// <returns>All disks managed by the provider.</returns>
-        /// <exception cref="ArgumentNullException">If
-        /// <paramref name="provider"/> is <c>null</c>, or if
-        /// <paramref name="logger"/> is <c>null</c>.</exception>
-        private IEnumerable<VdsDisk> GetDisks(
-                IVdsSwProvider provider,
-                CancellationToken cancellation) {
-            _ = provider ?? throw new ArgumentNullException(nameof(provider));
-            cancellation.ThrowIfCancellationRequested();
-
-            foreach (var pack in provider.QueryPacks()) {
-                cancellation.ThrowIfCancellationRequested();
-
-                //pack.GetProperties(out var properties);
-                //this._logger.LogTrace("Querying disks from pack {Pack} "
-                //    + "({PackID}, status {Status}, flags {Flags}).",
-                //    properties.Name, properties.Id, properties.Status,
-                //    properties.Flags);
-                foreach (var d in GetDisks(pack, cancellation)) {
-                    cancellation.ThrowIfCancellationRequested();
-                    yield return d;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Enumerates all disks from the specified virtual disk provider.
-        /// </summary>
-        /// <param name="provider"></param>
-        /// <param name="cancellation"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        private IEnumerable<VdsDisk> GetDisks(
-                IVdsVdProvider provider,
-                CancellationToken cancellation) {
-            _ = provider ?? throw new ArgumentNullException(nameof(provider));
-            cancellation.ThrowIfCancellationRequested();
-            foreach (var d in  provider.QueryVDisks()) {
-                cancellation.ThrowIfCancellationRequested();
-                yield return new VdsDisk(d);
             }
         }
 
@@ -469,6 +646,7 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Private fields
         private readonly ILogger _logger;
+        private readonly VdsOptions _options;
         private readonly IVdsService _service;
         #endregion
     }

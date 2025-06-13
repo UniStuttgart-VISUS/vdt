@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Services;
 
@@ -20,7 +21,7 @@ namespace Visus.DeploymentToolkit.Test {
         [TestMethod]
         public async Task GetDisks() {
             var wmi = new ManagementService(CreateLogger<ManagementService>());
-            var vds = new VdsService(CreateLogger<VdsService>());
+            var vds = new VdsService(Options.Create(new VdsOptions()), CreateLogger<VdsService>());
             var service = new WmiDiskService(wmi, vds, CreateLogger<WmiDiskService>());
             Assert.IsNotNull(service);
 
@@ -43,7 +44,7 @@ namespace Visus.DeploymentToolkit.Test {
         public async Task SelectDisks() {
             var logger = CreateLogger<WmiTest>();
             var wmi = new ManagementService(CreateLogger<ManagementService>());
-            var vds = new VdsService(CreateLogger<VdsService>());
+            var vds = new VdsService(Options.Create(new VdsOptions()), CreateLogger<VdsService>());
             var service = new WmiDiskService(wmi, vds, CreateLogger<WmiDiskService>());
             Assert.IsNotNull(service);
 

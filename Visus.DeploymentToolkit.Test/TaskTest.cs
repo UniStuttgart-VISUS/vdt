@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Security.Principal;
 using System.Xml.Linq;
 using Visus.DeploymentToolkit.DiskManagement;
@@ -124,7 +125,7 @@ namespace Visus.DeploymentToolkit.Test {
         public async Task TestSelectInstallDisk() {
             if (WindowsIdentity.GetCurrent().IsAdministrator()) {
                 var state = new State(CreateLogger<State>());
-                var vds = new VdsService(CreateLogger<VdsService>());
+                var vds = new VdsService(Options.Create(new VdsOptions()), CreateLogger<VdsService>());
                 var wmi = new ManagementService(CreateLogger<ManagementService>());
                 var diskMgmt = new WmiDiskService(wmi, vds, CreateLogger<WmiDiskService>());
                 var task = new SelectInstallDisk(state, diskMgmt, CreateLogger<SelectInstallDisk>());

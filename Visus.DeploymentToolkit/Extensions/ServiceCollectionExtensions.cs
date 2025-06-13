@@ -12,6 +12,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
 using Visus.DeploymentToolkit.Unattend;
@@ -109,6 +110,24 @@ namespace Visus.DeploymentToolkit.Extensions {
             ArgumentNullException.ThrowIfNull(configuration);
             ArgumentNullException.ThrowIfNull(sectionName);
             return services.Configure<UnattendBuilderOptions>(
+                configuration.GetSection(sectionName));
+        }
+
+        /// <summary>
+        /// Configures the <see cref="VdsOptions"/>.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <param name="sectionName"></param>
+        /// <returns></returns>
+        public static IServiceCollection ConfigureVds(
+                this IServiceCollection services,
+                IConfiguration configuration,
+                string sectionName = VdsOptions.SectionName) {
+            ArgumentNullException.ThrowIfNull(services);
+            ArgumentNullException.ThrowIfNull(configuration);
+            ArgumentNullException.ThrowIfNull(sectionName);
+            return services.Configure<VdsOptions>(
                 configuration.GetSection(sectionName));
         }
 
