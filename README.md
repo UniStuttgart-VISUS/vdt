@@ -1,5 +1,5 @@
 # Project Deimos
-Project Deimos aims to provide a partial replacement of the [Microsoft Deployment Toolkit (MDT)](https://learn.microsoft.com/de-de/mem/configmgr/mdt/) for internal use at VISUS. The main motivation for this project are that (i) MDT seems to be abandoned by Microsoft and (ii) is based on VBS which is a deprecated feature in Windows 11. Project Deimos does not provide a full replacement for MDT, but only for the deployment tasks performed at VISUS.
+The VISUS Deployment Toolkit (formerly project Deimos) aims to provide a partial replacement of the [Microsoft Deployment Toolkit (MDT)](https://learn.microsoft.com/de-de/mem/configmgr/mdt/) for internal use at VISUS. The main motivation for this project are that (i) MDT seems to be abandoned by Microsoft and (ii) is based on VBS which is a deprecated feature in Windows 11. Project Deimos does not provide a full replacement for MDT, but only for the deployment tasks performed at VISUS.
 
 ## Components
 The project consists of several components that limit the number of times the PXE image needs to be updated. This is mainly achieved by running the bulk of the deployment tasks from the deployment share and having a small bootstrapper that only mounts the share.
