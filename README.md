@@ -18,7 +18,14 @@ The agent performs the installation from WinPE and finalises it when booting int
 1. Applying the unattend.xml file to the installed operating system.
 
 ### Visus.DeploymentToolkit.ImageBuilder
-The image builder is intended to create images to be served by the TFTP server.
+The image builder is intended to create images to be served by the TFTP server. It must run on a machine with the [Windows Automated Installation Kit (WAIK)](https://learn.microsoft.com/de-de/windows-hardware/get-started/adk-install), including the Windows PE addon, installed. The image builder runs a built-in task sequence that
+
+1. Copies the WinPE sources from the WAIK into a temporary folder
+1. Mounts the boot.wim file used by WinPE
+1. Copies an unattend.xml file from the deploymentshare into the boot.wim
+1. Customises the unattend.xml in the boot.wim, most importantly to automatically run the bootstrapper
+1. Copies the bootstrapper into the boot.wim
+1. Commits the changes to the boot.wim
 
 ### Visus.DeploymentToolkit.TaskRunner
 The task runner tool allows for executing individual tasks from the deployment toolkit. The application needs the following parameters, either via the command line or via appsettings.json: The `StateFile` where tasks relying on existing state can obtain this information from, and the `Task`, which is the class name of the work item to be executed. Parameters to the tasks (public properties of the task object) can be set via the `Parameters` configuration section.
@@ -32,7 +39,7 @@ Visus.DeploymentToolkit.TaskRunner.exe /Task=PrepareDeploymentShare /Parameters:
 We do not have an installer yet, so the application needs to be built from source and deployed manually.
 
 ### Prerequisites
-On the machine serving the deployment share, the [Windows Automated Installation Kit (WAIK)](https://learn.microsoft.com/de-de/windows-hardware/get-started/adk-install) must be installed as it provides the necessary imaging tools. Make sure to also install the '''Windows PE addon''', which contains the source files for the boot image used by the deployment agent. The WAIK is assumed to be installed in its default location ([see `Waik` namespace](Visus.DeploymentToolkit.Contracts/Waik)).
+On the machine serving the deployment share, the Windows Automated Installation Kit (WAIK) must be installed as it provides the necessary imaging tools. Make sure to also install the '''Windows PE addon''', which contains the source files for the boot image used by the deployment agent. The WAIK is assumed to be installed in its default location ([see `Waik` namespace](Visus.DeploymentToolkit.Contracts/Waik)).
 
 ### Deployment share
 Everything is expected to reside in a "deployment share", which is a shared folder the machines to be installed will access, with the following subfolders:
