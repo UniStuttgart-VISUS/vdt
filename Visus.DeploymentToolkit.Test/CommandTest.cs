@@ -71,5 +71,12 @@ namespace Visus.DeploymentToolkit.Test {
                 .Build()
                 .ExecuteAsync();
         }
+
+        [TestMethod]
+        public void BuilderToString() {
+            var builder = new CommandBuilder("C:\\Windows\\system32\\cmd.exe")
+                .WithArguments("/c echo \"Hello from Test.\"");
+            Assert.AreEqual("C:\\Windows\\system32\\cmd.exe /c echo \"Hello from Test.\"", builder.ToString());
+        }
     }
 }

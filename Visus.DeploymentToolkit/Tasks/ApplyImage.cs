@@ -7,12 +7,16 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Wim;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.DeploymentShare;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Validation;
+using SPath = System.IO.Path;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
@@ -60,6 +64,11 @@ namespace Visus.DeploymentToolkit.Tasks {
         public override Task ExecuteAsync(CancellationToken cancellationToken) {
             this.CopyFrom(this._state);
             this.CopyFromEnvironment();
+
+            if (!File.Exists(this.Image)) {
+                this.SearchImage(this.Image);
+            }
+
             this.Validate();
 
             return Task.Run(() => {
@@ -82,6 +91,89 @@ namespace Visus.DeploymentToolkit.Tasks {
                     this.Image, this.Path, this.Options);
                 WimgApi.ApplyImage(img, this.Path, this.Options);
             }, cancellationToken);
+        }
+        #endregion
+
+        #region Private methods
+        /// <summary>
+        /// Searches the specified <paramref name="image"/> in the deployment
+        /// share specified in the state.
+        /// </summary>
+        /// <param name="image"></param>
+        /// <returns></returns>
+        private bool SearchImage(string image) {
+            this._logger.LogInformation("Image was not found at {Image}. "
+                + "Searching for it in the deployment share.", this.Image);
+
+            if (this.SearchImage(image,
+                    this._state.DeploymentDirectory,
+                    Layout.InstallImagePath)) {
+                return true;
+            }
+
+            if (this.SearchImage(image,
+                    this._state.DeploymentShare,
+                    Layout.InstallImagePath)) {
+                return true;
+            }
+
+            this._logger.LogWarning("The image {Image} was not found in the "
+                + "deployment share.", this.Image);
+            return false;
+        }
+
+        /// <summary>
+        /// Searches the specified <paramref name="image"/> in
+        /// <paramref name="directory"/>, if the directory exists, and
+        /// potentially in the specified <paramref name="subdirectories"/>
+        /// of <paramref name="directory"/>.
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="directory"></param>
+        /// <param name="subdirectories"></param>
+        /// <returns></returns>
+        private bool SearchImage(string image,
+                string? directory,
+                params string[] subdirectories) {
+            Debug.Assert(image is not null);
+            if (!Directory.Exists(directory)) {
+                this._logger.LogTrace("Directory {Directory} does not exist, "
+                    + "ignoring it.", directory);
+                return false;
+            }
+
+            this._logger.LogTrace("Searching for image {Image} in {Directory}.",
+                image, directory);
+
+            {
+                var path = SPath.Combine(directory, image);
+                if (File.Exists(path)) {
+                    this._logger.LogTrace("Image was found at {Image}.", path);
+                    this.Image = path;
+                    return true;
+                }
+            }
+
+            if (!SPath.HasExtension(image)) {
+                this._logger.LogTrace("Image {Image} does not have an "
+                    + "extension, so we try the default WIM extension.", image);
+                return this.SearchImage(directory, image + ".wim");
+            }
+
+            if (subdirectories is not null) {
+                this._logger.LogTrace("Searching in specified subdirectories"
+                    + " of {Directory}.", directory);
+                foreach (var s in subdirectories) {
+                    var d = SPath.Combine(directory, s);
+                    if (this.SearchImage(image, d)) {
+                        return true;
+                    }
+                }
+            }
+
+            this._logger.LogTrace("Image {Image} was not found in {Directory}.",
+                image, directory);
+            return false;
         }
         #endregion
     }

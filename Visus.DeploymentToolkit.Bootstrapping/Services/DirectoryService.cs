@@ -31,12 +31,19 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public methods
         /// <inheritdoc />
-        public async Task CleanAsync(string path) {
+        public Task CleanAsync(string path) {
             ArgumentNullException.ThrowIfNull(nameof(path));
             this._logger.LogTrace("Purging all contents from {Path}.",
                 path);
 
-            await Task.Factory.StartNew(async () => {
+            if (!Directory.Exists(path)) {
+                this._logger.LogTrace("Directory {Path} did not exist in "
+                    + "the first place.", path);
+                return Task.CompletedTask;
+            }
+
+            return Task.Run(async () => {
+                this._logger.LogTrace("Cleaning directory {Path}.", path);
                 foreach (var d in Directory.GetDirectories(path)) {
                     await this.DeleteAsync(d, true);
                 }
@@ -44,7 +51,7 @@ namespace Visus.DeploymentToolkit.Services {
                 foreach (var f in Directory.GetFiles(path)) {
                     File.Delete(f);
                 }
-            }).ConfigureAwait(false);
+            });
         }
 
         /// <inheritdoc />

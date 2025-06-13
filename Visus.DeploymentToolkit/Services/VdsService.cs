@@ -58,6 +58,24 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public methods
         /// <inheritdoc />
+        public Task AssignDriveLetterAsync(IDisk disk,
+                IPartition partition,
+                char letter) {
+            ArgumentNullException.ThrowIfNull(disk);
+            ArgumentNullException.ThrowIfNull(partition);
+            if (disk is not VdsDisk vds) {
+                throw new InvalidOperationException(Errors.NoVdsDisk);
+            }
+
+            this._logger.LogTrace("Assigning letter {Letter} to "
+                + "partition {Partition} at {Offset} on {Disk} ({Name}).",
+                letter, partition.Name, partition.Offset, disk.ID,
+                disk.FriendlyName);
+            vds.AdvancedDisk.AssignDriveLetter(partition.Offset, letter);
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc />
         public Task CleanAsync(IDisk disk,
                 CleanFlags flags,
                 CancellationToken cancellationToken) {
@@ -194,7 +212,7 @@ namespace Visus.DeploymentToolkit.Services {
             } catch (Exception ex) {
                 this._logger.LogWarning(ex, "Failed to get partition "
                     + "properties for newly created partition at offset "
-                    + "{Offset}. Trying harder in in {Delay}.", offset,
+                    + "{Offset}. Trying harder in {Delay}.", offset,
                     this._options.RetryTimeout);
                 await this.RefreshAsync(true, cancellationToken);
 

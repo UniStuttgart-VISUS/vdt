@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -26,7 +27,9 @@ namespace Visus.DeploymentToolkit.Workflow {
                 Type typeToConvert,
                 JsonSerializerOptions options) {
             using var doc = JsonDocument.ParseValue(ref reader);
-            var retval = new TaskDescription();
+            var retval = new TaskDescription() {
+                Parameters = new Dictionary<string, object?>()
+            };
 
             // Restore the type of the task.
             var task = doc.RootElement.GetProperty(
@@ -42,7 +45,7 @@ namespace Visus.DeploymentToolkit.Workflow {
                     if (parameters.TryGetProperty(p.Name, out var value)) {
                         var v = JsonSerializer.Deserialize(value,
                             p.PropertyType);
-                        p.SetValue(retval, v);
+                        retval.Parameters[p.Name] = v;
                     }
                 }
             }

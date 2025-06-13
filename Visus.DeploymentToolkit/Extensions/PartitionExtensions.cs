@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Visus.DeploymentToolkit.DiskManagement;
 
@@ -15,6 +16,29 @@ namespace Visus.DeploymentToolkit.Extensions {
     /// Extension methods for <see cref="IPartition"/>.
     /// </summary>
     internal static class PartitionExtensions {
+
+        /// <summary>
+        /// Finds the first drive letter assigned to the given paratition.
+        /// </summary>
+        /// <param name="that"></param>
+        /// <returns></returns>
+        public static char? GetDriveLetter(this PartitionDefinition that) {
+            if (that is null) {
+                return null;
+            }
+
+            foreach (var m in that.Mounts) {
+                var letter = m.TrimEnd(':',
+                    Path.DirectorySeparatorChar,
+                    Path.AltDirectorySeparatorChar);
+
+                if ((letter is not null) && (letter.Length == 1)) {
+                    return letter[0];
+                }
+            }
+
+            return null;
+        }
 
         /// <summary>
         /// Answer whether the given partition is of the specified

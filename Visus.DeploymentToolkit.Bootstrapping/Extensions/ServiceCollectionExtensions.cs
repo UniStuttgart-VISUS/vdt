@@ -82,7 +82,12 @@ namespace Visus.DeploymentToolkit.Extensions {
 #if DEBUG
                 o.AddDebug();
 #endif // DEBUG
-                o.AddFile(config);
+
+                if (config["PathFormat"] is not null) {
+                    // If we specify an invalid path format, Serilog will fail.
+                    o.AddFile(config);
+                }
+
                 o.AddSimpleConsole(f => {
                     f.IncludeScopes = false;
                     f.SingleLine = true;

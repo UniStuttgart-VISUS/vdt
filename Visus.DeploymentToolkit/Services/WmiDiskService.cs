@@ -43,6 +43,13 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public methods
         /// <inheritdoc />
+        public Task AssignDriveLetterAsync(IDisk disk,
+                IPartition partition,
+                char letter) {
+            throw new NotImplementedException("TODO");
+        }
+
+        /// <inheritdoc />
         public async Task CleanAsync(IDisk disk,
                 CleanFlags flags,
                 CancellationToken cancellationToken) {

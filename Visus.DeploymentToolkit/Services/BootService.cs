@@ -48,20 +48,26 @@ namespace Visus.DeploymentToolkit.Services {
 
                 {
                     var path = Path.Combine(drive, "BootMgr");
-                    this._logger.LogTrace("Deleting {Path}.", path);
-                    File.Delete(path);
+                    if (File.Exists(path)) {
+                        this._logger.LogTrace("Deleting {Path}.", path);
+                        File.Delete(path);
+                    }
                 }
 
             } else if (firmware == FirmwareType.Bios) {
                 var path = Path.Combine(drive, "boot", "bcd");
-                this._logger.LogTrace("Deleting {Path}.", path);
-                File.Delete(path);
+                if (File.Exists(path)) {
+                    this._logger.LogTrace("Deleting {Path}.", path);
+                    File.Delete(path);
+                }
 
             } else {
                 var path = Path.Combine(drive, "efi", "microsoft", "boot",
                     "bcd");
-                this._logger.LogTrace("Deleting {Path}.", path);
-                File.Delete(path);
+                if (File.Exists(path)) {
+                    this._logger.LogTrace("Deleting {Path}.", path);
+                    File.Delete(path);
+                }
             }
         }
 
@@ -84,6 +90,7 @@ namespace Visus.DeploymentToolkit.Services {
                 .WaitForProcess()
                 .Build();
 
+            this._logger.LogTrace("Creating BCD store with {Command}.", cmd);
             await cmd.ExecuteAndCheckAsync(0, this._logger);
         }
 
@@ -106,6 +113,8 @@ namespace Visus.DeploymentToolkit.Services {
                 .WaitForProcess();
 
             try {
+                this._logger.LogTrace("Creating book sector with {Command}.",
+                    cmd);
                 await cmd.Build().ExecuteAndCheckAsync(0, this._logger);
             } catch {
                 if (string.IsNullOrEmpty(mbr)) {

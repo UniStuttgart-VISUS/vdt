@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Visus.DeploymentToolkit.TaskSequenceList": {
+      "commandName": "Project",
+      "commandLineArgs": "\"--TaskSequenceStore:Path=t:\\depshare\\task sequences\""
+    }
+  }
+}

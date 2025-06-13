@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -64,10 +65,15 @@ namespace Visus.DeploymentToolkit.Services {
 
         /// <inheritdoc />
         public override string ToString() {
-            var sb = new StringBuilder(this.Path);
+            var sb = new StringBuilder(this._processStartInfo.FileName);
 
-            foreach (var a in this.Arguments) {
-                sb.Append(" \"").Append(a).Append('"');
+            if (this._processStartInfo.ArgumentList?.Any() == true) {
+                foreach (var a in this._processStartInfo.ArgumentList) {
+                    sb.Append(' ').Append(a);
+                }
+
+            } else if (!string.IsNullOrEmpty(this._processStartInfo.Arguments)) {
+                sb.Append(' ').Append(this._processStartInfo.Arguments);
             }
 
             return sb.ToString();

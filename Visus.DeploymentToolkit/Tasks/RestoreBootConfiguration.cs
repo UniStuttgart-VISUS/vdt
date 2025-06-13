@@ -96,9 +96,18 @@ namespace Visus.DeploymentToolkit.Tasks {
             this.CopyFromEnvironment();
             this.Validate();
 
+
             var bootDrive = await this.GetBootDrive(cancellationToken);
             var firmware = this._systemInformation.Firmware;
             var sysDrive = this.GetSystemDrive();
+            var winDir = this.InstallationDirectory;
+
+            if (Directory.Exists(Path.Combine(winDir, "Windows"))) {
+                this._logger.LogTrace("Found Windows directory in "
+                    + "{InstallationDirectory}, so the specified installation "
+                    + "directory is not the Windows directory itself.", winDir);
+                winDir = Path.Combine(winDir, "Windows");
+            }
 
             if (firmware != FirmwareType.Uefi) {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -107,22 +116,22 @@ namespace Visus.DeploymentToolkit.Tasks {
                 await this._bootService.CreateBootsectorAsync(sysDrive,
                     this.Version,
                     firmware);
+                bootDrive = sysDrive;
             }
 
             this._logger.LogInformation("Cleaning previous boot data.");
             cancellationToken.ThrowIfCancellationRequested();
-            await this._bootService.CleanAsync(sysDrive,
+            await this._bootService.CleanAsync(bootDrive,
                 this.Version,
                 firmware);
 
             if (!"nt52".EqualsIgnoreCase(this.Version)) {
                 this._logger.LogInformation("Restoring the BCD store on "
                     + " {SystemDrive} for the Windows installation "
-                    + "{InstallationDirectory}.", sysDrive,
-                    this.InstallationDirectory);
+                    + "{InstallationDirectory}.", bootDrive, winDir);
                 await this._bootService.CreateBcdStoreAsync(
-                    this.InstallationDirectory,
-                    sysDrive,
+                    winDir,
+                    bootDrive,
                     firmware);
             }
         }

@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Product>Project Deimos</Product>
+    <Copyright>Copyright © 2025 Visualisierungsinstitut der Universität Stuttgart</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

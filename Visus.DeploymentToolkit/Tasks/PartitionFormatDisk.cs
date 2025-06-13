@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
@@ -237,20 +238,17 @@ namespace Visus.DeploymentToolkit.Tasks {
                     FormatFlags.Quick | FormatFlags.Force,
                     cancellationToken);
 
-                //foreach (var m in p.Mounts) {
-                //    var mountPoint = m.TrimEnd(':',
-                //        Path.DirectorySeparatorChar,
-                //        Path.AltDirectorySeparatorChar);
+                var letter = p.GetDriveLetter();
+                if (letter is not null) {
+                    this._logger.LogTrace("Assigning drive letter {Letter}.",
+                        letter);
+                    await this._diskManagement.AssignDriveLetterAsync(
+                        this.Disk,
+                        partition,
+                        (char) letter);
+                }
 
-                //    //if (mountPoint.Length == 1) {
-                //    //    this._logger.LogDebug("Assigning drive letter "
-                //    //        + "{MountPoint} to partition {Partition}.",
-                //    //        mountPoint, p.Name);
-                //    //    disk.AssignDriveLetter(p.Offset, mountPoint[0]);
-                //    //}
-                //}
-
-                if (this.IsInstallationDisk) {
+                if (this.IsInstallationDisk && (letter is not null)) {
                     this._logger.LogTrace("Propagating mount points of an "
                         + "installation partition to next tasks.");
                     if (p.IsUsedFor(PartitionUsage.Boot)) {
@@ -315,10 +313,16 @@ namespace Visus.DeploymentToolkit.Tasks {
             };
 
             var systemDrive = (from d in this._driveInfo.GetFreeDrives()
-                               where d.StartsWith("c", true, null)
+                               where d.StartsWith("c", StringComparison.OrdinalIgnoreCase)
                                select d).FirstOrDefault()
-                              ?? this._driveInfo.GetFreeDrive();
-            var bootDrive = this._driveInfo.GetFreeDrive();
+                               ?? this._driveInfo.GetFreeDrive();
+            this._logger.LogTrace("Using system drive {SystemDrive} for the "
+                + "operating system installation.", systemDrive);
+            var bootDrive = (from d in this._driveInfo.GetFreeDrives()
+                             where d != systemDrive
+                             select d).First();
+            this._logger.LogTrace("Using boot drive {BootDrive} for the EFI "
+                + "system partition.", bootDrive);
 
             // Create the EFI system partition.
             {
@@ -329,7 +333,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                     Label = this._options.EfiLabel,
                     FileSystem = FileSystem.Fat32,
                     Type = PartitionType.EfiSystem,
-                    Mounts = [bootDrive],
+                    Mounts = [ bootDrive ],
                     Usage = PartitionUsage.Boot | PartitionUsage.System
                 });
             }
@@ -354,7 +358,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                     Label = this._options.SystemLabel,
                     FileSystem = FileSystem.Ntfs,
                     Type = PartitionType.MicrosoftBasicData,
-                    Mounts = [systemDrive],
+                    Mounts = [ systemDrive ],
                     Usage = PartitionUsage.Installation
                 });
             }

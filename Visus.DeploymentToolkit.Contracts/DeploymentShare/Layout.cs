@@ -38,7 +38,7 @@ namespace Visus.DeploymentToolkit.DeploymentShare {
         /// <summary>
         /// The folder where the operating system images are stored.
         /// </summary>
-        public const string InstallImagePath = "Image";
+        public const string InstallImagePath = "Images";
 
         /// <summary>
         /// The folder where the task sequences are stored.

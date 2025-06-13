@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Title>Project Deimos Task Sequence List</Title>
+    <Authors>Christoph Müller</Authors>
+    <Company>Visualisierungsinstitut der Universität Stuttgart</Company>
+    <Product>Project Deimos</Product>
+    <Description>Lists the contents of a task sequence store.</Description>
+    <Copyright>Copyright © 2025 Visualisierungsinstitut der Universität Stuttgart</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Visus.DeploymentToolkit\Visus.DeploymentToolkit.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

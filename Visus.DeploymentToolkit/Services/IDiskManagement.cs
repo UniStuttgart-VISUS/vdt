@@ -20,13 +20,15 @@ namespace Visus.DeploymentToolkit.Services {
     /// </summary>
     public interface IDiskManagement {
 
-        ///// <summary>
-        ///// Assigns the specified drive letter to the partition at the specified
-        ///// offset.
-        ///// </summary>
-        ///// <param name="offset"></param>
-        ///// <param name="letter"></param>
-        //void AssignDriveLetter(ulong offset, char letter);
+        /// <summary>
+        /// Assigns the specified drive letter to the specified
+        /// <paramref name="partition"/> on <paramref name="disk"/>.
+        /// </summary>
+        /// <param name="disk"></param>
+        /// <param name="partition"></param>
+        /// <param name="letter"></param>
+        Task AssignDriveLetterAsync(IDisk disk, IPartition partition,
+            char letter);
 
         ///// <summary>
         ///// Removes the specified drive letter from the partition at the
