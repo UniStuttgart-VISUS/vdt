@@ -178,6 +178,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lock screen.
+        /// </summary>
+        internal static string LockScreen {
+            get {
+                return ResourceManager.GetString("LockScreen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mount a WIM image.
         /// </summary>
         internal static string MountWim {

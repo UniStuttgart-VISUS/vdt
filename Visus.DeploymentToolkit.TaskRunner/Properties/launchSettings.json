@@ -2,7 +2,7 @@
   "profiles": {
     "Visus.DeploymentToolkit.TaskRunner": {
       "commandName": "Project",
-      "commandLineArgs": "/Task=ApplyImage /Parameters:Path=t:\\_apply /Parameters:Image=d:\\sources\\boot.wim /Parameters:ImageName=\"Lite Touch Windows PE (x64)\" /Parameters:TemporaryDirectory=t:\\"
+      "commandLineArgs": "/Task=LockScreen"
     }
   }
 }
