@@ -32,7 +32,7 @@ Visus.DeploymentToolkit.TaskRunner.exe /Task=PrepareDeploymentShare /Parameters:
 We do not have an installer yet, so the application needs to be built from source and deployed manually.
 
 ### Prerequisites
-On the machine serving the deployment share, the [Windows Automated Installation Kit (WAIK)](https://learn.microsoft.com/de-de/windows-hardware/get-started/adk-install) must be installed as it provides the necessary imaging tools. Make sure to also install the '''Windows PE addon''', which contains the source files for the boot image used by the deployment agent. The WAIK is assumed to be installed in its default location ([see `Waik` namespace](Visus.DeploymentToolkit.Contracts.Waik)).
+On the machine serving the deployment share, the [Windows Automated Installation Kit (WAIK)](https://learn.microsoft.com/de-de/windows-hardware/get-started/adk-install) must be installed as it provides the necessary imaging tools. Make sure to also install the '''Windows PE addon''', which contains the source files for the boot image used by the deployment agent. The WAIK is assumed to be installed in its default location ([see `Waik` namespace](Visus.DeploymentToolkit.Contracts/Waik)).
 
 ### Deployment share
 Everything is expected to reside in a "deployment share", which is a shared folder the machines to be installed will access, with the following subfolders:
