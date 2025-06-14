@@ -67,11 +67,21 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// </summary>
         public IDictionary<string, object?> Parameters { get; init; } = null!;
 
+        /// <inheritdoc />
+        IEnumerable<IParameterDescription> ITaskDescription.Parameters
+            => this.GetParameters().Select(p => new ParameterDescription(p));
+
         /// <summary>
         /// Gets or sets the fully qualified type name of the task.
         /// </summary>
         [Required]
-        public string Task { get; set; } = null!;
+        public string Task {
+            get => this._task;
+            set {
+                this._task = value ?? throw new ArgumentNullException();
+                this._type = null;  // Reset the type to force a re-evaluation.
+            }
+        }
 
         /// <summary>
         /// Gets the type resolved from <see cref="Task"/>
@@ -79,22 +89,24 @@ namespace Visus.DeploymentToolkit.Workflow {
         [JsonIgnore]
         public Type Type {
             get {
-                Debug.WriteLine(this.Task);
-                var retval = Type.GetType(this.Task, false, true);
+                if (this._type is null) {
+                    this._type = Type.GetType(this.Task, false, true);
 
-                if (retval is null) {
-                    // Try harder.
-                    retval = AppDomain.CurrentDomain.GetAssemblies()
-                        .SelectMany(a => a.GetTypes())
-                        .FirstOrDefault(t => t.FullName == this.Task);
+                    if (this._type is null) {
+                        // Try harder.
+                        this._type = AppDomain.CurrentDomain.GetAssemblies()
+                            .SelectMany(a => a.GetTypes())
+                            .FirstOrDefault(t => t.FullName == this.Task);
+                    }
+
+                    if (this._type is null) {
+                        // Now, we cannot do anything else.
+                        throw new InvalidOperationException(string.Format(
+                            Errors.TaskNotFound, this.Task));
+                    }
                 }
 
-                if (retval is null) {
-                    // Now, we cannot do anything else.
-                    throw new InvalidOperationException(string.Format(
-                        Errors.TaskNotFound, this.Task));
-                }
-                return retval;
+                return this._type;
             }
         }
         #endregion
@@ -141,6 +153,19 @@ namespace Visus.DeploymentToolkit.Workflow {
                          select p;
             return retval;
         }
+
+        /// <summary>
+        /// Gets the properties of <see cref="Type"/> that are  are considered
+        /// to be parameters.
+        /// </summary>
+        /// <returns></returns>
+        internal IEnumerable<PropertyInfo> GetParameters()
+            => GetParameters(this.Type);
+        #endregion
+
+        #region Private fields
+        private string _task = null!;
+        private Type? _type;
         #endregion
     }
 }

@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Threading;
@@ -52,12 +53,14 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Gets or sets whether existing data should be overwritten.
         /// </summary>
+        [DefaultValue(false)]
         public bool IsOverwrite { get; set; }
 
         /// <summary>
         /// Gets or sets whether the source structure should be copied
         /// recursively if <see cref="Source"/> is a folder.
         /// </summary>
+        [DefaultValue(true)]
         public bool IsRecursive { get; set; } = true;
 
         /// <summary>

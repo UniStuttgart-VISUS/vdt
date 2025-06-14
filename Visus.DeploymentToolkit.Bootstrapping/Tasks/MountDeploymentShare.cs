@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Versioning;
@@ -70,6 +71,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// Gets or sets whether the task should prompt for the deployment share
         /// and use any data provided only as suggestions.
         /// </summary>
+        [DefaultValue(true)]
         public bool Interactive { get; set; } = true;
 
         /// <summary>
@@ -93,6 +95,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// in the log files, which might be undesirable in production
         /// environments.
         /// </remarks>
+        [DefaultValue(false)]
         public bool PreserveConnection { get; set; }
 
         /// <summary>

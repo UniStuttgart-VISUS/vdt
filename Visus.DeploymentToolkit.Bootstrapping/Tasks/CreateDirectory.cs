@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
@@ -48,12 +49,14 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// is empty. If <c>true</c>, the task will delete all existing
         /// contents.
         /// </summary>
+        [DefaultValue(false)]
         public bool Clean { get; set; } = false;
 
         /// <summary>
         /// Gets or sets whether the desired directory already existing
         /// indicates a failure.
         /// </summary>
+        [DefaultValue(false)]
         public bool MustNotExist { get; set; } = false;
 
         /// <summary>

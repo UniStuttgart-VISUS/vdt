@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using System;
+using System.Collections.Generic;
 using Visus.DeploymentToolkit.Tasks;
 
 
@@ -22,6 +23,11 @@ namespace Visus.DeploymentToolkit.Workflow {
     /// to restore the task here.
     /// </remarks>
     public interface ITaskDescription {
+
+        /// <summary>
+        /// Gets a description of the parameters of the task.
+        /// </summary>
+        IEnumerable<IParameterDescription> Parameters { get; }
 
         /// <summary>
         /// Gets the fully qualified type name of the task to be instantiated.
