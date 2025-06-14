@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -35,45 +34,21 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <exception cref="ArgumentNullException">If <paramref name="task"/>
         /// is <c>null</c>.</exception>
         public static TaskDescription FromTask<TTask>(TTask task)
-                where TTask : ITask {
-            ArgumentNullException.ThrowIfNull(task);
-            var type = task.GetType();
-
-            if (type.IsGenericOf(typeof(SelfConfiguringTask<>))) {
-                // Serialise a self-configuring task as its base task. It is
-                // impossible to restore the self configuration part from JSON
-                // as this happens via lambdas in code.
-                type = type.GetGenericArguments().Single();
-            }
-
-            var retval = new TaskDescription {
-                //Task = type.AssemblyQualifiedName!,
-                Task = type.FullName!,
-                Parameters = new Dictionary<string, object?>()
-            };
-
-            foreach (var p in GetParameters(typeof(TTask))) {
-                var value = p.GetValue(task);
-                retval.Parameters[p.Name] = value;
-            }
-
-            return retval;
-        }
+                where TTask : ITask
+            => TaskDescriptionFactory.Create(task);
         #endregion
 
         #region Public properties
+        /// <inheritdoc />
+        public IEnumerable<IParameterDescription> DeclaredParameters
+            => this.GetParameters().Select(p => new ParameterDescription(p));
+
         /// <summary>
         /// Gets or sets the properties to be configured on the task.
         /// </summary>
         public IDictionary<string, object?> Parameters { get; init; } = null!;
 
         /// <inheritdoc />
-        IEnumerable<IParameterDescription> ITaskDescription.Parameters
-            => this.GetParameters().Select(p => new ParameterDescription(p));
-
-        /// <summary>
-        /// Gets or sets the fully qualified type name of the task.
-        /// </summary>
         [Required]
         public string Task {
             get => this._task;
@@ -83,27 +58,51 @@ namespace Visus.DeploymentToolkit.Workflow {
             }
         }
 
-        /// <summary>
-        /// Gets the type resolved from <see cref="Task"/>
-        /// </summary>
+        /// <inheritdoc />
         [JsonIgnore]
         public Type Type {
             get {
                 if (this._type is null) {
                     this._type = Type.GetType(this.Task, false, true);
-
-                    if (this._type is null) {
-                        // Try harder.
-                        this._type = AppDomain.CurrentDomain.GetAssemblies()
-                            .SelectMany(a => a.GetTypes())
-                            .FirstOrDefault(t => t.FullName == this.Task);
+                    if (this._type is not null) {
+                        return this._type;
                     }
 
-                    if (this._type is null) {
-                        // Now, we cannot do anything else.
-                        throw new InvalidOperationException(string.Format(
-                            Errors.TaskNotFound, this.Task));
+                    // Try harder.
+                    var candidates = AppDomain.CurrentDomain.GetAssemblies()
+                        .SelectMany(a => a.GetTypes())
+                        .Where(t => typeof(ITask).IsAssignableFrom(t))
+                        .ToList();
+
+                    this._type = candidates.SingleOrDefault(
+                        t => t.FullName == this.Task);
+                    if (this._type is not null) {
+                        return this._type;
                     }
+
+                    // Try even harder by using the class name only.
+                    this._type = candidates.SingleOrDefault(
+                        t => t.Name == this.Task);
+                    if (this._type is not null) {
+                        return this._type;
+                    }
+
+                    // Finally, try case-insensitive matching as last resort.
+                    this._type = candidates.SingleOrDefault(
+                        t => t.FullName.EqualsIgnoreCase(this.Task));
+                    if (this._type is not null) {
+                        return this._type;
+                    }
+
+                    this._type = candidates.SingleOrDefault(
+                        t => t.Name.EqualsIgnoreCase(this.Task));
+                    if (this._type is not null) {
+                        return this._type;
+                    }
+
+                    // Now, we cannot do anything else.
+                    throw new InvalidOperationException(string.Format(
+                        Errors.TaskNotFound, this.Task));
                 }
 
                 return this._type;
@@ -155,12 +154,20 @@ namespace Visus.DeploymentToolkit.Workflow {
         }
 
         /// <summary>
-        /// Gets the properties of <see cref="Type"/> that are  are considered
-        /// to be parameters.
+        /// Gets the properties of <see cref="Type"/> that are are considered
+        /// to be parameters and are listed in <see cref="Parameters"/>.
         /// </summary>
-        /// <returns></returns>
-        internal IEnumerable<PropertyInfo> GetParameters()
-            => GetParameters(this.Type);
+        /// <param name="force">If <see langword="true"/>, the parameters are
+        /// not checked against the <see cref="Parameters"/> dictionary. This
+        /// parameter defaults to <see langword="true"/>.</param>
+        /// <returns>All properties that are considered to be parameters.
+        /// </returns>
+        internal IEnumerable<PropertyInfo> GetParameters(bool force = true) {
+            var retval = from p in GetParameters(this.Type)
+                         where force || this.Parameters.ContainsKey(p.Name)
+                         select p;
+            return retval;
+        }
         #endregion
 
         #region Private fields

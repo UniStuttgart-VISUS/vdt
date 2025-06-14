@@ -297,4 +297,10 @@
   <data name="NoVdsPartition" xml:space="preserve">
     <value>The specified partition was not obtained from the VDS disk management service.</value>
   </data>
+  <data name="TypeNoTask" xml:space="preserve">
+    <value>The specified type {0} is not a task.</value>
+  </data>
+  <data name="TaskAbstract" xml:space="preserve">
+    <value>The specified task {0} is an abstract type, which cannot be described.</value>
+  </data>
 </root>

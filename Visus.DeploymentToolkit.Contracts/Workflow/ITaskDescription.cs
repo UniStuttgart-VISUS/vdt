@@ -27,12 +27,17 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <summary>
         /// Gets a description of the parameters of the task.
         /// </summary>
-        IEnumerable<IParameterDescription> Parameters { get; }
+        IEnumerable<IParameterDescription> DeclaredParameters { get; }
 
         /// <summary>
-        /// Gets the fully qualified type name of the task to be instantiated.
+        /// Gets the type name of the task to be instantiated.
         /// </summary>
         string Task { get; }
+
+        /// <summary>
+        /// Gets the type resolved from <see cref="Task"/>.
+        /// </summary>
+        Type Type { get; }
 
         /// <summary>
         /// Restores a task instance from the description.

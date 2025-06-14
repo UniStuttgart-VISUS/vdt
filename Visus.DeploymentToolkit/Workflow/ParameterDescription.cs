@@ -91,6 +91,9 @@ namespace Visus.DeploymentToolkit.Workflow {
 
             /// <inheritdoc />
             public ParameterSourceType Type { get; init; }
+
+            /// <inheritdoc />
+            public override string ToString() => $"{this.Type}: {this.Source}";
         }
         #endregion
     }

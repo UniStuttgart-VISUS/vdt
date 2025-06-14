@@ -511,6 +511,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified task {0} is an abstract type, which cannot be described..
+        /// </summary>
+        internal static string TaskAbstract {
+            get {
+                return ResourceManager.GetString("TaskAbstract", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The task type &quot;{0}&quot; does not exist..
         /// </summary>
         internal static string TaskNotFound {
@@ -525,6 +534,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string TsStoreNotFound {
             get {
                 return ResourceManager.GetString("TsStoreNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified type {0} is not a task..
+        /// </summary>
+        internal static string TypeNoTask {
+            get {
+                return ResourceManager.GetString("TypeNoTask", resourceCulture);
             }
         }
         

@@ -30,13 +30,13 @@ namespace Visus.DeploymentToolkit.Test {
             Assert.AreEqual("Visus.DeploymentToolkit.Tasks.CopyFiles", desc.Task);
 
             {
-                var p = desc.Parameters.Where(p => p.Name == nameof(CopyFiles.Destination)).SingleOrDefault();
+                var p = desc.DeclaredParameters.Where(p => p.Name == nameof(CopyFiles.Destination)).SingleOrDefault();
                 Assert.IsNotNull(p);
                 Assert.IsTrue(p.IsRequired);
             }
 
             {
-                var p = desc.Parameters.Where(p => p.Name == nameof(CopyFiles.IsOverwrite)).SingleOrDefault();
+                var p = desc.DeclaredParameters.Where(p => p.Name == nameof(CopyFiles.IsOverwrite)).SingleOrDefault();
                 Assert.IsNotNull(p);
                 Assert.IsFalse(p.IsRequired);
                 var d = p.Sources.Where(s => s.Type == ParameterSourceType.Default).SingleOrDefault();
@@ -45,7 +45,7 @@ namespace Visus.DeploymentToolkit.Test {
             }
 
             {
-                var p = desc.Parameters.Where(p => p.Name == nameof(CopyFiles.IsRecursive)).SingleOrDefault();
+                var p = desc.DeclaredParameters.Where(p => p.Name == nameof(CopyFiles.IsRecursive)).SingleOrDefault();
                 Assert.IsNotNull(p);
                 Assert.IsFalse(p.IsRequired);
                 var d = p.Sources.Where(s => s.Type == ParameterSourceType.Default).SingleOrDefault();
@@ -54,13 +54,13 @@ namespace Visus.DeploymentToolkit.Test {
             }
 
             {
-                var p = desc.Parameters.Where(p => p.Name == nameof(CopyFiles.IsRequired)).SingleOrDefault();
+                var p = desc.DeclaredParameters.Where(p => p.Name == nameof(CopyFiles.IsRequired)).SingleOrDefault();
                 Assert.IsNotNull(p);
                 Assert.IsFalse(p.IsRequired);
             }
 
             {
-                var p = desc.Parameters.Where(p => p.Name == nameof(CopyFiles.Source)).SingleOrDefault();
+                var p = desc.DeclaredParameters.Where(p => p.Name == nameof(CopyFiles.Source)).SingleOrDefault();
                 Assert.IsNotNull(p);
                 Assert.IsTrue(p.IsRequired);
             }
@@ -81,7 +81,7 @@ namespace Visus.DeploymentToolkit.Test {
             Assert.AreEqual("Visus.DeploymentToolkit.Tasks.MountDeploymentShare", desc.Task);
 
             {
-                var p = desc.Parameters.Where(p => p.Name == nameof(MountDeploymentShare.DeploymentShare)).SingleOrDefault();
+                var p = desc.DeclaredParameters.Where(p => p.Name == nameof(MountDeploymentShare.DeploymentShare)).SingleOrDefault();
                 Assert.IsNotNull(p);
                 Assert.IsTrue(p.IsRequired);
                 var s = p.Sources.Where(s => s.Type == ParameterSourceType.State).SingleOrDefault();
@@ -90,7 +90,7 @@ namespace Visus.DeploymentToolkit.Test {
             }
 
             {
-                var p = desc.Parameters.Where(p => p.Name == nameof(MountDeploymentShare.Domain)).SingleOrDefault();
+                var p = desc.DeclaredParameters.Where(p => p.Name == nameof(MountDeploymentShare.Domain)).SingleOrDefault();
                 Assert.IsNotNull(p);
                 Assert.IsFalse(p.IsRequired);
                 var s = p.Sources.Where(s => s.Type == ParameterSourceType.State).SingleOrDefault();
@@ -99,7 +99,7 @@ namespace Visus.DeploymentToolkit.Test {
             }
 
             {
-                var p = desc.Parameters.Where(p => p.Name == nameof(MountDeploymentShare.Interactive)).SingleOrDefault();
+                var p = desc.DeclaredParameters.Where(p => p.Name == nameof(MountDeploymentShare.Interactive)).SingleOrDefault();
                 Assert.IsNotNull(p);
                 Assert.IsFalse(p.IsRequired);
                 var d = p.Sources.Where(s => s.Type == ParameterSourceType.Default).SingleOrDefault();
@@ -108,7 +108,7 @@ namespace Visus.DeploymentToolkit.Test {
             }
 
             {
-                var p = desc.Parameters.Where(p => p.Name == nameof(MountDeploymentShare.MountPoint)).SingleOrDefault();
+                var p = desc.DeclaredParameters.Where(p => p.Name == nameof(MountDeploymentShare.MountPoint)).SingleOrDefault();
                 Assert.IsNotNull(p);
                 Assert.IsFalse(p.IsRequired);
                 var s = p.Sources.Where(s => s.Type == ParameterSourceType.State).SingleOrDefault();
@@ -117,13 +117,13 @@ namespace Visus.DeploymentToolkit.Test {
             }
 
             {
-                var p = desc.Parameters.Where(p => p.Name == nameof(MountDeploymentShare.Password)).SingleOrDefault();
+                var p = desc.DeclaredParameters.Where(p => p.Name == nameof(MountDeploymentShare.Password)).SingleOrDefault();
                 Assert.IsNotNull(p);
                 Assert.IsFalse(p.IsRequired);
             }
 
             {
-                var p = desc.Parameters.Where(p => p.Name == nameof(MountDeploymentShare.PreserveConnection)).SingleOrDefault();
+                var p = desc.DeclaredParameters.Where(p => p.Name == nameof(MountDeploymentShare.PreserveConnection)).SingleOrDefault();
                 Assert.IsNotNull(p);
                 Assert.IsFalse(p.IsRequired);
                 var d = p.Sources.Where(s => s.Type == ParameterSourceType.Default).SingleOrDefault();
@@ -132,13 +132,47 @@ namespace Visus.DeploymentToolkit.Test {
             }
 
             {
-                var p = desc.Parameters.Where(p => p.Name == nameof(MountDeploymentShare.User)).SingleOrDefault();
+                var p = desc.DeclaredParameters.Where(p => p.Name == nameof(MountDeploymentShare.User)).SingleOrDefault();
                 Assert.IsNotNull(p);
                 Assert.IsFalse(p.IsRequired);
                 var s = p.Sources.Where(s => s.Type == ParameterSourceType.State).SingleOrDefault();
                 Assert.IsNotNull(s);
                 Assert.AreEqual(WellKnownStates.DeploymentShareUser, s.Source);
             }
+        }
+
+        [TestMethod]
+        public void TestFactoryFromType() {
+            var desc = TaskDescriptionFactory.FromType<CopyFiles>();
+            Assert.IsNotNull(desc);
+            Assert.AreEqual("Visus.DeploymentToolkit.Tasks.CopyFiles", desc.Task);
+            Assert.IsTrue(desc.DeclaredParameters.Any(p => p.Name == nameof(CopyFiles.Destination)));
+            Assert.IsTrue(desc.DeclaredParameters.Any(p => p.Name == nameof(CopyFiles.IsOverwrite)));
+            Assert.IsTrue(desc.DeclaredParameters.Any(p => p.Name == nameof(CopyFiles.IsRecursive)));
+            Assert.IsTrue(desc.DeclaredParameters.Any(p => p.Name == nameof(CopyFiles.IsRequired)));
+            Assert.IsTrue(desc.DeclaredParameters.Any(p => p.Name == nameof(CopyFiles.Source)));
+        }
+
+        [TestMethod]
+        public void TestFactoryFromTypeString() {
+            var desc = TaskDescriptionFactory.FromType("Visus.DeploymentToolkit.Tasks.CopyFiles");
+            Assert.IsNotNull(desc);
+            Assert.AreEqual("Visus.DeploymentToolkit.Tasks.CopyFiles", desc.Task);
+            Assert.IsTrue(desc.DeclaredParameters.Any(p => p.Name == nameof(CopyFiles.Destination)));
+            Assert.IsTrue(desc.DeclaredParameters.Any(p => p.Name == nameof(CopyFiles.IsOverwrite)));
+            Assert.IsTrue(desc.DeclaredParameters.Any(p => p.Name == nameof(CopyFiles.IsRecursive)));
+            Assert.IsTrue(desc.DeclaredParameters.Any(p => p.Name == nameof(CopyFiles.IsRequired)));
+            Assert.IsTrue(desc.DeclaredParameters.Any(p => p.Name == nameof(CopyFiles.Source)));
+        }
+
+        [TestMethod]
+        public void TestFactoryFromAbstract() {
+            Assert.Throws<ArgumentException>(TaskDescriptionFactory.FromType<TaskBase>);
+        }
+
+        [TestMethod]
+        public void TestFactoryFromNonTask() {
+            Assert.Throws<ArgumentException>(() => TaskDescriptionFactory.FromType(typeof(int)));
         }
 
         private static ILogger<T> CreateLogger<T>() => Loggers.CreateLogger<T>();
