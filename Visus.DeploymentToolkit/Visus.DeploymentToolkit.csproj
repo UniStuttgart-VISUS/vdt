@@ -13,12 +13,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Kerberos.NET" Version="4.6.77" />
     <PackageReference Include="Microsoft.Dism" Version="3.3.12" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.6" />
     <PackageReference Include="Microsoft.Wim" Version="1.2.11" />
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.5" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.6" />
+    <PackageReference Include="Visus.DirectoryAuthentication" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>

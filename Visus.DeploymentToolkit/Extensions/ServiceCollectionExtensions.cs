@@ -17,6 +17,8 @@ using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
 using Visus.DeploymentToolkit.Unattend;
 using Visus.DeploymentToolkit.Workflow;
+using Visus.DirectoryAuthentication;
+using Visus.DirectoryAuthentication.Configuration;
 
 
 namespace Visus.DeploymentToolkit.Extensions {
@@ -42,6 +44,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             services.AddDism();
             services.AddDiskManagement();
             services.AddImaging();
+            services.AddLdapAuthentication(o => { });
             services.AddRegistry();
             services.AddSystemInformation();
             services.AddTasks();
@@ -73,6 +76,25 @@ namespace Visus.DeploymentToolkit.Extensions {
                 services.Configure<DismOptions>(configuration.GetSection(
                     sectionName));
             }
+            return services;
+        }
+
+        /// <summary>
+        /// Configures the <see cref="LdapOptions"/>.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <param name="sectionName"></param>
+        /// <returns></returns>
+        public static IServiceCollection ConfigureLdap(
+                this IServiceCollection services,
+                IConfiguration configuration,
+                string sectionName = LdapOptions.Section) {
+            ArgumentNullException.ThrowIfNull(services);
+            ArgumentNullException.ThrowIfNull(configuration);
+            ArgumentNullException.ThrowIfNull(sectionName);
+            services.Configure<LdapOptions>(configuration.GetSection(
+                sectionName));
             return services;
         }
 

@@ -6,11 +6,13 @@
 
 using System;
 using System.ComponentModel;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
+using System.Xml.Linq;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -95,10 +97,48 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public methods
         /// <summary>
+        /// Joins a computer to a workgroup or domain.
+        /// </summary>
+        /// <param name="server">A pointer to a constant string that specifies
+        /// the DNS or NetBIOS name of the computer on which to execute the
+        /// domain join operation. If this parameter is <see langword="null"/>,
+        /// the local computer is used.</param>
+        /// <param name="domain">A pointer to a constant null-terminated
+        /// character string that specifies the name of the domain or workgroup
+        /// to join.</param>
+        /// <param name="organisationalUnit">Optionally specifies the pointer to
+        /// a constant null-terminated character string that contains the
+        /// RFC-1779 format name of the organisational unit (OU) for the
+        /// computer account. If you specify this parameter, the string must
+        /// contain a full path lik OU=testOU,DC=domain,DC=Domain,DC=com.
+        /// Otherwise, this parameter must be <see langword="null"/>.</param>
+        /// <param name="account">A pointer to a constant null-terminated
+        /// character string that specifies the account name to use when
+        /// connecting to the domain controller. The string must specify either
+        /// a domain NetBIOS name and user account (for example, REDMOND\user)
+        /// or the user principal name (UPN) of the user in the form of an
+        /// Internet-style login name (&quot;user@remond.com&quot;). If this
+        /// parameter is <see langword="null"/>, the caller's context is used.
+        /// </param>
+        /// <param name="password">If the <paramref name="account"/>  parameter
+        /// specifies an account name, this parameter must point to the
+        /// password to use when connecting to the domain controller. Otherwise,
+        /// this parameter must be <see langword="null"/>. You can specify a
+        /// local machine account password rather than a user password for
+        /// unsecured joins.</param>
+        /// <param name="joinOptions">A set of bit flags defining the join
+        /// options.</param>
+        /// <returns>Zero in case of success, an error code otherwise.</returns>
+        [DllImport(LibraryName)]
+        public static extern int NetJoinDomain(string? server, string domain,
+          string? organisationalUnit, string? account, string? password,
+          JoinOptions joinOptions);
+
+        /// <summary>
         /// Shares a server resource.
         /// </summary>
         /// <param name="server">The name of the server to share the resource,
-        /// or <c>null</c> for the local machine.</param>
+        /// or <see langword="null"/> for the local machine.</param>
         /// <param name="level">Specifies the information level of the data.
         /// This <i>must</i> be 2 for this overload.</param>
         /// <param name="buffer">A <see cref="SHARE_INFO_2"/> structure
