@@ -108,6 +108,18 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         /// <inheritdoc />
+        public string? InstallationImage {
+            get => this[WellKnownStates.InstallationImage] as string;
+            set => this[WellKnownStates.InstallationImage] = value;
+        }
+
+        /// <inheritdoc />
+        public int InstallationImageIndex {
+            get => this[WellKnownStates.InstallationImageIndex] as int? ?? 1;
+            set => this[WellKnownStates.InstallationImageIndex] = value;
+        }
+
+        /// <inheritdoc />
         public Phase Phase {
             get => this[WellKnownStates.Phase] as Phase? ?? Phase.Unknown;
             set => this[WellKnownStates.Phase] = value;

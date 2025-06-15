@@ -4,7 +4,9 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System.Collections.Generic;
 using System.IO;
+using System.IO.Enumeration;
 using System.Threading.Tasks;
 
 
@@ -38,9 +40,10 @@ namespace Visus.DeploymentToolkit.Services {
         /// subdirectories and files in the directory.
         /// </summary>
         /// <param name="path">The path of the directory to be removed.</param>
-        /// <param name="recursive">If <c>true</c>, files and directories in
-        /// <paramref name="path"/> will be deleted, too. Otherwise, the
-        /// operation will fail if the directory is not empty.</param>
+        /// <param name="recursive">If <see langword="true"/>, files and
+        /// directories in <paramref name="path"/> will be deleted, too.
+        /// Otherwise, theoperation will fail if the directory is not empty.
+        /// </param>
         /// <returns>A task to wait for the operation to complete.</returns>
         Task DeleteAsync(string path, bool recursive = false);
 
@@ -48,8 +51,23 @@ namespace Visus.DeploymentToolkit.Services {
         /// Indicates whether <paramref name="path"> exists and is a directory.
         /// </summary>
         /// <param name="path">The path to check.</param>
-        /// <returns><c>true</c> if <paramref name="path"/> designates an
-        /// existing directory, <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if <paramref name="path"/>
+        /// designates an existing directory, <see langword="false"/> otherwise.
+        /// </returns>
         bool Exists(string? path);
+
+        /// <summary>
+        /// Gets all contents of the specified directory.
+        /// </summary>
+        /// <param name="path">The path of the directory to enumerate the
+        /// contents of. if this is <see langword="null"/>, the current working
+        /// directory is assumed.</param>
+        /// <param name="pattern">An optional pattern that the entries to be
+        /// returned must match.</param>
+        /// <param name="flags">Customises the behaviour of the method.</param>
+        /// <returns>The items in the given directory.</returns>
+        IEnumerable<FileSystemInfo> GetItems(string? path,
+            string? pattern= null,
+            GetItemsFlags flags = GetItemsFlags.None);
     }
 }

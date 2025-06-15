@@ -358,6 +358,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No installation image was available in the store..
+        /// </summary>
+        internal static string NoInstallationImage {
+            get {
+                return ResourceManager.GetString("NoInstallationImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The XPath expression &quot;{0}&quot; did match more than element..
         /// </summary>
         internal static string NonUniqueXPath {

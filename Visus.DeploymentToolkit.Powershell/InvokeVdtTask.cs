@@ -26,7 +26,6 @@ namespace Visus.DeploymentToolkit.Powershell {
         /// </summary>
         [Parameter(Position = 0,
             Mandatory = true,
-            ValueFromPipeline = true,
             HelpMessage = "Specifies the name of the task to run.")]
         public string Name { get; set; } = null!;
 

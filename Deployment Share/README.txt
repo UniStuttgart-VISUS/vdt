@@ -1,0 +1,1 @@
+﻿This is the template for a deployment share with all the default files in it.

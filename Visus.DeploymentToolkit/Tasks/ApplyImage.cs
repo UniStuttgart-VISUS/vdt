@@ -144,19 +144,26 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             this._logger.LogTrace("Searching for image {Image} in {Directory}.",
                 image, directory);
+            var path = SPath.Combine(directory, image);
 
-            {
-                var path = SPath.Combine(directory, image);
-                if (File.Exists(path)) {
-                    this._logger.LogTrace("Image was found at {Image}.", path);
-                    this.Image = path;
-                    return true;
-                }
+            if (File.Exists(path)) {
+                this._logger.LogTrace("Image was found at {Image}.", path);
+                this.Image = path;
+                return true;
+            }
+
+            if (Directory.Exists(path)) {
+                var wim = SPath.Combine(path, "sources", "install.wim");
+                this._logger.LogTrace("Image {Image} is a directory, so try "
+                    + "to handle it as a Windows source directory with the "
+                    + "installation image at {Path}.", path, wim);
+                return this.SearchImage(directory, wim);
             }
 
             if (!SPath.HasExtension(image)) {
                 this._logger.LogTrace("Image {Image} does not have an "
-                    + "extension, so we try the default WIM extension.", image);
+                    + "extension and is not a directory, so try the default "
+                    + "WIM extension.", image);
                 return this.SearchImage(directory, image + ".wim");
             }
 

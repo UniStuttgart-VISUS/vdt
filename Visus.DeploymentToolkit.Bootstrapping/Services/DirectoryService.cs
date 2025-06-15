@@ -6,7 +6,9 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 
@@ -79,6 +81,52 @@ namespace Visus.DeploymentToolkit.Services {
 
         /// <inheritdoc />
         public bool Exists(string? path) => Directory.Exists(path);
+
+        /// <inheritdoc />
+        public IEnumerable<FileSystemInfo> GetItems(string? path,
+                string? pattern = null,
+                GetItemsFlags flags = GetItemsFlags.None) {
+            if(string.IsNullOrWhiteSpace(path)) {
+                path = Directory.GetCurrentDirectory();
+                this._logger.LogTrace("Using current working directory "
+                    + "{Path}.", path);
+            }
+
+            if (pattern is null) {
+                pattern = "*";
+            }
+            this._logger.LogTrace("Enumerating items in directory {Path} "
+                + "with pattern {Pattern}.", path, pattern);
+
+            var options = SearchOption.TopDirectoryOnly;
+
+            if (flags.HasFlag(GetItemsFlags.Recursive)) {
+            this._logger.LogTrace("Recursively enumerating items in directory "
+                + "{Path}.", path);
+                options = SearchOption.AllDirectories;
+            }
+
+            if (flags.HasFlag(GetItemsFlags.FilesOnly)) {
+                this._logger.LogTrace("Enumerating only files in directory "
+                    + "{Path}.", path);
+                foreach (var f in Directory.GetFiles(path, pattern, options)) {
+                    yield return new FileInfo(Path.Combine(path, f));
+                }
+
+            } else {
+                this._logger.LogTrace("Enumerating all items in directory "
+                    + "{Path}.", path);
+                foreach (var f in Directory.GetDirectories(path, pattern,
+                        options)) {
+                    var p = Path.Combine(path, f);
+                    if (Directory.Exists(p)) {
+                        yield return new DirectoryInfo(p);
+                    } else {
+                        yield return new FileInfo(p);
+                    }
+                }
+            }
+        }
         #endregion
 
         #region Private fields

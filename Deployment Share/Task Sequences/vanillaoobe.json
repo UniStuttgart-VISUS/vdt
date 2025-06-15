@@ -1,0 +1,26 @@
+{
+  "Description": "Installs vanilla Windows from a user-selected image without applying any customisations.",
+  "ID": "VANILLA-OOBE",
+  "Name": "Install user-selected image",
+  "Phase": "Installation",
+  "Tasks": [
+    {
+      "Task": "Visus.DeploymentToolkit.Tasks.SelectImage"
+    },
+    {
+      "Task": "Visus.DeploymentToolkit.Tasks.SelectInstallDisk"
+    },
+    {
+      "Task": "Visus.DeploymentToolkit.Tasks.PartitionFormatDisk"
+    },
+    {
+      "Task": "Visus.DeploymentToolkit.Tasks.ApplyImage"
+    },
+    {
+      "Task": "Visus.DeploymentToolkit.Tasks.RestoreBootConfiguration"
+    },
+    {
+      "Task": "Visus.DeploymentToolkit.Tasks.RebootMachine"
+    }
+  ]
+}

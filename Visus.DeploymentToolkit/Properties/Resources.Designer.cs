@@ -216,6 +216,15 @@ namespace Visus.DeploymentToolkit.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Task sequence.
         /// </summary>
+        internal static string PromptInstallationImage {
+            get {
+                return ResourceManager.GetString("PromptInstallationImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Installation image.
+        /// </summary>
         internal static string PromptTaskSequence {
             get {
                 return ResourceManager.GetString("PromptTaskSequence", resourceCulture);
@@ -273,6 +282,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string RunDeimosBootstrapper {
             get {
                 return ResourceManager.GetString("RunDeimosBootstrapper", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select WIM image.
+        /// </summary>
+        internal static string SelectImage {
+            get {
+                return ResourceManager.GetString("SelectImage", resourceCulture);
             }
         }
         

@@ -75,6 +75,18 @@ namespace Visus.DeploymentToolkit.Services {
         public const string InstallationDisk = nameof(IState.InstallationDisk);
 
         /// <summary>
+        /// The path to the WIM image to be applied.
+        /// </summary>
+        public const string InstallationImage
+            = nameof(IState.InstallationImage);
+
+        /// <summary>
+        /// The one-based index of the WIM image to be applied.
+        /// </summary>
+        public const string InstallationImageIndex
+            = nameof(IState.InstallationImageIndex);
+
+        /// <summary>
         /// The current <see cref="Workflow.Phase"/>.
         /// </summary>
         public const string Phase = nameof(IState.Phase);

@@ -7,9 +7,11 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Wim;
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Xml.XPath;
+using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Validation;
@@ -59,6 +61,8 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Gets or sets the path to the WIM file to work with.
         /// </summary>
+        [FromState(WellKnownStates.InstallationImage, nameof(Image))]
+        [FromEnvironment("DEIMOS_INSTALLATION_IMAGE", "DEIMOS_IMAGE")]
         [Required]
         [FileExists]
         public string Image { get; set; } = null!;
@@ -73,7 +77,12 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// file. If both are set, the name will be checked first, and if that
         /// fails, the index will be used.
         /// </remarks>
-        public int ImageIndex { get; set; } = 0;
+        [FromState(WellKnownStates.InstallationImageIndex, nameof(ImageIndex))]
+        [FromEnvironment("DEIMOS_INSTALLATION_IMAGE_INDEX",
+            "DEIMOS_IMAGE_INDEX")]
+        [Required]
+        [DefaultValue(1)]
+        public int ImageIndex { get; set; } = 1;
 
         /// <summary>
         /// Getr or sets the name of the image in the WIM file to work with.

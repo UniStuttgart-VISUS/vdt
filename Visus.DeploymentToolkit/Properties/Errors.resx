@@ -303,4 +303,7 @@
   <data name="TaskAbstract" xml:space="preserve">
     <value>The specified task {0} is an abstract type, which cannot be described.</value>
   </data>
+  <data name="NoInstallationImage" xml:space="preserve">
+    <value>No installation image was available in the store.</value>
+  </data>
 </root>

@@ -92,6 +92,17 @@ namespace Visus.DeploymentToolkit.Services {
         IDisk? InstallationDisk { get; set; }
 
         /// <summary>
+        /// Gets or sets the path to the installation image that is being
+        /// applied to the target machine.
+        /// </summary>
+        string? InstallationImage { get; set; }
+
+        /// <summary>
+        /// Gets or sets the one-based index of the image to be installed.
+        /// </summary>
+        int InstallationImageIndex { get; set; }
+
+        /// <summary>
         /// Gets or sets the phase that we are running.
         /// </summary>
         Phase Phase { get; set; }

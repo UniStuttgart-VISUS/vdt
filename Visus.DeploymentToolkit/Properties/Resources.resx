@@ -169,6 +169,9 @@
     <value>Stage a deployment share</value>
   </data>
   <data name="PromptTaskSequence" xml:space="preserve">
+    <value>Installation image</value>
+  </data>
+  <data name="PromptInstallationImage" xml:space="preserve">
     <value>Task sequence</value>
   </data>
   <data name="RebootMachine" xml:space="preserve">
@@ -188,6 +191,9 @@
   </data>
   <data name="RunDeimosBootstrapper" xml:space="preserve">
     <value>Runs the installation bootstrapper copying the required files from the network and starts the agent.</value>
+  </data>
+  <data name="SelectImage" xml:space="preserve">
+    <value>Select WIM image</value>
   </data>
   <data name="SelectInstallationSequence" xml:space="preserve">
     <value>Select task sequence</value>
