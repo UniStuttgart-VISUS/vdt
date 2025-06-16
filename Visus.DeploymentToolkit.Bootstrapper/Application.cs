@@ -34,7 +34,7 @@ namespace Visus.DeploymentToolkit.Bootstrapper {
     /// </remarks>
     /// <param name="args">The arguments from the command line.</param>
     internal sealed class Application(string[] args)
-            : ApplicationBase<Options>(args, (_, _) => { }) {
+            : ApplicationBase<Options>(args) {
 
         /// <inheritdoc />
         protected override async Task<int> RunAsync() {

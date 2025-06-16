@@ -38,20 +38,16 @@ namespace Visus.DeploymentToolkit.Application {
         /// Initialises a new instance.
         /// </summary>
         /// <param name="arguments"></param>
-        /// <param name="bootstrappingOnly"></param>
-        /// <param name="configure"></param>
         /// <param name="stateFile"></param>
         /// <param name="stateRequired"></param>
         /// <param name="logFile"></param>
         /// <param name="settingsFile"></param>
         protected ApplicationBase(string[] arguments,
-                Action<IServiceCollection, IConfiguration> configure,
                 string? stateFile = null,
                 bool stateRequired = false,
                 string? logFile = null,
                 string settingsFile = "appsettings.json") {
             ArgumentNullException.ThrowIfNull(arguments);
-            ArgumentNullException.ThrowIfNull(configure);
             ArgumentNullException.ThrowIfNull(settingsFile);
 
             // Prepare the application configuration.
@@ -87,7 +83,7 @@ namespace Visus.DeploymentToolkit.Application {
             }
 
             // Allow applications to further add services.
-            configure(provider, this.Configuration);
+            this.ConfigureServices(provider, this.Configuration);
 
             this.Services = provider.BuildServiceProvider();
 
@@ -135,6 +131,15 @@ namespace Visus.DeploymentToolkit.Application {
         #endregion
 
         #region Protected methods
+        /// <summary>
+        /// Allows derived classes to configure additional services at
+        /// construction time. The default implementation does nothing.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        protected virtual void ConfigureServices(IServiceCollection services,
+            IConfiguration configuration) { }
+
         /// <summary>
         /// Gets a required service from <see cref="Services"/>.
         /// </summary>

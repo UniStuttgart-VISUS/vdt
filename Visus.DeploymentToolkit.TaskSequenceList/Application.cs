@@ -18,7 +18,15 @@ namespace Visus.DeploymentToolkit.TaskSequenceList {
     /// Hosts the task runninger application.
     /// </summary>
     internal sealed class Application(string[] args)
-            : ApplicationBase<Options>(args, Configure) {
+            : ApplicationBase<Options>(args) {
+
+        /// <inheritdoc />
+        protected override void ConfigureServices(IServiceCollection services,
+                IConfiguration configuration) {
+            base.ConfigureServices(services, configuration);
+            services.ConfigureTaskSequenceStore(configuration);
+            services.AddDeploymentServices();
+        }
 
         /// <inheritdoc />
         protected override async Task<int> RunAsync() {
@@ -49,13 +57,5 @@ namespace Visus.DeploymentToolkit.TaskSequenceList {
                 return -1;
             }
         }
-
-        #region Private methods
-        private static void Configure(IServiceCollection services,
-                IConfiguration config) {
-            services.ConfigureTaskSequenceStore(config);
-            services.AddDeploymentServices();
-        }
-        #endregion
     }
 }
