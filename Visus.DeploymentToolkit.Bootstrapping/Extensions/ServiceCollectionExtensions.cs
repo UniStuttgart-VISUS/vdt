@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Visus.DeploymentToolkit.Compliance;
@@ -55,16 +56,21 @@ namespace Visus.DeploymentToolkit.Extensions {
 
         /// <summary>
         /// Configures our own logging to the console and to a log file (and to
-        /// diverse debug outputs).
+        /// diverse debug outputs). Logging is configured to redact data marked
+        /// with <see cref="Classification.SensitiveData"/>.
         /// </summary>
         /// <param name="services">The service collection to add logging to.
         /// </param>
         /// <param name="config">The logging configuration section.</param>
+        /// <param name="configure">An optional callback that allows callers to
+        /// override the default configuration derived from
+        /// <paramref name="config"/>.</param>
         /// <returns><paramref name="services"/> after injection.</returns>
         /// <exception cref="ArgumentNullException"></exception>
         public static IServiceCollection AddLogging(
                 this IServiceCollection services,
-                IConfiguration config) {
+                IConfiguration config,
+                Action<ILoggingBuilder>? configure = null) {
             ArgumentNullException.ThrowIfNull(services);
             ArgumentNullException.ThrowIfNull(config);
 
@@ -84,14 +90,13 @@ namespace Visus.DeploymentToolkit.Extensions {
 #endif // DEBUG
 
                 if (config["PathFormat"] is not null) {
-                    // If we specify an invalid path format, Serilog will fail.
+                    // If we specify an invalid path format, Serilog will
+                    // fail.
                     o.AddFile(config);
                 }
 
-                o.AddSimpleConsole(f => {
-                    f.IncludeScopes = false;
-                    f.SingleLine = true;
-                });
+                // Call the optional user-defined customisation.
+                configure?.Invoke(o);
             });
 
             return services;

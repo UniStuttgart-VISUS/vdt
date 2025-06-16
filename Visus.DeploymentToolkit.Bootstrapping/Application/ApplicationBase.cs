@@ -65,7 +65,9 @@ namespace Visus.DeploymentToolkit.Application {
             var provider = new ServiceCollection()
                     .Configure<TOptions>(this.Configuration.Bind)
                     .AddBootstrappingServices()
-                    .AddLogging(this.Configuration.GetSection("Logging"));
+                    .AddLogging(
+                        this.Configuration.GetSection("Logging"),
+                        this.ConfigureLogging);
 
             // If we have a state file from the command line and the actual
             // constructor parameter does not override it, use it.
@@ -131,6 +133,18 @@ namespace Visus.DeploymentToolkit.Application {
         #endregion
 
         #region Protected methods
+        /// <summary>
+        /// Configures logging by adding console output.
+        /// </summary>
+        /// <param name="builder"></param>
+        protected virtual void ConfigureLogging(ILoggingBuilder builder) {
+            ArgumentNullException.ThrowIfNull(builder);
+            builder.AddSimpleConsole(f => {
+                f.IncludeScopes = false;
+                f.SingleLine = true;
+            });
+        }
+
         /// <summary>
         /// Allows derived classes to configure additional services at
         /// construction time. The default implementation does nothing.
