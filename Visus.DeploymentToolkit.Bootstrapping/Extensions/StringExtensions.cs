@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Security;
 
@@ -30,6 +31,7 @@ namespace Visus.DeploymentToolkit.Extensions {
         /// </summary>
         /// <param name="that"></param>
         /// <returns></returns>
+        [return: NotNullIfNotNull(nameof(that))]
         public static string? ToInsecureString(this SecureString? that) {
             string? retval = null;
 

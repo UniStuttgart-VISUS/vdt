@@ -70,10 +70,12 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             return Task.Factory.StartNew(() => {
                 this._logger.LogInformation("Mapping {NetworkPath} to "
-                    + "{MountPoint} as {User}.",
+                    + "{MountPoint} as {Domain}\\{User} {Password} password.",
                     this.Path,
                     this.MountPoint,
-                    this.Credential?.UserName ?? Resources.CurrentUser);
+                    this.Credential?.Domain ?? ".",
+                    this.Credential?.UserName ?? Resources.CurrentUser,
+                    this.Credential?.Password is null ? "without" : "with");
                 MprApi.Connect(this.MountPoint, this.Path, this.Credential,
                     MprApi.ConnectionFlags.Temporary);
             });

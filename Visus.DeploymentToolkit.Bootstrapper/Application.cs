@@ -6,7 +6,6 @@
 
 using Microsoft.Extensions.Logging;
 using System;
-using System.IO;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Application;
 using Visus.DeploymentToolkit.Bootstrapper.Properties;
@@ -47,6 +46,13 @@ namespace Visus.DeploymentToolkit.Bootstrapper {
                 .Add<Delay>(t => {
                     t.Duration = TimeSpan.FromSeconds(2);
                     t.Reason = Resources.WaitForLog;
+                })
+                .Add<PromptCredential>((t, s) => {
+                    t.DomainState = WellKnownStates.DeploymentShareDomain;
+                    t.DomainSuggestion = s.DeploymentShareDomain;
+                    t.UserState = WellKnownStates.DeploymentShareUser;
+                    t.UserSuggestion = s.DeploymentShareUser;
+                    t.PasswordState = WellKnownStates.DeploymentSharePassword;
                 })
                 .Add<MountDeploymentShare>()
                 .Add<CreateDirectory>(t => {

@@ -106,6 +106,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy the boostrapper.
+        /// </summary>
+        internal static string CopyBootstrapper {
+            get {
+                return ResourceManager.GetString("CopyBootstrapper", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copy unattend.xml.
         /// </summary>
         internal static string CopyUnattend {

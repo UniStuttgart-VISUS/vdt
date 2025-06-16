@@ -216,4 +216,7 @@
     <value>Delete shared resource</value>
     <comment>The title of the UnshareTask</comment>
   </data>
+  <data name="CopyBootstrapper" xml:space="preserve">
+    <value>Copy the boostrapper</value>
+  </data>
 </root>

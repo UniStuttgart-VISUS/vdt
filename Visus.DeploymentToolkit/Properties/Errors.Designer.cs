@@ -205,6 +205,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The installation directory must be a full path in order to derive the location of the bootstrapper..
+        /// </summary>
+        internal static string InstallationDirectoryNotRooted {
+            get {
+                return ResourceManager.GetString("InstallationDirectoryNotRooted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A valid location for the deployment share is required..
         /// </summary>
         internal static string InvalidDeploymentShare {
@@ -354,6 +363,24 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string NoDismSession {
             get {
                 return ResourceManager.GetString("NoDismSession", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The location of the executing assembly could not be determined..
+        /// </summary>
+        internal static string NoEntryPoint {
+            get {
+                return ResourceManager.GetString("NoEntryPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No installation directory was specified..
+        /// </summary>
+        internal static string NoInstallationDirectory {
+            get {
+                return ResourceManager.GetString("NoInstallationDirectory", resourceCulture);
             }
         }
         

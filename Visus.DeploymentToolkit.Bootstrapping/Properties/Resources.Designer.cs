@@ -124,6 +124,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Prompt for credential.
+        /// </summary>
+        internal static string PromptCredential {
+            get {
+                return ResourceManager.GetString("PromptCredential", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Path to deployment share.
         /// </summary>
         internal static string PromptDeploymentShare {

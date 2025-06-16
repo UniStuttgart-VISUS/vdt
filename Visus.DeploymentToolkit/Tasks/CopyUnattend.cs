@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
@@ -100,6 +101,8 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <see cref="Architecture"/> to the file name, which allows for
         /// formulating the task sequence architecture independently.
         /// </remarks>
+        [DefaultValue("Unattend")]
+        [Required]
         public string Source { get; set; } = "Unattend";
         #endregion
 

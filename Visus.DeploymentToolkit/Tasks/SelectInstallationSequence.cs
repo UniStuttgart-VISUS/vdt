@@ -69,6 +69,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                 }
 
                 var desc = options[option];
+                this._logger.LogInformation("Task sequence {Index} "
+                    + "({TaskSequence}) was selected.", option, desc.ID);
                 this._state.TaskSequence = this._tasks.CreateBuilder()
                     .FromDescription(desc)
                     .Build();
@@ -81,6 +83,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                         Errors.SequenceNotInStore, id));
                 }
 
+                this._logger.LogInformation("Task sequence {ID} "
+                    + "({TaskSequence}) was selected.", id, desc.ID);
                 this._state.TaskSequence = this._tasks.CreateBuilder()
                     .FromDescription(desc)
                     .Build();

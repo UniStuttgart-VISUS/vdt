@@ -140,7 +140,7 @@ namespace Visus.DeploymentToolkit.Services {
 
                 // Note: we allow the same key to be set multiple times just
                 // to make serialisation easier.
-                if ((current is not null) && (current != value)) {
+                if ((current is not null) && !current.Equals(value)) {
                     throw new InvalidOperationException(
                         Errors.CannotChangeSessionKey);
                 }
@@ -253,8 +253,12 @@ namespace Visus.DeploymentToolkit.Services {
                     this._values.TryGetValue(key, out var retval);
                     this._values[key] = value;
 
-                    var from = IsSensitive(key) ? "***" : retval;
-                    var to = IsSensitive(key) ? "***" : value;
+                    var from = IsSensitive(key) && (retval is not null)
+                        ? "***"
+                        : retval;
+                    var to = IsSensitive(key) && (value is not null)
+                        ? "***"
+                        : value;
 
                     this._logger.LogInformation("Changing state {State} "
                         + "from {OldValue} to {NewValue}.",
@@ -284,7 +288,7 @@ namespace Visus.DeploymentToolkit.Services {
             var flags = BindingFlags.Public | BindingFlags.Instance;
             var retval = from p in typeof(State).GetProperties(flags)
                          let a = p.GetCustomAttribute<SensitiveDataAttribute>()
-                         where (a != null) && (p.PropertyType == typeof(string)) && (p.Name != nameof(SessionKey))
+                         where (a != null) /* && (p.PropertyType == typeof(string)) && (p.Name != nameof(SessionKey))*/
                          select p.Name;
             return retval.ToHashSet();
         });

@@ -39,7 +39,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                 ISessionSecurity sessionSecurity,
                 IConsoleInput input,
                 IDriveInfo driveInfo,
-                ILogger<MountNetworkShare> logger)
+                ILogger<MountDeploymentShare> logger)
                 : base(state, logger) {
             this._driveInfo = driveInfo
                 ?? throw new ArgumentNullException(nameof(driveInfo));
@@ -50,6 +50,7 @@ namespace Visus.DeploymentToolkit.Tasks {
             this._sessionSecurity = sessionSecurity
                 ?? throw new ArgumentNullException(nameof(sessionSecurity));
             this.Name = Resources.MountNetworkShare;
+            this.IsCritical = true;
         }
         #endregion
 
@@ -83,6 +84,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Gets or sets the password used to connect to the deployment share.
         /// </summary>
+        [FromState(WellKnownStates.DeploymentSharePassword)]
         public string? Password { get; set; }
 
         /// <summary>
@@ -110,10 +112,18 @@ namespace Visus.DeploymentToolkit.Tasks {
         [SupportedOSPlatform("windows")]
         public override async Task ExecuteAsync(
                 CancellationToken cancellationToken) {
+            var plainTextPassword = this.Password;
             this.CopyFrom(this._state);
+            this.Validate();
 
-            if ((this.Password is null) && !string.IsNullOrEmpty(
+            if (!string.IsNullOrWhiteSpace(plainTextPassword)) {
+                this._logger.LogTrace("Using explicitly provided password to "
+                    + "connect to the deployment share.");
+                this.Password = plainTextPassword;
+
+            } else if (!string.IsNullOrWhiteSpace(
                     this._state.DeploymentSharePassword)) {
+                this._logger.LogTrace("Decrypting password.");
                 this.Password = this._sessionSecurity.DecryptString(
                     this._state.DeploymentSharePassword);
             }
@@ -121,7 +131,7 @@ namespace Visus.DeploymentToolkit.Tasks {
             if (string.IsNullOrWhiteSpace(this.MountPoint)) {
                 var drives = this._driveInfo.GetFreeDrives();
                 this.MountPoint = drives.Last();
-                this._logger.LogInformation("Selected {MountPoint} to mount "
+                this._logger.LogTrace("Selected {MountPoint} to mount "
                     + "the deployment share.", this.MountPoint);
             }
 
@@ -132,15 +142,6 @@ namespace Visus.DeploymentToolkit.Tasks {
                 this.MountPoint = this._input.ReadInput(
                     Resources.PromptMountPoint,
                     this.MountPoint)!;
-
-                this.Domain = this._input.ReadInput(
-                    Resources.PromptDomain,
-                    this.Domain);
-                this.User = this._input.ReadInput(
-                    Resources.PromptUser,
-                    this.User);
-                this.Password = this._input.ReadPassword(
-                    Resources.PromptPassword).ToInsecureString();
             }
 
             this._mount.Credential = new(this.User, this.Password, this.Domain);

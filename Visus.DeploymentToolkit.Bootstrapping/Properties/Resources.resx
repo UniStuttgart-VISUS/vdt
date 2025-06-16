@@ -138,6 +138,9 @@
   <data name="PersistState" xml:space="preserve">
     <value>Persist task sequence state</value>
   </data>
+  <data name="PromptCredential" xml:space="preserve">
+    <value>Prompt for credential</value>
+  </data>
   <data name="PromptDeploymentShare" xml:space="preserve">
     <value>Path to deployment share</value>
   </data>

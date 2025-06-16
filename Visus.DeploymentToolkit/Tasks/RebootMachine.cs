@@ -7,13 +7,11 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Net.NetworkInformation;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
+using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Security;
 using Visus.DeploymentToolkit.Services;
@@ -43,6 +41,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// Gets or sets whether applications blocking the reboot are forcefully
         /// closed, which is the default.
         /// </summary>
+        [DefaultValue(true)]
         public bool ForceAppsClosed { get; set; } = true;
 
         /// <summary>
@@ -50,6 +49,14 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// to cancel the reboot.
         /// </summary>
         public string? Message { get; set; } = Resources.RebootMessage;
+
+        /// <summary>
+        /// Gets or sets the location where the state of the deplyoment sequence
+        /// should be preserved. If this is <see langword="null"/> or an empty
+        /// string, the state is not persisted and unavailable after the reboot.
+        /// </summary>
+        [FromState(WellKnownStates.StateFile)]
+        public string? PreserveState { get; set; }
 
         /// <summary>
         /// Gets or sets the reason for the reboot using one of the codes from
@@ -67,11 +74,19 @@ namespace Visus.DeploymentToolkit.Tasks {
         #region Public methods
         /// <inheritdoc />
         [SupportedOSPlatform("windows")]
-        public override Task ExecuteAsync(CancellationToken cancellationToken) {
+        public override async Task ExecuteAsync(
+                CancellationToken cancellationToken) {
+            this.CopyFrom(this._state);
+            this.Validate();
+
             this._logger.LogTrace("Enabling shutdown privilege.");
             Advapi32.AdjustTokenPrivileges("SeShutdownPrivilege", true);
 
-            // TODO: preserve state?
+            if (!string.IsNullOrEmpty(this.PreserveState)) {
+                this._logger.LogInformation("Preserving state at {Path}.",
+                    this.PreserveState);
+                await this._state.SaveAsync(this.PreserveState);
+            }
 
             this._logger.LogInformation("Rebooting the system.");
             if (!InitiateSystemShutdownEx(null,
@@ -82,8 +97,6 @@ namespace Visus.DeploymentToolkit.Tasks {
                     this.Reason)) {
                 throw new Win32Exception();
             }
-
-            return Task.CompletedTask;
         }
         #endregion
 

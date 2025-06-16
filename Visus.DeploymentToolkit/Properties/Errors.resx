@@ -180,9 +180,6 @@
   <data name="MissingWimMount" xml:space="preserve">
     <value>A mounted WIM image was expected to be stored in "{0}", but was not found.</value>
   </data>
-  <data name="CannotDeleteDefaultValue" xml:space="preserve">
-    <value>The default value of a registry cannot be deleted.</value>
-  </data>
   <data name="MissingRegistryValue" xml:space="preserve">
     <value>A value registry value must be provided unless the value is to be deleted.</value>
   </data>
@@ -305,5 +302,17 @@
   </data>
   <data name="NoInstallationImage" xml:space="preserve">
     <value>No installation image was available in the store.</value>
+  </data>
+  <data name="InstallationDirectoryNotRooted" xml:space="preserve">
+    <value>The installation directory must be a full path in order to derive the location of the bootstrapper.</value>
+  </data>
+  <data name="CannotDeleteDefaultValue" xml:space="preserve">
+    <value>The default value of a registry cannot be deleted.</value>
+  </data>
+  <data name="NoEntryPoint" xml:space="preserve">
+    <value>The location of the executing assembly could not be determined.</value>
+  </data>
+  <data name="NoInstallationDirectory" xml:space="preserve">
+    <value>No installation directory was specified.</value>
   </data>
 </root>

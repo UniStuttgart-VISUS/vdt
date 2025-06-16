@@ -74,7 +74,7 @@ namespace Visus.DeploymentToolkit.Test {
             var sec = new SessionSecurityService(state, CreateLogger<SessionSecurityService>());
             var console = new ConsoleInputService();
             var drives = new DriveInfoService();
-            var task = new MountDeploymentShare(state, mount, sec, console, drives, CreateLogger<MountNetworkShare>());
+            var task = new MountDeploymentShare(state, mount, sec, console, drives, CreateLogger<MountDeploymentShare>());
 
             var desc = TaskDescription.FromTask(task) as ITaskDescription;
             Assert.IsNotNull(desc);

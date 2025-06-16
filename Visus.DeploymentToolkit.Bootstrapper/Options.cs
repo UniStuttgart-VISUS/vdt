@@ -108,7 +108,7 @@ namespace Visus.DeploymentToolkit {
         /// and the task sequence are copied to.
         /// </summary>
         [State(WellKnownStates.WorkingDirectory)]
-        public string WorkingDirectory { get; set; } = @"\deimos";
+        public string WorkingDirectory { get; set; } = @"\__DEIMOS";
         #endregion
 
         #region Private fields
