@@ -250,6 +250,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &quot;{0}&quot; does not designate a valid machine account. A machine must either be specified as fully qualified domain name or as NT account name..
+        /// </summary>
+        internal static string InvalidMachineAccount {
+            get {
+                return ResourceManager.GetString("InvalidMachineAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &quot;{0}&quot; is not a valid mount point..
         /// </summary>
         internal static string InvalidMountPoint {
@@ -282,6 +291,24 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string InvalidWindowsPeDirectory {
             get {
                 return ResourceManager.GetString("InvalidWindowsPeDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The machine account {0} has no key version number in attribute {1}..
+        /// </summary>
+        internal static string KvnoNotFound {
+            get {
+                return ResourceManager.GetString("KvnoNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The machine account &quot;{0}&quot; could not be found in the directory..
+        /// </summary>
+        internal static string MachineAccountNotFound {
+            get {
+                return ResourceManager.GetString("MachineAccountNotFound", resourceCulture);
             }
         }
         
@@ -358,11 +385,29 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The default naming context of the LDAP server could not be determined..
+        /// </summary>
+        internal static string NoDefaultNamingContext {
+            get {
+                return ResourceManager.GetString("NoDefaultNamingContext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A DISM image needs to be opened before this operation can be performed..
         /// </summary>
         internal static string NoDismSession {
             get {
                 return ResourceManager.GetString("NoDismSession", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The domain controller could not be obtained from {0} of {1}..
+        /// </summary>
+        internal static string NoDomainController {
+            get {
+                return ResourceManager.GetString("NoDomainController", resourceCulture);
             }
         }
         
@@ -421,6 +466,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The root DSE of an LDAP connection could not be obtained..
+        /// </summary>
+        internal static string NoRootDse {
+            get {
+                return ResourceManager.GetString("NoRootDse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The system drive could not be determined..
         /// </summary>
         internal static string NoSystemDrive {
@@ -435,6 +489,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string NotAdministrator {
             get {
                 return ResourceManager.GetString("NotAdministrator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The LDAP connection must be encrypted to perform the necessary changes. Make sure to configure SSL or TLS in the LDAP options..
+        /// </summary>
+        internal static string NoTransportSecurity {
+            get {
+                return ResourceManager.GetString("NoTransportSecurity", resourceCulture);
             }
         }
         
@@ -543,6 +606,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string SequenceNotInStore {
             get {
                 return ResourceManager.GetString("SequenceNotInStore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The machine account {0} has no service principal names in attribute {1}..
+        /// </summary>
+        internal static string SpnsNotFound {
+            get {
+                return ResourceManager.GetString("SpnsNotFound", resourceCulture);
             }
         }
         

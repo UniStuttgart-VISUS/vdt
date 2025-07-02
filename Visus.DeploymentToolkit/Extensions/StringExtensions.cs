@@ -37,5 +37,41 @@ namespace Visus.DeploymentToolkit.Extensions {
 
             return sb.ToString();
         }
+
+
+        /// <summary>
+        /// Split an account name (user or machine) into its domain and account
+        /// name.
+        /// </summary>
+        /// <param name="that"></param>
+        /// <returns></returns>
+        public static (string?, string?) SplitAccount(this string? that) {
+            if (that is null) {
+                return (null, null);
+            }
+
+            {
+                var split = that.IndexOf('@');
+                if (split > 0) {
+                    return (that[(split + 1)..], that[..split]);
+                }
+            }
+
+            {
+                var split = that.IndexOf('\\');
+                if (split > 0) {
+                    return (that[..split], that[(split + 1)..]);
+                }
+            }
+
+            {
+                var split = that.IndexOf('.');
+                if (split > 0) {
+                    return (that[(split + 1)..], that[..split]);
+                }
+            }
+
+            return (null, that);
+        }
     }
 }

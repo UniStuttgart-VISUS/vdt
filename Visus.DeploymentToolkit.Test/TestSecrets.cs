@@ -23,8 +23,27 @@ namespace Visus.DeploymentToolkit.Test {
             return retval;
         }
 
+        public bool CanTestDomain
+            => !string.IsNullOrWhiteSpace(this.Domain)
+            && !string.IsNullOrWhiteSpace(this.DomainAdmin)
+            && !string.IsNullOrWhiteSpace(this.DomainPassword)
+            && !string.IsNullOrWhiteSpace(this.DomainController)
+            && !string.IsNullOrWhiteSpace(this.SearchBase)
+            && !string.IsNullOrWhiteSpace(this.TestMachine);
+
+        public bool CanTestNetworkShare
+            => !string.IsNullOrWhiteSpace(this.NetworkShare)
+            && !string.IsNullOrWhiteSpace(this.NetworkUser)
+            && !string.IsNullOrWhiteSpace(this.NetworkPassword);
+
+        public string? Domain { get; set; }
+        public string? DomainAdmin { get; set; }
+        public string? DomainController { get; set; }
+        public string? DomainPassword { get; set; }
         public string? NetworkShare { get; set; }
         public string? NetworkPassword { get; set; }
         public string? NetworkUser { get; set; }
+        public string? SearchBase { get; set; }
+        public string? TestMachine { get; set; }
     }
 }

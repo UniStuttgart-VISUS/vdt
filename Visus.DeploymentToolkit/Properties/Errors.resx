@@ -315,4 +315,28 @@
   <data name="NoInstallationDirectory" xml:space="preserve">
     <value>No installation directory was specified.</value>
   </data>
+  <data name="MachineAccountNotFound" xml:space="preserve">
+    <value>The machine account "{0}" could not be found in the directory.</value>
+  </data>
+  <data name="NoRootDse" xml:space="preserve">
+    <value>The root DSE of an LDAP connection could not be obtained.</value>
+  </data>
+  <data name="NoTransportSecurity" xml:space="preserve">
+    <value>The LDAP connection must be encrypted to perform the necessary changes. Make sure to configure SSL or TLS in the LDAP options.</value>
+  </data>
+  <data name="NoDefaultNamingContext" xml:space="preserve">
+    <value>The default naming context of the LDAP server could not be determined.</value>
+  </data>
+  <data name="NoDomainController" xml:space="preserve">
+    <value>The domain controller could not be obtained from {0} of {1}.</value>
+  </data>
+  <data name="InvalidMachineAccount" xml:space="preserve">
+    <value>"{0}" does not designate a valid machine account. A machine must either be specified as fully qualified domain name or as NT account name.</value>
+  </data>
+  <data name="SpnsNotFound" xml:space="preserve">
+    <value>The machine account {0} has no service principal names in attribute {1}.</value>
+  </data>
+  <data name="KvnoNotFound" xml:space="preserve">
+    <value>The machine account {0} has no key version number in attribute {1}.</value>
+  </data>
 </root>

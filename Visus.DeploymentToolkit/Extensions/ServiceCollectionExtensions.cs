@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
+using System.DirectoryServices.Protocols;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -19,6 +21,7 @@ using Visus.DeploymentToolkit.Unattend;
 using Visus.DeploymentToolkit.Workflow;
 using Visus.DirectoryAuthentication;
 using Visus.DirectoryAuthentication.Configuration;
+using Visus.Ldap.Mapping;
 
 
 namespace Visus.DeploymentToolkit.Extensions {
@@ -42,6 +45,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             services.AddBootService();
             services.AddBootstrappingServices();
             services.AddDism();
+            services.AddDomain();
             services.AddDiskManagement();
             services.AddImaging();
             services.AddLdapAuthentication(o => { });
@@ -80,6 +84,50 @@ namespace Visus.DeploymentToolkit.Extensions {
         }
 
         /// <summary>
+        /// Configures the <see cref="DomainOptions"/>.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <param name="sectionName"></param>
+        /// <returns></returns>
+        public static IServiceCollection ConfigureDomain(
+                this IServiceCollection services,
+                IConfiguration configuration,
+                string sectionName = DomainOptions.SectionName) {
+            ArgumentNullException.ThrowIfNull(services);
+            ArgumentNullException.ThrowIfNull(configuration);
+            ArgumentNullException.ThrowIfNull(sectionName);
+            services.Configure<DomainOptions>(configuration.GetSection(
+                sectionName));
+            return services;
+        }
+
+        /// <summary>
+        /// Applies dummy <see cref="LdapOptions"/>.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection ConfigureLdap(
+                this IServiceCollection services) {
+            ArgumentNullException.ThrowIfNull(services);
+            services.Configure<LdapOptions>(o => {
+                // Add some BS data to make the validation happy. We will always
+                // replace this info with user-provided data in WinPE.
+                o.DefaultDomain = "domain";
+                o.User = "user";
+                o.Password = "password";
+                o.Servers = [ "localhost" ];
+                o.Schema = Schema.ActiveDirectory;
+                if (o.SearchBases?.Any() != true) {
+                    o.SearchBases = new Dictionary<string, SearchScope>() {
+                        { "DC=domain", SearchScope.Subtree }
+                    };
+                }
+            });
+            return services;
+        }
+
+        /// <summary>
         /// Configures the <see cref="LdapOptions"/>.
         /// </summary>
         /// <param name="services"></param>
@@ -93,8 +141,37 @@ namespace Visus.DeploymentToolkit.Extensions {
             ArgumentNullException.ThrowIfNull(services);
             ArgumentNullException.ThrowIfNull(configuration);
             ArgumentNullException.ThrowIfNull(sectionName);
-            services.Configure<LdapOptions>(configuration.GetSection(
-                sectionName));
+            services.Configure<LdapOptions>(o => {
+                configuration.GetSection(sectionName).Bind(o);
+
+                // Add some BS data to make the validation happy. We will always
+                // replace this info with user-provided data in WinPE.
+                if (string.IsNullOrWhiteSpace(o.DefaultDomain)) {
+                    o.DefaultDomain = "domain";
+                }
+                
+                if (string.IsNullOrWhiteSpace(o.User)) {
+                    o.User = "user";
+                }
+
+                if (string.IsNullOrWhiteSpace(o.Password)) {
+                    o.Password = "password";
+                }
+
+                if (o.Servers?.Any() != true) {
+                    o.Servers = [ "localhost" ];
+                }
+
+                if (string.IsNullOrWhiteSpace(o.Schema)) {
+                    o.Schema = Schema.ActiveDirectory;
+                }
+
+                //if (o.SearchBases?.Any() != true) {
+                //    o.SearchBases = new Dictionary<string, SearchScope>() {
+                //        { "DC=domain", SearchScope.Subtree }
+                //    };
+                //}
+            });
             return services;
         }
 
@@ -177,6 +254,18 @@ namespace Visus.DeploymentToolkit.Extensions {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
                 services.AddSingleton<IDismScope, DismScope>();
             }
+            return services;
+        }
+
+        /// <summary>
+        /// Adds a <see cref="IDomainService"/> to <paramref name="services"/>.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        internal static IServiceCollection AddDomain(
+                this IServiceCollection services) {
+            ArgumentNullException.ThrowIfNull(services);
+            services.AddSingleton<IDomainService, DomainService>();
             return services;
         }
 

@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
@@ -94,6 +95,54 @@ namespace Visus.DeploymentToolkit.Extensions {
                         select (p, p.Name, ra != null);
 
             foreach (var (p, s, r) in props) {
+                var v = p.GetValue(dst);
+                if (r && (v == null)) {
+                    var msg = Errors.RequiredPropertyNotSet;
+                    msg = string.Format(msg, p.Name, dst.GetType().FullName, s);
+                    throw new ArgumentException(msg);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Copies public settable properties from <paramref name="src"/> to
+        /// <paramref name="dst"/> based on their name.
+        /// </summary>
+        /// <param name="dst"></param>
+        /// <param name="src"></param>
+        /// <param name="force">If <see langword="true"/>, a property of
+        /// <paramref name="dst"/> will also be set if it already has a value.
+        /// </param>
+        public static void CopyFrom(this object dst,
+                IDictionary<string, object> src,
+                bool force = false) {
+            ArgumentNullException.ThrowIfNull(dst);
+            ArgumentNullException.ThrowIfNull(src);
+
+            var flags = BindingFlags.Public | BindingFlags.Instance;
+            var props = from p in dst.GetType().GetProperties(flags)
+                        let ra = p.GetCustomAttribute<RequiredAttribute>()
+                        where (p.SetMethod != null)
+                        select (p, p.Name, ra != null);
+
+            foreach (var (p, s, r) in props) {
+                if ((p.GetValue(dst) != default) && !force) {
+                    // If the property already has a value and we are not
+                    // forcing the copy, skip it.
+                    continue;
+                }
+
+                if (src.TryGetValue(s, out var value)) {
+                    if (p.PropertyType.IsAssignableFrom(value.GetType())) {
+                        p.SetValue(dst, value);
+
+                    } else {
+                        // Attempt a cast.
+                        p.SetValue(dst, Convert.ChangeType(value,
+                            p.PropertyType));
+                    }
+                }
+
                 var v = p.GetValue(dst);
                 if (r && (v == null)) {
                     var msg = Errors.RequiredPropertyNotSet;

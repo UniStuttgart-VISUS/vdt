@@ -183,6 +183,9 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public methods
         /// <inheritdoc />
+        public bool Clear(string name) => this._values.Remove(name);
+
+        /// <inheritdoc />
         public Task LoadAsync(string? path) {
             if (string.IsNullOrEmpty(path)) {
                 path = this.StateFile;

@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Security.Principal;
 using System.Text.Json;
 using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Services;
@@ -62,36 +63,40 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public async Task TestSerialiseWinPeSequence() {
-            var services = new ServiceCollection();
-            services.AddState();
-            services.Configure<TaskSequenceStoreOptions>(o => {
-                o.Path = Directory.GetCurrentDirectory();
-            });
-            services.AddLogging(s => s.AddDebug());
-            services.AddDeploymentServices();
-            var provider = services.BuildServiceProvider();
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                var services = new ServiceCollection();
+                services.AddState();
+                services.Configure<TaskSequenceStoreOptions>(o => {
+                    o.Path = Directory.GetCurrentDirectory();
+                });
+                services.AddLogging(s => s.AddDebug());
+                services.AddDeploymentServices();
+                var provider = services.BuildServiceProvider();
 
-            var state = provider.GetRequiredService<IState>();
-            Assert.IsNotNull(state);
+                var state = provider.GetRequiredService<IState>();
+                Assert.IsNotNull(state);
 
-            var task = provider.GetRequiredService<SelectWindowsPeSequence>();
-            await task.ExecuteAsync();
-            Assert.IsNotNull(state.TaskSequence);
+                var task = provider.GetRequiredService<SelectWindowsPeSequence>();
+                await task.ExecuteAsync();
+                Assert.IsNotNull(state.TaskSequence);
 
-            var sequence = state.TaskSequence as ITaskSequence;
-            Assert.IsNotNull(sequence);
+                var sequence = state.TaskSequence as ITaskSequence;
+                Assert.IsNotNull(sequence);
 
-            var path = Path.GetTempFileName();
-            await sequence.SaveAsync(path, "TEST", "Test Sequence", "Blah");
+                var path = Path.GetTempFileName();
+                await sequence.SaveAsync(path, "TEST", "Test Sequence", "Blah");
 
-            var desc = await TaskSequenceDescription.ParseAsync(path);
-            Assert.IsNotNull(desc);
+                var desc = await TaskSequenceDescription.ParseAsync(path);
+                Assert.IsNotNull(desc);
 
-            var builder = provider.GetRequiredService<ITaskSequenceBuilder>();
-            Assert.IsNotNull(builder);
+                var builder = provider.GetRequiredService<ITaskSequenceBuilder>();
+                Assert.IsNotNull(builder);
 
-            var restored = builder.FromDescription(desc);
-            Assert.IsNotNull(restored);
+                var restored = builder.FromDescription(desc);
+                Assert.IsNotNull(restored);
+            } else {
+                Assert.Inconclusive("This test requires administrator privileges.");
+            }
         }
 
         private static ILogger<T> CreateLogger<T>() where T : class  => LoggerFactory.CreateLogger<T>();

@@ -10,7 +10,7 @@ using System;
 namespace Visus.DeploymentToolkit.Services {
 
     /// <summary>
-    /// Possible flags to be used with <see cref="IKerberosService.JoinDomain"/>
+    /// Possible flags to be used with <see cref="IDomainService.JoinDomain"/>
     /// and <see cref="NetApi.NetJoinDomain"/>.
     /// </summary>
     [Flags]

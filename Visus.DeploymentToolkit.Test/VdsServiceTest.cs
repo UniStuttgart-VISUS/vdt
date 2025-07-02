@@ -34,6 +34,8 @@ namespace Visus.DeploymentToolkit.Test {
                     Assert.IsTrue(disk.Partitions.Any());
                     Assert.IsNotNull(disk.Volumes);
                 }
+            } else {
+                Assert.Inconclusive("This test requires administrator privileges.");
             }
         }
 
@@ -97,6 +99,8 @@ namespace Visus.DeploymentToolkit.Test {
                     var selected = await selection.ApplyAsync(disks, service, logger);
                     Assert.IsTrue(selected.Any());
                 }
+            } else {
+                Assert.Inconclusive("This test requires administrator privileges.");
             }
         }
 

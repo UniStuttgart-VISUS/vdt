@@ -177,4 +177,7 @@
   <data name="InvalidEnumValue" xml:space="preserve">
     <value>The specified value {0} is not a well-known enumeration value of type {1}.</value>
   </data>
+  <data name="StateNotFound" xml:space="preserve">
+    <value>The state variable "{0}" was not set.</value>
+  </data>
 </root>

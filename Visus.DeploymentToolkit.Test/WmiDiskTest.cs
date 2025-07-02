@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Security.Principal;
 using Visus.DeploymentToolkit.DiskManagement;
 using Visus.DeploymentToolkit.Services;
 
@@ -20,84 +21,92 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public async Task GetDisks() {
-            var wmi = new ManagementService(CreateLogger<ManagementService>());
-            var vds = new VdsService(Options.Create(new VdsOptions()), CreateLogger<VdsService>());
-            var service = new WmiDiskService(wmi, vds, CreateLogger<WmiDiskService>());
-            Assert.IsNotNull(service);
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                var wmi = new ManagementService(CreateLogger<ManagementService>());
+                var vds = new VdsService(Options.Create(new VdsOptions()), CreateLogger<VdsService>());
+                var service = new WmiDiskService(wmi, vds, CreateLogger<WmiDiskService>());
+                Assert.IsNotNull(service);
 
-            var disks = await service.GetDisksAsync(CancellationToken.None);
-            Assert.IsTrue(disks.Any());
+                var disks = await service.GetDisksAsync(CancellationToken.None);
+                Assert.IsTrue(disks.Any());
 
-            foreach (var disk in disks) {
-                Assert.IsTrue(disk.Partitions.Any());
-                Assert.IsNotNull(disk.Volumes);
+                foreach (var disk in disks) {
+                    Assert.IsTrue(disk.Partitions.Any());
+                    Assert.IsNotNull(disk.Volumes);
 
-                foreach (var volume in disk.Volumes) {
-                    Assert.IsNotNull(volume.Name);
-                    Assert.IsTrue(volume.Size > 0);
-                    Assert.IsFalse(volume.Mounts.Any(string.IsNullOrEmpty));
+                    foreach (var volume in disk.Volumes) {
+                        Assert.IsNotNull(volume.Name);
+                        Assert.IsTrue(volume.Size > 0);
+                        Assert.IsFalse(volume.Mounts.Any(string.IsNullOrEmpty));
+                    }
                 }
+            } else {
+                Assert.Inconclusive("This test requires administrator privileges.");
             }
         }
 
         [TestMethod]
         public async Task SelectDisks() {
-            var logger = CreateLogger<WmiTest>();
-            var wmi = new ManagementService(CreateLogger<ManagementService>());
-            var vds = new VdsService(Options.Create(new VdsOptions()), CreateLogger<VdsService>());
-            var service = new WmiDiskService(wmi, vds, CreateLogger<WmiDiskService>());
-            Assert.IsNotNull(service);
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                var logger = CreateLogger<WmiTest>();
+                var wmi = new ManagementService(CreateLogger<ManagementService>());
+                var vds = new VdsService(Options.Create(new VdsOptions()), CreateLogger<VdsService>());
+                var service = new WmiDiskService(wmi, vds, CreateLogger<WmiDiskService>());
+                Assert.IsNotNull(service);
 
-            var disks = await service.GetDisksAsync(CancellationToken.None);
-            Assert.IsTrue(disks.Any());
+                var disks = await service.GetDisksAsync(CancellationToken.None);
+                Assert.IsTrue(disks.Any());
 
-            var selection = new DiskSelectionStep() {
-                Action = DiskSelectionAction.Include,
-            };
+                var selection = new DiskSelectionStep() {
+                    Action = DiskSelectionAction.Include,
+                };
 
-            {
-                selection.BuiltInCondition = BuiltInCondition.None;
-                selection.Condition = "BusType == \"Nvme\"";
-                var selected = await selection.ApplyAsync(disks, service, logger);
-                Assert.IsTrue(selected.Any());
-            }
+                {
+                    selection.BuiltInCondition = BuiltInCondition.None;
+                    selection.Condition = "BusType == \"Nvme\"";
+                    var selected = await selection.ApplyAsync(disks, service, logger);
+                    Assert.IsTrue(selected.Any());
+                }
 
-            {
-                selection.BuiltInCondition = BuiltInCondition.None;
-                selection.Condition = "BusType == \"SD\"";
-                var selected = await selection.ApplyAsync(disks, service, logger);
-                Assert.IsFalse(selected.Any());
-            }
+                {
+                    selection.BuiltInCondition = BuiltInCondition.None;
+                    selection.Condition = "BusType == \"SD\"";
+                    var selected = await selection.ApplyAsync(disks, service, logger);
+                    Assert.IsFalse(selected.Any());
+                }
 
-            {
-                selection.BuiltInCondition = BuiltInCondition.HasMicrosoftPartition;
-                var selected = await selection.ApplyAsync(disks, service, logger);
-                Assert.IsTrue(selected.Any());
-            }
+                {
+                    selection.BuiltInCondition = BuiltInCondition.HasMicrosoftPartition;
+                    var selected = await selection.ApplyAsync(disks, service, logger);
+                    Assert.IsTrue(selected.Any());
+                }
 
-            {
-                selection.BuiltInCondition = BuiltInCondition.IsSmallest;
-                var selected = await selection.ApplyAsync(disks, service, logger);
-                Assert.IsTrue(selected.Any());
-            }
+                {
+                    selection.BuiltInCondition = BuiltInCondition.IsSmallest;
+                    var selected = await selection.ApplyAsync(disks, service, logger);
+                    Assert.IsTrue(selected.Any());
+                }
 
-            {
-                selection.BuiltInCondition = BuiltInCondition.IsLargest;
-                var selected = await selection.ApplyAsync(disks, service, logger);
-                Assert.IsTrue(selected.Any());
-            }
+                {
+                    selection.BuiltInCondition = BuiltInCondition.IsLargest;
+                    var selected = await selection.ApplyAsync(disks, service, logger);
+                    Assert.IsTrue(selected.Any());
+                }
 
-            {
-                selection.BuiltInCondition = BuiltInCondition.IsEfiSystemDisk;
-                var selected = await selection.ApplyAsync(disks, service, logger);
-                Assert.IsTrue(selected.Any());
-            }
+                {
+                    selection.BuiltInCondition = BuiltInCondition.IsEfiSystemDisk;
+                    var selected = await selection.ApplyAsync(disks, service, logger);
+                    Assert.IsTrue(selected.Any());
+                }
 
-            {
-                selection.BuiltInCondition = BuiltInCondition.None;
-                selection.Condition = "PartitionStyle == \"Gpt\"";
-                var selected = await selection.ApplyAsync(disks, service, logger);
-                Assert.IsTrue(selected.Any());
+                {
+                    selection.BuiltInCondition = BuiltInCondition.None;
+                    selection.Condition = "PartitionStyle == \"Gpt\"";
+                    var selected = await selection.ApplyAsync(disks, service, logger);
+                    Assert.IsTrue(selected.Any());
+                }
+            } else {
+                Assert.Inconclusive("This test requires administrator privileges.");
             }
         }
 

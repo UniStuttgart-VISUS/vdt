@@ -232,6 +232,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The state variable &quot;{0}&quot; was not set..
+        /// </summary>
+        internal static string StateNotFound {
+            get {
+                return ResourceManager.GetString("StateNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The given task cannot execute in phase {0}..
         /// </summary>
         internal static string TaskCannotExecute {

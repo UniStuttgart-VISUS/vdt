@@ -165,6 +165,15 @@ namespace Visus.DeploymentToolkit.Services {
 
         #region Public methods
         /// <summary>
+        /// Clears the given state variable if it exists.
+        /// </summary>
+        /// <param name="name">The name of the state to be cleared.</param>
+        /// <returns><see langword="true"/> if the state was cleared,
+        /// <see langword="false"/> if it did not exist in the first place.
+        /// </returns>
+        bool Clear(string name);
+
+        /// <summary>
         /// Restores the state from the given JSON file.
         /// </summary>
         /// <remarks>

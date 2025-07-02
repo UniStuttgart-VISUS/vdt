@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using System.Security.Principal;
 using System.Xml.Linq;
 using Visus.DeploymentToolkit.DiskManagement;
+using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Services;
 using Visus.DeploymentToolkit.Tasks;
 using Visus.DeploymentToolkit.Unattend;
@@ -142,6 +143,33 @@ namespace Visus.DeploymentToolkit.Test {
                 ];
                 await Assert.ThrowsAsync<InvalidOperationException>(task.ExecuteAsync);
             }
+        }
+
+        [TestMethod]
+        public async Task TestReinterpretState() {
+            var state = new State(CreateLogger<State>());
+            var task = new ReinterpretState(state, CreateLogger<ReinterpretState>());
+
+            state.AgentPath = "horst";
+
+            task.Source = WellKnownStates.AgentPath;
+            task.Destination = WellKnownStates.DeploymentShareUser;
+            await task.ExecuteAsync();
+
+            Assert.AreEqual("horst", state.DeploymentShareUser);
+        }
+
+        [TestMethod]
+        public async Task TestClearState() {
+            var state = new State(CreateLogger<State>());
+            var task = new ClearState(state, CreateLogger<ClearState>());
+
+            state.AgentPath = "horst";
+
+            task.Variable = WellKnownStates.AgentPath;
+            await task.ExecuteAsync();
+
+            Assert.IsNull(state.AgentPath);
         }
 
         private static ILogger<T> CreateLogger<T>() => LoggerFactory.CreateLogger<T>();

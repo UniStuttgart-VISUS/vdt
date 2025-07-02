@@ -187,6 +187,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Join domain or workgroup.
+        /// </summary>
+        internal static string JoinDomain {
+            get {
+                return ResourceManager.GetString("JoinDomain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Lock screen.
         /// </summary>
         internal static string LockScreen {

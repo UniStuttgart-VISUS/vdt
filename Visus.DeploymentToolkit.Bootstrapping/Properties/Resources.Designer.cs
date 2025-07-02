@@ -61,6 +61,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear state variable.
+        /// </summary>
+        internal static string ClearState {
+            get {
+                return ResourceManager.GetString("ClearState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copy files.
         /// </summary>
         internal static string CopyFiles {
@@ -174,6 +183,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string PromptUser {
             get {
                 return ResourceManager.GetString("PromptUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy state information.
+        /// </summary>
+        internal static string ReinterpretState {
+            get {
+                return ResourceManager.GetString("ReinterpretState", resourceCulture);
             }
         }
         

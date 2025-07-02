@@ -219,4 +219,7 @@
   <data name="CopyBootstrapper" xml:space="preserve">
     <value>Copy the boostrapper</value>
   </data>
+  <data name="JoinDomain" xml:space="preserve">
+    <value>Join domain or workgroup</value>
+  </data>
 </root>

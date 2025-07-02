@@ -25,8 +25,10 @@ namespace Visus.DeploymentToolkit.Agent {
         /// <inheritdoc/>
         protected override void ConfigureServices(IServiceCollection services,
                 IConfiguration configuration) {
-            base.ConfigureServices(services, configuration); 
+            base.ConfigureServices(services, configuration);
             services.ConfigureDism(configuration);
+            services.ConfigureDomain(configuration);
+            services.ConfigureLdap(configuration);
             services.ConfigureTaskSequenceStore(configuration);
             services.ConfigureVds(configuration);
             services.AddDeploymentServices();

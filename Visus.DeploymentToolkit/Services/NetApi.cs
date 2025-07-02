@@ -6,13 +6,14 @@
 
 using System;
 using System.ComponentModel;
-using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using System.Xml.Linq;
+using Visus.DeploymentToolkit.Security;
+using static Visus.DeploymentToolkit.Services.NetApi;
 
 
 namespace Visus.DeploymentToolkit.Services {
@@ -44,6 +45,85 @@ namespace Visus.DeploymentToolkit.Services {
                 | Delete
                 | Attribute
                 | Permission
+        }
+
+        /// <summary>
+        /// The <see href="DOMAIN_CONTROLLER_INFO"> structure is used with the
+        /// <see cref="DsGetDcName"/> method to receive data about a domain
+        /// controller.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        public struct DOMAIN_CONTROLLER_INFO {
+            public string DomainControllerName;
+            public string DomainControllerAddress;
+            public uint DomainControllerAddressType;
+            public Guid DomainGuid;
+            public string DomainName;
+            public string DnsForestName;
+            public uint Flags;
+            public string DcSiteName;
+            public string ClientSiteName;
+        }
+
+        /// <summary>
+        /// Possible flags for the <see cref="DsGetDcName"/> method.
+        /// </summary>
+        [Flags]
+        public enum GetDcNameFlags : uint {
+            None = 0x00000000,
+            ForceRediscovery = 0x00000001,
+            DirectoryServiceRequired = 0x00000010,
+            DirectoryServicePreferred = 0x00000020,
+            GlobalCatalogServerRequired = 0x00000040,
+            PrimaryDomainControllerRequired = 0x00000080,
+            BackgroundOnly = 0x00000100,
+            IpRequired = 0x00000200,
+            KdcRequired = 0x00000400,
+            TimeServerRequired = 0x00000800,
+            WritableRequired = 0x00001000,
+            GoodTimeServerPreferred = 0x00002000,
+            AvoidSelf = 0x00004000,
+            OnlyLdapNeeded = 0x00008000,
+            IsFlatName = 0x00010000,
+            IsDnsName = 0x00020000,
+            TryNextClosestSite = 0x00040000,
+            DirectoryService6Required = 0x00080000,
+            WebServiceRequired = 0x00100000,
+            DirectoryService8Required = 0x00200000,
+            DirectoryService9Required = 0x00400000,
+            DirectoryService10Required = 0x00800000,
+            KeyListSupportRequired = 0x01000000,
+            DirectoryService13Required = 0x02000000,
+            ReturnDnsName = 0x40000000,
+            ReturnFlatName = 0x80000000
+        }
+
+        /// <summary>
+        /// A wrapper for <see cref="Guid"/> that allows for using a GUID
+        /// as an optional parameter.
+        /// </summary>
+        public sealed class OptionalGuid {
+
+            /// <summary>
+            /// Converts a <see cref="Guid"/> to an <see cref="OptionalGuid"/>.
+            /// </summary>
+            /// <param name="value"></param>
+            public static implicit operator OptionalGuid(Guid value) {
+                return new OptionalGuid { Value = value };
+            }
+
+            /// <summary>
+            /// Converts an <see cref="OptionalGuid"/> to a <see cref="Guid"/>.
+            /// </summary>
+            /// <param name="value"></param>
+            public static implicit operator Guid?(OptionalGuid? value) {
+                return value?.Value;
+            }
+
+            /// <summary>
+            /// Gets or set the actual GUID.
+            /// </summary>
+            public Guid Value { get; set; }
         }
 
         /// <summary>
@@ -96,6 +176,139 @@ namespace Visus.DeploymentToolkit.Services {
         #endregion
 
         #region Public methods
+        /// <summary>
+        /// Returns the name of a domain controller in a specified domain. This
+        /// function accepts additional domain controller selection criteria to
+        /// indicate preference for a domain controller with particular
+        /// characteristics.
+        /// </summary>
+        /// <param name="computerName">The name of the server to process this
+        /// function. Typically, this parameter is <see langword="null"/>, which
+        /// indicates that the local computer is used.</param>
+        /// <param name="domainName">Specifies the name of the domain or
+        /// application partition to query. This name can either be a DNS-style
+        /// name or a flat-style name. If a DNS.style name is specified, the
+        /// name may be specified with or without a trailing period. If the 
+        /// <paramref name="flags"/> parameter contains the 
+        /// <see cref="GetDcNameFlags.GlobalCatalogServerRequired"/> flag, the
+        /// must be the name of the forest. In this case, the method fails if
+        /// the domain name specifies a name that is not the forest root. If
+        /// the <paramref name="flags"/> parameter contains the
+        /// <see cref="GetDcNameFlags.GlobalCatalogServerRequired"/> flag and
+        /// this parameter is <see langword="null" />, the method attempts to
+        /// find a global catalog in the forest of the computer identified by
+        /// <paramref name="computerName">, which is the local computer if
+        /// <paramref name="computerName"> is <see langword="null" />. If this
+        /// parameter is <see langword="null" /> and the
+        /// <paramref name="flags"/> parameter does not contain the
+        /// <see cref="GetDcNameFlags.GlobalCatalogServerRequired" /> flag,
+        /// <paramref name="computerName" /> is set to the default domain name
+        /// of the primary domain of the computer identified by
+        /// <paramref name="computerName"/>.</param>
+        /// <param name="domainGuid">A GUID that specifies the GUID of the
+        /// domain queried. If this parameter is not <see langword="null"/> and
+        /// the domain specified by <paramref name="domainName"> or 
+        /// <paramref name="computerName"/> cannot be found, the method attempts
+        /// to locate a domain controller in the domain having the GUID
+        /// specified by this parameter.</param>
+        /// <param name="siteName">Specifies the name of the site where the
+        /// returned domain controller should physically exist. If this
+        /// parameter is <see langword="null">, the method attempts to return a
+        /// domain controller in the site closest to the site of the computer
+        /// specified by <paramref name="computerName" />. This parameter should
+        /// be <see langword="null">, by default.</param>
+        /// <param name="flags">Contains a set of flags that provide additional
+        /// data used to process the request.</param>
+        /// <param name="domainControllerInfo">Receives a pointer to a 
+        /// <see cref="DOMAIN_CONTROLLER_INFO"> structure that contains data
+        /// about the domain controller selected. This structure is allocated by
+        /// the method. The caller must free the structure using the 
+        /// <see cref="NetApiBufferFree"/> method when it is no longer required.
+        /// </param>
+        /// <returns>Zero in case of success, a Windows error code otherwise.
+        /// </returns>
+        [DllImport(LibraryName)]
+        public static extern int DsGetDcName(string? computerName,
+            string domainName,
+            OptionalGuid? domainGuid,
+            string? siteName,
+            GetDcNameFlags flags,
+            out nint domainControllerInfo);
+
+        /// <summary>
+        /// Returns the name of a domain controller in a specified domain. This
+        /// function accepts additional domain controller selection criteria to
+        /// indicate preference for a domain controller with particular
+        /// characteristics.
+        /// </summary>
+        /// <param name="computerName">The name of the server to process this
+        /// function. Typically, this parameter is <see langword="null"/>, which
+        /// indicates that the local computer is used.</param>
+        /// <param name="domainName">Specifies the name of the domain or
+        /// application partition to query. This name can either be a DNS-style
+        /// name or a flat-style name. If a DNS.style name is specified, the
+        /// name may be specified with or without a trailing period. If the 
+        /// <paramref name="flags"/> parameter contains the 
+        /// <see cref="GetDcNameFlags.GlobalCatalogServerRequired"/> flag, the
+        /// must be the name of the forest. In this case, the method fails if
+        /// the domain name specifies a name that is not the forest root. If
+        /// the <paramref name="flags"/> parameter contains the
+        /// <see cref="GetDcNameFlags.GlobalCatalogServerRequired"/> flag and
+        /// this parameter is <see langword="null" />, the method attempts to
+        /// find a global catalog in the forest of the computer identified by
+        /// <paramref name="computerName">, which is the local computer if
+        /// <paramref name="computerName"> is <see langword="null" />. If this
+        /// parameter is <see langword="null" /> and the
+        /// <paramref name="flags"/> parameter does not contain the
+        /// <see cref="GetDcNameFlags.GlobalCatalogServerRequired" /> flag,
+        /// <paramref name="computerName" /> is set to the default domain name
+        /// of the primary domain of the computer identified by
+        /// <paramref name="computerName"/>.</param>
+        /// <param name="domainGuid">A GUID that specifies the GUID of the
+        /// domain queried. If this parameter is not <see langword="null"/> and
+        /// the domain specified by <paramref name="domainName"> or 
+        /// <paramref name="computerName"/> cannot be found, the method attempts
+        /// to locate a domain controller in the domain having the GUID
+        /// specified by this parameter.</param>
+        /// <param name="siteName">Specifies the name of the site where the
+        /// returned domain controller should physically exist. If this
+        /// parameter is <see langword="null">, the method attempts to return a
+        /// domain controller in the site closest to the site of the computer
+        /// specified by <paramref name="computerName" />. This parameter should
+        /// be <see langword="null">, by default.</param>
+        /// <param name="flags">Contains a set of flags that provide additional
+        /// data used to process the request.</param>
+        /// <returns>The name of the domain controller</returns>
+        /// <exception cref="Win32Exception">If the native API call failed.
+        /// </exception>
+        public static DOMAIN_CONTROLLER_INFO DsGetDcName(string? computerName,
+                string domainName,
+                OptionalGuid? domainGuid,
+                string? siteName,
+                GetDcNameFlags flags) {
+            var status = DsGetDcName(computerName, domainName, domainGuid,
+                siteName, flags, out var info);
+            if (status != 0) {
+                throw new Win32Exception(status);
+            }
+
+            var retval = Marshal.PtrToStructure<DOMAIN_CONTROLLER_INFO>(info);
+            NetApiBufferFree(info);
+            return retval;
+        }
+
+
+        /// <summary>
+        /// Frees the memory that the <c>NetApiBufferAllocate</c> function
+        /// allocates. Applications should also call
+        /// <see cref="NetApiBufferFree"/> to free the memory that other network
+        /// management functions use internally to return information.
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
+        [DllImport(LibraryName)]
+        public static extern int NetApiBufferFree(nint buffer);
+
         /// <summary>
         /// Joins a computer to a workgroup or domain.
         /// </summary>

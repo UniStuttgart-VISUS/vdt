@@ -17,7 +17,7 @@ namespace Visus.DeploymentToolkit.Test {
     public sealed class NetApiTest {
 
         [TestMethod]
-        public void ShareUnshare() {
+        public void TestShareUnshare() {
             try {
                 NetApi.ShareFolder(null, "test$", Directory.GetCurrentDirectory());
                 Assert.IsTrue(Directory.Exists(@"\\localhost\test$"));
@@ -27,7 +27,7 @@ namespace Visus.DeploymentToolkit.Test {
         }
 
         [TestMethod]
-        public void MapFail() {
+        public void TestMapFail() {
             Assert.ThrowsException<Win32Exception>(() => {
                 NetApi.ShareFolder(null, "test$", "fwrtg2tg$'!Ä$KFWÖGJ");
             });
@@ -41,6 +41,21 @@ namespace Visus.DeploymentToolkit.Test {
 
                 NetApi.Share(null, ref share);
             });
+        }
+
+        [TestMethod]
+        public void TestDcGetName() {
+            if (this._secrets.CanTestDomain) {
+                var guid = Guid.Empty;
+                var dcName = NetApi.DsGetDcName(null,
+                    this._secrets.Domain!,
+                    null,
+                    null,
+                    NetApi.GetDcNameFlags.IsDnsName);
+                Assert.IsNotNull(dcName);
+            } else {
+                Assert.Inconclusive("This test requires a domain name.");
+            }
         }
 
         private readonly TestSecrets _secrets = TestSecrets.Load();

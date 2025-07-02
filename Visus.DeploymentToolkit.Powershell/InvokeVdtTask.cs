@@ -30,6 +30,16 @@ namespace Visus.DeploymentToolkit.Powershell {
         public string Name { get; set; } = null!;
 
         /// <summary>
+        /// Gets or sets the parameters to be passed to the task.
+        /// </summary>
+        [Parameter(Position = 1,
+            HelpMessage = "Specifies the parameters to be passed to the task.")]
+        public IDictionary<string, object> Parameters {
+            get;
+            set;
+        } = new Dictionary<string, object>();
+
+        /// <summary>
         /// Gets or sets the path to a state file that should be loaded before
         /// running the task.
         /// </summary>
@@ -70,7 +80,8 @@ namespace Visus.DeploymentToolkit.Powershell {
                     desc.Task));
             }
 
-            // TODO: parameters
+            // Assign the parameters.
+            task.CopyFrom(this.Parameters);
 
             // Execute the task.
             task.ExecuteAsync().Wait();
