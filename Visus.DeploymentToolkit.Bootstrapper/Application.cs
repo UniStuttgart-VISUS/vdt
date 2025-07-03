@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Application;
 using Visus.DeploymentToolkit.Bootstrapper.Properties;
@@ -37,7 +38,12 @@ namespace Visus.DeploymentToolkit.Bootstrapper {
 
         /// <inheritdoc />
         protected override async Task<int> RunAsync() {
-            this.Logger.LogInformation("Preparing bootstrapping task sequence.");
+            this.Logger.LogInformation("Persisting the location of the "
+                + "bootstrapper for subsequent phases.");
+            this.State.BootstrapperPath = Assembly.GetEntryAssembly()?.Location;
+
+            this.Logger.LogInformation("Preparing bootstrapping task"
+                + " sequence.");
             var builder = this.GetRequiredService<ITaskSequenceBuilder>()
                 .ForPhase(Phase.Bootstrapping)
                 .Add<SetInputLocale>(t => {

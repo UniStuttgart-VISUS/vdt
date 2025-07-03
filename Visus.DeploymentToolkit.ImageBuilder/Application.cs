@@ -30,6 +30,7 @@ namespace Visus.DeploymentToolkit.ImageBuilder {
             services.ConfigureDism(configuration);
             services.ConfigureTaskSequenceStore(configuration);
             services.ConfigureUnattendBuilder(configuration);
+            services.ConfigureTools(configuration);
             services.AddDeploymentServices();
         }
 

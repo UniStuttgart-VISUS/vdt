@@ -5,9 +5,9 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Extensions;
@@ -30,13 +30,16 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// </summary>
         /// <param name="state"></param>
         /// <param name="copy"></param>
+        /// <param name="tools">Provides access to the locations of the deployment
+        /// tools.</param>
         /// <param name="logger"></param>
         /// <exception cref="ArgumentNullException"></exception>
         public CopyWindowsPe(IState state,
                 ICopy copy,
                 IDirectory directory,
+                IOptions<ToolsOptions> tools,
                 ILogger<CopyWindowsPe> logger)
-                : base(state, logger) {
+                : base(state, tools, logger) {
             this._copy = copy
                 ?? throw new ArgumentNullException(nameof(copy));
             this._directory = directory
@@ -88,11 +91,14 @@ namespace Visus.DeploymentToolkit.Tasks {
             }
 
             if (string.IsNullOrEmpty(this.FirmwareSourceDirectory)) {
-                this.FirmwareSourceDirectory = Path.Combine(
-                    this.DeploymentToolsRootDirectory,
-                    this.WinPeArchitecture,
-                    "Oscdimg");
+                this.FirmwareSourceDirectory = this._tools.OscdimgPath;
+                this.FirmwareSourceDirectory = Path.GetDirectoryName(
+                    this.FirmwareSourceDirectory)
+                    ?? throw new InvalidOperationException(
+                        Errors.OscdimgMissingDirectory);
             }
+            this.FirmwareSourceDirectory = this._tools.EvaluateArchitecture(
+                this.FirmwareSourceDirectory, this.Architecture);
 
             if (string.IsNullOrEmpty(this.MediaSourceDirectory)) {
                 this.MediaSourceDirectory = Path.Combine(
@@ -100,6 +106,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                     this.WinPeArchitecture,
                     "Media");
             }
+            this.MediaSourceDirectory = this._tools.EvaluateArchitecture(
+                this.MediaSourceDirectory, this.Architecture);
 
             if (string.IsNullOrEmpty(this.WimSourcePath)) {
                 this.WimSourcePath = Path.Combine(
@@ -108,6 +116,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                     "en-us",
                     "winpe.wim");
             }
+            this.WimSourcePath = this._tools.EvaluateArchitecture(
+                this.WimSourcePath, this.Architecture);
 
             this.Validate();
 
@@ -173,14 +183,18 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Gets the location where the BIOS firmware is located.
         /// </summary>
-        private string BiosSourcePath => Path.Combine(
-            this.FirmwareSourceDirectory!, "etfsboot.com");
+        private string BiosSourcePath
+            => Path.Combine(this._tools.EvaluateArchitecture(
+                this.FirmwareSourceDirectory!, this.Architecture),
+                "etfsboot.com");
 
         /// <summary>
         /// Gets the location where the EFI firmware is located.
         /// </summary>
-        private string EfiSourcePath => Path.Combine(
-            this.FirmwareSourceDirectory!, "efisys.bin");
+        private string EfiSourcePath
+            => Path.Combine(this._tools.EvaluateArchitecture(
+                this.FirmwareSourceDirectory!, this.Architecture),
+                "efisys.bin");
         #endregion
 
         #region Private fields

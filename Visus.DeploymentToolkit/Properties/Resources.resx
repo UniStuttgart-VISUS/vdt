@@ -222,4 +222,7 @@
   <data name="JoinDomain" xml:space="preserve">
     <value>Join domain or workgroup</value>
   </data>
+  <data name="NextPhase" xml:space="preserve">
+    <value>Transition to next phase</value>
+  </data>
 </root>

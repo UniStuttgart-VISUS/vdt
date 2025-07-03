@@ -367,6 +367,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The location of the deployment agent is unknown..
+        /// </summary>
+        internal static string NoAgentPath {
+            get {
+                return ResourceManager.GetString("NoAgentPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The basic software provider was not found..
         /// </summary>
         internal static string NoBasicSwProvider {
@@ -381,6 +390,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string NoBootDrive {
             get {
                 return ResourceManager.GetString("NoBootDrive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The location of the bootstrapper could not be determined..
+        /// </summary>
+        internal static string NoBootstrapperPath {
+            get {
+                return ResourceManager.GetString("NoBootstrapperPath", resourceCulture);
             }
         }
         
@@ -426,6 +444,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string NoInstallationDirectory {
             get {
                 return ResourceManager.GetString("NoInstallationDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No installation drive was specified..
+        /// </summary>
+        internal static string NoInstallationDrive {
+            get {
+                return ResourceManager.GetString("NoInstallationDrive", resourceCulture);
             }
         }
         
@@ -588,6 +615,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string OpenRegistryFailed {
             get {
                 return ResourceManager.GetString("OpenRegistryFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The path to the oscdimg tool does not specify a directory, which is required to determine the location of the firmware..
+        /// </summary>
+        internal static string OscdimgMissingDirectory {
+            get {
+                return ResourceManager.GetString("OscdimgMissingDirectory", resourceCulture);
             }
         }
         

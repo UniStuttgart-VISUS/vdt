@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -39,10 +40,14 @@ namespace Visus.DeploymentToolkit.Tasks {
                 ITaskSequenceFactory tasks,
                 RunCommandCustomisation runBootstrapper,
                 LocalisationCustomisation setLanguage,
+                IOptions<ToolsOptions> tools,
                 ILogger<SelectWindowsPeSequence> logger)
                 : base(state, store, tasks, logger) {
             ArgumentNullException.ThrowIfNull(runBootstrapper);
             ArgumentNullException.ThrowIfNull(setLanguage);
+
+            this._tools = tools?.Value
+                ?? throw new ArgumentNullException(nameof(tools));
 
             // The following unattend.xml customisations are used when the
             // task sequence creates a new Windows PE image.
@@ -71,8 +76,10 @@ namespace Visus.DeploymentToolkit.Tasks {
                 ITaskSequenceFactory tasks,
                 RunCommandCustomisation runBootstrapper,
                 LocalisationCustomisation setLanguage,
+                IOptions<ToolsOptions> tools,
                 ILogger<SelectWindowsPeSequence> logger)
-            : this(state, null, tasks, runBootstrapper, setLanguage, logger) { }
+            : this(state, null, tasks, runBootstrapper, setLanguage, tools,
+                logger) { }
         #endregion
 
         #region Public methods
@@ -190,7 +197,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                         t.Path = "de-de/lp.cab";
 
                         if (string.IsNullOrEmpty(t.BasePath)) {
-                            t.BasePath = Waik.Tools.GetWinPeOptionalComponentsPath(
+                            t.BasePath = this._tools.EvaluateArchitecture(
+                                this._tools.WinPeOptionalComponentsPath,
                                 s.Architecture);
                         }
                     })
@@ -219,6 +227,7 @@ namespace Visus.DeploymentToolkit.Tasks {
 
         #region Private fields
         private readonly IEnumerable<ICustomisation> _customisations;
+        private readonly ToolsOptions _tools;
         #endregion
     }
 

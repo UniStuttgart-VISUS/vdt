@@ -5,6 +5,8 @@
 // <author>Christoph Müller</author>
 
 
+using System.CodeDom;
+
 namespace Visus.DeploymentToolkit.Services {
 
     /// <summary>
@@ -32,6 +34,11 @@ namespace Visus.DeploymentToolkit.Services {
         /// The path where the boot drive is mounted.
         /// </summary>
         public const string BootDrive = nameof(IState.BootDrive);
+
+        /// <summary>
+        /// The path to the binary of the bootstrapper.
+        /// </summary>
+        public const string BootstrapperPath = nameof(IState.BootstrapperPath);
 
         /// <summary>
         /// The directory where the deployment share is mounted.

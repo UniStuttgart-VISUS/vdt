@@ -38,6 +38,13 @@ namespace Visus.DeploymentToolkit.Services {
         public string Name { get; }
 
         /// <summary>
+        /// Gets the name of the domain with the preferred domain controller for
+        /// use with <see cref="NetApi.NetJoinDomain"/>.
+        /// </summary>
+        public string NameWithDomainController
+            => $@"{this.Name}\{this.DomainController}";
+
+        /// <summary>
         /// Gets the name of the site where the domain controller resides.
         /// </summary>
         public string Site { get; }

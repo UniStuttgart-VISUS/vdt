@@ -5,6 +5,8 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using Visus.DeploymentToolkit.Extensions;
@@ -18,10 +20,14 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// A base class for tasks working with Windows PE images.
     /// </summary>
     /// <param name="state">The current state of the task sequence.</param>
+    /// <param name="tools">Provides access to the locations of the deployment
+    /// tools.</param>
     /// <param name="logger">A logger for progress and error messages.
     /// </param>
     [SupportsPhase(Workflow.Phase.PreinstalledEnvironment)]
-    public abstract class WindowsPeTaskBase(IState state, ILogger logger)
+    public abstract class WindowsPeTaskBase(IState state,
+            IOptions<ToolsOptions> tools,
+            ILogger logger)
             : TaskBase(state, logger) {
 
         #region Public properties
@@ -35,17 +41,6 @@ namespace Visus.DeploymentToolkit.Tasks {
             get;
             set;
         } = RuntimeInformation.ProcessArchitecture;
-
-        /// <summary>
-        /// Gets or sets the root directory for the deployment tools, most
-        /// importantly including the firmware files and the oscdimg tool for
-        /// creating ISOs.
-        /// </summary>
-        [DirectoryExists]
-        public string DeploymentToolsRootDirectory {
-            get;
-            set;
-        } = Waik.Defaults.DeploymentToolsPath;
 
         /// <summary>
         /// Gets or sets the working directory where the image will be staged.
@@ -65,7 +60,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         public string WinPeSourceDirectory {
             get;
             set;
-        } = Waik.Defaults.WinPePath;
+        } = tools.Value?.WinPePath!;
         #endregion
 
         #region Protected properties
@@ -90,14 +85,24 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <summary>
         /// Gets the path where the WinPE image file will be copied to.
         /// </summary>
-        protected string WimPath => Path.Combine(
-            this.MediaDirectory, "sources", "boot.wim");
+        protected string WimPath
+            => Path.Combine(this._tools.EvaluateArchitecture(
+                this.WorkingDirectory!, this.Architecture),
+                "sources", "boot.wim");
 
         /// <summary>
         /// Gets the architecture string used in the WinPE paths, which is
         /// derived from <see cref="Architecture"/>.
         /// </summary>
         protected string WinPeArchitecture => this.Architecture.GetFolder();
+        #endregion
+
+        #region Protected fields
+        /// <summary>
+        /// Provides access to the locations of the deployment tools.
+        /// </summary>
+        protected readonly ToolsOptions _tools = tools?.Value
+            ?? throw new ArgumentNullException(nameof(tools));
         #endregion
     }
 }

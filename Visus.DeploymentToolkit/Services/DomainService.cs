@@ -41,6 +41,7 @@ namespace Visus.DeploymentToolkit.Services {
             ILogger<DomainService> logger)
             : IDomainService {
 
+        #region Public methods
         /// <inheritdoc />
         public Task<DomainInfo> DiscoverAsync(string domain) {
             ArgumentNullException.ThrowIfNull(domain);
@@ -59,14 +60,12 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         /// <inheritdoc />
-        public async Task CreateKeyTableAsync(string path,
-                string machine,
+        public async Task<KeyTable> CreateKeyTableAsync(string machine,
                 string machinePassword,
                 string domainController,
                 string? user,
                 string? password,
                 IEnumerable<EncryptionType> encryptionTypes) {
-            ArgumentException.ThrowIfNullOrWhiteSpace(path);
             ArgumentNullException.ThrowIfNull(machine);
             ArgumentNullException.ThrowIfNull(domainController);
 
@@ -87,8 +86,7 @@ namespace Visus.DeploymentToolkit.Services {
 
             var spnAtt = this._krbOptions.ServicePrincipalNameAttribute;
             var principals = account.Attributes[spnAtt]?.GetValues<string>()
-                ?? throw new ArgumentException(string.Format(
-                    Errors.SpnsNotFound, machine, spnAtt));
+                ?? Enumerable.Empty<string>();
             this._logger.LogTrace("Found {Count} service principal names "
                 + "for machine {Machine}: {Spns}.", principals.Count(),
                 machine, string.Join(", ", principals));
@@ -105,7 +103,6 @@ namespace Visus.DeploymentToolkit.Services {
 
             var realm = GetDomain(account).ToUpperInvariant();
             this._logger.LogTrace("Using Kerberos realm {Realm}.", realm);
-            //var x = await connection.SearchAsync(dftCtx);
 
             var spns = principals
                 .Select(s => PrincipalName.FromKrbPrincipalName(
@@ -129,29 +126,27 @@ namespace Visus.DeploymentToolkit.Services {
                 }
             }
 
-            var keytab = new KeyTable(keys);
-
-            using (var f = File.Open(path, FileMode.Create,
-                FileAccess.ReadWrite, FileShare.None))
-            using (var w = new BinaryWriter(f)) {
-                this._logger.LogTrace("Writing keytab to {Path}.", path);
-                keytab.Write(w);
-            }
+            return new KeyTable(keys);
         }
 
         /// <inheritdoc />
-        public void JoinDomain(string domain,
+        public void JoinDomain(string? server,
+                string domain,
                 string? account,
                 [SensitiveData] string? password,
                 JoinOptions options = JoinOptions.JoinDomain,
                 string? organisationalUnit = null) {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-                this._logger.LogTrace("Joining local machine to domain "
+                this._logger.LogTrace("Joining {Machine} to domain "
                     + "{Domain} in {OU} using the account {Account} and "
-                    + "options {Options}. A password {Password}.", domain,
-                    account, organisationalUnit, options,
+                    + "options {Options}. A password {Password}.",
+                    server ?? "the local machine",
+                    domain,
+                    account,
+                    organisationalUnit,
+                    options,
                     (password is null) ? "was not given" : "was given");
-                var status = NetJoinDomain(null,
+                var status = NetJoinDomain(server,
                     domain,
                     organisationalUnit,
                     account,
@@ -240,6 +235,7 @@ namespace Visus.DeploymentToolkit.Services {
 
             await connection.LdapConnection.SendRequestAsync(req);
         }
+        #endregion
 
         #region Nested class Connection
         /// <summary>

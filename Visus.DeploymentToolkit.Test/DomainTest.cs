@@ -81,17 +81,12 @@ namespace Visus.DeploymentToolkit.Test {
 
                 var domain = new DomainService(krbOptions, ldap, ldapOptions, logger);
 
-                var path = Path.Combine(this.TestContext.DeploymentDirectory!, "krb5.keytab");
-                await domain.CreateKeyTableAsync(path,
-                    "salsa", //this._secrets.TestMachine!,
+                var keytab = await domain.CreateKeyTableAsync(this._secrets.TestMachine!,
                     "horst",
                     this._secrets.DomainController!,
                     this._secrets.DomainAdmin!,
                     this._secrets.DomainPassword!,
                     IDomainService.DefaultEncryptionTypes);
-
-                using var f = File.OpenRead(path);
-                var keytab = new KeyTable(f);
                 Assert.IsNotNull(keytab);
 
             } else {

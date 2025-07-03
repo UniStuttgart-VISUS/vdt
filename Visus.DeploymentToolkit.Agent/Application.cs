@@ -30,6 +30,7 @@ namespace Visus.DeploymentToolkit.Agent {
             services.ConfigureDomain(configuration);
             services.ConfigureLdap(configuration);
             services.ConfigureTaskSequenceStore(configuration);
+            services.ConfigureTools(configuration);
             services.ConfigureVds(configuration);
             services.AddDeploymentServices();
         }

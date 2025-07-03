@@ -65,6 +65,12 @@ namespace Visus.DeploymentToolkit.Services {
         }
 
         /// <inheritdoc />
+        public string? BootstrapperPath {
+            get => this[WellKnownStates.BootstrapperPath] as string;
+            set => this[WellKnownStates.BootstrapperPath] = value;
+        }
+
+        /// <inheritdoc />
         public string? DeploymentDirectory {
             get => this[WellKnownStates.DeploymentDirectory] as string;
             set => this[WellKnownStates.DeploymentDirectory] = value;

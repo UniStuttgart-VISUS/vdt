@@ -214,6 +214,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Transition to next phase.
+        /// </summary>
+        internal static string NextPhase {
+            get {
+                return ResourceManager.GetString("NextPhase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Partition and format disk.
         /// </summary>
         internal static string PartitionFormatDisk {

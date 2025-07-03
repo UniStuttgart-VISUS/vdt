@@ -50,6 +50,11 @@ namespace Visus.DeploymentToolkit.Services {
         string? BootDrive { get; set; }
 
         /// <summary>
+        /// Gets or sets the location of the bootstrapper.
+        /// </summary>
+        string? BootstrapperPath { get; set; }
+
+        /// <summary>
         /// Gets or sets the path to the mount point where the
         /// <see cref="DeploymentShare"/> is mounted.
         /// </summary>

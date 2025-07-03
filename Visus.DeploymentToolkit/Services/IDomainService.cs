@@ -31,8 +31,6 @@ namespace Visus.DeploymentToolkit.Services {
         /// given <paramref name="machine"/> and
         /// <paramref name="machinePassword"/>.
         /// </summary>
-        /// <param name="path">The path to the keytab that will be written.
-        /// Existing data will be overwritten.</param>
         /// <param name="machine">The account name or distinguished name of the
         /// machine.</param>
         /// <param name="machinePassword">The machine password to be embedded
@@ -46,7 +44,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <paramref name="user"/>.</param>
         /// <param name="encryptionTypes">The encryption types used for the keys
         /// in the keytab.</param>
-        /// <returns>A task for waiting on the operation to complete.</returns>
+        /// <returns>A task for the keytab that is being generated.</returns>
         /// <exception cref="System.ArgumentException">If
         /// <paramref name="path"/> is <see langword="null"/> or empty.
         /// </exception>
@@ -54,8 +52,7 @@ namespace Visus.DeploymentToolkit.Services {
         /// <paramref name="machine"/> is <see langword="null"/>, or if
         /// <paramref name="machinePassword"/> is <see langword="null"/>.
         /// </exception>
-        Task CreateKeyTableAsync(string path,
-            string machine,
+        Task<KeyTable> CreateKeyTableAsync(string machine,
             string machinePassword,
             string domainController,
             string? user,
@@ -73,6 +70,46 @@ namespace Visus.DeploymentToolkit.Services {
         /// <exception cref="System.InvalidOperationException">If this method
         /// is called on any platform but Windows.</exception>
         Task<DomainInfo> DiscoverAsync(string domain);
+
+        /// <summary>
+        /// Joins the computer to a workgroup or domain.
+        /// </summary>
+        /// <param name="server">The DNS or NetBIOS name of the computer on
+        /// which to execute the domain join operation. If this parameter is
+        /// <see langword="null"/>, the local computer is used. Note that this
+        /// parameter can also be used to rename a machine as part of a join
+        /// if <see cref="JoinOptions.JoinWithNewName"/> is set.</param>
+        /// <param name="domain">A pointer to a constant null-terminated
+        /// character string that specifies the name of the domain or workgroup
+        /// to join.</param>
+        /// <param name="account">A pointer to a constant null-terminated
+        /// character string that specifies the account name to use when
+        /// connecting to the domain controller. The string must specify either
+        /// a domain NetBIOS name and user account (for example, REDMOND\user)
+        /// or the user principal name (UPN) of the user in the form of an
+        /// Internet-style login name (&quot;user@remond.com&quot;). If this
+        /// parameter is <see langword="null"/>, the caller's context is used.
+        /// </param>
+        /// <param name="password">If the <paramref name="account"/>  parameter
+        /// specifies an account name, this parameter must point to the
+        /// password to use when connecting to the domain controller. Otherwise,
+        /// this parameter must be <see langword="null"/>. You can specify a
+        /// local machine account password rather than a user password for
+        /// unsecured joins.</param>
+        /// <param name="options">A set of bit flags defining the join options.
+        /// </param>
+        /// <param name="organisationalUnit">Optionally specifies the pointer to
+        /// a constant null-terminated character string that contains the
+        /// RFC-1779 format name of the organisational unit (OU) for the
+        /// computer account. If you specify this parameter, the string must
+        /// contain a full path lik OU=testOU,DC=domain,DC=Domain,DC=com.
+        /// Otherwise, this parameter must be <see langword="null"/>.</param>
+        void JoinDomain(string? server,
+            string domain,
+            string? account,
+            [SensitiveData] string? password,
+            JoinOptions options,
+            string? organisationalUnit = null);
 
         /// <summary>
         /// Joins the computer to a workgroup or domain.
@@ -103,10 +140,12 @@ namespace Visus.DeploymentToolkit.Services {
         /// contain a full path lik OU=testOU,DC=domain,DC=Domain,DC=com.
         /// Otherwise, this parameter must be <see langword="null"/>.</param>
         void JoinDomain(string domain,
-            string? account,
-            [SensitiveData] string? password,
-            JoinOptions options,
-            string? organisationalUnit = null);
+                string? account,
+                [SensitiveData] string? password,
+                JoinOptions options,
+                string? organisationalUnit = null)
+            => this.JoinDomain(null, domain, account, password, options,
+                organisationalUnit);
 
         /// <summary>
         /// Sets a new machine password for the given

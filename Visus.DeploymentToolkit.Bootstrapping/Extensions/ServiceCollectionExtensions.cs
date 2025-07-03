@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Visus.DeploymentToolkit.Compliance;
@@ -166,6 +165,37 @@ namespace Visus.DeploymentToolkit.Extensions {
                 return state;
             });
 
+            return services;
+        }
+
+        /// <summary>
+        /// Configures the default <see cref="ToolsOptions"/> in
+        /// <paramref name="services"/>.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection ConfigureTools(
+                this IServiceCollection services) {
+            ArgumentNullException.ThrowIfNull(services);
+            services.Configure<ToolsOptions>(_ => { });
+            return services;
+        }
+
+        /// <summary>
+        /// Configures the <see cref="ToolsOptions" /> from the given
+        /// configuration section.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <param name="sectionName"></param>
+        /// <returns></returns>
+        public static IServiceCollection ConfigureTools(
+                this IServiceCollection services,
+                IConfiguration configuration,
+                string sectionName = ToolsOptions.Section) {
+            ArgumentNullException.ThrowIfNull(services);
+            services.Configure<ToolsOptions>(
+                configuration.GetSection(sectionName));
             return services;
         }
         #endregion

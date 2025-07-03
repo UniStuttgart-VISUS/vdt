@@ -339,4 +339,16 @@
   <data name="KvnoNotFound" xml:space="preserve">
     <value>The machine account {0} has no key version number in attribute {1}.</value>
   </data>
+  <data name="NoAgentPath" xml:space="preserve">
+    <value>The location of the deployment agent is unknown.</value>
+  </data>
+  <data name="NoBootstrapperPath" xml:space="preserve">
+    <value>The location of the bootstrapper could not be determined.</value>
+  </data>
+  <data name="NoInstallationDrive" xml:space="preserve">
+    <value>No installation drive was specified.</value>
+  </data>
+  <data name="OscdimgMissingDirectory" xml:space="preserve">
+    <value>The path to the oscdimg tool does not specify a directory, which is required to determine the location of the firmware.</value>
+  </data>
 </root>

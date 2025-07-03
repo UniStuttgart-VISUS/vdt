@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
@@ -32,13 +33,16 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <param name="state">The application state, which can be used to
         /// populate the <see cref="WorkingDirectory"/>.</param>
         /// <param name="commands">The factory for creating commands.</param>
+        /// <param name="tools">Provides access to the locations of the deployment
+        /// tools.</param>
         /// <param name="logger">A logger.</param>
         /// <exception cref="ArgumentNullException">If
         /// <paramref name="commands"/> is <c>null</c>.</exception>
         public CreateWindowsPeIso(IState state,
                 ICommandBuilderFactory commands,
+                IOptions<ToolsOptions> tools,
                 ILogger<CreateWindowsPeIso> logger)
-                : base(state, logger) {
+                : base(state, tools,logger) {
             this._commands = commands
                 ?? throw new ArgumentNullException(nameof(commands));
             this.IsCritical = true;
@@ -47,16 +51,6 @@ namespace Visus.DeploymentToolkit.Tasks {
         #endregion
 
         #region Public properties
-        /// <summary>
-        /// Gets or sets the path to the oscdimg tool.
-        /// </summary>
-        /// <remarks>
-        /// If this parameter is not specified, the path is derived from the
-        /// <see cref="DeploymentToolsRootDirectory"/>
-        /// </remarks>
-        [FileExists]
-        public string? OscdImgPath { get; set; }
-
         /// <summary>
         /// Gets or sets the path of the ISO file to be created.
         /// </summary>
@@ -69,19 +63,15 @@ namespace Visus.DeploymentToolkit.Tasks {
         public override async Task ExecuteAsync(
                 CancellationToken cancellationToken) {
             this.CopyFrom(this._state);
-
-            if (string.IsNullOrWhiteSpace(this.OscdImgPath)) {
-                this.OscdImgPath = System.IO.Path.Combine(
-                    this.DeploymentToolsRootDirectory,
-                    this.WinPeArchitecture,
-                    "Oscdimg",
-                    "oscdimg.exe");
-            }
-
             this.Validate();
             cancellationToken.ThrowIfCancellationRequested();
 
-            var cmd = this._commands.Run(this.OscdImgPath)
+            var oscdimg = this._tools.EvaluateArchitecture(
+                this._tools.OscdimgPath,
+                this.Architecture);
+            this._logger.LogTrace("oscdimg is configured to be at {Path}.",
+                oscdimg);
+            var cmd = this._commands.Run(oscdimg)
                 .WithArguments($"-bootdata:{this.BootData} -u1 -udfver102 "
                     + $"\"{this.MediaDirectory}\" \"{this.Path}\"")
                 .WaitForProcess()
