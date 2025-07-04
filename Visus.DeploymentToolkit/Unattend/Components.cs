@@ -27,7 +27,14 @@ namespace Visus.DeploymentToolkit.Unattend {
         /// <summary>
         /// The name of the component for installing Windows.
         /// </summary>
-        public const string WindowsSetup = "Microsoft-Windows-Setup";
+        public const string WindowsSetup
+            = "Microsoft-Windows-Setup";
+
+        /// <summary>
+        /// The name of the component for preparing the Windows shell.
+        /// </summary>
+        public const string WindowsShellSetup
+            = "Microsoft-Windows-Shell-Setup";
 
     }
 }

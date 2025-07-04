@@ -87,7 +87,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// </summary>
         protected string WimPath
             => Path.Combine(this._tools.EvaluateArchitecture(
-                this.WorkingDirectory!, this.Architecture),
+                this.MediaDirectory, this.Architecture),
                 "sources", "boot.wim");
 
         /// <summary>

@@ -41,7 +41,7 @@ namespace Visus.DeploymentToolkit.Agent {
                 this.Logger.LogInformation("Project Deimos agent is starting.");
 
                 this.Logger.LogInformation("Assigning user-provided state.");
-                this.Options.CopyTo(this.State, true);
+                this.Options.CopyTo(this.State);
 
                 // Find out what task sequence we are running. If there is none
                 // specified in the startup options, we ask the user to provide
@@ -65,7 +65,8 @@ namespace Visus.DeploymentToolkit.Agent {
 
                 return 0;
             } catch (Exception ex) {
-                this.Logger.LogCritical(ex, "Building a boot image failed.");
+                this.Logger.LogCritical(ex, "The deployment agent failed to "
+                    + "perform its work.");
                 return 1;
             }
         }

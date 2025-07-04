@@ -22,6 +22,9 @@ namespace Visus.DeploymentToolkit.Workflow {
 
         #region Public properties
         /// <inheritdoc />
+        public string ID { get; }
+
+        /// <inheritdoc />
         public int Count => this._tasks.Count;
 
         /// <inheritdoc />
@@ -84,13 +87,16 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
+        /// <param name="id">The unique ID of the task sequence.</param>
         /// <param name="logger">The logger for the task sequence.</param>
         /// <param name="phase"></param>
         /// <param name="tasks"></param>
         /// <exception cref="ArgumentNullException"></exception>
         internal TaskSequence(ILogger<TaskSequence> logger,
+                string id,
                 Phase phase,
                 IList<ITask> tasks) {
+            this.ID = id ?? throw new ArgumentNullException(nameof(id));
             this.Phase = phase;
             this._logger = logger
                 ?? throw new ArgumentNullException(nameof(logger));

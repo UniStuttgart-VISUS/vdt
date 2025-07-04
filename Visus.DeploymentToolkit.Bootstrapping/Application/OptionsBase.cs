@@ -27,7 +27,7 @@ namespace Visus.DeploymentToolkit.Application {
         /// the share exported by the deployment server.
         /// </remarks>
         [State(WellKnownStates.DeploymentShare)]
-        public string DeploymentShare { get; set; } = string.Empty;
+        public string? DeploymentShare { get; set; }
 
         /// <summary>
         /// Gets or sets the path to the state file where the bootstrapper

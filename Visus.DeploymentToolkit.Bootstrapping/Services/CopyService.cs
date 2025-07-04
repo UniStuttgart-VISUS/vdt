@@ -90,7 +90,9 @@ namespace Visus.DeploymentToolkit.Services {
                         d = Path.Combine(dest, d);
 
                         var dd = Path.GetDirectoryName(d);
-                        if (dd != null) {
+                        if ((dd != null) && !Directory.Exists(dd)) {
+                            this._logger.LogTrace("Ensuring that subdirectory "
+                                + "{Destination} exists.", dd);
                             await this._directory.CreateAsync(dd);
                         }
 

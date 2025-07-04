@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Compliance;
@@ -95,6 +96,12 @@ namespace Visus.DeploymentToolkit.Services {
         /// Gets or sets the disk where Windows will be installed.
         /// </summary>
         IDisk? InstallationDisk { get; set; }
+
+        /// <summary>
+        /// Gets the drive where Windows ist to be installed.
+        /// </summary>
+        string? InstallationDrive => Path.GetPathRoot(
+            this.InstallationDirectory);
 
         /// <summary>
         /// Gets or sets the path to the installation image that is being

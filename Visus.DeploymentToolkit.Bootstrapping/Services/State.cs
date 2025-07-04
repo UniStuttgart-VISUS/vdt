@@ -206,18 +206,22 @@ namespace Visus.DeploymentToolkit.Services {
             // We must make sure to erase any existing session key, because we
             // need the one used when saving the state file to restore sensitive
             // state properly.
-            this._logger.LogTrace("Erasing random session key.");
+            this._logger.LogTrace("Erasing random session key to make space for "
+                + "an existing one in the state file we load next.");
             this._values[WellKnownStates.SessionKey] = null;
 
             // Restore using the configuration deserialiser, because it will
             // reconstruct objects safely for us. As a downside, properties that
             // are not defined in the state class cannot be restored.
-            this._logger.LogTrace("Loading existing state.");
+            this._logger.LogTrace("Loading existing state from {StateFile}.",
+                path);
             new ConfigurationBuilder()
                 .AddJsonFile(path!)
                 .Build()
                 .Bind(this);
 
+            this._logger.LogTrace("State successfully restored from "
+                + "{StateFile}.", path);
             return Task.CompletedTask;
         }
 

@@ -73,11 +73,10 @@ namespace Visus.DeploymentToolkit.Tasks {
 
             return Task.Run(() => {
                 if (this.TemporaryDirectory is null) {
+                    this.TemporaryDirectory = this._state.InstallationDrive;
                     this._logger.LogTrace("Setting temporary directory for WIM "
-                        + "operations to working curren tdirectory "
-                        + " {WorkingDirectory}.",
-                        this._state.WorkingDirectory);
-                    this.TemporaryDirectory = this._state.WorkingDirectory;
+                        + "operations to {TemporaryDirectory}.",
+                        this.TemporaryDirectory);
                 }
 
                 using var wim = this.OpenFile();

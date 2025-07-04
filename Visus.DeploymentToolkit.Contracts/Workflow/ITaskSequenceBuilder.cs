@@ -136,5 +136,14 @@ namespace Visus.DeploymentToolkit.Workflow {
         ITaskSequenceBuilder Insert<TTask>(int index,
             Action<TTask, IState> configure)
             where TTask : ITask;
+
+        /// <summary>
+        /// Assigns a unique ID to the task sequence.
+        /// </summary>
+        /// <param name="id">The ID of the task sequence.</param>
+        /// <returns><c>this</c>.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="id"/> is
+        /// <see langword="null"/>.</exception>
+        ITaskSequenceBuilder WithID(string id);
     }
 }

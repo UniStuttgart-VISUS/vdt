@@ -84,6 +84,7 @@ namespace Visus.DeploymentToolkit.Workflow {
                 ITaskSequenceDescription desc) {
             _ = desc ?? throw new ArgumentNullException(nameof(desc));
 
+            this.WithID(desc.ID);
             this.ForPhase(desc.Phase);
 
             foreach (var t in desc.Tasks) {
@@ -97,6 +98,7 @@ namespace Visus.DeploymentToolkit.Workflow {
         public ITaskSequence Build() {
             return new TaskSequence(
                 this._services.GetRequiredService<ILogger<TaskSequence>>(),
+                this._id,
                 this._phase,
                 this._tasks);
         }
@@ -131,6 +133,13 @@ namespace Visus.DeploymentToolkit.Workflow {
             var task = new SelfConfiguringTask<TTask>(t, configure,
                 this._services);
             return this.Insert(index, task);
+        }
+
+        /// <inheritdoc />
+        public ITaskSequenceBuilder WithID(string id) {
+            ArgumentNullException.ThrowIfNull(id);
+            this._id = id;
+            return this;
         }
         #endregion
 
@@ -167,6 +176,7 @@ namespace Visus.DeploymentToolkit.Workflow {
         #endregion
 
         #region Private fields
+        private string _id = Guid.NewGuid().ToString("D");
         private readonly ILogger _logger;
         private Phase _phase = Phase.Unknown;
         private readonly IServiceProvider _services;

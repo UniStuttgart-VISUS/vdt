@@ -351,4 +351,7 @@
   <data name="OscdimgMissingDirectory" xml:space="preserve">
     <value>The path to the oscdimg tool does not specify a directory, which is required to determine the location of the firmware.</value>
   </data>
+  <data name="NoWorkingDirectory" xml:space="preserve">
+    <value>No valid working directory was available.</value>
+  </data>
 </root>

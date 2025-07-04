@@ -610,6 +610,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No valid working directory was available..
+        /// </summary>
+        internal static string NoWorkingDirectory {
+            get {
+                return ResourceManager.GetString("NoWorkingDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to open the registry path &quot;{0}&quot;..
         /// </summary>
         internal static string OpenRegistryFailed {

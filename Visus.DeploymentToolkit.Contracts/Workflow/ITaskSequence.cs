@@ -20,6 +20,11 @@ namespace Visus.DeploymentToolkit.Workflow {
 
         #region Public properties
         /// <summary>
+        /// Gets the unique ID of the task sequence.
+        /// </summary>
+        string ID { get; }
+
+        /// <summary>
         /// Gets the <see cref="Phase"/> the sequence is applicable to.
         /// </summary>
         Phase Phase { get; }

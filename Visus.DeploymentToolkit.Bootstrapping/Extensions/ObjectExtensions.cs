@@ -231,7 +231,7 @@ namespace Visus.DeploymentToolkit.Extensions {
             foreach (var (p, n) in props) {
                 var value = p.GetValue(src);
 
-                if ((value != default) || force) {
+                if (((value != default) && (value != null)) || force) {
                     // Have a value or force to erase the property.
                     dst[n] = value;
                 }
