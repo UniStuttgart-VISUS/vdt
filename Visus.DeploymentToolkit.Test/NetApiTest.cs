@@ -5,6 +5,7 @@
 // <author>Christoph Müller</author>
 
 using System.ComponentModel;
+using System.Security.Principal;
 using Visus.DeploymentToolkit.Services;
 
 
@@ -18,11 +19,19 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public void TestShareUnshare() {
-            try {
-                NetApi.ShareFolder(null, "test$", Directory.GetCurrentDirectory());
-                Assert.IsTrue(Directory.Exists(@"\\localhost\test$"));
-            } finally {
-                NetApi.Unshare(null, "test$");
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                try {
+                    NetApi.Unshare(null, "test$");
+                } catch { /* This is expected. */ }
+
+                try {
+                    NetApi.ShareFolder(null, "test$", Directory.GetCurrentDirectory());
+                    Assert.IsTrue(Directory.Exists(@"\\localhost\test$"));
+                } finally {
+                    NetApi.Unshare(null, "test$");
+                }
+            } else {
+                Assert.Inconclusive("This test requires administrator privileges.");
             }
         }
 
@@ -32,15 +41,19 @@ namespace Visus.DeploymentToolkit.Test {
                 NetApi.ShareFolder(null, "test$", "fwrtg2tg$'!Ä$KFWÖGJ");
             });
 
-            Assert.ThrowsException<ArgumentException>(() => {
-                var share = new NetApi.SHARE_INFO_2 {
-                    shi2_netname = "test$",
-                    shi2_path = Directory.GetCurrentDirectory(),
-                    shi2_type = NetApi.ShareType.Mask
-                };
+            if (WindowsIdentity.GetCurrent().IsAdministrator()) {
+                Assert.ThrowsException<ArgumentException>(() => {
+                    var share = new NetApi.SHARE_INFO_2 {
+                        shi2_netname = "test$",
+                        shi2_path = Directory.GetCurrentDirectory(),
+                        shi2_type = NetApi.ShareType.Mask
+                    };
 
-                NetApi.Share(null, ref share);
-            });
+                    NetApi.Share(null, ref share);
+                });
+            } else {
+                Assert.Inconclusive("This test requires administrator privileges.");
+            }
         }
 
         [TestMethod]

@@ -14,12 +14,17 @@ namespace Visus.DeploymentToolkit.Test {
     /// </summary>
     internal static class Extensions {
 
-        public static bool IsAdministrator(this WindowsIdentity identity) {
-            if (identity == null) {
+        /// <summary>
+        /// Answer whether the specified identity is an administrator.
+        /// </summary>
+        /// <param name="that"></param>
+        /// <returns></returns>
+        public static bool IsAdministrator(this WindowsIdentity that) {
+            if (that == null) {
                 return false;
             }
 
-            var principal = new WindowsPrincipal(identity);
+            var principal = new WindowsPrincipal(that);
             return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
 
