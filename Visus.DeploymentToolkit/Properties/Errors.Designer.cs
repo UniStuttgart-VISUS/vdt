@@ -322,6 +322,15 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The unattend.xml customisation object does not have the mandatory Type property..
+        /// </summary>
+        internal static string MissingCustomisationType {
+            get {
+                return ResourceManager.GetString("MissingCustomisationType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The registry key &quot;{0}&quot; does not exist..
         /// </summary>
         internal static string MissingRegistryKey {
@@ -741,6 +750,15 @@ namespace Visus.DeploymentToolkit.Properties {
         internal static string UnexpectedPhase {
             get {
                 return ResourceManager.GetString("UnexpectedPhase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The type {0} of an unattend.xml customisation could not be found..
+        /// </summary>
+        internal static string UnknownCustomisationType {
+            get {
+                return ResourceManager.GetString("UnknownCustomisationType", resourceCulture);
             }
         }
         

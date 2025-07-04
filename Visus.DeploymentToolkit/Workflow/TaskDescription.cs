@@ -63,48 +63,10 @@ namespace Visus.DeploymentToolkit.Workflow {
         public Type Type {
             get {
                 if (this._type is null) {
-                    this._type = Type.GetType(this.Task, false, true);
-                    if (this._type is not null) {
-                        return this._type;
-                    }
-
-                    // Try harder.
-                    var candidates = AppDomain.CurrentDomain.GetAssemblies()
-                        .SelectMany(a => a.GetTypes())
-                        .Where(t => typeof(ITask).IsAssignableFrom(t))
-                        .ToList();
-
-                    this._type = candidates.SingleOrDefault(
-                        t => t.FullName == this.Task);
-                    if (this._type is not null) {
-                        return this._type;
-                    }
-
-                    // Try even harder by using the class name only.
-                    this._type = candidates.SingleOrDefault(
-                        t => t.Name == this.Task);
-                    if (this._type is not null) {
-                        return this._type;
-                    }
-
-                    // Finally, try case-insensitive matching as last resort.
-                    this._type = candidates.SingleOrDefault(
-                        t => t.FullName.EqualsIgnoreCase(this.Task));
-                    if (this._type is not null) {
-                        return this._type;
-                    }
-
-                    this._type = candidates.SingleOrDefault(
-                        t => t.Name.EqualsIgnoreCase(this.Task));
-                    if (this._type is not null) {
-                        return this._type;
-                    }
-
-                    // Now, we cannot do anything else.
-                    throw new InvalidOperationException(string.Format(
+                    this._type = this.Task.GetImplementingType<ITask>()
+                        ?? throw new InvalidOperationException(string.Format(
                         Errors.TaskNotFound, this.Task));
                 }
-
                 return this._type;
             }
         }
@@ -142,16 +104,11 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// Gets the properties of the task <paramref name="type"/> that are
         /// considered to be parameters.
         /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        internal static IEnumerable<PropertyInfo> GetParameters(Type type) {
-            ArgumentNullException.ThrowIfNull(type);
-            var flags = BindingFlags.Public | BindingFlags.Instance;
-            var retval = from p in type.GetProperties(flags)
-                         where p.CanRead && p.CanWrite
-                         select p;
-            return retval;
-        }
+        /// <param name="type">The type of task to get the parameters for.
+        /// </param>
+        /// <returns>A list of parameter properties.</returns>
+        internal static IEnumerable<PropertyInfo> GetParameters(Type type)
+            => type.GetPublicReadWriteInstanceProperties();
 
         /// <summary>
         /// Gets the properties of <see cref="Type"/> that are are considered

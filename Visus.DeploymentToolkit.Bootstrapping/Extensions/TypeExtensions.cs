@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 
 
 namespace Visus.DeploymentToolkit.Extensions {
@@ -16,6 +17,31 @@ namespace Visus.DeploymentToolkit.Extensions {
     /// Extension methods for <see cref="Type"/>.
     /// </summary>
     public static class TypeExtensions {
+
+        /// <summary>
+        /// Gets all public instance properties of a type.
+        /// </summary>
+        /// <param name="that"></param>
+        /// <returns></returns>
+        public static IEnumerable<PropertyInfo> GetPublicInstanceProperties(
+                this Type that) {
+            if (that is null) {
+                return Enumerable.Empty<PropertyInfo>();
+            } else {
+                var flags = BindingFlags.Public | BindingFlags.Instance;
+                return that.GetProperties(flags);
+            }
+        }
+
+        /// <summary>
+        /// Gets all public instance properties that can be read and written.
+        /// </summary>
+        /// <param name="that"></param>
+        /// <returns></returns>
+        public static IEnumerable<PropertyInfo> GetPublicReadWriteInstanceProperties(
+                this Type that)
+            => that.GetPublicInstanceProperties()
+                .Where(p => p.CanRead && p.CanWrite);
 
         /// <summary>
         /// Answer whether <paramref name="that"/> is one of the basic JSON

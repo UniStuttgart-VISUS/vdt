@@ -4,6 +4,7 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Security.Principal;
@@ -64,18 +65,22 @@ namespace Visus.DeploymentToolkit.Test {
 
         [TestMethod]
         public async Task TestCustomiseUnattend() {
+            var services = new ServiceCollection()
+                .AddLogging(l => l.AddDebug())
+                .AddDeploymentServices()
+                .BuildServiceProvider();
             var file = Path.Combine(this.TestContext.DeploymentDirectory!, "Unattend_Core_x64.xml");
             Assert.IsTrue(File.Exists(file));
             var state = new State(CreateLogger<State>());
-            var task = new CustomiseUnattend(state, CreateLogger<CustomiseUnattend>());
+            var task = new CustomiseUnattend(state, services, CreateLogger<CustomiseUnattend>());
             task.Path = file;
             task.OutputPath = "TestCustomiseUnattend.xml";
             task.Customisations = [
-                new XmlValueCustomisation(CreateLogger < XmlValueCustomisation >()) {
-                    Path = "//unattend:UILanguage",
-                    Value = "de-DE",
-                    IsRequired = true
-                },
+                CustomisationDescription.Create<XmlValueCustomisation>(new Dictionary<string, object?> {
+                    { nameof(XmlValueCustomisation.Path), "//unattend:UILanguage"},
+                    { nameof(XmlValueCustomisation.Value), "de-DE" },
+                    { nameof(XmlValueCustomisation.IsRequired), true }
+                })
             ];
             await task.ExecuteAsync();
 

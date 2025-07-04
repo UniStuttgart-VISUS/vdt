@@ -4,7 +4,9 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text;
 
 
@@ -15,6 +17,7 @@ namespace Visus.DeploymentToolkit.Extensions {
     /// </summary>
     public static class StringExtensions {
 
+        #region Public methods
         /// <summary>
         /// Escapes a string for use in WQL queries.
         /// </summary>
@@ -37,7 +40,6 @@ namespace Visus.DeploymentToolkit.Extensions {
 
             return sb.ToString();
         }
-
 
         /// <summary>
         /// Split an account name (user or machine) into its domain and account
@@ -73,5 +75,60 @@ namespace Visus.DeploymentToolkit.Extensions {
 
             return (null, that);
         }
+        #endregion
+
+        #region Internal methods
+        /// <summary>
+        /// Searches a type by its name.
+        /// </summary>
+        /// <typeparam name="TInterface">The interface that the type must
+        /// implement.</typeparam>
+        /// <param name="that">The name of the type to look for.</param>
+        /// <returns>The type described by the given name or
+        /// <see langword="null"/> if no matching type was found.</returns>
+        internal static Type? GetImplementingType<TInterface>(
+                this string that) {
+            if (that is null) {
+                return null;
+            }
+
+            var retval = Type.GetType(that, false, true);
+            if (retval is not null) {
+                return retval;
+            }
+
+            // Try harder.
+            var candidates = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(a => a.GetTypes())
+                .Where(t => typeof(TInterface).IsAssignableFrom(t))
+                .ToList();
+
+            retval = candidates.SingleOrDefault(t => t.FullName == that);
+            if (retval is not null) {
+                return retval;
+            }
+
+            // Try even harder by using the class name only.
+            retval = candidates.SingleOrDefault(t => t.Name == that);
+            if (retval is not null) {
+                return retval;
+            }
+
+            // Finally, try case-insensitive matching as last resort.
+            retval = candidates.SingleOrDefault(
+                t => t.FullName.EqualsIgnoreCase(that));
+            if (retval is not null) {
+                return retval;
+            }
+
+            retval = candidates.SingleOrDefault(
+                t => t.Name.EqualsIgnoreCase(that));
+            if (retval is not null) {
+                return retval;
+            }
+
+            return retval;
+        }
+        #endregion
     }
 }

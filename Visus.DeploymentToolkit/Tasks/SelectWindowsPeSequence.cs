@@ -8,7 +8,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Visus.DeploymentToolkit.Properties;
@@ -38,32 +40,42 @@ namespace Visus.DeploymentToolkit.Tasks {
         public SelectWindowsPeSequence(IState state,
                 ITaskSequenceStore? store,
                 ITaskSequenceFactory tasks,
-                RunCommandCustomisation runBootstrapper,
-                LocalisationCustomisation setLanguage,
                 IOptions<ToolsOptions> tools,
                 ILogger<SelectWindowsPeSequence> logger)
                 : base(state, store, tasks, logger) {
-            ArgumentNullException.ThrowIfNull(runBootstrapper);
-            ArgumentNullException.ThrowIfNull(setLanguage);
-
             this._tools = tools?.Value
                 ?? throw new ArgumentNullException(nameof(tools));
 
             // The following unattend.xml customisations are used when the
             // task sequence creates a new Windows PE image.
-            runBootstrapper.Passes = [ Passes.WindowsPE ];
-            runBootstrapper.Description = Resources.RunDeimosBootstrapper;
-            runBootstrapper.Path = Path.DirectorySeparatorChar
-                + Path.Combine(WorkingDirectory, Bootstrapper);
+            this._customisations.Add(CustomisationDescription.Create<
+                RunCommandCustomisation>(new Dictionary<string, object?> {
+                    {
+                        nameof(RunCommandCustomisation.Passes),
+                        new string[] { Passes.WindowsPE }
+                    },
+                    { 
+                        nameof(RunCommandCustomisation.Description),
+                        Resources.RunDeimosBootstrapper
+                    },
+                    {
+                        nameof(RunCommandCustomisation.Path),
+                        Path.DirectorySeparatorChar + Path.Combine(
+                            WorkingDirectory, Bootstrapper)
+                    }
+                }));
 
-            setLanguage.Passes = [ Passes.WindowsPE ];
-            setLanguage.InputLocale
-                = setLanguage.UserLocale
-                = setLanguage.SystemLocale
-                = new("de-DE");
-
-            //this._customisations = [runBootstrapper ];
-            this._customisations = [ runBootstrapper, setLanguage ];
+            this._customisations.Add(CustomisationDescription.Create<
+                LocalisationCustomisation>());
+            {
+                var desc = this._customisations.Last();
+                desc.Parameters[nameof(LocalisationCustomisation.Passes)]
+                    = new string[] { Passes.WindowsPE };
+                desc.Parameters[nameof(LocalisationCustomisation.InputLocale)]
+                    = desc.Parameters[nameof(LocalisationCustomisation.UserLocale)]
+                    = desc.Parameters[nameof(LocalisationCustomisation.SystemLocale)]
+                    = new CultureInfo("de-DE");
+            }
         }
 
         /// <summary>
@@ -74,12 +86,9 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// <exception cref="ArgumentNullException"></exception>
         public SelectWindowsPeSequence(IState state,
                 ITaskSequenceFactory tasks,
-                RunCommandCustomisation runBootstrapper,
-                LocalisationCustomisation setLanguage,
                 IOptions<ToolsOptions> tools,
                 ILogger<SelectWindowsPeSequence> logger)
-            : this(state, null, tasks, runBootstrapper, setLanguage, tools,
-                logger) { }
+            : this(state, null, tasks, tools, logger) { }
         #endregion
 
         #region Public methods
@@ -226,7 +235,7 @@ namespace Visus.DeploymentToolkit.Tasks {
         #endregion
 
         #region Private fields
-        private readonly IEnumerable<ICustomisation> _customisations;
+        private readonly List<CustomisationDescription> _customisations = new();
         private readonly ToolsOptions _tools;
         #endregion
     }

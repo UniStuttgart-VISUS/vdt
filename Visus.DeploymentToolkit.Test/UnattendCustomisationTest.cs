@@ -44,7 +44,7 @@ namespace Visus.DeploymentToolkit.Test {
 
             var desc = CustomisationDescription.Create(customisation);
             Assert.IsNotNull(desc);
-            Assert.AreEqual(customisation.GetType().FullName, desc.Type);
+            Assert.AreEqual(customisation.GetType().FullName, desc.Customisation);
             Assert.AreEqual("/unattend:unattend/unattend:settings", desc.Parameters[nameof(customisation.Path)]);
             Assert.AreEqual("pass", desc.Parameters[nameof(customisation.Name)]);
             Assert.AreEqual("horst", desc.Parameters[nameof(customisation.Value)]);

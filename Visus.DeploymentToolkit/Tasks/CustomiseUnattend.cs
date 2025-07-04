@@ -4,7 +4,9 @@
 // </copyright>
 // <author>Christoph Müller</author>
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
@@ -29,10 +31,14 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// Initialises a new instance.
         /// </summary>
         /// <param name="state"></param>
+        /// <param name="services"></param>
         /// <param name="logger"></param>
         public CustomiseUnattend(IState state,
+                IServiceProvider services,
                 ILogger<CustomiseUnattend> logger)
                 : base(state, logger) {
+            this._services = services
+                ?? throw new ArgumentNullException(nameof(services));
             this.Name = Resources.CustomiseUnattend;
             this.IsCritical = true;
         }
@@ -42,7 +48,10 @@ namespace Visus.DeploymentToolkit.Tasks {
         /// Gets or sets the customisations to be applied to the unattend file.
         /// </summary>
         [Required]
-        public IEnumerable<ICustomisation> Customisations { get; set; } = [];
+        public IEnumerable<CustomisationDescription> Customisations {
+            get;
+            set;
+        } = [];
 
         /// <summary>
         /// Gets ors sets the path where the customised unattend.xml file should
@@ -89,7 +98,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                 this._logger.LogTrace("Applying {Type} customisation.",
                     c.GetType().FullName);
                 cancellationToken.ThrowIfCancellationRequested();
-                c.Apply(doc);
+                c.Create(this._services).Apply(doc);
             }
 
             this._logger.LogInformation("Saving customised unattend file "
@@ -100,6 +109,10 @@ namespace Visus.DeploymentToolkit.Tasks {
                 await doc.SaveAsync(s, SaveOptions.None, cancellationToken);
             }
         }
+        #endregion
+
+        #region Private fields
+        private readonly IServiceProvider _services;
         #endregion
     }
 }

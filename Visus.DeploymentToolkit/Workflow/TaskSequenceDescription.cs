@@ -108,6 +108,7 @@ namespace Visus.DeploymentToolkit.Workflow {
             AllowTrailingCommas = false,
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             Converters = {
+                new CustomisationDescriptionConverter(),
                 new JsonStringEnumConverter<Architecture>(),
                 new JsonStringEnumConverter<Phase>(),
                 new TaskDescriptionConverter()

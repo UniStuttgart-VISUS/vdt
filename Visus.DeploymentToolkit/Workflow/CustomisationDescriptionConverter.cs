@@ -7,8 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Unattend;
 
@@ -16,50 +18,53 @@ using Visus.DeploymentToolkit.Unattend;
 namespace Visus.DeploymentToolkit.Workflow {
 
     /// <summary>
-    /// Converts a <see cref="ICustomisation" /> from and to JSON by using
-    /// our <see cref="CustomisationDescription" /> class as an intermediate.
+    /// Converts a <see cref="CustomisationDescription" /> from and to JSON.
     /// </summary>
     internal sealed class CustomisationDescriptionConverter
-            : JsonConverter<ICustomisation> {
+            : JsonConverter<CustomisationDescription> {
 
         /// <inheritdoc />
-        public override ICustomisation? Read(
+        public override CustomisationDescription? Read(
                 ref Utf8JsonReader reader,
                 Type typeToConvert,
                 JsonSerializerOptions options) {
             using var doc = JsonDocument.ParseValue(ref reader);
+            var retval = new CustomisationDescription() {
+                Parameters = new Dictionary<string, object?>()
+            };
 
             // Restore the type of the customisation.
-            var typeProperty = doc.RootElement.GetProperty(
-                nameof(CustomisationDescription.Type));
-            var type = typeProperty.GetString()
-                ?? throw new JsonException(Errors.MissingTaskType);
+            var customisation = doc.RootElement.GetProperty(
+                nameof(CustomisationDescription.Customisation));
+            retval.Customisation = customisation.GetString()
+                ?? throw new JsonException(Errors.MissingCustomisationType);
+            var type = Type.GetType(retval.Customisation)
+                ?? throw new JsonException(string.Format(
+                    Errors.UnknownCustomisationType, retval.Customisation));
 
-            //// Restore the configuration.
-            //if (doc.RootElement.TryGetProperty(
-            //        nameof(TaskDescription.Parameters),
-            //        out var parameters)) {
-            //    foreach (var p in TaskDescription.GetParameters(retval.Type)) {
-            //        if (parameters.TryGetProperty(p.Name, out var value)) {
-            //            var v = JsonSerializer.Deserialize(value,
-            //                p.PropertyType);
-            //            retval.Parameters[p.Name] = v;
-            //        }
-            //    }
-            //}
+            // Restore the parameters.
+            if (doc.RootElement.TryGetProperty(
+                    nameof(CustomisationDescription.Parameters),
+                    out var parameters)) {
+                foreach (var p in type.GetPublicReadWriteInstanceProperties()) {
+                    if (parameters.TryGetProperty(p.Name, out var value)) {
+                        var v = JsonSerializer.Deserialize(value,
+                            p.PropertyType);
+                        retval.Parameters[p.Name] = v;
+                    }
+                }
+            }
 
-            //return retval;
-            throw new NotImplementedException("TODO");
+            return retval;
         }
 
         /// <inheritdoc />
         public override void Write(Utf8JsonWriter writer,
-                ICustomisation value,
+                CustomisationDescription value,
                 JsonSerializerOptions options) {
             Debug.Assert(writer != null);
             Debug.Assert(value != null);
             Debug.Assert(options != null);
-            throw new NotImplementedException("TODO");
             JsonSerializer.Serialize(writer, value, value.GetType(), options);
         }
     }
