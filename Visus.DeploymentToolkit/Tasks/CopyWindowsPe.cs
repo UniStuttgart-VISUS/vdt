@@ -22,7 +22,7 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// This task copies the Windows PE files to the specified location for
     /// building a new boot image.
     /// </summary>
-    [SupportsPhase(Workflow.Phase.PreinstalledEnvironment)]
+    [SupportsPhase(Workflow.Phase.ImageServicing)]
     public sealed class CopyWindowsPe : WindowsPeTaskBase {
 
         /// <summary>

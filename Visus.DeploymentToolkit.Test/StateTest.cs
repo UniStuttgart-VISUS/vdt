@@ -27,8 +27,8 @@ namespace Visus.DeploymentToolkit.Test {
             state.DeploymentShare = "test";
             Assert.AreEqual("test", state.DeploymentShare);
 
-            state.Phase = Phase.PreinstalledEnvironment;
-            Assert.AreEqual(Phase.PreinstalledEnvironment, state.Phase);
+            state.Phase = Phase.ImageServicing;
+            Assert.AreEqual(Phase.ImageServicing, state.Phase);
         }
 
         [TestMethod]

@@ -10,10 +10,9 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Visus.DeploymentToolkit.Extensions;
 using Visus.DeploymentToolkit.Properties;
 using Visus.DeploymentToolkit.Services;
-using Visus.DeploymentToolkit.Validation;
+using Visus.DeploymentToolkit.Workflow;
 
 
 namespace Visus.DeploymentToolkit.Tasks {
@@ -22,6 +21,7 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// Injects drivers into a mounted Windows image or online servicing
     /// session.
     /// </summary>
+    [SupportsPhase(Phase.ImageServicing)]
     public sealed class InjectDrivers : ImageServicingTaskBase {
 
         #region Public constructors
@@ -77,8 +77,8 @@ namespace Visus.DeploymentToolkit.Tasks {
                         }
 
                         this._logger.LogInformation("Injecting drivers from "
-                            + "{Path} " + "to {Image}.",
-                            p, this.EffectiveInstallationPath);
+                            + "{Path} to {Image}.", p,
+                            this.EffectiveInstallationPath);
                         this.Open().InjectDrivers(p, this.IsRecursive,
                             this.IsUnsigned);
                         this._logger.LogInformation("Drivers from {Path} "

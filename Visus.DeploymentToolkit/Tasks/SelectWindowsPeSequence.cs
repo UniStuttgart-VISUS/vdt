@@ -26,7 +26,7 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// <see cref="IState.TaskSequence"/> or creates the default WinPE servicing
     /// task sequence.
     /// </summary>
-    [SupportsPhase(Phase.PreinstalledEnvironment)]
+    [SupportsPhase(Phase.ImageServicing)]
     public sealed class SelectWindowsPeSequence : SelectTaskSequenceBase {
 
         #region Public constructors
@@ -109,12 +109,21 @@ namespace Visus.DeploymentToolkit.Tasks {
                     + "sequence for Windows PE.");
 
                 this._state.TaskSequence = this._tasks.CreateBuilder()
-                    .ForPhase(Phase.PreinstalledEnvironment)
+                    .ForPhase(Phase.ImageServicing)
                     .Add<CheckElevation>()
                     // Copy the Windows PE files from the deployment share.
                     .Add<CopyWindowsPe>()
                     // Mount the boot.wim used by Windows PE.
                     .Add<MountWim>()
+                    .Add<InjectDrivers>(
+                        (t, s) => {
+                            ArgumentNullException.ThrowIfNull(s.WimMount);
+                            ArgumentNullException.ThrowIfNull(s.DeploymentShare);
+                            t.InstallationPath = s.WimMount.MountPoint;
+                            t.Path = [ Path.Combine(s.DeploymentShare!,
+                                DeploymentShare.Layout.DriverPath) ];
+                            t.IsRecursive = true;
+                        })
                     // Copy the unattend file for Windows PE into the image.
                     .Add<CopyUnattend>(
                         (t, s) => {
@@ -225,7 +234,7 @@ namespace Visus.DeploymentToolkit.Tasks {
             }
 
             CheckPhase(this._state.TaskSequence as ITaskSequence,
-                Phase.PreinstalledEnvironment);
+                Phase.ImageServicing);
         }
         #endregion
 

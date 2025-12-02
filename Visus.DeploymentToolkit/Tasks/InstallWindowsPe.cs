@@ -63,7 +63,7 @@ namespace Visus.DeploymentToolkit.Tasks {
                 + "installing Windows PE on a system.");
 
             this._state.TaskSequence = this._tasks.CreateBuilder()
-                .ForPhase(Phase.PreinstalledEnvironment)
+                .ForPhase(Phase.ImageServicing)
                 .Add<SelectInstallDisk>()
                 .Add<PartitionFormatDisk>()
                 .Add<ApplyImage>((t, s) => {

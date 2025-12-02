@@ -23,7 +23,7 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// <summary>
     /// This task creates an ISO file holding the specified Windows PE image.
     /// </summary>
-    [SupportsPhase(Workflow.Phase.PreinstalledEnvironment)]
+    [SupportsPhase(Workflow.Phase.ImageServicing)]
     public sealed class CreateWindowsPeIso : WindowsPeTaskBase {
 
         #region Public constructors

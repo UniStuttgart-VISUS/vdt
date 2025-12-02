@@ -24,7 +24,7 @@ namespace Visus.DeploymentToolkit.Tasks {
     /// tools.</param>
     /// <param name="logger">A logger for progress and error messages.
     /// </param>
-    [SupportsPhase(Workflow.Phase.PreinstalledEnvironment)]
+    [SupportsPhase(Workflow.Phase.ImageServicing)]
     public abstract class WindowsPeTaskBase(IState state,
             IOptions<ToolsOptions> tools,
             ILogger logger)

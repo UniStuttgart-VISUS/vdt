@@ -26,7 +26,7 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// installed, from which it gets a WinPE template that is customised
         /// by the task sequence.
         /// </remarks>
-        PreinstalledEnvironment = 100,
+        ImageServicing = 100,
 
         /// <summary>
         /// We are running in the boostrapper preparing the deployment agent.
@@ -41,7 +41,7 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <summary>
         /// The installation phase which is running from the preinstalled
         /// environment that has been prepared in the
-        /// <see cref="PreinstalledEnvironment"/> phase and loaded from TFTP to
+        /// <see cref="ImageServicing"/> phase and loaded from TFTP to
         /// the computer being installed.
         /// </summary>
         Installation = 300,

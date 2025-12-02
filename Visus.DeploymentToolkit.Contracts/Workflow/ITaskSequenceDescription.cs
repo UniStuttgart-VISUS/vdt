@@ -36,7 +36,7 @@ namespace Visus.DeploymentToolkit.Workflow {
         /// <summary>
         /// Gets the <see cref="Phase"/> the task sequence can run
         /// in. This typically includes
-        /// <see cref="Phase.PreinstalledEnvironment"/> for a task sequence that
+        /// <see cref="Phase.ImageServicing"/> for a task sequence that
         /// creates a WinPE image and <see cref="Phase.Installation"/> for a task
         /// sequence performing a Windows installation.
         /// </summary>

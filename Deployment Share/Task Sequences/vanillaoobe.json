@@ -8,7 +8,7 @@
             "Task": "Visus.DeploymentToolkit.Tasks.SelectImage"
         },
         {
-            "Task": "Visus.DeploymentToolkit.Tasks.SelectInstallDisk"
+            "Task": "Visus.DeploymentToolkit.Tasks.SelectInstallDisk",
             "Parameters": {
                 "Steps": [
                     {
@@ -30,7 +30,7 @@
                     {
                         "Condition": "FriendlyName.Contains(\"PRO\")",
                         "Action": "Prefer"
-                    }
+                    },
                     {
                         "BuiltInCondition": "IsLargest",
                         "Action": "Include"
