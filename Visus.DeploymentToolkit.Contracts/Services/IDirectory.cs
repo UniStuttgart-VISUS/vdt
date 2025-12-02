@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Enumeration;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 
@@ -55,6 +55,16 @@ namespace Visus.DeploymentToolkit.Services {
         /// designates an existing directory, <see langword="false"/> otherwise.
         /// </returns>
         bool Exists(string? path);
+
+        /// <summary>
+        /// Computes a hash of the contents of the specified directory.
+        /// </summary>
+        /// <param name="path">The path to the directory to be hashed.</param>
+        /// <param name="flags">The flags controlling how the hash is computed.
+        /// </param>
+        /// <returns>The finalised hash value.</returns>
+        public Task<byte[]> HashAsync(string path,
+            HashItemsFlags flags = HashItemsFlags.None);
 
         /// <summary>
         /// Gets all contents of the specified directory.

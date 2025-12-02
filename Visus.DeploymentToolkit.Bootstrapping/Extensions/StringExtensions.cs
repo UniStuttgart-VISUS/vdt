@@ -27,6 +27,41 @@ namespace Visus.DeploymentToolkit.Extensions {
             => string.Equals(that, other, StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
+        /// Replaces any occurrence of any character in
+        /// <paramref name="needles"/> in <paramref name="that"/> with
+        /// <paramref name="replacement"/> in place.
+        /// </summary>
+        /// <param name="that"></param>
+        /// <param name="needles"></param>
+        /// <param name="replacement"></param>
+        public static void ReplaceAll(this Span<char> that,
+                ReadOnlySpan<char> needles,
+                char replacement) {
+            foreach (var n in needles) {
+                that.Replace(n, replacement);
+            }
+        }
+
+        /// <summary>
+        /// Replaces any occurrence of any character in
+        /// <paramref name="needles"/> in <paramref name="that"/> with
+        /// <paramref name="replacement"/>.
+        /// </summary>
+        /// <param name="that"></param>
+        /// <param name="needles"></param>
+        /// <param name="replacement"></param>
+        /// <returns></returns>
+        public static string ReplaceAll(this string that,
+                ReadOnlySpan<char> needles,
+                char replacement) {
+            ArgumentNullException.ThrowIfNull(that);
+            foreach (var n in needles) {
+                that = that.Replace(n, replacement);
+            }
+            return that;
+        }
+
+        /// <summary>
         /// Converts a <see cref="SecureString"/> to a <see cref="string"/>.
         /// </summary>
         /// <param name="that"></param>

@@ -36,6 +36,16 @@ namespace Visus.DeploymentToolkit.InfParser {
 
         /// <inheritdoc/>
         IEnumerator IEnumerable.GetEnumerator() => this.Values.GetEnumerator();
+
+        /// <summary>
+        /// Returns whether the given <paramref name="key"/>. and if this is the
+        /// case, also the associated value.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public bool TryGetValue(string key, out object? value)
+            => this.Values.TryGetValue(key, out value);
         #endregion
 
         #region Public indexers

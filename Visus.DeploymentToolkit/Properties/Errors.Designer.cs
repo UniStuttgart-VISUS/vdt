@@ -439,11 +439,29 @@ namespace Visus.DeploymentToolkit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The INF file &quot;{0}&quot; does not contain a valid driver version..
+        /// </summary>
+        internal static string NoDriverVer {
+            get {
+                return ResourceManager.GetString("NoDriverVer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The location of the executing assembly could not be determined..
         /// </summary>
         internal static string NoEntryPoint {
             get {
                 return ResourceManager.GetString("NoEntryPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The driver INF file &quot;{0}&quot; does not contain the mandatory version section..
+        /// </summary>
+        internal static string NoInfFileVersion {
+            get {
+                return ResourceManager.GetString("NoInfFileVersion", resourceCulture);
             }
         }
         

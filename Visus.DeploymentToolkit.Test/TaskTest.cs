@@ -22,9 +22,9 @@ namespace Visus.DeploymentToolkit.Test {
     /// Tests for <see cref="ITask"/>s.
     /// </summary>
     [TestClass]
+    [DeploymentItem(@"TestData\TestImportDrivers")]
     [DeploymentItem(@"TestData\Unattend_Core_x64.xml")]
     public sealed class TaskTest {
-
         public TestContext TestContext { get; set; } = null!;
 
         [TestMethod]
@@ -175,6 +175,26 @@ namespace Visus.DeploymentToolkit.Test {
             await task.ExecuteAsync();
 
             Assert.IsNull(state.AgentPath);
+        }
+
+
+        [TestMethod]
+        public async Task TestImportDrivers() {
+            var state = new State(CreateLogger<State>());
+            var dir = new DirectoryService(CreateLogger<DirectoryService>());
+            var copy = new CopyService(dir, CreateLogger<CopyService>());
+            var task = new ImportDrivers(state, copy, dir, CreateLogger<ImportDrivers>());
+
+            task.Source = Path.Combine(this.TestContext.DeploymentDirectory!, "Drivers");
+            task.Destination = Path.Combine(Path.GetTempPath(), "deimostest" + DateTime.Now.ToString("yyyyMMddHHmmssfff"));
+
+            Assert.IsTrue(Directory.Exists(task.Source), "Source data have been deployed.");
+            task.Overwrite = true;
+            task.Recursive = true;
+            await task.ExecuteAsync();
+            Assert.IsTrue(Directory.Exists(task.Destination), "Destination was created.");
+            Assert.IsTrue(Directory.Exists(Path.Combine(task.Destination, "Net")), "Imported drivers are Net class.");
+
         }
 
         private static ILogger<T> CreateLogger<T>() => LoggerFactory.CreateLogger<T>();

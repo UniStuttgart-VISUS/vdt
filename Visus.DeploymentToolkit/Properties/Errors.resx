@@ -360,4 +360,10 @@
   <data name="UnknownCustomisationType" xml:space="preserve">
     <value>The type {0} of an unattend.xml customisation could not be found.</value>
   </data>
+  <data name="NoInfFileVersion" xml:space="preserve">
+    <value>The driver INF file "{0}" does not contain the mandatory version section.</value>
+  </data>
+  <data name="NoDriverVer" xml:space="preserve">
+    <value>The INF file "{0}" does not contain a valid driver version.</value>
+  </data>
 </root>

@@ -19,7 +19,7 @@ namespace Visus.DeploymentToolkit.Test {
         public TestContext TestContext { get; set; } = null!;
 
         [TestMethod]
-        public void TestParseString() {
+        public void TestParseFile() {
             var file = Path.Combine(this.TestContext.DeploymentDirectory!, "amdpsp.inf");
             var content = File.ReadAllText(file);
             var sections = Parser.ParseFile(file);
